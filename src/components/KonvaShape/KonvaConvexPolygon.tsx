@@ -167,8 +167,7 @@ export const KonvaConvexPolygon = React.memo(
 
     const handleTransformEnd = React.useCallback(
       (e: Konva.KonvaEventObject<Event>): void => {
-        const node: Konva.RegularPolygon =
-          nodeRef.current as Konva.RegularPolygon;
+        const node: Konva.RegularPolygon = e.target as Konva.RegularPolygon;
         if (!node) {
           return;
         }

@@ -3,16 +3,16 @@ import Konva from "konva";
 
 export type KonvaShape = Partial<
   Konva.ImageConfig &
-    Konva.CircleConfig &
-    Konva.EllipseConfig &
-    Konva.RectConfig &
-    Konva.LineConfig &
-    Konva.TextConfig &
-    Konva.ArrowConfig &
-    Konva.RegularPolygonConfig &
-    Konva.StarConfig &
-    Konva.RingConfig &
-    Konva.WedgeConfig
+  Konva.CircleConfig &
+  Konva.EllipseConfig &
+  Konva.RectConfig &
+  Konva.LineConfig &
+  Konva.TextConfig &
+  Konva.ArrowConfig &
+  Konva.RegularPolygonConfig &
+  Konva.StarConfig &
+  Konva.RingConfig &
+  Konva.WedgeConfig
 > & {
   // Extend
   type?: KonvaShapeType;
@@ -85,6 +85,7 @@ export type KonvaFreeDrawingLine = Omit<Konva.LineConfig, "points"> & {
 
 export type KonvaShapeProp = {
   isSelected?: boolean;
+  isCroped?: boolean;
 
   // Shape options
   shapeOption?: KonvaShape;
