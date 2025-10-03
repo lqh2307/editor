@@ -1,0 +1,29 @@
+stages:
+  - build
+  - test
+  - package
+  - deploy
+
+debian-pack:
+  stage: package
+  tags:
+    - deployer
+  variables:
+    GIT_SUBMODULE_STRATEGY: recursive
+    SERVER_HOST: localhost
+    SERVER_PORT: 30000
+  script:
+    - make release-debian
+  when: always
+
+image-pack:
+  stage: package
+  tags:
+    - image-deployer
+  variables:
+    GIT_SUBMODULE_STRATEGY: recursive
+    DOCKER_USER: admin
+    DOCKER_PASSWORD: admin
+  script:
+    - make release-docker-image
+  when: always

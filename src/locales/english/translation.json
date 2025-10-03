@@ -1,0 +1,1071 @@
+{
+  "guideText": {
+    "emptyShapeList": {
+      "title": "Guide: Create a shape to start"
+    },
+    "noSelectedId": {
+      "title": "Guide: Click a shape to start edit"
+    },
+    "freeDrawing": {
+      "title": "Guide: Press Esc to exit"
+    },
+    "shapeMouseOver": {
+      "title": "Click to edit"
+    }
+  },
+  "toolBar": {
+    "save": {
+      "title": "Save (Ctrl + S)",
+      "children": {
+        "save": {
+          "title": "Save"
+        },
+        "toCloud": {
+          "title": "To Cloud",
+          "children": {
+            "name": {
+              "title": "Name"
+            },
+            "type": {
+              "title": "Type"
+            }
+          }
+        }
+      },
+      "common": {
+        "type": {
+          "report": "Report",
+          "template": "Template",
+          "component": "Component"
+        },
+        "snackBarAlert": {
+          "save": "Saved!",
+          "error": "Error!"
+        },
+        "button": {
+          "save": "Save",
+          "close": "Close",
+          "autoGenerate": "Auto generate"
+        }
+      }
+    },
+    "export": {
+      "title": "Export",
+      "children": {
+        "setting": {
+          "title": "Setting",
+          "children": {
+            "general": {
+              "title": "General",
+              "children": {
+                "name": {
+                  "title": "Name"
+                },
+                "format": {
+                  "title": "Format"
+                }
+              }
+            },
+            "paper": {
+              "title": "Paper",
+              "children": {
+                "size": {
+                  "title": "Size"
+                },
+                "orientation": {
+                  "title": "Orientation"
+                },
+                "width": {
+                  "title": "Width"
+                },
+                "height": {
+                  "title": "Height"
+                }
+              }
+            },
+            "alignContent": {
+              "title": "Align Content",
+              "children": {
+                "horizontal": {
+                  "title": "Horizontal"
+                },
+                "vertical": {
+                  "title": "Vertical"
+                },
+                "fit": {
+                  "title": "Fit"
+                },
+                "row": {
+                  "title": "Number Of Row"
+                },
+                "column": {
+                  "title": "Number Of Column"
+                },
+                "marginX": {
+                  "title": "Horizontal Margin"
+                },
+                "marginY": {
+                  "title": "Vertical Margin"
+                },
+                "gapX": {
+                  "title": "Horizontal Gap"
+                },
+                "gapY": {
+                  "title": "Vertical Gap"
+                }
+              }
+            },
+            "pagination": {
+              "title": "Pagination",
+              "children": {
+                "enabled": {
+                  "title": "Enabled"
+                },
+                "horizontal": {
+                  "title": "Horizontal"
+                },
+                "vertical": {
+                  "title": "Vertical"
+                }
+              }
+            },
+            "advanced": {
+              "title": "Advanced",
+              "children": {
+                "crop": {
+                  "title": "Cut Off Excess"
+                },
+                "highQuality": {
+                  "title": "High Quality"
+                },
+                "grayscale": {
+                  "title": "Grayscale"
+                }
+              }
+            }
+          }
+        },
+        "preview": {
+          "title": "Preview"
+        }
+      },
+      "common": {
+        "formats": {
+          "json": "JSON",
+          "png": "PNG",
+          "pdf": "PDF"
+        },
+        "sizes": {
+          "a0": "A0",
+          "a1": "A1",
+          "a2": "A2",
+          "a3": "A3",
+          "a4": "A4",
+          "a5": "A5",
+          "a6": "A6",
+          "b0": "B0",
+          "b1": "B1",
+          "b2": "B2",
+          "b3": "B3",
+          "b4": "B4",
+          "b5": "B5",
+          "b6": "B6",
+          "c0": "C0",
+          "c1": "C1",
+          "c2": "C2",
+          "c3": "C3",
+          "c4": "C4",
+          "c5": "C5",
+          "c6": "C6",
+          "custom": "Custom"
+        },
+        "orientations": {
+          "portrait": "Portrait",
+          "landscape": "Landscape"
+        },
+        "fits": {
+          "contain": "Contain",
+          "cover": "Cover",
+          "fill": "Fill"
+        },
+        "horizontalAligns": {
+          "left": "Left",
+          "center": "Center",
+          "right": "Right"
+        },
+        "verticalAligns": {
+          "top": "Top",
+          "middle": "Middle",
+          "bottom": "Bottom"
+        },
+        "button": {
+          "close": "Close",
+          "export": "Export",
+          "next": "Next",
+          "back": "Back",
+          "autoGenerate": "Auto generate"
+        },
+        "snackBarAlert": {
+          "export": "Exported!",
+          "error": "Error!"
+        }
+      }
+    },
+    "import": {
+      "title": "Import",
+      "children": {
+        "fromDevice": {
+          "title": "From Device"
+        },
+        "fromCloud": {
+          "title": "From Cloud",
+          "children": {
+            "name": {
+              "title": "Name"
+            }
+          }
+        }
+      },
+      "common": {
+        "snackBarAlert": {
+          "import": "Imported!",
+          "error": "Error!"
+        },
+        "button": {
+          "import": "Import",
+          "close": "Close"
+        }
+      }
+    },
+    "undo": {
+      "title": "Undo (Ctrl + Z)",
+      "common": {
+        "snackBarAlert": {
+          "undo": "Undone!"
+        }
+      }
+    },
+    "redo": {
+      "title": "Redo (Ctrl + Y)",
+      "common": {
+        "snackBarAlert": {
+          "redo": "Redone!"
+        }
+      }
+    },
+    "selectAll": {
+      "title": "Select All (Ctrl + A)"
+    },
+    "delete": {
+      "title": "Delete (Del)",
+      "common": {
+        "snackBarAlert": {
+          "delete": "Deleted!"
+        }
+      }
+    },
+    "cut": {
+      "title": "Cut (Ctrl + X)",
+      "common": {
+        "snackBarAlert": {
+          "cut": "Cutted!"
+        }
+      }
+    },
+    "duplicate": {
+      "title": "Duplicate (Ctrl + D)",
+      "common": {
+        "snackBarAlert": {
+          "duplicate": "Duplicated!"
+        }
+      }
+    },
+    "copy": {
+      "title": "Copy (Ctrl + C)",
+      "common": {
+        "snackBarAlert": {
+          "copy": "Copied!"
+        }
+      }
+    },
+    "paste": {
+      "title": "Paste (Ctrl + V)",
+      "common": {
+        "snackBarAlert": {
+          "paste": "Pasted!"
+        }
+      }
+    },
+    "addShape": {
+      "title": "Add Shape",
+      "children": {
+        "line": {
+          "title": "Line"
+        },
+        "arrow": {
+          "title": "Arrow"
+        },
+        "circle": {
+          "title": "Circle"
+        },
+        "rectangle": {
+          "title": "Rectangle"
+        },
+        "convexPolygon": {
+          "title": "Convex Polygon"
+        },
+        "concavePolygon": {
+          "title": "Concave Polygon"
+        },
+        "ring": {
+          "title": "Ring"
+        },
+        "wedge": {
+          "title": "Wedge"
+        }
+      },
+      "common": {
+        "snackBarAlert": {
+          "error": "Error!"
+        }
+      }
+    },
+    "addIcon": {
+      "title": "Add Icon",
+      "common": {
+        "snackBarAlert": {
+          "error": "Error!"
+        }
+      }
+    },
+    "uploadImage": {
+      "title": "Upload Image",
+      "children": {
+        "fromDevice": {
+          "title": "From Device"
+        },
+        "fromLink": {
+          "title": "From Link",
+          "children": {
+            "link": {
+              "title": "Link"
+            }
+          }
+        }
+      },
+      "common": {
+        "snackBarAlert": {
+          "uploading": "Uploading image...",
+          "error": "Error!"
+        },
+        "button": {
+          "upload": "Upload",
+          "close": "Close"
+        }
+      }
+    },
+    "uploadVideo": {
+      "title": "Upload Video",
+      "children": {
+        "fromDevice": {
+          "title": "From Computer"
+        },
+        "fromLink": {
+          "title": "From Link",
+          "children": {
+            "link": {
+              "title": "Link"
+            }
+          }
+        }
+      },
+      "common": {
+        "snackBarAlert": {
+          "uploading": "Uploading video...",
+          "error": "Error!"
+        },
+        "button": {
+          "upload": "Upload",
+          "close": "Close"
+        }
+      }
+    },
+    "addImage": {
+      "title": "Add Image",
+      "common": {
+        "snackBarAlert": {
+          "error": "Error!"
+        }
+      }
+    },
+    "addComponent": {
+      "title": "Add Component",
+      "common": {
+        "snackBarAlert": {
+          "error": "Error!"
+        }
+      }
+    },
+    "addTemplate": {
+      "title": "Add Template",
+      "common": {
+        "snackBarAlert": {
+          "apply": "Applied",
+          "error": "Error!"
+        }
+      }
+    },
+    "addText": {
+      "title": "Add Text"
+    },
+    "drawing": {
+      "title": "Drawing"
+    },
+    "eraser": {
+      "title": "Eraser"
+    },
+    "zoom": {
+      "title": "Zoom",
+      "children": {
+        "in": {
+          "title": "Zoom In (Ctrl + +)"
+        },
+        "out": {
+          "title": "Zoom Out (Ctrl + -)"
+        }
+      },
+      "common": {
+        "snackBarAlert": {
+          "current": "Curent zoom:"
+        }
+      }
+    },
+    "fitScreen": {
+      "title": "Fit Screen (Ctrl + 0)"
+    },
+    "background": {
+      "title": "Background",
+      "children": {
+        "color": {
+          "title": "Color"
+        },
+        "opacity": {
+          "title": "Opacity"
+        }
+      }
+    },
+    "grid": {
+      "title": "Grid",
+      "children": {
+        "disabled": {
+          "title": "Disabled"
+        },
+        "dotted": {
+          "title": "Dotted"
+        },
+        "solid": {
+          "title": "Solid"
+        }
+      }
+    },
+    "setting": {
+      "title": "Setting",
+      "children": {
+        "language": {
+          "title": "Language",
+          "children": {
+            "language": {
+              "title": "Language",
+              "content": {
+                "vietnamese": "Vietnamese",
+                "english": "English"
+              }
+            }
+          }
+        },
+        "history": {
+          "title": "History",
+          "children": {
+            "max": {
+              "title": "Max"
+            }
+          }
+        },
+        "guideLines": {
+          "title": "Guide Lines",
+          "children": {
+            "threshold": {
+              "title": "Threshold"
+            },
+            "guideLinesStick": {
+              "title": "Auto Stick"
+            }
+          }
+        },
+        "stage": {
+          "title": "Stage",
+          "children": {
+            "ratio": {
+              "title": "Ratio"
+            },
+            "width": {
+              "title": "Width"
+            },
+            "height": {
+              "title": "Height"
+            },
+            "minZoom": {
+              "title": "Min Zoom"
+            },
+            "maxZoom": {
+              "title": "Max Zoom"
+            },
+            "zoomStep": {
+              "title": "Zoom Step"
+            }
+          }
+        }
+      },
+      "common": {
+        "button": {
+          "close": "Close",
+          "ok": "OK"
+        }
+      }
+    },
+    "help": {
+      "title": "Help",
+      "children": {
+        "guide": {
+          "title": "Guide",
+          "children": {
+            "manipulation": {
+              "title": "Manipulating Objects",
+              "children": {
+                "add": {
+                  "title": "Add",
+                  "content": "Select a shape type (ex: circle, arrow, rectangle) from the top toolbar, then click or drag on the screen to create an object. With the free drawing tool, you can draw directly by clicking and moving the mouse."
+                },
+                "edit": {
+                  "title": "Edit",
+                  "content": "Click on an object to select it for editing. You can drag, resize with the mouse, or change its properties displayed in the right-hand toolbar."
+                }
+              }
+            },
+            "save": {
+              "title": "Save and Open",
+              "content": "Use the Import/Export function to save drawings in various formats or reopen saved drawings from your device or the cloud."
+            },
+            "template": {
+              "title": "Template",
+              "content": "You can save one or multiple objects as a template/component for reuse in other drawings."
+            },
+            "shotcut": {
+              "title": "Shortcut",
+              "children": {
+                "general": {
+                  "title": "General",
+                  "content": [
+                    "Ctrl + Click/Cmd + Click: Select multiple objects.",
+                    "Ctrl + A/Cmd + A: Select all objects.",
+                    "Del/Delete: Delete object.",
+                    "Ctrl + X/Cmd + X: Cut object.",
+                    "Ctrl + C/Cmd + C: Copy object.",
+                    "Ctrl + V/Cmd + V: Paste object.",
+                    "Ctrl + D/Cmd + D: Duplicate object.",
+                    "Ctrl + S/Cmd + S: Save.",
+                    "Ctrl + Shift + S/Cmd + Shift + S: Save to cloud.",
+                    "Ctrl + Plus/Cmd + Plus: Zoom in.",
+                    "Ctrl + Minus/Cmd + Minus: Zoom out.",
+                    "Ctrl + 0/Cmd + 0: Fit to screen.",
+                    "Esc/Escape: End free drawing/Deselect object.",
+                    "Ctrl + W/Cmd + W: Close page."
+                  ]
+                },
+                "history": {
+                  "title": "History",
+                  "content": [
+                    "Ctrl + Z/Cmd + Z: Undo.",
+                    "Ctrl + Y/Cmd + Y: Redo."
+                  ]
+                },
+                "text": {
+                  "title": "Text",
+                  "content": [
+                    "Ctrl + B/Cmd + B: Bold.",
+                    "Ctrl + I/Cmd + I: Italic.",
+                    "Ctrl + U/Cmd + U: Underline.",
+                    "Ctrl + T/Cmd + T: Strikethrough.",
+                    "Ctrl + L/Cmd + L: Align left.",
+                    "Ctrl + E/Cmd + E: Align center.",
+                    "Ctrl + R/Cmd + R: Align right.",
+                    "Ctrl + Shift + L/Cmd + Shift + L: Align top.",
+                    "Ctrl + Shift + E/Cmd + Shift + E: Align middle.",
+                    "Ctrl + Shift + R/Cmd + Shift + R: Align bottom."
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "about": {
+          "title": "About",
+          "children": {
+            "introdution": {
+              "title": "Introduction",
+              "content": "This is an intuitive tool that helps users create, edit, and manage content quickly and efficiently. With a user-friendly interface, the tool allows direct interaction on the screen, making it easy to draw basic shapes, perform freehand drawing, insert images, add text, use icons, or insert videos."
+            },
+            "version": {
+              "title": "Version",
+              "content": "Current version: 1.0.0."
+            },
+            "feature": {
+              "title": "Features",
+              "children": {
+                "object": {
+                  "title": "Supported Objects",
+                  "children": {
+                    "basic": {
+                      "title": "Basic Shapes",
+                      "content": "Line, arrow, circle, rectangle, convex polygon, concave polygon, ring, and sector."
+                    },
+                    "text": {
+                      "title": "Text",
+                      "content": "Add text blocks for descriptions, annotations, or titles within the drawing."
+                    },
+                    "image": {
+                      "title": "Image",
+                      "content": "Insert images from your device or via links to illustrate or enhance visual content."
+                    },
+                    "icon": {
+                      "title": "Icons",
+                      "content": "A library with over 3000 diverse icons that can be used to highlight or complement your drawings."
+                    },
+                    "video": {
+                      "title": "Video",
+                      "content": "Insert videos from your device or via links to enhance visualization and interactivity."
+                    },
+                    "freeDrawing": {
+                      "title": "Free Drawing",
+                      "content": "Allows users to draw freely on the screen, suitable for sketching or quick creative work."
+                    }
+                  }
+                },
+                "manipulation": {
+                  "title": "Manipulation With Objects",
+                  "children": {
+                    "add": {
+                      "title": "Add",
+                      "content": "Add new objects by clicking or dragging and dropping them directly into the workspace."
+                    },
+                    "edit": {
+                      "title": "Edit",
+                      "content": "Supports editing actions: dragging, resizing one or multiple objects at once, and modifying object details."
+                    }
+                  }
+                },
+                "template": {
+                  "title": "Save And Reuse",
+                  "content": "Allows saving objects or drawings as templates/components for reuse."
+                },
+                "io": {
+                  "title": "Import/Export",
+                  "content": "Supports importing/exporting data from/to devices and cloud in multiple formats for sharing or storage."
+                },
+                "shotcut": {
+                  "title": "Shortcuts",
+                  "content": "A system of shortcuts that enables faster operations, saving time for professional users."
+                },
+                "history": {
+                  "title": "History",
+                  "content": "Automatically saves operation history, allowing you to undo or redo when necessary."
+                },
+                "other": {
+                  "title": "Other Features",
+                  "content": "Changing background color, displaying alignment guides, toggling grid, and many other useful features."
+                }
+              }
+            },
+            "license": {
+              "title": "License",
+              "content": "This product is developed and copyrighted by Viettel HighTech."
+            }
+          }
+        }
+      },
+      "common": {
+        "button": {
+          "close": "Close"
+        }
+      }
+    },
+    "close": {
+      "title": "Close (Ctrl + W)",
+      "children": {
+        "notification": {
+          "title": "Notification",
+          "content": "Confirm close?"
+        }
+      },
+      "common": {
+        "button": {
+          "close": "Close",
+          "confirm": "Confirm",
+          "cancel": "Cancel"
+        }
+      }
+    },
+    "profile": {
+      "title": "Profile",
+      "children": {
+        "profile": {
+          "title": "Profile"
+        },
+        "logout": {
+          "title": "Logout"
+        }
+      }
+    }
+  },
+  "panel": {
+    "control": {
+      "title": "Control",
+      "children": {
+        "general": {
+          "title": "General",
+          "children": {
+            "relay": {
+              "title": "Relay"
+            },
+            "play": {
+              "title": "Play"
+            },
+            "pause": {
+              "title": "Pause"
+            },
+            "forward": {
+              "title": "Forward"
+            },
+            "loop": {
+              "title": "Loop"
+            },
+            "inverse": {
+              "title": "Inverse"
+            },
+            "speed": {
+              "title": "Speed"
+            },
+            "volume": {
+              "title": "Volume"
+            }
+          }
+        }
+      }
+    },
+    "style": {
+      "title": "Style",
+      "children": {
+        "general": {
+          "title": "General",
+          "children": {
+            "sides": {
+              "title": "Sides"
+            },
+            "numPoints": {
+              "title": "Points"
+            },
+            "radius": {
+              "title": "Radius"
+            },
+            "angle": {
+              "title": "Angle"
+            },
+            "clockwise": {
+              "title": "Clockwise"
+            },
+            "innerRadius": {
+              "title": "Inner Radius"
+            },
+            "outerRadius": {
+              "title": "Outer Radius"
+            },
+            "radiusX": {
+              "title": "Radius X"
+            },
+            "radiusY": {
+              "title": "Radius Y"
+            },
+            "width": {
+              "title": "Width"
+            },
+            "height": {
+              "title": "Height"
+            },
+            "cornerRadius": {
+              "title": "Corner Radius"
+            },
+            "rotation": {
+              "title": "Rotation"
+            },
+            "opacity": {
+              "title": "Opacity"
+            }
+          }
+        },
+        "fill": {
+          "title": "Fill",
+          "children": {
+            "enabled": {
+              "title": "Enabled"
+            },
+            "color": {
+              "title": "Color"
+            },
+            "opacity": {
+              "title": "Opacity"
+            }
+          }
+        },
+        "stroke": {
+          "title": "Stroke",
+          "children": {
+            "enabled": {
+              "title": "Enabled"
+            },
+            "width": {
+              "title": "Width"
+            },
+            "color": {
+              "title": "Color"
+            },
+            "opacity": {
+              "title": "Opacity"
+            },
+            "lineCap": {
+              "title": "Line Cap",
+              "content": {
+                "butt": "Butt",
+                "round": "Round",
+                "square": "Square"
+              }
+            },
+            "lineJoin": {
+              "title": "Line Join",
+              "content": {
+                "round": "Round",
+                "bevel": "Bevel",
+                "miter": "Miter"
+              }
+            }
+          }
+        },
+        "pointer": {
+          "title": "Pointer",
+          "children": {
+            "width": {
+              "title": "Width"
+            },
+            "length": {
+              "title": "Length"
+            }
+          }
+        },
+        "shadow": {
+          "title": "Shadow",
+          "children": {
+            "enabled": {
+              "title": "Enabled"
+            },
+            "horizontal": {
+              "title": "Horizontal"
+            },
+            "vertical": {
+              "title": "Vertical"
+            },
+            "color": {
+              "title": "Color"
+            },
+            "opacity": {
+              "title": "Opacity"
+            },
+            "blur": {
+              "title": "Blur"
+            }
+          }
+        }
+      }
+    },
+    "text": {
+      "title": "Text",
+      "children": {
+        "font": {
+          "title": "Font",
+          "children": {
+            "font": {
+              "title": "Font"
+            },
+            "size": {
+              "title": "Size"
+            }
+          }
+        },
+        "format": {
+          "title": "Format",
+          "children": {
+            "bold": {
+              "title": "Bold (Ctrl + B)"
+            },
+            "italic": {
+              "title": "Italic (Ctrl + I)"
+            },
+            "underline": {
+              "title": "Underline (Ctrl + U)"
+            },
+            "strikethrough": {
+              "title": "Strikethrough (Ctrl + T)"
+            }
+          }
+        },
+        "align": {
+          "title": "Align",
+          "children": {
+            "left": {
+              "title": "Left (Ctrl + L)"
+            },
+            "center": {
+              "title": "Center (Ctrl + E)"
+            },
+            "right": {
+              "Right": "Left (Ctrl + R)"
+            },
+            "top": {
+              "title": "Top (Ctrl + Shift + L)"
+            },
+            "middle": {
+              "title": "Middle (Ctrl + Shift + E)"
+            },
+            "bottom": {
+              "title": "Bottom (Ctrl + Shift + R)"
+            }
+          }
+        }
+      },
+      "common": {
+        "snackBarAlert": {
+          "error": "Lỗi!"
+        }
+      }
+    },
+    "arrange": {
+      "title": "Arrange",
+      "children": {
+        "layer": {
+          "title": "Layer",
+          "children": {
+            "toFront": {
+              "title": "To Front"
+            },
+            "toBack": {
+              "title": "To Back"
+            },
+            "bringForward": {
+              "title": "Bring Forward"
+            },
+            "sendBackward": {
+              "title": "Send Backward"
+            }
+          }
+        },
+        "align": {
+          "title": "Align",
+          "children": {
+            "topLeft": {
+              "title": "Top Left"
+            },
+            "top": {
+              "title": "Top"
+            },
+            "topRight": {
+              "title": "Top Right"
+            },
+            "left": {
+              "title": "Left"
+            },
+            "center": {
+              "title": "Center"
+            },
+            "right": {
+              "title": "Right"
+            },
+            "bottomLeft": {
+              "title": "Bottom Left"
+            },
+            "bottom": {
+              "title": "Bottom"
+            },
+            "bottomRight": {
+              "title": "Bottom Right"
+            }
+          }
+        },
+        "flip": {
+          "title": "Flip",
+          "children": {
+            "horizontal": {
+              "title": "Horizontal"
+            },
+            "vertical": {
+              "title": "Vertical"
+            }
+          }
+        }
+      }
+    },
+    "filter": {
+      "title": "Filter",
+      "children": {
+        "general": {
+          "title": "General",
+          "children": {
+            "brightness": {
+              "title": "Brightness"
+            },
+            "contrast": {
+              "title": "Contrast"
+            },
+            "highQuality": {
+              "title": "High Quality"
+            },
+            "enhance": {
+              "title": "Enhance"
+            },
+            "noise": {
+              "title": "Noise"
+            },
+            "blur": {
+              "title": "Blur"
+            }
+          }
+        },
+        "color": {
+          "title": "Color",
+          "children": {
+            "grayscale": {
+              "title": "Grayscale"
+            },
+            "invert": {
+              "title": "Invert"
+            },
+            "sepia": {
+              "title": "Sepia"
+            },
+            "solarize": {
+              "title": "Solarize"
+            }
+          }
+        }
+      }
+    }
+  },
+  "common": {}
+}

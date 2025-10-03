@@ -1,0 +1,7 @@
+#!/bin/bash
+
+set -e
+
+rm -rf /etc/nginx/sites-enabled/DEB_PACKAGE.conf
+
+systemctl reload nginx.service

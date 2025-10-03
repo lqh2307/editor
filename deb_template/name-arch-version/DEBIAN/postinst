@@ -1,0 +1,10 @@
+#!/bin/bash
+
+set -e
+
+ln -sf /etc/nginx/sites-available/DEB_PACKAGE.conf /etc/nginx/sites-enabled/DEB_PACKAGE.conf
+
+systemctl daemon-reload
+systemctl enable nginx.service
+systemctl start nginx.service
+systemctl reload nginx.service

@@ -1,0 +1,1071 @@
+{
+  "guideText": {
+    "emptyShapeList": {
+      "title": "Hướng dẫn: Tạo một đối tượng để bắt đầu"
+    },
+    "noSelectedId": {
+      "title": "Hướng dẫn: Nhấn vào một đối tượng để bắt đầu chỉnh sửa"
+    },
+    "freeDrawing": {
+      "title": "Hướng dẫn: Nhấn Esc để thoát"
+    },
+    "shapeMouseOver": {
+      "title": "Nhấn để chỉnh sửa"
+    }
+  },
+  "toolBar": {
+    "save": {
+      "title": "Lưu (Ctrl + S)",
+      "children": {
+        "save": {
+          "title": "Lưu"
+        },
+        "toCloud": {
+          "title": "Lưu đám mây",
+          "children": {
+            "name": {
+              "title": "Tên"
+            },
+            "type": {
+              "title": "Loại"
+            }
+          }
+        }
+      },
+      "common": {
+        "type": {
+          "report": "Báo cáo",
+          "template": "Mẫu",
+          "component": "Thành phần"
+        },
+        "snackBarAlert": {
+          "save": "Đã lưu!",
+          "error": "Lỗi!"
+        },
+        "button": {
+          "save": "Lưu",
+          "close": "Đóng",
+          "autoGenerate": "Tự động sinh"
+        }
+      }
+    },
+    "export": {
+      "title": "Xuất",
+      "children": {
+        "setting": {
+          "title": "Thiết lập",
+          "children": {
+            "general": {
+              "title": "Chung",
+              "children": {
+                "name": {
+                  "title": "Tên"
+                },
+                "format": {
+                  "title": "Định dạng"
+                }
+              }
+            },
+            "paper": {
+              "title": "Giấy",
+              "children": {
+                "size": {
+                  "title": "Khổ giấy"
+                },
+                "orientation": {
+                  "title": "Hướng"
+                },
+                "width": {
+                  "title": "Dài"
+                },
+                "height": {
+                  "title": "Rộng"
+                }
+              }
+            },
+            "alignContent": {
+              "title": "Căn chỉnh",
+              "children": {
+                "horizontal": {
+                  "title": "Ngang"
+                },
+                "vertical": {
+                  "title": "Dọc"
+                },
+                "fit": {
+                  "title": "Vừa"
+                },
+                "row": {
+                  "title": "Số hàng"
+                },
+                "column": {
+                  "title": "Số cột"
+                },
+                "marginX": {
+                  "title": "Lề ngang"
+                },
+                "marginY": {
+                  "title": "Lề dọc"
+                },
+                "gapX": {
+                  "title": "Cách ngang"
+                },
+                "gapY": {
+                  "title": "Cách dọc"
+                }
+              }
+            },
+            "pagination": {
+              "title": "Đánh trang",
+              "children": {
+                "enabled": {
+                  "title": "Bật"
+                },
+                "horizontal": {
+                  "title": "Ngang"
+                },
+                "vertical": {
+                  "title": "Dọc"
+                }
+              }
+            },
+            "advanced": {
+              "title": "Nâng cao",
+              "children": {
+                "crop": {
+                  "title": "Cắt phần thừa"
+                },
+                "highQuality": {
+                  "title": "Chất lượng cao"
+                },
+                "grayscale": {
+                  "title": "Thang xám"
+                }
+              }
+            }
+          }
+        },
+        "preview": {
+          "title": "Xem trước"
+        }
+      },
+      "common": {
+        "formats": {
+          "json": "JSON",
+          "png": "PNG",
+          "pdf": "PDF"
+        },
+        "sizes": {
+          "a0": "A0",
+          "a1": "A1",
+          "a2": "A2",
+          "a3": "A3",
+          "a4": "A4",
+          "a5": "A5",
+          "a6": "A6",
+          "b0": "B0",
+          "b1": "B1",
+          "b2": "B2",
+          "b3": "B3",
+          "b4": "B4",
+          "b5": "B5",
+          "b6": "B6",
+          "c0": "C0",
+          "c1": "C1",
+          "c2": "C2",
+          "c3": "C3",
+          "c4": "C4",
+          "c5": "C5",
+          "c6": "C6",
+          "custom": "Tùy chỉnh"
+        },
+        "orientations": {
+          "portrait": "Dọc",
+          "landscape": "Ngang"
+        },
+        "fits": {
+          "contain": "Vừa",
+          "cover": "Phủ",
+          "fill": "Đầy"
+        },
+        "horizontalAligns": {
+          "left": "Trái",
+          "center": "Giữa",
+          "right": "Phải"
+        },
+        "verticalAligns": {
+          "top": "Trên",
+          "middle": "Giữa",
+          "bottom": "Dưới"
+        },
+        "button": {
+          "close": "Đóng",
+          "export": "Xuất",
+          "next": "Tiếp",
+          "back": "Quay lại",
+          "autoGenerate": "Tự động sinh"
+        },
+        "snackBarAlert": {
+          "export": "Đã xuất!",
+          "error": "Lỗi!"
+        }
+      }
+    },
+    "import": {
+      "title": "Nhập",
+      "children": {
+        "fromDevice": {
+          "title": "Từ thiết bị"
+        },
+        "fromCloud": {
+          "title": "Từ đám mây",
+          "children": {
+            "name": {
+              "title": "Tên"
+            }
+          }
+        }
+      },
+      "common": {
+        "snackBarAlert": {
+          "import": "Đã nhập!",
+          "error": "Lỗi!"
+        },
+        "button": {
+          "import": "Nhập",
+          "close": "Đóng"
+        }
+      }
+    },
+    "undo": {
+      "title": "Hoàn tác (Ctrl + Z)",
+      "common": {
+        "snackBarAlert": {
+          "undo": "Đã hoàn tác!"
+        }
+      }
+    },
+    "redo": {
+      "title": "Làm lại (Ctrl + Y)",
+      "common": {
+        "snackBarAlert": {
+          "redo": "Đã làm lại!"
+        }
+      }
+    },
+    "selectAll": {
+      "title": "Chọn tất cả (Ctrl + A)"
+    },
+    "delete": {
+      "title": "Xóa (Del)",
+      "common": {
+        "snackBarAlert": {
+          "delete": "Đã xóa!"
+        }
+      }
+    },
+    "cut": {
+      "title": "Cắt (Ctrl + X)",
+      "common": {
+        "snackBarAlert": {
+          "cut": "Đã cắt!"
+        }
+      }
+    },
+    "duplicate": {
+      "title": "Nhân bản (Ctrl + D)",
+      "common": {
+        "snackBarAlert": {
+          "duplicate": "Đã nhân bản!"
+        }
+      }
+    },
+    "copy": {
+      "title": "Sao chép (Ctrl + C)",
+      "common": {
+        "snackBarAlert": {
+          "copy": "Đã sao chép!"
+        }
+      }
+    },
+    "paste": {
+      "title": "Dán (Ctrl + V)",
+      "common": {
+        "snackBarAlert": {
+          "paste": "Đã dán!"
+        }
+      }
+    },
+    "addShape": {
+      "title": "Thêm hình học",
+      "children": {
+        "line": {
+          "title": "Đường thẳng"
+        },
+        "arrow": {
+          "title": "Mũi tên"
+        },
+        "circle": {
+          "title": "Tròn"
+        },
+        "rectangle": {
+          "title": "Chữ nhật"
+        },
+        "convexPolygon": {
+          "title": "Đa giác lồi"
+        },
+        "concavePolygon": {
+          "title": "Đa giác lõm"
+        },
+        "ring": {
+          "title": "Vòng"
+        },
+        "wedge": {
+          "title": "Rẻ quạt"
+        }
+      },
+      "common": {
+        "snackBarAlert": {
+          "error": "Lỗi!"
+        }
+      }
+    },
+    "addIcon": {
+      "title": "Thêm biểu tượng",
+      "common": {
+        "snackBarAlert": {
+          "error": "Lỗi!"
+        }
+      }
+    },
+    "uploadImage": {
+      "title": "Tải lên ảnh",
+      "children": {
+        "fromDevice": {
+          "title": "Từ thiết bị"
+        },
+        "fromLink": {
+          "title": "Từ liên kết",
+          "children": {
+            "link": {
+              "title": "Liên kết"
+            }
+          }
+        }
+      },
+      "common": {
+        "snackBarAlert": {
+          "uploading": "Đang tải lên ảnh...",
+          "error": "Lỗi!"
+        },
+        "button": {
+          "upload": "Tải lên",
+          "close": "Đóng"
+        }
+      }
+    },
+    "uploadVideo": {
+      "title": "Tải lên băng hình",
+      "children": {
+        "fromDevice": {
+          "title": "Từ thiết bị"
+        },
+        "fromLink": {
+          "title": "Từ liên kết",
+          "children": {
+            "link": {
+              "title": "Liên kết"
+            }
+          }
+        }
+      },
+      "common": {
+        "snackBarAlert": {
+          "uploading": "Đang tải lên băng hình...",
+          "error": "Lỗi!"
+        },
+        "button": {
+          "upload": "Tải lên",
+          "close": "Đóng"
+        }
+      }
+    },
+    "addImage": {
+      "title": "Thêm ảnh",
+      "common": {
+        "snackBarAlert": {
+          "error": "Lỗi!"
+        }
+      }
+    },
+    "addComponent": {
+      "title": "Thêm thành phần",
+      "common": {
+        "snackBarAlert": {
+          "error": "Lỗi!"
+        }
+      }
+    },
+    "addTemplate": {
+      "title": "Thêm mẫu",
+      "common": {
+        "snackBarAlert": {
+          "apply": "Đã áp dụng!",
+          "error": "Lỗi!"
+        }
+      }
+    },
+    "addText": {
+      "title": "Thêm văn bản"
+    },
+    "drawing": {
+      "title": "Vẽ tay"
+    },
+    "eraser": {
+      "title": "Tẩy vẽ tay"
+    },
+    "zoom": {
+      "title": "Thu phóng",
+      "children": {
+        "in": {
+          "title": "Phóng to (Ctrl + +)"
+        },
+        "out": {
+          "title": "Thu nhỏ (Ctrl + -)"
+        }
+      },
+      "common": {
+        "snackBarAlert": {
+          "current": "Thu phóng hiện tại:"
+        }
+      }
+    },
+    "fitScreen": {
+      "title": "Vừa màn hình (Ctrl + 0)"
+    },
+    "background": {
+      "title": "Nền",
+      "children": {
+        "color": {
+          "title": "Màu sắc"
+        },
+        "opacity": {
+          "title": "Độ mờ"
+        }
+      }
+    },
+    "grid": {
+      "title": "Lưới",
+      "children": {
+        "disabled": {
+          "title": "Tắt"
+        },
+        "dotted": {
+          "title": "Chấm"
+        },
+        "solid": {
+          "title": "Nét liền"
+        }
+      }
+    },
+    "setting": {
+      "title": "Cài đặt",
+      "children": {
+        "language": {
+          "title": "Ngôn ngữ",
+          "children": {
+            "language": {
+              "title": "Ngôn ngữ",
+              "content": {
+                "vietnamese": "Tiếng Việt",
+                "english": "Tiếng Anh"
+              }
+            }
+          }
+        },
+        "history": {
+          "title": "Lịch sử",
+          "children": {
+            "max": {
+              "title": "Tối đa"
+            }
+          }
+        },
+        "guideLines": {
+          "title": "Đường chỉ dẫn",
+          "children": {
+            "threshold": {
+              "title": "Ngưỡng"
+            },
+            "guideLinesStick": {
+              "title": "Tự động bám"
+            }
+          }
+        },
+        "stage": {
+          "title": "Khung vẽ",
+          "children": {
+            "ratio": {
+              "title": "Tỉ lệ"
+            },
+            "width": {
+              "title": "Ngang"
+            },
+            "height": {
+              "title": "Dọc"
+            },
+            "minZoom": {
+              "title": "Thu nhỏ tối thiếu"
+            },
+            "maxZoom": {
+              "title": "Phóng to tối đa"
+            },
+            "zoomStep": {
+              "title": "Bước thu/phóng"
+            }
+          }
+        }
+      },
+      "common": {
+        "button": {
+          "close": "Đóng",
+          "ok": "Đồng ý"
+        }
+      }
+    },
+    "help": {
+      "title": "Trợ giúp",
+      "children": {
+        "guide": {
+          "title": "Hướng dẫn",
+          "children": {
+            "manipulation": {
+              "title": "Thao tác với đối tượng",
+              "children": {
+                "add": {
+                  "title": "Thêm",
+                  "content": "Chọn loại hình (ví dụ: hình tròn, mũi tên, chữ nhật) trên thanh công cụ phía trên sau đó nhấp chuột hoặc kéo thả trên màn hình để tạo đối tượng. Với công cụ vẽ tự do, bạn có thể vẽ trực tiếp bằng cách nhấp và di chuyển chuột."
+                },
+                "edit": {
+                  "title": "Chỉnh sửa",
+                  "content": "Nhấp chuột để chọn một đối tượng chỉnh sửa. Bạn có thể kéo, thay đổi kích thước bằng chuột hoặc thay đổi các thuộc tính bên trong đối tượng được hiển thị thên thanh công cụ bên phải."
+                }
+              }
+            },
+            "save": {
+              "title": "Lưu và mở",
+              "content": "Sử dụng chức năng Nhập/Xuất để lưu bản vẽ dưới nhiều định dạng hoặc mở lại các bản vẽ đã lưu từ thiết bị hoặc đám mây."
+            },
+            "template": {
+              "title": "Tạo mẫu",
+              "content": "Bạn có thể lưu một hoặc nhiều đối tượng thành mẫu/thành phần con để tái sử dụng cho các bản vẽ khác."
+            },
+            "shotcut": {
+              "title": "Phím tắt",
+              "children": {
+                "general": {
+                  "title": "Chung",
+                  "content": [
+                    "Ctrl + Click/Cmd + Click: Chọn nhiều đối tượng.",
+                    "Ctrl + A/Cmd + A: Chọn tất cả đối tượng.",
+                    "Del/Delete: Xóa đối tượng.",
+                    "Ctrl + X/Cmd + X: Cắt đối tượng.",
+                    "Ctrl + C/Cmd + C: Sao chép đối tượng.",
+                    "Ctrl + V/Cmd + V: Dán đối tượng.",
+                    "Ctrl + D/Cmd + D: Nhân bản đối tượng.",
+                    "Ctrl + S/Cmd + S: Lưu.",
+                    "Ctrl + Shift + S/Cmd + Shift + S: Lưu đám mây.",
+                    "Ctrl + Plus/Cmd + Plus: Phóng to.",
+                    "Ctrl + Minus/Cmd + Minus: Thu nhỏ.",
+                    "Ctrl + 0/Cmd + 0: Vừa màn hình.",
+                    "Esc/Escape: Kết thúc vẽ dự do/Bỏ chọn đối tượng.",
+                    "Ctrl + W/Cmd + W: Đóng trang."
+                  ]
+                },
+                "history": {
+                  "title": "Lịch sử",
+                  "content": [
+                    "Ctrl + Z/Cmd + Z: Hoàn tác.",
+                    "Ctrl + Y/Cmd + Y: Làm lại."
+                  ]
+                },
+                "text": {
+                  "title": "Văn bản",
+                  "content": [
+                    "Ctrl + B/Cmd + B: In đậm.",
+                    "Ctrl + I/Cmd + I: In nghiêng.",
+                    "Ctrl + U/Cmd + U: Gạch dưới.",
+                    "Ctrl + T/Cmd + T: Gạch ngang.",
+                    "Ctrl + L/Cmd + L: Căn trái.",
+                    "Ctrl + E/Cmd + E: Căn giữa.",
+                    "Ctrl + R/Cmd + R: Căn phải.",
+                    "Ctrl + Shift + L/Cmd + Shift + L: Căn trên.",
+                    "Ctrl + Shift + E/Cmd + Shift + E: Căn giữa.",
+                    "Ctrl + Shift + R/Cmd + Shift + R: Căn dưới."
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "about": {
+          "title": "Thông tin",
+          "children": {
+            "introdution": {
+              "title": "Giới thiệu",
+              "content": "Đây là một công cụ trực quan hỗ trợ người dùng tạo, chỉnh sửa và quản lý nội dung một cách nhanh chóng, hiệu quả. Với giao diện thân thiện, công cụ cho phép thao tác trực tiếp trên màn hình, giúp bạn dễ dàng vẽ các hình học cơ bản, thực hiện vẽ tự do, chèn ảnh, thêm văn bản, sử dụng biểu tượng hoặc chèn băng hình."
+            },
+            "version": {
+              "title": "Phiên bản",
+              "content": "Phiên bản hiện tại: 1.0.0."
+            },
+            "feature": {
+              "title": "Các tính năng",
+              "children": {
+                "object": {
+                  "title": "Đối tượng hỗ trợ",
+                  "children": {
+                    "basic": {
+                      "title": "Hình học cơ bản",
+                      "content": "Đường thẳng, mũi tên, hình tròn, hình chữ nhật, đa giác lồi, đa giác lõm, hình vòng, hình rẻ quạt."
+                    },
+                    "text": {
+                      "title": "Văn bản",
+                      "content": "Thêm các đoạn văn bản để mô tả, chú thích hoặc đặt tiêu đề cho bản vẽ."
+                    },
+                    "image": {
+                      "title": "Hình ảnh",
+                      "content": "Chèn ảnh từ thiết bị hoặc liên kết để minh họa hoặc bổ sung nội dung trực quan."
+                    },
+                    "icon": {
+                      "title": "Biểu tượng",
+                      "content": "Thư viện với hơn 3000 biểu tượng đa dạng, có thể sử dụng để làm nổi bật hoặc bổ sung cho bản vẽ."
+                    },
+                    "video": {
+                      "title": "Băng hình",
+                      "content": "Chèn băng hình từ thiết bị hoặc liên kết để nâng cao tính trực quan và sinh động."
+                    },
+                    "freeDrawing": {
+                      "title": "Vẽ tự do",
+                      "content": "Cho phép người dùng vẽ tay tự do trên màn hình, phù hợp cho phác thảo hoặc sáng tạo nhanh."
+                    }
+                  }
+                },
+                "manipulation": {
+                  "title": "Thao tác với đối tượng",
+                  "children": {
+                    "add": {
+                      "title": "Thêm",
+                      "content": "Thêm đối tượng mới bằng thao tác nhấp chuột hoặc kéo thả trực tiếp vào khu vực làm việc."
+                    },
+                    "edit": {
+                      "title": "Chỉnh sửa",
+                      "content": "Hỗ trợ các thao tác chỉnh sửa: kéo, thay đổi kích thước của một hay nhiều đối tượng cùng lúc, chỉnh sửa chi tiết nội dung của đối tượng."
+                    }
+                  }
+                },
+                "template": {
+                  "title": "Lưu trữ và tái sử dụng",
+                  "content": "Cho phép lưu các đối tượng hoặc bản vẽ thành mẫu/thành phần con để tái sử dụng."
+                },
+                "io": {
+                  "title": "Nhập/Xuất dữ liệu",
+                  "content": "Hỗ trợ nhập/xuất dữ liệu từ/đến thiết bị, đám mây với nhiều định dạng để chia sẻ hoặc lưu trữ."
+                },
+                "shotcut": {
+                  "title": "Phím tắt",
+                  "content": "Hệ thống phím tắt giúp thao tác nhanh hơn, tiết kiệm thời gian cho người dùng chuyên nghiệp."
+                },
+                "history": {
+                  "title": "Lịch sử thao tác",
+                  "content": "Tự động lưu lại lịch sử thao tác, cho phép hoàn tác (undo) hoặc làm lại (redo) khi cần."
+                },
+                "other": {
+                  "title": "Các tính năng khác",
+                  "content": "Thay đổi màu nền, hiển thị đường căn chỉnh, bật/tắt ô lưới, và nhiều tính năng hữu ích khác."
+                }
+              }
+            },
+            "license": {
+              "title": "Bản quyền",
+              "content": "Sản phẩm được phát triển và sở hữu bản quyền bởi Viettel HighTech."
+            }
+          }
+        }
+      },
+      "common": {
+        "button": {
+          "close": "Đóng"
+        }
+      }
+    },
+    "close": {
+      "title": "Đóng (Ctrl + W)",
+      "children": {
+        "notification": {
+          "title": "Thông báo",
+          "content": "Xác nhận đóng?"
+        }
+      },
+      "common": {
+        "button": {
+          "close": "Đóng",
+          "confirm": "Xác nhận",
+          "cancel": "Hủy"
+        }
+      }
+    },
+    "profile": {
+      "title": "Hồ sơ",
+      "children": {
+        "profile": {
+          "title": "Hồ sơ"
+        },
+        "logout": {
+          "title": "Đăng xuất"
+        }
+      }
+    }
+  },
+  "panel": {
+    "control": {
+      "title": "Điều khiển",
+      "children": {
+        "general": {
+          "title": "Chung",
+          "children": {
+            "relay": {
+              "title": "Tua ngược"
+            },
+            "play": {
+              "title": "Chơi"
+            },
+            "pause": {
+              "title": "Dừng"
+            },
+            "forward": {
+              "title": "Tua tới"
+            },
+            "loop": {
+              "title": "Lặp"
+            },
+            "inverse": {
+              "title": "Nghịch đảo"
+            },
+            "speed": {
+              "title": "Tốc độ"
+            },
+            "volume": {
+              "title": "Âm lượng"
+            }
+          }
+        }
+      }
+    },
+    "style": {
+      "title": "Kiểu dáng",
+      "children": {
+        "general": {
+          "title": "Chung",
+          "children": {
+            "sides": {
+              "title": "Cạnh"
+            },
+            "numPoints": {
+              "title": "Đỉnh"
+            },
+            "radius": {
+              "title": "Bán kính"
+            },
+            "angle": {
+              "title": "Góc"
+            },
+            "clockwise": {
+              "title": "Chiều kim đồng hồ"
+            },
+            "innerRadius": {
+              "title": "Bán kính trong"
+            },
+            "outerRadius": {
+              "title": "Bán kính ngoài"
+            },
+            "radiusX": {
+              "title": "Bán kính ngang"
+            },
+            "radiusY": {
+              "title": "Bán kính dọc"
+            },
+            "width": {
+              "title": "Ngang"
+            },
+            "height": {
+              "title": "Dọc"
+            },
+            "cornerRadius": {
+              "title": "Bo góc"
+            },
+            "rotation": {
+              "title": "Xoay"
+            },
+            "opacity": {
+              "title": "Độ mờ"
+            }
+          }
+        },
+        "fill": {
+          "title": "Đổ màu",
+          "children": {
+            "enabled": {
+              "title": "Bật"
+            },
+            "color": {
+              "title": "Màu sắc"
+            },
+            "opacity": {
+              "title": "Độ mờ"
+            }
+          }
+        },
+        "stroke": {
+          "title": "Đường viền",
+          "children": {
+            "enabled": {
+              "title": "Bật"
+            },
+            "width": {
+              "title": "Rộng"
+            },
+            "color": {
+              "title": "Màu sắc"
+            },
+            "opacity": {
+              "title": "Độ mờ"
+            },
+            "lineCap": {
+              "title": "Điểm mút",
+              "content": {
+                "butt": "Cụt",
+                "round": "Tròn",
+                "square": "Vuông"
+              }
+            },
+            "lineJoin": {
+              "title": "Điểm giao",
+              "content": {
+                "round": "Tròn",
+                "bevel": "Vát",
+                "miter": "Nhọn"
+              }
+            }
+          }
+        },
+        "pointer": {
+          "title": "Con trỏ",
+          "children": {
+            "width": {
+              "title": "Rộng"
+            },
+            "length": {
+              "title": "Dài"
+            }
+          }
+        },
+        "shadow": {
+          "title": "Đổ bóng",
+          "children": {
+            "enabled": {
+              "title": "Bật"
+            },
+            "horizontal": {
+              "title": "Ngang"
+            },
+            "vertical": {
+              "title": "Dọc"
+            },
+            "color": {
+              "title": "Màu sắc"
+            },
+            "opacity": {
+              "title": "Độ mờ"
+            },
+            "blur": {
+              "title": "Mờ"
+            }
+          }
+        }
+      }
+    },
+    "text": {
+      "title": "Văn bản",
+      "children": {
+        "font": {
+          "title": "Phông chữ",
+          "children": {
+            "font": {
+              "title": "Phông chữ"
+            },
+            "size": {
+              "title": "Cỡ chữ"
+            }
+          }
+        },
+        "format": {
+          "title": "Định dạng",
+          "children": {
+            "bold": {
+              "title": "In đậm (Ctrl + B)"
+            },
+            "italic": {
+              "title": "In nghiêng (Ctrl + I)"
+            },
+            "underline": {
+              "title": "Gạch dưới (Ctrl + U)"
+            },
+            "strikethrough": {
+              "title": "Gạch ngang (Ctrl + T)"
+            }
+          }
+        },
+        "align": {
+          "title": "Căn chỉnh",
+          "children": {
+            "left": {
+              "title": "Trái (Ctrl + L)"
+            },
+            "center": {
+              "title": "Giữa (Ctrl + E)"
+            },
+            "right": {
+              "title": "Phải (Ctrl + R)"
+            },
+            "top": {
+              "title": "Trên (Ctrl + Shift + L)"
+            },
+            "middle": {
+              "title": "Giữa (Ctrl + Shift + E)"
+            },
+            "bottom": {
+              "title": "Dưới (Ctrl + Shift + R)"
+            }
+          }
+        }
+      },
+      "common": {
+        "snackBarAlert": {
+          "error": "Error!"
+        }
+      }
+    },
+    "arrange": {
+      "title": "Sắp xếp",
+      "children": {
+        "layer": {
+          "title": "Lớp",
+          "children": {
+            "toFront": {
+              "title": "Đưa đầu"
+            },
+            "toBack": {
+              "title": "Đưa ra sau"
+            },
+            "bringForward": {
+              "title": "Đưa trên"
+            },
+            "sendBackward": {
+              "title": "Đưa xuống dưới"
+            }
+          }
+        },
+        "align": {
+          "title": "Căn chỉnh",
+          "children": {
+            "topLeft": {
+              "title": "Trên trái"
+            },
+            "top": {
+              "title": "Trên"
+            },
+            "topRight": {
+              "title": "Trên phải"
+            },
+            "left": {
+              "title": "Trái"
+            },
+            "center": {
+              "title": "Giữa"
+            },
+            "right": {
+              "title": "Phải"
+            },
+            "bottomLeft": {
+              "title": "Dưới trái"
+            },
+            "bottom": {
+              "title": "Dưới"
+            },
+            "bottomRight": {
+              "title": "Dưới phải"
+            }
+          }
+        },
+        "flip": {
+          "title": "Lật",
+          "children": {
+            "horizontal": {
+              "title": "Ngang"
+            },
+            "vertical": {
+              "title": "Dọc"
+            }
+          }
+        }
+      }
+    },
+    "filter": {
+      "title": "Bộ lọc",
+      "children": {
+        "general": {
+          "title": "Chung",
+          "children": {
+            "brightness": {
+              "title": "Độ sáng"
+            },
+            "contrast": {
+              "title": "Tương phản"
+            },
+            "highQuality": {
+              "title": "Chất lượng"
+            },
+            "enhance": {
+              "title": "Tăng cường"
+            },
+            "noise": {
+              "title": "Nhiễu"
+            },
+            "blur": {
+              "title": "Mờ"
+            }
+          }
+        },
+        "color": {
+          "title": "Màu",
+          "children": {
+            "grayscale": {
+              "title": "Thang xám"
+            },
+            "invert": {
+              "title": "Nghịch đảo"
+            },
+            "sepia": {
+              "title": "Vàng nâu"
+            },
+            "solarize": {
+              "title": "Âm bản"
+            }
+          }
+        }
+      }
+    }
+  },
+  "common": {}
+}
