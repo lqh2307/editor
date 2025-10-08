@@ -550,9 +550,7 @@ export function StageProvider(prop: StageProviderProp): React.JSX.Element {
         ],
         rotationSnapTolerance: 3,
         ignoreStroke: false,
-        anchorCornerRadius: 5,
-        anchorSize: 10,
-        anchorFill: "#ffA500",
+        flipEnabled: true,
         borderStroke: "#ff0000",
         borderStrokeWidth: 1.5,
         borderDash: [20, 10],
@@ -566,6 +564,53 @@ export function StageProvider(prop: StageProviderProp): React.JSX.Element {
           "bottom-center",
           "bottom-right",
         ],
+        anchorStyleFunc: (anchor) => {
+          if (anchor.hasName("top-center") || anchor.hasName("bottom-center")) {
+            anchor.setAttrs({
+              fill: "#ffA500",
+              stroke: "#ff0000",
+              strokeWidth: 1,
+              cornerRadius: 5,
+              height: 10,
+              offsetY: 5,
+              width: 40,
+              offsetX: 20,
+            });
+          } else if (anchor.hasName("middle-left") || anchor.hasName("middle-right")) {
+            anchor.setAttrs({
+              fill: "#ffA500",
+              stroke: "#ff0000",
+              strokeWidth: 1,
+              cornerRadius: 5,
+              height: 40,
+              offsetY: 20,
+              width: 10,
+              offsetX: 5,
+            });
+          } else if (anchor.hasName("rotater")) {
+            anchor.setAttrs({
+              fill: "#ffA500",
+              stroke: "#ff0000",
+              strokeWidth: 1,
+              cornerRadius: 10,
+              height: 20,
+              offsetY: 10,
+              width: 20,
+              offsetX: 10,
+            });
+          } else {
+            anchor.setAttrs({
+              fill: "#ffA500",
+              stroke: "#ff0000",
+              strokeWidth: 1,
+              cornerRadius: 5,
+              height: 10,
+              offsetY: 5,
+              width: 10,
+              offsetX: 5,
+            });
+          }
+        },
       });
     },
     []
