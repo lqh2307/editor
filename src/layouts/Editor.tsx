@@ -1,4 +1,4 @@
-import { clampNumber } from "../utils/Utils";
+import { limitValue } from "../utils/Number";
 import { EditorProp } from "./Types";
 import { Box } from "@mui/material";
 import { Toolbar } from "./Toolbar";
@@ -51,7 +51,7 @@ export const Editor = React.memo((prop: EditorProp): React.JSX.Element => {
 
   const scaleX: number = canvasWidth / stageWidth;
   const scaleY: number = canvasHeight / stageHeight;
-  const stageZoom: number = clampNumber(
+  const stageZoom: number = limitValue(
     scaleX < scaleY ? scaleX : scaleY,
     stageZoomMin,
     stageZoomMax

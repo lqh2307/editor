@@ -1,5 +1,7 @@
 import { DDMMSS, Format, Unit } from "../../types/Common";
 import { WindowSize } from "../../types/Window";
+import { Mutex } from "async-mutex";
+import mime from "mime";
 
 /**
  * Delay function to wait for a specified time
@@ -18,47 +20,75 @@ export async function delay(ms: number): Promise<void> {
  * @returns {string} Content type
  */
 export function detectContentTypeFromFormat(format: Format): string {
-  switch (format) {
-    case "png": {
-      return "image/png";
+  return mime.getType(format);
+}
+
+/**
+ * Handle concurrency
+ * @param {number} concurrency Concurrency
+ * @param {(idx: number, value: any[], tasks: { activeTasks: number, completeTasks: number }) => void} handleFunc Handle function
+ * @param {any[]} values Values
+ * @param {{ interval: number, callbackFunc: (tasks: { activeTasks: number, completeTasks: number }) => void }} callback Callback
+ * @returns {Promise<{void}>} Response
+ */
+export async function handleConcurrency(
+  concurrency: number,
+  handleFunc: (idx: number, value: any[], tasks: { activeTasks: number, completeTasks: number }) => Promise<void>,
+  values: any[],
+  callback: { interval: number, callbackFunc: (tasks: { activeTasks: number, completeTasks: number }) => void },
+): Promise<void> {
+  let intervalID: NodeJS.Timeout;
+
+  try {
+    const mutex = new Mutex();
+
+    const tasks = {
+      activeTasks: 0,
+      completeTasks: 0,
+    };
+
+    const { interval, callbackFunc } = callback || {};
+
+    /* Call callback */
+    if (interval > 0 && callbackFunc) {
+      intervalID = setInterval(() => callbackFunc(tasks), interval);
     }
 
-    case "jpg":
-    case "jpeg": {
-      return "image/jpeg";
+    for (let idx = 0; idx < values.length; idx++) {
+      /* Wait slot for a task */
+      while (tasks.activeTasks >= concurrency) {
+        await delay(25);
+      }
+
+      /* Acquire mutex */
+      await mutex.runExclusive(() => {
+        tasks.activeTasks++;
+        tasks.completeTasks++;
+      });
+
+      /* Run a task */
+      handleFunc(idx, values, tasks).finally(() =>
+        /* Release mutex */
+        mutex.runExclusive(() => {
+          tasks.activeTasks--;
+        })
+      );
     }
 
-    case "gif": {
-      return "image/gif";
+    /* Wait all tasks done */
+    while (tasks.activeTasks > 0) {
+      await delay(25);
     }
 
-    case "webp": {
-      return "image/webp";
+    /* Last call callback */
+    if (interval > 0 && callbackFunc) {
+      callbackFunc(tasks);
     }
-
-    case "pbf": {
-      return "application/x-protobuf";
-    }
-
-    case "xml": {
-      return "text/xml";
-    }
-
-    case "svg": {
-      return "image/svg+xml";
-    }
-
-    case "json":
-    case "geojson": {
-      return "application/json";
-    }
-
-    case "pdf": {
-      return "application/pdf";
-    }
-
-    default: {
-      return "application/octet-stream";
+  } catch (error) {
+    throw error;
+  } finally {
+    if (intervalID) {
+      clearInterval(intervalID);
     }
   }
 }
@@ -123,30 +153,6 @@ export function saveFileFromBase64(
   a.href = base64;
   a.download = fileName;
   a.click();
-}
-
-export function fixNumber(
-  strNumber: string,
-  isFloat?: boolean,
-  defaultNumber?: number
-): number {
-  const match: RegExpMatchArray = strNumber?.match(
-    isFloat ? /-?\d+(\.\d+)?/ : /-?\d+/
-  );
-
-  return match ? Number(match[0]) : (defaultNumber ?? 0);
-}
-
-export function clampNumber(val: number, min?: number, max?: number): number {
-  if (val < min) {
-    val = min;
-  }
-
-  if (val > max) {
-    val = max;
-  }
-
-  return val;
 }
 
 export function degToRad(angle: number): number {

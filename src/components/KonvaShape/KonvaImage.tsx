@@ -1,8 +1,7 @@
+import { createShapeBox, createFilter } from "../../utils/Shapes";
 import { parseHexToRGBAString } from "../../utils/Color";
 import { KonvaShape, KonvaShapeProp } from "./Types";
-import { createShapeBox } from "../../utils/Shapes";
 import { Portal } from "react-konva-utils";
-import { Filter } from "konva/lib/Node";
 import { Image } from "react-konva";
 import Konva from "konva";
 import React from "react";
@@ -41,32 +40,6 @@ export const KonvaImage = React.memo(
 
       const prop: KonvaShapeProp = currentPropRef.current;
 
-      // Filters
-      const filters: Filter[] = [
-        Konva.Filters.Pixelate,
-        Konva.Filters.Brighten,
-        Konva.Filters.Contrast,
-        Konva.Filters.Blur,
-        Konva.Filters.Enhance,
-        Konva.Filters.Noise,
-      ];
-
-      if (prop.shapeOption.grayscale) {
-        filters.push(Konva.Filters.Grayscale);
-      }
-
-      if (prop.shapeOption.invert) {
-        filters.push(Konva.Filters.Invert);
-      }
-
-      if (prop.shapeOption.sepia) {
-        filters.push(Konva.Filters.Sepia);
-      }
-
-      if (prop.shapeOption.solarize) {
-        filters.push(Konva.Filters.Solarize);
-      }
-
       // Update node attrs
       node.setAttrs({
         ...prop.shapeOption,
@@ -79,13 +52,18 @@ export const KonvaImage = React.memo(
           prop.shapeOption.stroke as string,
           prop.shapeOption.strokeOpacity
         ),
-        filters: filters,
+        filters: createFilter(
+          prop.shapeOption.grayscale,
+          prop.shapeOption.invert,
+          prop.shapeOption.sepia,
+          prop.shapeOption.solarize
+        ),
       });
 
       // Update shape box
       prop.shapeOption.box = createShapeBox(node);
 
-      // Cache and and Draw hit
+      // Cache
       if (node.width() || node.height()) {
         node.cache();
       }

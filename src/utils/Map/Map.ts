@@ -18,7 +18,6 @@ export async function renderMap(option: {
     const size: WindowSize = calculateSizes(
       option.zoom,
       option.bounds,
-      option.tileScale,
       option.tileSize
     );
 
@@ -39,7 +38,7 @@ export async function renderMap(option: {
       bearing: option.bearing ?? 0,
     });
 
-    map.on("error", (error) => {
+    map.once("error", (error) => {
       map.remove();
       container.remove();
 

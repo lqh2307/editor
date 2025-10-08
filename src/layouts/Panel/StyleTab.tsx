@@ -7,7 +7,7 @@ import { ColorInput } from "../../components/ColorInput";
 import { LineCap, LineJoin } from "konva/lib/Shape";
 import { useShapesContext } from "../../contexts";
 import { useTranslation } from "react-i18next";
-import { fixNumber } from "../../utils/Utils";
+import { fixNumber } from "../../utils/Number";
 import { TabPanel } from "@mui/lab";
 import React from "react";
 import {
@@ -396,8 +396,8 @@ export const PanelStyleTab = React.memo((): React.JSX.Element => {
           <NumberInput
             display={
               selectedShape.type === "circle" ||
-              selectedShape.type === "convex-polygon" ||
-              selectedShape.type === "wedge"
+                selectedShape.type === "convex-polygon" ||
+                selectedShape.type === "wedge"
                 ? "flex"
                 : "none"
             }
@@ -423,7 +423,7 @@ export const PanelStyleTab = React.memo((): React.JSX.Element => {
             sx={{
               display:
                 selectedShape.type === "concave-polygon" ||
-                selectedShape.type === "ring"
+                  selectedShape.type === "ring"
                   ? "flex"
                   : "none",
               flexDirection: "row",
@@ -479,9 +479,9 @@ export const PanelStyleTab = React.memo((): React.JSX.Element => {
             sx={{
               display:
                 selectedShape.type === "text" ||
-                selectedShape.type === "rectangle" ||
-                selectedShape.type === "image" ||
-                selectedShape.type === "video"
+                  selectedShape.type === "rectangle" ||
+                  selectedShape.type === "image" ||
+                  selectedShape.type === "video"
                   ? "flex"
                   : "none",
               flexDirection: "row",
@@ -506,7 +506,7 @@ export const PanelStyleTab = React.memo((): React.JSX.Element => {
           <NumberInput
             display={
               selectedShape.type === "rectangle" ||
-              selectedShape.type === "image"
+                selectedShape.type === "image"
                 ? "flex"
                 : "none"
             }

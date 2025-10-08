@@ -1,6 +1,7 @@
 import { HorizontalAlign, VerticalAlign } from "../types/Window";
 import { IShapesContext } from "./Interfaces";
 import { ShapesProviderProp } from "./Types";
+import { limitValue } from "../utils/Number";
 import { Vector2d } from "konva/lib/types";
 import Konva from "konva";
 import React from "react";
@@ -19,7 +20,6 @@ import {
 import {
   detectContentTypeFromFormat,
   saveFileFromBuffer,
-  clampNumber,
 } from "../utils/Utils";
 import {
   KonvaShapeBox,
@@ -41,34 +41,34 @@ type State = {
 
 type Action = {
   type:
-    | "SET_MAX_HISTORY"
-    | "UPDATE_SELECTED_IDS"
-    | "UPDATE_SHAPE"
-    | "ADD_SHAPES"
-    | "DO_SHAPE"
-    | "DELETE_SHAPES"
-    | "COPY_SHAPE"
-    | "DUPLICATE_SHAPE"
-    | "MOVE_SHAPES"
-    | "PASTE_SHAPE"
-    | "LAYER_SHAPE"
-    | "ALIGN_SHAPE"
-    | "FLIP_SHAPE"
-    | "CLEAN";
+  | "SET_MAX_HISTORY"
+  | "UPDATE_SELECTED_IDS"
+  | "UPDATE_SHAPE"
+  | "ADD_SHAPES"
+  | "DO_SHAPE"
+  | "DELETE_SHAPES"
+  | "COPY_SHAPE"
+  | "DUPLICATE_SHAPE"
+  | "MOVE_SHAPES"
+  | "PASTE_SHAPE"
+  | "LAYER_SHAPE"
+  | "ALIGN_SHAPE"
+  | "FLIP_SHAPE"
+  | "CLEAN";
   payload?:
-    | number
-    | UpdateSelectedIds
-    | Update
-    | Add
-    | Do
-    | Delete
-    | Copy
-    | Duplicate
-    | Move
-    | Paste
-    | Layer
-    | Align
-    | Flip;
+  | number
+  | UpdateSelectedIds
+  | Update
+  | Add
+  | Do
+  | Delete
+  | Copy
+  | Duplicate
+  | Move
+  | Paste
+  | Layer
+  | Align
+  | Flip;
 };
 
 type Layer = {
@@ -143,7 +143,7 @@ function reducer(state: State, action: Action): State {
   } {
     // Calculate overflow
     const nextIndex: number = state.historyIndex + 1;
-    const overflow: number = clampNumber(
+    const overflow: number = limitValue(
       state.historyIndex + 2 - state.maxHistory,
       0,
       undefined
@@ -243,9 +243,9 @@ function reducer(state: State, action: Action): State {
       // Create new state
       return update.storeHistory
         ? {
-            ...state,
-            ...addHistory(state.shapeList),
-          }
+          ...state,
+          ...addHistory(state.shapeList),
+        }
         : state;
     }
 

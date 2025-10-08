@@ -1,5 +1,5 @@
 import { Color } from "../../types/Color";
-import { clampNumber } from "../Utils";
+import { limitValue } from "../Number";
 
 export function parseRGBAStringToRGBA(color: string): Color {
   const match: RegExpMatchArray = color?.match(
@@ -11,13 +11,13 @@ export function parseRGBAStringToRGBA(color: string): Color {
   }
 
   const r: number =
-    match[1] === undefined ? undefined : clampNumber(Number(match[1]), 0, 255);
+    match[1] === undefined ? undefined : limitValue(Number(match[1]), 0, 255);
   const g: number =
-    match[2] === undefined ? undefined : clampNumber(Number(match[2]), 0, 255);
+    match[2] === undefined ? undefined : limitValue(Number(match[2]), 0, 255);
   const b: number =
-    match[3] === undefined ? undefined : clampNumber(Number(match[3]), 0, 255);
+    match[3] === undefined ? undefined : limitValue(Number(match[3]), 0, 255);
   const a: number =
-    match[4] === undefined ? undefined : clampNumber(Number(match[4]), 0, 1);
+    match[4] === undefined ? undefined : limitValue(Number(match[4]), 0, 1);
 
   return { r, g, b, a };
 }
@@ -72,15 +72,15 @@ export function parseRGBAStringToHex(color: string): string {
   const r: string =
     match[1] === undefined
       ? "00"
-      : clampNumber(Number(match[1]), 0, 255).toString(16).padStart(2, "0");
+      : limitValue(Number(match[1]), 0, 255).toString(16).padStart(2, "0");
   const g: string =
     match[2] === undefined
       ? "00"
-      : clampNumber(Number(match[2]), 0, 255).toString(16).padStart(2, "0");
+      : limitValue(Number(match[2]), 0, 255).toString(16).padStart(2, "0");
   const b: string =
     match[3] === undefined
       ? "00"
-      : clampNumber(Number(match[3]), 0, 255).toString(16).padStart(2, "0");
+      : limitValue(Number(match[3]), 0, 255).toString(16).padStart(2, "0");
 
   return `#${r}${g}${b}`;
 }

@@ -19,6 +19,7 @@ import { BASE_URL, importSchema } from "../../configs";
 import { validateJSON } from "../../utils/Validator";
 import { Format, Size } from "../../types/Common";
 import { useTranslation } from "react-i18next";
+import { fixNumber } from "../../utils/Number";
 import { AxiosResponse } from "axios";
 import { nanoid } from "nanoid";
 import React from "react";
@@ -45,7 +46,6 @@ import {
   detectContentTypeFromFormat,
   calculatePaperSize,
   saveFileFromBase64,
-  fixNumber,
 } from "../../utils/Utils";
 import {
   HorizontalAlign,
@@ -737,63 +737,63 @@ export const ToolbarIO = React.memo((): React.JSX.Element => {
         // Call API to render PDF
         const response: AxiosResponse = exportInfo.highQuality
           ? await renderHighQualityPDF({
-              controller: renderPreviewControllerRef.current,
-              input: {
-                images: [
-                  {
-                    image: tmpPreviewImages[0],
-                    resolution: resolutionRef.current,
-                  },
-                ],
-              },
-              preview: {
-                format: "png",
-              },
-              output: {
-                alignContent: {
-                  horizontal: exportInfo.horizontalAlign,
-                  vertical: exportInfo.verticalAlign,
+            controller: renderPreviewControllerRef.current,
+            input: {
+              images: [
+                {
+                  image: tmpPreviewImages[0],
+                  resolution: resolutionRef.current,
                 },
-                base64: true,
-                paperSize: [exportInfo.width, exportInfo.height],
-                orientation: exportInfo.orientation,
-                grayscale: exportInfo.grayscale,
+              ],
+            },
+            preview: {
+              format: "png",
+            },
+            output: {
+              alignContent: {
+                horizontal: exportInfo.horizontalAlign,
+                vertical: exportInfo.verticalAlign,
               },
-            })
+              base64: true,
+              paperSize: [exportInfo.width, exportInfo.height],
+              orientation: exportInfo.orientation,
+              grayscale: exportInfo.grayscale,
+            },
+          })
           : await renderPDF({
-              controller: renderPreviewControllerRef.current,
-              input: {
-                images: tmpPreviewImages,
+            controller: renderPreviewControllerRef.current,
+            input: {
+              images: tmpPreviewImages,
+            },
+            preview: {
+              format: "png",
+            },
+            output: {
+              alignContent: {
+                horizontal: exportInfo.horizontalAlign,
+                vertical: exportInfo.verticalAlign,
               },
-              preview: {
-                format: "png",
+              base64: true,
+              paperSize: [exportInfo.width, exportInfo.height],
+              orientation: exportInfo.orientation,
+              fit: exportInfo.fit,
+              grid: {
+                row: exportInfo.row,
+                column: exportInfo.column,
+                marginX: exportInfo.marginX,
+                marginY: exportInfo.marginY,
+                gapX: exportInfo.gapX,
+                gapY: exportInfo.gapY,
               },
-              output: {
-                alignContent: {
-                  horizontal: exportInfo.horizontalAlign,
-                  vertical: exportInfo.verticalAlign,
-                },
-                base64: true,
-                paperSize: [exportInfo.width, exportInfo.height],
-                orientation: exportInfo.orientation,
-                fit: exportInfo.fit,
-                grid: {
-                  row: exportInfo.row,
-                  column: exportInfo.column,
-                  marginX: exportInfo.marginX,
-                  marginY: exportInfo.marginY,
-                  gapX: exportInfo.gapX,
-                  gapY: exportInfo.gapY,
-                },
-                grayscale: exportInfo.grayscale,
-                pagination: exportInfo.pagination
-                  ? {
-                      horizontal: exportInfo.horizontalPagination,
-                      vertical: exportInfo.verticalPagination,
-                    }
-                  : undefined,
-              },
-            });
+              grayscale: exportInfo.grayscale,
+              pagination: exportInfo.pagination
+                ? {
+                  horizontal: exportInfo.horizontalPagination,
+                  vertical: exportInfo.verticalPagination,
+                }
+                : undefined,
+            },
+          });
 
         extractedPreviewImages = tmpPreviewImages;
         previewImages = response.data as string[];
@@ -827,55 +827,55 @@ export const ToolbarIO = React.memo((): React.JSX.Element => {
         // Call API to render PDF
         const response: AxiosResponse = exportInfo.highQuality
           ? await renderHighQualityPDF({
-              input: {
-                images: [
-                  {
-                    image: exportInfo.extractedPreviewImages[0],
-                    resolution: resolutionRef.current,
-                  },
-                ],
-              },
-              output: {
-                alignContent: {
-                  horizontal: exportInfo.horizontalAlign,
-                  vertical: exportInfo.verticalAlign,
+            input: {
+              images: [
+                {
+                  image: exportInfo.extractedPreviewImages[0],
+                  resolution: resolutionRef.current,
                 },
-                base64: true,
-                paperSize: [exportInfo.width, exportInfo.height],
-                orientation: exportInfo.orientation,
-                grayscale: exportInfo.grayscale,
+              ],
+            },
+            output: {
+              alignContent: {
+                horizontal: exportInfo.horizontalAlign,
+                vertical: exportInfo.verticalAlign,
               },
-            })
+              base64: true,
+              paperSize: [exportInfo.width, exportInfo.height],
+              orientation: exportInfo.orientation,
+              grayscale: exportInfo.grayscale,
+            },
+          })
           : await renderPDF({
-              input: {
-                images: exportInfo.extractedPreviewImages,
+            input: {
+              images: exportInfo.extractedPreviewImages,
+            },
+            output: {
+              alignContent: {
+                horizontal: exportInfo.horizontalAlign,
+                vertical: exportInfo.verticalAlign,
               },
-              output: {
-                alignContent: {
-                  horizontal: exportInfo.horizontalAlign,
-                  vertical: exportInfo.verticalAlign,
-                },
-                base64: true,
-                paperSize: [exportInfo.width, exportInfo.height],
-                orientation: exportInfo.orientation,
-                fit: exportInfo.fit,
-                grid: {
-                  row: exportInfo.row,
-                  column: exportInfo.column,
-                  marginX: exportInfo.marginX,
-                  marginY: exportInfo.marginY,
-                  gapX: exportInfo.gapX,
-                  gapY: exportInfo.gapY,
-                },
-                grayscale: exportInfo.grayscale,
-                pagination: exportInfo.pagination
-                  ? {
-                      horizontal: exportInfo.horizontalPagination,
-                      vertical: exportInfo.verticalPagination,
-                    }
-                  : undefined,
+              base64: true,
+              paperSize: [exportInfo.width, exportInfo.height],
+              orientation: exportInfo.orientation,
+              fit: exportInfo.fit,
+              grid: {
+                row: exportInfo.row,
+                column: exportInfo.column,
+                marginX: exportInfo.marginX,
+                marginY: exportInfo.marginY,
+                gapX: exportInfo.gapX,
+                gapY: exportInfo.gapY,
               },
-            });
+              grayscale: exportInfo.grayscale,
+              pagination: exportInfo.pagination
+                ? {
+                  horizontal: exportInfo.horizontalPagination,
+                  vertical: exportInfo.verticalPagination,
+                }
+                : undefined,
+            },
+          });
 
         // Save
         saveFileFromBase64(

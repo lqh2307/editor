@@ -47,12 +47,25 @@ export const KonvaTransformer = React.memo(
         []
       );
 
+      const handleTransformStart = React.useCallback(
+        (e: Konva.KonvaEventObject<Event>): void => {
+          const node: Konva.Transformer = e.currentTarget as Konva.Transformer;
+          if (!node) {
+            return;
+          }
+
+          (node as any).lastActiveAnchor = node.getActiveAnchor();
+        },
+        []
+      );
+
       return (
         <Transformer
           listening={true}
           draggable={false}
           ref={nodeRef}
           id={prop.id}
+          onTransformStart={handleTransformStart}
         />
       );
     }

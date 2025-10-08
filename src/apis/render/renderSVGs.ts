@@ -1,12 +1,12 @@
 import { IMAGE_PROCESS_URL } from "../../configs";
-import { RenderStyleJSONOption } from "./Types";
 import axios, { AxiosResponse } from "axios";
+import { RenderSVGsOption } from "./Types";
 
-export async function renderStyleJSON(
-  options: RenderStyleJSONOption
+export async function renderSVGs(
+  options: RenderSVGsOption
 ): Promise<AxiosResponse> {
-  return await axios.post<RenderStyleJSONOption, AxiosResponse>(
-    `${IMAGE_PROCESS_URL}/renders/stylejson`,
+  return await axios.post<RenderSVGsOption, AxiosResponse>(
+    `${IMAGE_PROCESS_URL}/renders/svgs`,
     options.overlays,
     {
       timeout: 300000,

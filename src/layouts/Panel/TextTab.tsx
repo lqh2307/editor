@@ -5,7 +5,7 @@ import { NumberInput } from "../../components/NumberInput";
 import { useShapesContext } from "../../contexts";
 import { textFontFamilies } from "../../configs";
 import { useTranslation } from "react-i18next";
-import { fixNumber } from "../../utils/Utils";
+import { fixNumber } from "../../utils/Number";
 import { TabPanel } from "@mui/lab";
 import React from "react";
 import {

@@ -5,7 +5,7 @@ import { TooltipButton } from "../../components/TooltipButton";
 import { NumberInput } from "../../components/NumberInput";
 import { BasicDialog } from "../../components/BasicDialog";
 import { useTranslation } from "react-i18next";
-import { fixNumber } from "../../utils/Utils";
+import { fixNumber } from "../../utils/Number";
 import React from "react";
 import {
   useShapesContext,

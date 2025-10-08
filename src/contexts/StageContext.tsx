@@ -1,12 +1,13 @@
-import { clampNumber, detectContentTypeFromFormat } from "../utils/Utils";
 import { KonvaGridStyle, KonvaGridAPI } from "../components/KonvaGrid";
 import { KonvaTransformerAPI } from "../components/KonvaTransformer";
 import { KonvaGuideLinesAPI } from "../components/KonvaGuideLines";
 import { KonvaBackgroundAPI } from "../components/KonvaBackground";
 import { SnackbarAlertProp } from "../components/SnackbarAlert";
+import { detectContentTypeFromFormat } from "../utils/Utils";
 import { ImageFormat } from "../types/Common";
 import { IStageContext } from "./Interfaces";
 import { WindowRect } from "../types/Window";
+import { limitValue } from "../utils/Number";
 import { StageProviderProp } from "./Types";
 import { Vector2d } from "konva/lib/types";
 import { AlertColor } from "@mui/material";
@@ -30,13 +31,13 @@ type StageState = {
 
 type StageAction = {
   type:
-    | "SET_RATIO"
-    | "SET_ZOOM"
-    | "SET_CANVAS_SIZE"
-    | "FIT_SCREEN"
-    | "DRAG"
-    | "EXPAND"
-    | "ZOOM";
+  | "SET_RATIO"
+  | "SET_ZOOM"
+  | "SET_CANVAS_SIZE"
+  | "FIT_SCREEN"
+  | "DRAG"
+  | "EXPAND"
+  | "ZOOM";
   payload?: Ratio | SetZoom | SetCanvasSize | Fit | Drag | Expand | Zoom;
 };
 
@@ -99,7 +100,7 @@ function stageReducer(state: StageState, action: StageAction): StageState {
         const scaleX: number = state.canvasWidth / state.stageWidth;
         const scaleY: number = state.canvasHeight / state.stageHeight;
 
-        newStageZoom = clampNumber(
+        newStageZoom = limitValue(
           scaleX < scaleY ? scaleX : scaleY,
           state.stageZoomMin,
           state.stageZoomMax
@@ -176,7 +177,7 @@ function stageReducer(state: StageState, action: StageAction): StageState {
         // New zoom step is cannot smaller than zoom min and larger than zoom max
         return {
           ...state,
-          stageZoomStep: clampNumber(
+          stageZoomStep: limitValue(
             setZoom.zoom,
             state.stageZoomMin,
             state.stageZoomMax
@@ -184,7 +185,7 @@ function stageReducer(state: StageState, action: StageAction): StageState {
         };
       } else if (setZoom.type === "max") {
         // Zoom stage is cannot larger than new zoom max
-        const stageZoom: number = clampNumber(
+        const stageZoom: number = limitValue(
           state.stageZoom,
           undefined,
           setZoom.zoom
@@ -199,7 +200,7 @@ function stageReducer(state: StageState, action: StageAction): StageState {
           ...state,
           stageZoom: stageZoom,
           stageZoomMax: setZoom.zoom,
-          stageZoomMin: clampNumber(
+          stageZoomMin: limitValue(
             state.stageZoomMin,
             undefined,
             setZoom.zoom
@@ -207,7 +208,7 @@ function stageReducer(state: StageState, action: StageAction): StageState {
         };
       } else {
         // Zoom stage is cannot smaller than new zoom min
-        const stageZoom: number = clampNumber(
+        const stageZoom: number = limitValue(
           state.stageZoom,
           setZoom.zoom,
           undefined
@@ -221,7 +222,7 @@ function stageReducer(state: StageState, action: StageAction): StageState {
         return {
           ...state,
           stageZoom: stageZoom,
-          stageZoomMax: clampNumber(
+          stageZoomMax: limitValue(
             state.stageZoomMax,
             setZoom.zoom,
             undefined
@@ -302,7 +303,7 @@ function stageReducer(state: StageState, action: StageAction): StageState {
 
       const oldZoom: number = stage.scaleX();
 
-      const newZoom: number = clampNumber(
+      const newZoom: number = limitValue(
         zoom.zoomOut
           ? stage.scaleX() - state.stageZoomStep
           : stage.scaleX() + state.stageZoomStep,

@@ -2,27 +2,17 @@ import { BBox, Point, TileScheme, TileSize, Unit } from "../../types/Common";
 import { WindowSize } from "../../types/Window";
 import { convertLength } from "../Utils";
 import { loadImageSrc } from "../Image";
+import { limitValue } from "../Number";
 
 /**
  * Convert coordinates from EPSG:4326 (lon, lat) to EPSG:3857 (x, y in meters)
  * @param {number} lon Longitude in degree
  * @param {number} lat Latitude in degree
- * @returns {[number, number]} Web Mercator x, y in meters
+ * @returns {Point} Web Mercator x, y in meters
  */
 export function lonLat4326ToXY3857(lon: number, lat: number): Point {
-  // Limit longitude
-  if (lon > 180) {
-    lon = 180;
-  } else if (lon < -180) {
-    lon = -180;
-  }
-
-  // Limit latitude
-  if (lat > 85.051129) {
-    lat = 85.051129;
-  } else if (lat < -85.051129) {
-    lat = -85.051129;
-  }
+  lon = limitValue(lon, -180, 180);
+  lat = limitValue(lat, -85.051129, 85.051129);
 
   return [
     lon * (Math.PI / 180) * 6378137.0,
@@ -34,25 +24,14 @@ export function lonLat4326ToXY3857(lon: number, lat: number): Point {
  * Convert coordinates from EPSG:3857 (x, y in meters) to EPSG:4326 (lon, lat in degree)
  * @param {number} x X in meters (Web Mercator)
  * @param {number} y Y in meters (Web Mercator)
- * @returns {[number, number]} Longitude and latitude in degree
+ * @returns {Point} Longitude and latitude in degree
  */
 export function xy3857ToLonLat4326(x: number, y: number): Point {
   let lon: number = (x / 6378137.0) * (180 / Math.PI);
   let lat: number = Math.atan(Math.sinh(y / 6378137.0)) * (180 / Math.PI);
 
-  // Limit longitude
-  if (lon > 180) {
-    lon = 180;
-  } else if (lon < -180) {
-    lon = -180;
-  }
-
-  // Limit latitude
-  if (lat > 85.051129) {
-    lat = 85.051129;
-  } else if (lat < -85.051129) {
-    lat = -85.051129;
-  }
+  lon = limitValue(lon, -180, 180);
+  lat = limitValue(lat, -85.051129, 85.051129);
 
   return [lon, lat];
 }
@@ -62,8 +41,8 @@ export function xy3857ToLonLat4326(x: number, y: number): Point {
  * @param {number} lon Longitude in EPSG:4326
  * @param {number} lat Latitude in EPSG:4326
  * @param {number} z Zoom level
- * @param {"xyz"|"tms"} scheme Tile scheme to output (Default: XYZ)
- * @param {256|512} tileSize Tile size
+ * @param {TileScheme} scheme Tile scheme to output (Default: XYZ)
+ * @param {TileSize} tileSize Tile size
  * @returns {[number, number, number]} Tile indices [x, y, z]
  */
 export function getXYZFromLonLatZ(
@@ -80,19 +59,8 @@ export function getXYZFromLonLatZ(
   const zc: number = size / 2;
   const maxTileIndex: number = (1 << z) - 1;
 
-  // Limit longitude
-  if (lon > 180) {
-    lon = 180;
-  } else if (lon < -180) {
-    lon = -180;
-  }
-
-  // Limit latitude
-  if (lat > 85.051129) {
-    lat = 85.051129;
-  } else if (lat < -85.051129) {
-    lat = -85.051129;
-  }
+  lon = limitValue(lon, -180, 180);
+  lat = limitValue(lat, -85.051129, 85.051129);
 
   let x: number = Math.floor((zc + lon * bc) / tileSize);
   let y: number = Math.floor(
@@ -104,19 +72,8 @@ export function getXYZFromLonLatZ(
     y = maxTileIndex - y;
   }
 
-  // Limit x
-  if (x < 0) {
-    x = 0;
-  } else if (x > maxTileIndex) {
-    x = maxTileIndex;
-  }
-
-  // Limit y
-  if (y < 0) {
-    y = 0;
-  } else if (y > maxTileIndex) {
-    y = maxTileIndex;
-  }
+  x = limitValue(x, 0, maxTileIndex);
+  y = limitValue(y, 0, maxTileIndex);
 
   return [x, y, z];
 }
@@ -127,8 +84,8 @@ export function getXYZFromLonLatZ(
  * @param {number} y Y tile index
  * @param {number} z Zoom level
  * @param {"center"|"topLeft"|"bottomRight"} position Tile position: "center", "topLeft", or "bottomRight"
- * @param {"xyz"|"tms"} scheme Tile scheme
- * @param {256|512} tileSize Tile size
+ * @param {TileScheme} scheme Tile scheme
+ * @param {TileSize} tileSize Tile size
  * @returns {[number, number]} [longitude, latitude] in EPSG:4326
  */
 export function getLonLatFromXYZ(
@@ -208,21 +165,112 @@ export function getPyramidTileRanges(
 }
 
 /**
+ * Calculate zoom levels
+ * @param {BBox} bbox Bounding box in EPSG:4326
+ * @param {number} width Width of image
+ * @param {number} height Height of image
+ * @param {TileSize} tileSize Tile size
+ * @returns {Promise<{ minZoom: number, maxZoom: number }>} Zoom levels
+ */
+export async function calculateZoomLevels(bbox: BBox, width: number, height: number, tileSize: TileSize): Promise<{ minZoom: number, maxZoom: number }> {
+  tileSize = tileSize || 256;
+
+  const [xRes, yRes]: [number, number] = await calculateResolution({
+    bbox: bbox,
+    width: width,
+    height: height,
+  }, "m");
+
+  const res: number = xRes <= yRes ? xRes : yRes;
+
+  const maxZoom: number = limitValue(
+    Math.round(Math.log2((2 * Math.PI * 6378137.0) / tileSize / res)),
+    0,
+    25
+  );
+
+  let minZoom = maxZoom;
+
+  const targetTileSize: number = Math.floor(tileSize * 0.95);
+
+  while (minZoom > 0 && (width > targetTileSize || height > targetTileSize)) {
+    width /= 2;
+    height /= 2;
+
+    minZoom--;
+  }
+
+  return {
+    minZoom,
+    maxZoom,
+  };
+}
+
+/**
+ * Get grids for specific bbox with optional lat/lon steps (Keeps both head and tail residuals)
+ * @param {BBox} bbox [minLon, minLat, maxLon, maxLat]
+ * @param {number} lonStep Step for longitude
+ * @param {number} latStep Step for latitude
+ * @returns {BBox[]}
+ */
+export function splitBBox(bbox: BBox, lonStep?: number, latStep?: number): BBox[] {
+  const result = [];
+
+  function splitStep(start: number, end: number, step: number): [number, number][] {
+    const ranges = [];
+
+    let cur = Math.ceil(start / step) * step;
+
+    if (cur > end) {
+      return [[start, end]];
+    }
+
+    if (start < cur) {
+      ranges.push([start, cur]);
+    }
+
+    while (cur + step <= end) {
+      ranges.push([cur, cur + step]);
+
+      cur += step;
+    }
+
+    if (cur < end) {
+      ranges.push([cur, end]);
+    }
+
+    return ranges;
+  }
+
+  const lonRanges = lonStep
+    ? splitStep(bbox[0], bbox[2], lonStep)
+    : [[bbox[0], bbox[2]]];
+  const latRanges = latStep
+    ? splitStep(bbox[1], bbox[3], latStep)
+    : [[bbox[1], bbox[3]]];
+
+  for (const [lonStart, lonEnd] of lonRanges) {
+    for (const [latStart, latEnd] of latRanges) {
+      result.push([lonStart, latStart, lonEnd, latEnd]);
+    }
+  }
+
+  return result;
+}
+
+/**
  * Calculate sizes
  * @param {number} z Zoom level
  * @param {[number, number, number, number]} bbox Bounding box in EPSG:4326
- * @param {number} tileScale Tile scale
  * @param {256|512} tileSize Tile size
  * @returns {{width: number, height: number}} Sizes
  */
 export function calculateSizes(
   z: number,
   bbox: BBox,
-  tileScale?: number,
   tileSize?: TileSize
 ): WindowSize {
-  tileScale = tileScale || 1;
-  tileSize = tileSize || 256;
+  tileSize = tileSize || 512;
 
   const [minX, minY]: Point = lonLat4326ToXY3857(bbox[0], bbox[1]);
   const [maxX, maxY]: Point = lonLat4326ToXY3857(bbox[2], bbox[3]);
@@ -231,8 +279,8 @@ export function calculateSizes(
     (2 * Math.PI * 6378137.0) / (tileSize * Math.pow(2, z));
 
   return {
-    width: Math.round(tileScale * ((maxX - minX) / resolution)),
-    height: Math.round(tileScale * ((maxY - minY) / resolution)),
+    width: Math.round((maxX - minX) / resolution),
+    height: Math.round((maxY - minY) / resolution),
   };
 }
 
@@ -334,9 +382,9 @@ export function getRealBBox(
 
 /**
  * Get bounding box from center and radius
- * @param {[number, number]} center [lon, lat] of center (EPSG:4326)
+ * @param {Point} center [lon, lat] of center (EPSG:4326)
  * @param {number} radius Radius in metter (EPSG:3857)
- * @returns {[number, number, number, number]} [minLon, minLat, maxLon, maxLat]
+ * @returns {BBox} [minLon, minLat, maxLon, maxLat]
  */
 export function getBBoxFromCircle(center: Point, radius: number): BBox {
   const [xCenter, yCenter]: Point = lonLat4326ToXY3857(center[0], center[1]);
@@ -349,8 +397,8 @@ export function getBBoxFromCircle(center: Point, radius: number): BBox {
 
 /**
  * Get bounding box from an array of points
- * @param {[number, number][]} points Array of points in the format [lon, lat]
- * @returns {[number, number, number, number]} Bounding box in the format [minLon, minLat, maxLon, maxLat]
+ * @param {Point[]} points Array of points in the format [lon, lat]
+ * @returns {BBox} Bounding box in the format [minLon, minLat, maxLon, maxLat]
  */
 export function getBBoxFromPoints(points: Point[]): BBox {
   let bbox: BBox = [-180, -85.051129, 180, 85.051129];
@@ -376,29 +424,10 @@ export function getBBoxFromPoints(points: Point[]): BBox {
       }
     }
 
-    if (bbox[0] > 180) {
-      bbox[0] = 180;
-    } else if (bbox[0] < -180) {
-      bbox[0] = -180;
-    }
-
-    if (bbox[2] > 180) {
-      bbox[2] = 180;
-    } else if (bbox[2] < -180) {
-      bbox[2] = -180;
-    }
-
-    if (bbox[1] > 85.051129) {
-      bbox[1] = 85.051129;
-    } else if (bbox[1] < -85.051129) {
-      bbox[1] = -85.051129;
-    }
-
-    if (bbox[3] > 85.051129) {
-      bbox[3] = 85.051129;
-    } else if (bbox[3] < -85.051129) {
-      bbox[3] = -85.051129;
-    }
+    bbox[0] = limitValue(bbox[0], -180, 180);
+    bbox[2] = limitValue(bbox[2], -180, 180);
+    bbox[1] = limitValue(bbox[1], -85.051129, 85.051129);
+    bbox[3] = limitValue(bbox[3], -85.051129, 85.051129);
   }
 
   return bbox;
@@ -406,9 +435,9 @@ export function getBBoxFromPoints(points: Point[]): BBox {
 
 /**
  * Get bounding box intersect
- * @param {[number, number, number, number]} bbox1 Bounding box 1 in the format [minLon, minLat, maxLon, maxLat]
- * @param {[number, number, number, number]} bbox2 Bounding box 2 in the format [minLon, minLat, maxLon, maxLat]
- * @returns {[number, number, number, number]} Intersect bounding box in the format [minLon, minLat, maxLon, maxLat]
+ * @param {BBox} bbox1 Bounding box 1 in the format [minLon, minLat, maxLon, maxLat]
+ * @param {BBox} bbox2 Bounding box 2 in the format [minLon, minLat, maxLon, maxLat]
+ * @returns {BBox} Intersect bounding box in the format [minLon, minLat, maxLon, maxLat]
  */
 export function getIntersectBBox(bbox1: BBox, bbox2: BBox): BBox {
   const minLon: number = bbox1[0] >= bbox2[0] ? bbox1[0] : bbox2[0];
@@ -424,10 +453,25 @@ export function getIntersectBBox(bbox1: BBox, bbox2: BBox): BBox {
 }
 
 /**
+ * Get bounding box cover
+ * @param {BBox} bbox1 Bounding box 1 in the format [minLon, minLat, maxLon, maxLat]
+ * @param {BBox} bbox2 Bounding box 2 in the format [minLon, minLat, maxLon, maxLat]
+ * @returns {BBox} Cover bounding box in the format [minLon, minLat, maxLon, maxLat]
+ */
+export function getCoverBBox(bbox1: BBox, bbox2: BBox): BBox {
+  const minLon: number = bbox1[0] < bbox2[0] ? bbox1[0] : bbox2[0];
+  const minLat: number = bbox1[1] < bbox2[1] ? bbox1[1] : bbox2[1];
+  const maxLon: number = bbox1[2] > bbox2[2] ? bbox1[2] : bbox2[2];
+  const maxLat: number = bbox1[3] > bbox2[3] ? bbox1[3] : bbox2[3];
+
+  return [minLon, minLat, maxLon, maxLat];
+}
+
+/**
  * Convert zoom to scale
  * @param {number} zoom Zoom
  * @param {number} ppi Pixel per inch
- * @param {256|512} tileSize Tile size
+ * @param {TileSize} tileSize Tile size
  * @returns {number} Scale
  */
 export function zoomToScale(
@@ -446,7 +490,7 @@ export function zoomToScale(
  * Convert scale to zoom
  * @param {number} scale Scale
  * @param {number} ppi Pixel per inch
- * @param {256|512} tileSize Tile size
+ * @param {TileSize} tileSize Tile size
  * @returns {number} zoom
  */
 export function scaleToZoom(
@@ -463,13 +507,13 @@ export function scaleToZoom(
 
 /**
  * Calculate resolution
- * @param {{ image: string, bbox: [number, number, number, number], width: number, height: number }} input Input object
+ * @param {{ image: string, bbox: BBox, width: number, height: number }} input Input object
  * @param {Unit} unit unit
  * @returns {Promise<[number, number]>} [X resolution (m/pixel), Y resolution (m/pixel)]
  */
 export async function calculateResolution(
-  input: any,
-  unit: Unit
+  input: { image?: string, bbox: BBox, width: number, height: number },
+  unit?: Unit
 ): Promise<[number, number]> {
   // Convert bbox from EPSG:4326 to EPSG:3857
   const [minX, minY]: Point = lonLat4326ToXY3857(input.bbox[0], input.bbox[1]);

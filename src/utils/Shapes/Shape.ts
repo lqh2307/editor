@@ -1,6 +1,7 @@
-import { WindowRect } from "../../types/Window";
+import { WindowRect, WindowSize } from "../../types/Window";
+import { IRect, Vector2d } from "konva/lib/types";
 import { createRandomHexColor } from "../Color";
-import { Vector2d } from "konva/lib/types";
+import { Filter } from "konva/lib/Node";
 import { nanoid } from "nanoid";
 import svgPath from "svgpath";
 import Konva from "konva";
@@ -56,6 +57,7 @@ export function createShape(shape: KonvaShape): KonvaShape {
 
     case "arrow":
     case "line": {
+      // Size
       if (newShape.type === "arrow") {
         newShape.pointerWidth =
           newShape.pointerWidth ?? newShape.pointerWidth ?? 5;
@@ -63,6 +65,7 @@ export function createShape(shape: KonvaShape): KonvaShape {
           newShape.pointerLength ?? newShape.pointerLength ?? 5;
       }
 
+      // Common
       newShape.x = newShape.x ?? 150;
       newShape.y = newShape.y ?? 250;
       newShape.fillEnabled = newShape.fillEnabled ?? true;
@@ -79,6 +82,7 @@ export function createShape(shape: KonvaShape): KonvaShape {
     }
 
     case "rectangle": {
+      // Common
       newShape.width = newShape.width ?? 200;
       newShape.height = newShape.height ?? 200;
       newShape.x = newShape.x ?? 150;
@@ -101,6 +105,7 @@ export function createShape(shape: KonvaShape): KonvaShape {
     case "concave-polygon":
     case "ring":
     case "wedge": {
+      // Size
       if (newShape.type === "ellipse") {
         newShape.radiusX = newShape.radiusX ?? 100;
         newShape.radiusY = newShape.radiusY ?? 100;
@@ -122,6 +127,7 @@ export function createShape(shape: KonvaShape): KonvaShape {
         newShape.clockwise = newShape.clockwise ?? false;
       }
 
+      // Common
       newShape.x = newShape.x ?? 250;
       newShape.y = newShape.y ?? 250;
       newShape.fillEnabled = newShape.fillEnabled ?? true;
@@ -136,6 +142,7 @@ export function createShape(shape: KonvaShape): KonvaShape {
     }
 
     case "text": {
+      // Common
       newShape.width = newShape.width ?? 200;
       newShape.height = newShape.height ?? 100;
       newShape.x = newShape.x ?? 150;
@@ -167,6 +174,7 @@ export function createShape(shape: KonvaShape): KonvaShape {
     }
 
     case "free-drawing": {
+      // Common
       newShape.x = newShape.x ?? 0;
       newShape.y = newShape.y ?? 0;
       newShape.fillEnabled = newShape.fillEnabled ?? true;
@@ -185,6 +193,7 @@ export function createShape(shape: KonvaShape): KonvaShape {
     }
 
     case "path": {
+      // Common
       newShape.width = newShape.width ?? 200;
       newShape.height = newShape.height ?? 200;
       newShape.x = newShape.x ?? 150;
@@ -217,6 +226,7 @@ export function createShape(shape: KonvaShape): KonvaShape {
       newShape.enhance = newShape.enhance ?? 0;
       newShape.noise = newShape.noise ?? 0;
 
+      // Common
       newShape.x = newShape.x ?? 150;
       newShape.y = newShape.y ?? 150;
       newShape.fillEnabled = newShape.fillEnabled ?? true;
@@ -228,6 +238,7 @@ export function createShape(shape: KonvaShape): KonvaShape {
       newShape.strokeWidth = newShape.strokeWidth ?? 1;
       newShape.cornerRadius = newShape.cornerRadius ?? 0;
 
+      // Size
       if (newShape.image) {
         const img: HTMLImageElement = newShape.image as HTMLImageElement;
         if (img) {
@@ -236,10 +247,19 @@ export function createShape(shape: KonvaShape): KonvaShape {
         }
       }
 
+      // // Crop
+      // newShape.crop = newShape.crop ?? {
+      //   x: 0,
+      //   y: 0,
+      //   width: newShape.width,
+      //   height: newShape.height,
+      // };
+
       break;
     }
 
     case "video": {
+      // Common
       newShape.x = newShape.x ?? 150;
       newShape.y = newShape.y ?? 150;
       newShape.fillEnabled = newShape.fillEnabled ?? true;
@@ -256,6 +276,7 @@ export function createShape(shape: KonvaShape): KonvaShape {
       newShape.loop = newShape.loop ?? false;
       newShape.inverse = newShape.inverse ?? false;
 
+      // Size
       if (newShape.image) {
         const video: HTMLVideoElement = newShape.image as HTMLVideoElement;
         newShape.width = newShape.width ?? video.videoWidth;
@@ -460,4 +481,99 @@ export function createPathsFromSVG(
   );
 
   return result;
+}
+
+/**
+ * Calculate crop
+ * @param curSize
+ * @param lastSize
+ * @param lastCrop
+ * @returns
+ */
+export function calculateCrop(
+  curSize: WindowSize,
+  lastSize: WindowSize,
+  lastCrop: IRect,
+  anchor: string
+): IRect {
+  let x = lastCrop.x;
+  let y = lastCrop.y;
+  let width = lastCrop.width;
+  let height = lastCrop.height;
+
+  if (anchor === "middle-left" || anchor === "middle-right") {
+    if (curSize.width < lastSize.width) {
+      // Horizontal narrow
+      width = lastCrop.width * (curSize.width / lastSize.width);
+      if (anchor === "middle-left") {
+        x = lastCrop.x + lastCrop.width - width;
+      }
+    } else {
+      // Horizontal extend
+      width = curSize.width * (lastCrop.height / lastSize.height);
+      if (width > lastSize.width - lastCrop.x) {
+        height =
+          curSize.height * ((lastSize.width - lastCrop.x) / curSize.width);
+      }
+    }
+  } else if (anchor === "top-center" || anchor === "bottom-center") {
+    if (curSize.height < lastSize.height) {
+      // Vertical narrow
+      height = lastCrop.height * (curSize.height / lastSize.height);
+      if (anchor === "top-center") {
+        y = lastCrop.y + lastCrop.height - height;
+      }
+    } else {
+      // Vertical extend
+      height = curSize.height * (lastCrop.width / lastSize.width);
+      if (height > lastCrop.height - lastCrop.y) {
+        width =
+          curSize.width * ((lastCrop.height - lastCrop.y) / curSize.height);
+      }
+    }
+  }
+
+  return { x, y, width, height };
+}
+
+/**
+ * Create filter
+ * @param grayscale
+ * @param invert
+ * @param sepia
+ * @param solarize
+ * @returns
+ */
+export function createFilter(
+  grayscale?: boolean,
+  invert?: boolean,
+  sepia?: boolean,
+  solarize?: boolean
+) {
+  const filters: Filter[] = [
+    Konva.Filters.Pixelate,
+    Konva.Filters.Brighten,
+    Konva.Filters.Contrast,
+    Konva.Filters.Blur,
+    Konva.Filters.Enhance,
+    Konva.Filters.Noise,
+  ];
+
+  if (grayscale) {
+    filters.push(Konva.Filters.Grayscale);
+  }
+
+  if (invert) {
+    filters.push(Konva.Filters.Invert);
+  }
+
+  if (sepia) {
+    filters.push(Konva.Filters.Sepia);
+  }
+
+  if (solarize) {
+    filters.push(Konva.Filters.Solarize);
+  }
+
+  return filters;
 }

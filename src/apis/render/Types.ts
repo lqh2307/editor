@@ -113,9 +113,11 @@ export type RenderStyleJSONOverlay = {
   format?: ImageFormat;
   width?: number;
   height?: number;
+  pitch?: number;
+  bearing?: number;
 };
 
-export type RenderStyleJSONOption = {
+export type RenderStyleJSONsOption = {
   controller?: AbortController;
 
   overlays: RenderStyleJSONOverlay[];
@@ -130,7 +132,7 @@ export type RenderSVGOverlay = {
   grayscale?: boolean;
 };
 
-export type RenderSVGOption = {
+export type RenderSVGsOption = {
   controller?: AbortController;
 
   overlays: RenderSVGOverlay[];
