@@ -86,7 +86,7 @@ export function getXYZFromLonLatZ(
  * @param {"center"|"topLeft"|"bottomRight"} position Tile position: "center", "topLeft", or "bottomRight"
  * @param {TileScheme} scheme Tile scheme
  * @param {TileSize} tileSize Tile size
- * @returns {[number, number]} [longitude, latitude] in EPSG:4326
+ * @returns {Point} [longitude, latitude] in EPSG:4326
  */
 export function getLonLatFromXYZ(
   x: number,
@@ -214,12 +214,12 @@ export async function calculateZoomLevels(bbox: BBox, width: number, height: num
  * @returns {BBox[]}
  */
 export function splitBBox(bbox: BBox, lonStep?: number, latStep?: number): BBox[] {
-  const result = [];
+  const result: BBox[] = [];
 
-  function splitStep(start: number, end: number, step: number): [number, number][] {
-    const ranges = [];
+  function splitStep(start: number, end: number, step: number): Point[] {
+    const ranges: Point[] = [];
 
-    let cur = Math.ceil(start / step) * step;
+    let cur: number = Math.ceil(start / step) * step;
 
     if (cur > end) {
       return [[start, end]];
@@ -242,10 +242,10 @@ export function splitBBox(bbox: BBox, lonStep?: number, latStep?: number): BBox[
     return ranges;
   }
 
-  const lonRanges = lonStep
+  const lonRanges: Point[] = lonStep
     ? splitStep(bbox[0], bbox[2], lonStep)
     : [[bbox[0], bbox[2]]];
-  const latRanges = latStep
+  const latRanges: Point[] = latStep
     ? splitStep(bbox[1], bbox[3], latStep)
     : [[bbox[1], bbox[3]]];
 
@@ -261,9 +261,9 @@ export function splitBBox(bbox: BBox, lonStep?: number, latStep?: number): BBox[
 /**
  * Calculate sizes
  * @param {number} z Zoom level
- * @param {[number, number, number, number]} bbox Bounding box in EPSG:4326
- * @param {256|512} tileSize Tile size
- * @returns {{width: number, height: number}} Sizes
+ * @param {BBox} bbox Bounding box in EPSG:4326
+ * @param {TileSize} tileSize Tile size
+ * @returns {WindowSize} Sizes
  */
 export function calculateSizes(
   z: number,
@@ -291,9 +291,9 @@ export function calculateSizes(
  * @param {number} xMax Maximum x tile index
  * @param {number} yMax Maximum y tile index
  * @param {number} z Zoom level
- * @param {"xyz"|"tms"} scheme Tile scheme
- * @param {256|512} tileSize Tile size
- * @returns {[number, number, number, number]} Bounding box [lonMin, latMin, lonMax, latMax] in EPSG:4326
+ * @param {TileScheme} scheme Tile scheme
+ * @param {TileSize} tileSize Tile size
+ * @returns {BBox} Bounding box [lonMin, latMin, lonMax, latMax] in EPSG:4326
  */
 export function getBBoxFromTiles(
   xMin: number,
@@ -304,7 +304,7 @@ export function getBBoxFromTiles(
   scheme: TileScheme,
   tileSize: TileSize
 ): BBox {
-  let [lonMin, latMax] = getLonLatFromXYZ(
+  let [lonMin, latMax]: Point = getLonLatFromXYZ(
     xMin,
     yMin,
     z,
@@ -312,7 +312,7 @@ export function getBBoxFromTiles(
     scheme,
     tileSize
   );
-  let [lonMax, latMin] = getLonLatFromXYZ(
+  let [lonMax, latMin]: Point = getLonLatFromXYZ(
     xMax,
     yMax,
     z,
@@ -334,10 +334,10 @@ export function getBBoxFromTiles(
 
 /**
  * Convert bbox to tiles
- * @param {[number, number, number, number]} bbox Bounding box [lonMin, latMin, lonMax, latMax] in EPSG:4326
+ * @param {BBox} bbox Bounding box [lonMin, latMin, lonMax, latMax] in EPSG:4326
  * @param {number} z Zoom level
- * @param {"xyz"|"tms"} scheme Tile scheme
- * @param {256|512} tileSize Tile size
+ * @param {TileScheme} scheme Tile scheme
+ * @param {TileSize} tileSize Tile size
  * @returns {[number, number, number, number]} Tiles [minX, maxX, minY, maxY]
  */
 export function getTilesFromBBox(
