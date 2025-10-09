@@ -24,7 +24,7 @@ export function limitValue(value: number, min?: number, max?: number): number {
  */
 export function maxValue(values: number[]): number {
   if (values?.length) {
-    let value = values[0];
+    let value: number = values[0];
 
     for (let i = 1; i < values.length; i++) {
       if (value < values[i]) {
@@ -43,7 +43,7 @@ export function maxValue(values: number[]): number {
  */
 export function minValue(values: number[]): number {
   if (values?.length) {
-    let value = values[0];
+    let value: number = values[0];
 
     for (let i = 1; i < values.length; i++) {
       if (value > values[i]) {

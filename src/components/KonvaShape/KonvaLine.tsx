@@ -183,19 +183,7 @@ export const KonvaLine = React.memo(
 
         const prop: KonvaShapeProp = currentPropRef.current;
 
-        let scaleAbs: number;
-
-        if (
-          Number(scaleXAbs.toPrecision(9)) >= 1 &&
-          Number(scaleYAbs.toPrecision(9)) >= 1
-        ) {
-          scaleAbs = scaleXAbs > scaleYAbs ? scaleXAbs : scaleYAbs;
-        } else {
-          scaleAbs = scaleXAbs < scaleYAbs ? scaleXAbs : scaleYAbs;
-        }
-
         Object.assign(prop.shapeOption, {
-          strokeWidth: Math.round(prop.shapeOption.strokeWidth * scaleAbs),
           points: prop.shapeOption.points.map((point, idx) =>
             idx % 2 === 0 ? point * scaleXAbs : point * scaleYAbs
           ),

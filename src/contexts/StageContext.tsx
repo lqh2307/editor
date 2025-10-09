@@ -31,13 +31,13 @@ type StageState = {
 
 type StageAction = {
   type:
-  | "SET_RATIO"
-  | "SET_ZOOM"
-  | "SET_CANVAS_SIZE"
-  | "FIT_SCREEN"
-  | "DRAG"
-  | "EXPAND"
-  | "ZOOM";
+    | "SET_RATIO"
+    | "SET_ZOOM"
+    | "SET_CANVAS_SIZE"
+    | "FIT_SCREEN"
+    | "DRAG"
+    | "EXPAND"
+    | "ZOOM";
   payload?: Ratio | SetZoom | SetCanvasSize | Fit | Drag | Expand | Zoom;
 };
 
@@ -200,11 +200,7 @@ function stageReducer(state: StageState, action: StageAction): StageState {
           ...state,
           stageZoom: stageZoom,
           stageZoomMax: setZoom.zoom,
-          stageZoomMin: limitValue(
-            state.stageZoomMin,
-            undefined,
-            setZoom.zoom
-          ),
+          stageZoomMin: limitValue(state.stageZoomMin, undefined, setZoom.zoom),
         };
       } else {
         // Zoom stage is cannot smaller than new zoom min
@@ -222,11 +218,7 @@ function stageReducer(state: StageState, action: StageAction): StageState {
         return {
           ...state,
           stageZoom: stageZoom,
-          stageZoomMax: limitValue(
-            state.stageZoomMax,
-            setZoom.zoom,
-            undefined
-          ),
+          stageZoomMax: limitValue(state.stageZoomMax, setZoom.zoom, undefined),
           stageZoomMin: setZoom.zoom,
         };
       }
@@ -571,12 +563,15 @@ export function StageProvider(prop: StageProviderProp): React.JSX.Element {
               stroke: "#ff0000",
               strokeWidth: 1,
               cornerRadius: 5,
-              height: 10,
-              offsetY: 5,
+              height: 8,
+              offsetY: 4,
               width: 40,
               offsetX: 20,
             });
-          } else if (anchor.hasName("middle-left") || anchor.hasName("middle-right")) {
+          } else if (
+            anchor.hasName("middle-left") ||
+            anchor.hasName("middle-right")
+          ) {
             anchor.setAttrs({
               fill: "#ffA500",
               stroke: "#ff0000",
@@ -584,14 +579,14 @@ export function StageProvider(prop: StageProviderProp): React.JSX.Element {
               cornerRadius: 5,
               height: 40,
               offsetY: 20,
-              width: 10,
-              offsetX: 5,
+              width: 8,
+              offsetX: 4,
             });
           } else if (anchor.hasName("rotater")) {
             anchor.setAttrs({
               fill: "#ffA500",
               stroke: "#ff0000",
-              strokeWidth: 1,
+              strokeWidth: 1.5,
               cornerRadius: 10,
               height: 20,
               offsetY: 10,

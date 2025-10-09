@@ -41,34 +41,34 @@ type State = {
 
 type Action = {
   type:
-  | "SET_MAX_HISTORY"
-  | "UPDATE_SELECTED_IDS"
-  | "UPDATE_SHAPE"
-  | "ADD_SHAPES"
-  | "DO_SHAPE"
-  | "DELETE_SHAPES"
-  | "COPY_SHAPE"
-  | "DUPLICATE_SHAPE"
-  | "MOVE_SHAPES"
-  | "PASTE_SHAPE"
-  | "LAYER_SHAPE"
-  | "ALIGN_SHAPE"
-  | "FLIP_SHAPE"
-  | "CLEAN";
+    | "SET_MAX_HISTORY"
+    | "UPDATE_SELECTED_IDS"
+    | "UPDATE_SHAPE"
+    | "ADD_SHAPES"
+    | "DO_SHAPE"
+    | "DELETE_SHAPES"
+    | "COPY_SHAPE"
+    | "DUPLICATE_SHAPE"
+    | "MOVE_SHAPES"
+    | "PASTE_SHAPE"
+    | "LAYER_SHAPE"
+    | "ALIGN_SHAPE"
+    | "FLIP_SHAPE"
+    | "CLEAN";
   payload?:
-  | number
-  | UpdateSelectedIds
-  | Update
-  | Add
-  | Do
-  | Delete
-  | Copy
-  | Duplicate
-  | Move
-  | Paste
-  | Layer
-  | Align
-  | Flip;
+    | number
+    | UpdateSelectedIds
+    | Update
+    | Add
+    | Do
+    | Delete
+    | Copy
+    | Duplicate
+    | Move
+    | Paste
+    | Layer
+    | Align
+    | Flip;
 };
 
 type Layer = {
@@ -243,9 +243,9 @@ function reducer(state: State, action: Action): State {
       // Create new state
       return update.storeHistory
         ? {
-          ...state,
-          ...addHistory(state.shapeList),
-        }
+            ...state,
+            ...addHistory(state.shapeList),
+          }
         : state;
     }
 
@@ -284,9 +284,13 @@ function reducer(state: State, action: Action): State {
               case "rectangle":
               case "text": {
                 item.x =
-                  add.position.x - Math.abs(item.width * item.scaleX) / 2;
+                  add.position.x -
+                  Math.abs(item.width * item.scaleX) / 2 +
+                  item.offsetX;
                 item.y =
-                  add.position.y - Math.abs(item.height * item.scaleY) / 2;
+                  add.position.y -
+                  Math.abs(item.height * item.scaleY) / 2 +
+                  item.offsetY;
 
                 break;
               }
@@ -297,16 +301,22 @@ function reducer(state: State, action: Action): State {
               case "ring":
               case "wedge":
               case "circle": {
-                item.x = add.position.x;
-                item.y = add.position.y;
+                item.x = add.position.x - item.offsetX;
+                item.y = add.position.y - item.offsetY;
 
                 break;
               }
 
               case "arrow":
               case "line": {
-                item.x = add.position.x - (item.points[0] + item.points[2]) / 2;
-                item.y = add.position.y - (item.points[1] + item.points[3]) / 2;
+                item.x =
+                  add.position.x -
+                  (item.points[0] + item.points[2]) / 2 +
+                  item.offsetX;
+                item.y =
+                  add.position.y -
+                  (item.points[1] + item.points[3]) / 2 +
+                  item.offsetY;
 
                 break;
               }

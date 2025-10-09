@@ -191,14 +191,23 @@ export const KonvaImage = React.memo(
 
         const prop: KonvaShapeProp = currentPropRef.current;
 
+        const newWidth: number = Math.round(
+          prop.shapeOption.width * scaleX * newScaleX
+        );
+        const newHeight: number = Math.round(
+          prop.shapeOption.height * scaleY * newScaleY
+        );
+
         Object.assign(prop.shapeOption, {
-          width: Math.round(prop.shapeOption.width * scaleX * newScaleX),
-          height: Math.round(prop.shapeOption.height * scaleY * newScaleY),
+          width: newWidth,
+          height: newHeight,
           rotation: node.rotation(),
           scaleX: newScaleX,
           scaleY: newScaleY,
           x: node.x(),
           y: node.y(),
+          offsetX: newWidth / 2,
+          offsetY: newHeight / 2,
         });
 
         // Call callback function

@@ -33,14 +33,24 @@ export function detectContentTypeFromFormat(format: Format): string {
  */
 export async function handleConcurrency(
   concurrency: number,
-  handleFunc: (idx: number, value: any[], tasks: { activeTasks: number, completeTasks: number }) => Promise<void>,
+  handleFunc: (
+    idx: number,
+    value: any[],
+    tasks: { activeTasks: number; completeTasks: number }
+  ) => Promise<void>,
   values: any[],
-  callback: { interval: number, callbackFunc: (tasks: { activeTasks: number, completeTasks: number }) => void },
+  callback: {
+    interval: number;
+    callbackFunc: (tasks: {
+      activeTasks: number;
+      completeTasks: number;
+    }) => void;
+  }
 ): Promise<void> {
   let intervalID: NodeJS.Timeout;
 
   try {
-    const mutex = new Mutex();
+    const mutex: Mutex = new Mutex();
 
     const tasks = {
       activeTasks: 0,

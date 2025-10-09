@@ -65,7 +65,7 @@ export function getXYZFromLonLatZ(
   let x: number = Math.floor((zc + lon * bc) / tileSize);
   let y: number = Math.floor(
     (zc - cc * Math.log(Math.tan(Math.PI / 4 + lat * (Math.PI / 360)))) /
-    tileSize
+      tileSize
   );
 
   if (scheme === "tms") {
@@ -128,7 +128,7 @@ export function getLonLatFromXYZ(
  * @param {number} z Zoom level
  * @param {number} x X tile index
  * @param {number} y Y tile index
- * @param {"xyz"|"tms"} scheme Tile scheme
+ * @param {TileScheme} scheme Tile scheme
  * @param {number} deltaZ Delta zoom
  * @returns {{ x: [number, number], y: [number, number] }}
  */
@@ -172,14 +172,22 @@ export function getPyramidTileRanges(
  * @param {TileSize} tileSize Tile size
  * @returns {Promise<{ minZoom: number, maxZoom: number }>} Zoom levels
  */
-export async function calculateZoomLevels(bbox: BBox, width: number, height: number, tileSize: TileSize): Promise<{ minZoom: number, maxZoom: number }> {
+export async function calculateZoomLevels(
+  bbox: BBox,
+  width: number,
+  height: number,
+  tileSize: TileSize
+): Promise<{ minZoom: number; maxZoom: number }> {
   tileSize = tileSize || 256;
 
-  const [xRes, yRes]: [number, number] = await calculateResolution({
-    bbox: bbox,
-    width: width,
-    height: height,
-  }, "m");
+  const [xRes, yRes]: [number, number] = await calculateResolution(
+    {
+      bbox: bbox,
+      width: width,
+      height: height,
+    },
+    "m"
+  );
 
   const res: number = xRes <= yRes ? xRes : yRes;
 
@@ -213,7 +221,11 @@ export async function calculateZoomLevels(bbox: BBox, width: number, height: num
  * @param {number} latStep Step for latitude
  * @returns {BBox[]}
  */
-export function splitBBox(bbox: BBox, lonStep?: number, latStep?: number): BBox[] {
+export function splitBBox(
+  bbox: BBox,
+  lonStep?: number,
+  latStep?: number
+): BBox[] {
   const result: BBox[] = [];
 
   function splitStep(start: number, end: number, step: number): Point[] {
@@ -401,7 +413,7 @@ export function getBBoxFromCircle(center: Point, radius: number): BBox {
  * @returns {BBox} Bounding box in the format [minLon, minLat, maxLon, maxLat]
  */
 export function getBBoxFromPoints(points: Point[]): BBox {
-  let bbox: BBox = [-180, -85.051129, 180, 85.051129];
+  let bbox: BBox;
 
   if (points.length) {
     bbox = [points[0][0], points[0][1], points[0][0], points[0][1]];
@@ -512,7 +524,7 @@ export function scaleToZoom(
  * @returns {Promise<[number, number]>} [X resolution (m/pixel), Y resolution (m/pixel)]
  */
 export async function calculateResolution(
-  input: { image?: string, bbox: BBox, width: number, height: number },
+  input: { image?: string; bbox: BBox; width: number; height: number },
   unit?: Unit
 ): Promise<[number, number]> {
   // Convert bbox from EPSG:4326 to EPSG:3857

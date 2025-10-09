@@ -197,7 +197,6 @@ export const KonvaArrow = React.memo(
         Object.assign(prop.shapeOption, {
           pointerLength: Math.round(prop.shapeOption.pointerLength * scaleXAbs),
           pointerWidth: Math.round(prop.shapeOption.pointerWidth * scaleYAbs),
-          strokeWidth: Math.round(prop.shapeOption.strokeWidth * scaleAbs),
           points: prop.shapeOption.points.map((point, idx) =>
             idx % 2 === 0 ? point * scaleXAbs : point * scaleYAbs
           ),

@@ -396,7 +396,11 @@ export const Canvas = React.memo((): React.JSX.Element => {
   );
 
   return (
-    <Box sx={{ width: "100%", height: "100%" }} onDragOver={handleStageDragOver} onDrop={handleStageDrop}>
+    <Box
+      sx={{ width: "100%", height: "100%" }}
+      onDragOver={handleStageDragOver}
+      onDrop={handleStageDrop}
+    >
       {/* Stage */}
       <Stage
         ref={assignStage}

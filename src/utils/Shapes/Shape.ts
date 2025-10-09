@@ -37,10 +37,6 @@ export function createShape(shape: KonvaShape): KonvaShape {
   newShape.shadowOffsetY = newShape.shadowOffsetY ?? 15;
   newShape.rotation = newShape.rotation ?? 0;
 
-  // Offset
-  newShape.offsetX = newShape.offsetX ?? 0;
-  newShape.offsetY = newShape.offsetY ?? 0;
-
   // Scale
   newShape.scaleX = newShape.scaleX ?? 1;
   newShape.scaleY = newShape.scaleY ?? 1;
@@ -60,9 +56,9 @@ export function createShape(shape: KonvaShape): KonvaShape {
       // Size
       if (newShape.type === "arrow") {
         newShape.pointerWidth =
-          newShape.pointerWidth ?? newShape.pointerWidth ?? 5;
+          newShape.pointerWidth ?? newShape.pointerWidth ?? 10;
         newShape.pointerLength =
-          newShape.pointerLength ?? newShape.pointerLength ?? 5;
+          newShape.pointerLength ?? newShape.pointerLength ?? 10;
       }
 
       // Common
@@ -74,9 +70,13 @@ export function createShape(shape: KonvaShape): KonvaShape {
       newShape.strokeEnabled = newShape.strokeEnabled ?? true;
       newShape.stroke = newShape.stroke ?? randomColor;
       newShape.strokeOpacity = newShape.strokeOpacity ?? 1;
-      newShape.strokeScaleEnabled = newShape.strokeScaleEnabled ?? true;
-      newShape.strokeWidth = newShape.strokeWidth ?? 5;
+      newShape.strokeScaleEnabled = newShape.strokeScaleEnabled ?? false;
+      newShape.strokeWidth = newShape.strokeWidth ?? 10;
       newShape.points = newShape.points ?? [0, 0, 200, 0];
+
+      // Offset
+      newShape.offsetX = newShape.offsetX ?? 0;
+      newShape.offsetY = newShape.offsetY ?? 0;
 
       break;
     }
@@ -95,6 +95,10 @@ export function createShape(shape: KonvaShape): KonvaShape {
       newShape.strokeOpacity = newShape.strokeOpacity ?? 1;
       newShape.strokeWidth = newShape.strokeWidth ?? 1;
       newShape.cornerRadius = newShape.cornerRadius ?? 0;
+
+      // Offset
+      newShape.offsetX = newShape.offsetX ?? newShape.width / 2;
+      newShape.offsetY = newShape.offsetY ?? newShape.height / 2;
 
       break;
     }
@@ -138,6 +142,10 @@ export function createShape(shape: KonvaShape): KonvaShape {
       newShape.strokeOpacity = newShape.strokeOpacity ?? 1;
       newShape.strokeWidth = newShape.strokeWidth ?? 1;
 
+      // Offset
+      newShape.offsetX = newShape.offsetX ?? 0;
+      newShape.offsetY = newShape.offsetY ?? 0;
+
       break;
     }
 
@@ -170,6 +178,10 @@ export function createShape(shape: KonvaShape): KonvaShape {
       newShape.verticalAlign = newShape.verticalAlign ?? "top";
       newShape.wrap = newShape.wrap ?? "word";
 
+      // Offset
+      newShape.offsetX = newShape.offsetX ?? 0;
+      newShape.offsetY = newShape.offsetY ?? 0;
+
       break;
     }
 
@@ -189,6 +201,10 @@ export function createShape(shape: KonvaShape): KonvaShape {
       newShape.tension = newShape.tension ?? 0.5;
       newShape.lines = newShape.lines ?? [];
 
+      // Offset
+      newShape.offsetX = newShape.offsetX ?? 0;
+      newShape.offsetY = newShape.offsetY ?? 0;
+
       break;
     }
 
@@ -207,6 +223,10 @@ export function createShape(shape: KonvaShape): KonvaShape {
       newShape.strokeWidth = newShape.strokeWidth ?? 1;
       newShape.cornerRadius = newShape.cornerRadius ?? 0;
       newShape.paths = newShape.paths ?? [];
+
+      // Offset
+      newShape.offsetX = newShape.offsetX ?? 0;
+      newShape.offsetY = newShape.offsetY ?? 0;
 
       break;
     }
@@ -247,6 +267,10 @@ export function createShape(shape: KonvaShape): KonvaShape {
         }
       }
 
+      // Offset
+      newShape.offsetX = newShape.offsetX ?? newShape.width / 2;
+      newShape.offsetY = newShape.offsetY ?? newShape.height / 2;
+
       // // Crop
       // newShape.crop = newShape.crop ?? {
       //   x: 0,
@@ -282,6 +306,10 @@ export function createShape(shape: KonvaShape): KonvaShape {
         newShape.width = newShape.width ?? video.videoWidth;
         newShape.height = newShape.height ?? video.videoHeight;
       }
+
+      // Offset
+      newShape.offsetX = newShape.offsetX ?? newShape.width / 2;
+      newShape.offsetY = newShape.offsetY ?? newShape.height / 2;
 
       break;
     }
