@@ -17,6 +17,7 @@ import { KonvaShape } from "../../components/KonvaShape";
 import { TextInput } from "../../components/TextInput";
 import { BASE_URL, importSchema } from "../../configs";
 import { validateJSON } from "../../utils/Validator";
+import { abortRequest } from "../../utils/Request";
 import { Format, Size } from "../../types/Common";
 import { useTranslation } from "react-i18next";
 import { fixNumber } from "../../utils/Number";
@@ -131,11 +132,7 @@ export const ToolbarIO = React.memo((): React.JSX.Element => {
   const fetchReportHandler = React.useCallback(async (): Promise<void> => {
     try {
       // Cancel previous request
-      if (fetchReportControllerRef.current) {
-        fetchReportControllerRef.current.abort();
-      }
-
-      fetchReportControllerRef.current = new AbortController();
+      fetchReportControllerRef.current = abortRequest(fetchReportControllerRef.current, true)
 
       // Call API to search report
       const response: AxiosResponse = await searchReport({
@@ -693,19 +690,13 @@ export const ToolbarIO = React.memo((): React.JSX.Element => {
     }
 
     if (exportInfo.format === "pdf") {
-      if (exportInfo.width <= 0 || exportInfo.height <= 0) {
-        return;
-      }
-
-      if (
-        !exportInfo.highQuality &&
+      if (exportInfo.width <= 0 || exportInfo.height <= 0 || (!exportInfo.highQuality &&
         (exportInfo.row <= 0 ||
           exportInfo.column <= 0 ||
           exportInfo.marginX < 0 ||
           exportInfo.marginY < 0 ||
           exportInfo.gapX < 0 ||
-          exportInfo.gapY)
-      ) {
+          exportInfo.gapY))) {
         return;
       }
     }
@@ -724,11 +715,7 @@ export const ToolbarIO = React.memo((): React.JSX.Element => {
 
       if (exportInfo.format === "pdf") {
         // Cancel previous request
-        if (renderPreviewControllerRef.current) {
-          renderPreviewControllerRef.current.abort();
-        }
-
-        renderPreviewControllerRef.current = new AbortController();
+        renderPreviewControllerRef.current = abortRequest(renderPreviewControllerRef.current, true)
 
         const tmpPreviewImages: string[] = [
           exportStage("png", exportInfo.crop),
@@ -737,63 +724,63 @@ export const ToolbarIO = React.memo((): React.JSX.Element => {
         // Call API to render PDF
         const response: AxiosResponse = exportInfo.highQuality
           ? await renderHighQualityPDF({
-              controller: renderPreviewControllerRef.current,
-              input: {
-                images: [
-                  {
-                    image: tmpPreviewImages[0],
-                    resolution: resolutionRef.current,
-                  },
-                ],
-              },
-              preview: {
-                format: "png",
-              },
-              output: {
-                alignContent: {
-                  horizontal: exportInfo.horizontalAlign,
-                  vertical: exportInfo.verticalAlign,
+            controller: renderPreviewControllerRef.current,
+            input: {
+              images: [
+                {
+                  image: tmpPreviewImages[0],
+                  resolution: resolutionRef.current,
                 },
-                base64: true,
-                paperSize: [exportInfo.width, exportInfo.height],
-                orientation: exportInfo.orientation,
-                grayscale: exportInfo.grayscale,
+              ],
+            },
+            preview: {
+              format: "png",
+            },
+            output: {
+              alignContent: {
+                horizontal: exportInfo.horizontalAlign,
+                vertical: exportInfo.verticalAlign,
               },
-            })
+              base64: true,
+              paperSize: [exportInfo.width, exportInfo.height],
+              orientation: exportInfo.orientation,
+              grayscale: exportInfo.grayscale,
+            },
+          })
           : await renderPDF({
-              controller: renderPreviewControllerRef.current,
-              input: {
-                images: tmpPreviewImages,
+            controller: renderPreviewControllerRef.current,
+            input: {
+              images: tmpPreviewImages,
+            },
+            preview: {
+              format: "png",
+            },
+            output: {
+              alignContent: {
+                horizontal: exportInfo.horizontalAlign,
+                vertical: exportInfo.verticalAlign,
               },
-              preview: {
-                format: "png",
+              base64: true,
+              paperSize: [exportInfo.width, exportInfo.height],
+              orientation: exportInfo.orientation,
+              fit: exportInfo.fit,
+              grid: {
+                row: exportInfo.row,
+                column: exportInfo.column,
+                marginX: exportInfo.marginX,
+                marginY: exportInfo.marginY,
+                gapX: exportInfo.gapX,
+                gapY: exportInfo.gapY,
               },
-              output: {
-                alignContent: {
-                  horizontal: exportInfo.horizontalAlign,
-                  vertical: exportInfo.verticalAlign,
-                },
-                base64: true,
-                paperSize: [exportInfo.width, exportInfo.height],
-                orientation: exportInfo.orientation,
-                fit: exportInfo.fit,
-                grid: {
-                  row: exportInfo.row,
-                  column: exportInfo.column,
-                  marginX: exportInfo.marginX,
-                  marginY: exportInfo.marginY,
-                  gapX: exportInfo.gapX,
-                  gapY: exportInfo.gapY,
-                },
-                grayscale: exportInfo.grayscale,
-                pagination: exportInfo.pagination
-                  ? {
-                      horizontal: exportInfo.horizontalPagination,
-                      vertical: exportInfo.verticalPagination,
-                    }
-                  : undefined,
-              },
-            });
+              grayscale: exportInfo.grayscale,
+              pagination: exportInfo.pagination
+                ? {
+                  horizontal: exportInfo.horizontalPagination,
+                  vertical: exportInfo.verticalPagination,
+                }
+                : undefined,
+            },
+          });
 
         extractedPreviewImages = tmpPreviewImages;
         previewImages = response.data as string[];
@@ -827,55 +814,55 @@ export const ToolbarIO = React.memo((): React.JSX.Element => {
         // Call API to render PDF
         const response: AxiosResponse = exportInfo.highQuality
           ? await renderHighQualityPDF({
-              input: {
-                images: [
-                  {
-                    image: exportInfo.extractedPreviewImages[0],
-                    resolution: resolutionRef.current,
-                  },
-                ],
-              },
-              output: {
-                alignContent: {
-                  horizontal: exportInfo.horizontalAlign,
-                  vertical: exportInfo.verticalAlign,
+            input: {
+              images: [
+                {
+                  image: exportInfo.extractedPreviewImages[0],
+                  resolution: resolutionRef.current,
                 },
-                base64: true,
-                paperSize: [exportInfo.width, exportInfo.height],
-                orientation: exportInfo.orientation,
-                grayscale: exportInfo.grayscale,
+              ],
+            },
+            output: {
+              alignContent: {
+                horizontal: exportInfo.horizontalAlign,
+                vertical: exportInfo.verticalAlign,
               },
-            })
+              base64: true,
+              paperSize: [exportInfo.width, exportInfo.height],
+              orientation: exportInfo.orientation,
+              grayscale: exportInfo.grayscale,
+            },
+          })
           : await renderPDF({
-              input: {
-                images: exportInfo.extractedPreviewImages,
+            input: {
+              images: exportInfo.extractedPreviewImages,
+            },
+            output: {
+              alignContent: {
+                horizontal: exportInfo.horizontalAlign,
+                vertical: exportInfo.verticalAlign,
               },
-              output: {
-                alignContent: {
-                  horizontal: exportInfo.horizontalAlign,
-                  vertical: exportInfo.verticalAlign,
-                },
-                base64: true,
-                paperSize: [exportInfo.width, exportInfo.height],
-                orientation: exportInfo.orientation,
-                fit: exportInfo.fit,
-                grid: {
-                  row: exportInfo.row,
-                  column: exportInfo.column,
-                  marginX: exportInfo.marginX,
-                  marginY: exportInfo.marginY,
-                  gapX: exportInfo.gapX,
-                  gapY: exportInfo.gapY,
-                },
-                grayscale: exportInfo.grayscale,
-                pagination: exportInfo.pagination
-                  ? {
-                      horizontal: exportInfo.horizontalPagination,
-                      vertical: exportInfo.verticalPagination,
-                    }
-                  : undefined,
+              base64: true,
+              paperSize: [exportInfo.width, exportInfo.height],
+              orientation: exportInfo.orientation,
+              fit: exportInfo.fit,
+              grid: {
+                row: exportInfo.row,
+                column: exportInfo.column,
+                marginX: exportInfo.marginX,
+                marginY: exportInfo.marginY,
+                gapX: exportInfo.gapX,
+                gapY: exportInfo.gapY,
               },
-            });
+              grayscale: exportInfo.grayscale,
+              pagination: exportInfo.pagination
+                ? {
+                  horizontal: exportInfo.horizontalPagination,
+                  vertical: exportInfo.verticalPagination,
+                }
+                : undefined,
+            },
+          });
 
         // Save
         saveFileFromBase64(

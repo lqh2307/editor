@@ -5,6 +5,7 @@ import { PopperButton } from "../../components/PopperButton";
 import { Report, searchReport } from "../../apis/report";
 import { KonvaShape } from "../../components/KonvaShape";
 import { ShapeLineTwoTone } from "@mui/icons-material";
+import { abortRequest } from "../../utils/Request";
 import { IMAGE_STORAGE_URL } from "../../configs";
 import { CellComponentProps } from "react-window";
 import { KonvaDragDrop } from "../../types/Konva";
@@ -56,11 +57,7 @@ export const ToolbarAddComponent = React.memo((): React.JSX.Element => {
       }));
 
       // Cancel previous request
-      if (fetchComponentControllerRef.current) {
-        fetchComponentControllerRef.current.abort();
-      }
-
-      fetchComponentControllerRef.current = new AbortController();
+      fetchComponentControllerRef.current = abortRequest(fetchComponentControllerRef.current, true)
 
       // Call API to search report
       const response: AxiosResponse = await searchReport({
