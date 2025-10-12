@@ -1,4 +1,88 @@
 @font-face {
+  font-family: "Arial";
+  src: url("./Arial/Arial.otf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "Arial";
+  src: url("./Arial/Arial - Italic.otf") format("truetype");
+  font-weight: 400;
+  font-style: italic;
+}
+
+@font-face {
+  font-family: "Arial";
+  src: url("./Arial/Arial - Bold.otf") format("truetype");
+  font-weight: 700;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "Arial";
+  src: url("./Arial/Arial - Bold Italic.otf") format("truetype");
+  font-weight: 700;
+  font-style: italic;
+}
+
+@font-face {
+  font-family: "Calibri";
+  src: url("./Calibri/Calibri.otf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "Calibri";
+  src: url("./Calibri/Calibri - Italic.otf") format("truetype");
+  font-weight: 400;
+  font-style: italic;
+}
+
+@font-face {
+  font-family: "Calibri";
+  src: url("./Calibri/Calibri - Bold.otf") format("truetype");
+  font-weight: 700;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "Calibri";
+  src: url("./Calibri/Calibri - Bold Italic.otf") format("truetype");
+  font-weight: 700;
+  font-style: italic;
+}
+
+@font-face {
+  font-family: "Consolas";
+  src: url("./Consolas/Consolas.otf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "Consolas";
+  src: url("./Consolas/Consolas - Italic.otf") format("truetype");
+  font-weight: 400;
+  font-style: italic;
+}
+
+@font-face {
+  font-family: "Consolas";
+  src: url("./Consolas/Consolas - Bold.otf") format("truetype");
+  font-weight: 700;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "Consolas";
+  src: url("./Consolas/Consolas - Bold Italic.otf") format("truetype");
+  font-weight: 700;
+  font-style: italic;
+}
+
+@font-face {
   font-family: "Helvetica Neue";
   src: url("./HelveticaNeue/HelveticaNeue.otf") format("opentype");
   font-weight: 400;
@@ -7,74 +91,23 @@
 
 @font-face {
   font-family: "Helvetica Neue";
-  src: url("./HelveticaNeue/HelveticaNeue-Italic.otf") format("opentype");
+  src: url("./HelveticaNeue/HelveticaNeue - Italic.otf") format("opentype");
   font-weight: 400;
   font-style: italic;
 }
 
 @font-face {
   font-family: "Helvetica Neue";
-  src: url("./HelveticaNeue/HelveticaNeue-Bold.otf") format("opentype");
+  src: url("./HelveticaNeue/HelveticaNeue - Bold.otf") format("opentype");
   font-weight: 700;
   font-style: normal;
 }
 
 @font-face {
   font-family: "Helvetica Neue";
-  src: url("./HelveticaNeue/HelveticaNeue-BoldItalic.otf") format("opentype");
+  src: url("./HelveticaNeue/HelveticaNeue - Bold Italic.otf") format("opentype");
   font-weight: 700;
   font-style: italic;
-}
-
-@font-face {
-  font-family: "Helvetica Neue";
-  src: url("./HelveticaNeue/HelveticaNeue-Light.otf") format("opentype");
-  font-weight: 300;
-  font-style: normal;
-}
-
-@font-face {
-  font-family: "Helvetica Neue";
-  src: url("./HelveticaNeue/HelveticaNeue-LightItalic.otf") format("opentype");
-  font-weight: 300;
-  font-style: italic;
-}
-
-@font-face {
-  font-family: "Helvetica Neue";
-  src: url("./HelveticaNeue/HelveticaNeue-Medium.otf") format("opentype");
-  font-weight: 500;
-  font-style: normal;
-}
-
-@font-face {
-  font-family: "Helvetica Neue";
-  src: url("./HelveticaNeue/HelveticaNeue-UltraLight.otf") format("opentype");
-  font-weight: 200;
-  font-style: normal;
-}
-
-@font-face {
-  font-family: "Helvetica Neue";
-  src: url("./HelveticaNeue/HelveticaNeue-UltraLightItalic.otf")
-    format("opentype");
-  font-weight: 200;
-  font-style: italic;
-}
-
-@font-face {
-  font-family: "Helvetica Neue Condensed";
-  src: url("./HelveticaNeue/HelveticaNeue-CondensedBold.otf") format("opentype");
-  font-weight: 700;
-  font-style: normal;
-}
-
-@font-face {
-  font-family: "Helvetica Neue Condensed";
-  src: url("./HelveticaNeue/HelveticaNeue-CondensedBlack.otf")
-    format("opentype");
-  font-weight: 900;
-  font-style: normal;
 }
 
 @font-face {
@@ -102,6 +135,34 @@
   font-family: "Times New Roman";
   src: url("./Times New Roman/Times New Roman -Bold Italic.ttf")
     format("truetype");
+  font-weight: 700;
+  font-style: italic;
+}
+
+@font-face {
+  font-family: "Verdana";
+  src: url("./Verdana/Verdana.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "Verdana";
+  src: url("./Verdana/Verdana - Italic.ttf") format("truetype");
+  font-weight: 400;
+  font-style: italic;
+}
+
+@font-face {
+  font-family: "Verdana";
+  src: url("./Verdana/Verdana - Bold.ttf") format("truetype");
+  font-weight: 700;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "Verdana";
+  src: url("./Verdana/Verdana -Bold Italic.ttf") format("truetype");
   font-weight: 700;
   font-style: italic;
 }
