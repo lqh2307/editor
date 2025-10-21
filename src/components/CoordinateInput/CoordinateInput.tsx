@@ -141,7 +141,7 @@ export const CoordinateInput = React.memo(
           flexDirection: "row",
           gap: "1rem",
           alignItems: "center",
-          flexGrow: 1,
+          width: "100%",
         }}
       >
         {icon && (
@@ -189,7 +189,7 @@ export const CoordinateInput = React.memo(
               flexDirection: "row",
               gap: "0.25rem",
               alignItems: "center",
-              flexGrow: 1,
+              width: "100%",
             }}
           >
             <TextField

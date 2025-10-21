@@ -219,19 +219,20 @@ export const KonvaFreeDrawing = React.memo(
 
         const prop: KonvaShapeProp = currentPropRef.current;
 
-        let scaleAbs: number;
+        let strokeWidth: number;
 
-        if (
-          Number(scaleXAbs.toPrecision(9)) >= 1 &&
-          Number(scaleYAbs.toPrecision(9)) >= 1
-        ) {
-          scaleAbs = scaleXAbs > scaleYAbs ? scaleXAbs : scaleYAbs;
+        if (scaleXAbs.toPrecision(5) === scaleYAbs.toPrecision(5)) {
+          strokeWidth = Math.round(prop.shapeOption.strokeWidth * scaleXAbs);
+
+          if (strokeWidth < 1) {
+            strokeWidth = 1;
+          }
         } else {
-          scaleAbs = scaleXAbs < scaleYAbs ? scaleXAbs : scaleYAbs;
+          strokeWidth = prop.shapeOption.strokeWidth;
         }
 
         Object.assign(prop.shapeOption, {
-          strokeWidth: Math.round(prop.shapeOption.strokeWidth * scaleAbs),
+          strokeWidth: strokeWidth,
           rotation: node.rotation(),
           scaleX: newScaleX,
           scaleY: newScaleY,

@@ -183,28 +183,32 @@ export const KonvaArrow = React.memo(
 
         const prop: KonvaShapeProp = currentPropRef.current;
 
-        let scaleAbs: number;
+        let strokeWidth: number;
 
-        if (
-          Number(scaleXAbs.toPrecision(9)) >= 1 &&
-          Number(scaleYAbs.toPrecision(9)) >= 1
-        ) {
-          scaleAbs = scaleXAbs > scaleYAbs ? scaleXAbs : scaleYAbs;
+        if (scaleXAbs.toPrecision(5) === scaleYAbs.toPrecision(5)) {
+          strokeWidth = Math.round(prop.shapeOption.strokeWidth * scaleXAbs);
+
+          if (strokeWidth < 1) {
+            strokeWidth = 1;
+          }
         } else {
-          scaleAbs = scaleXAbs < scaleYAbs ? scaleXAbs : scaleYAbs;
+          strokeWidth = prop.shapeOption.strokeWidth;
         }
 
         Object.assign(prop.shapeOption, {
+          strokeWidth: strokeWidth,
           pointerLength: Math.round(prop.shapeOption.pointerLength * scaleXAbs),
           pointerWidth: Math.round(prop.shapeOption.pointerWidth * scaleYAbs),
-          points: prop.shapeOption.points.map((point, idx) =>
-            idx % 2 === 0 ? point * scaleXAbs : point * scaleYAbs
-          ),
           rotation: node.rotation(),
           scaleX: newScaleX,
           scaleY: newScaleY,
           x: node.x(),
           y: node.y(),
+        });
+
+        prop.shapeOption.points.forEach((point, idx) => {
+          prop.shapeOption.points[idx] =
+            idx % 2 === 0 ? point * scaleXAbs : point * scaleYAbs;
         });
 
         // Call callback function

@@ -702,12 +702,15 @@
     "close": {
       "title": "Close (Ctrl + W)",
       "children": {
-        "notification": {
-          "title": "Notification",
-          "content": "Confirm close?"
+        "close": {
+          "title": "Close"
         }
       },
       "common": {
+        "notification": {
+          "title": "Notification",
+          "content": "Confirm close?"
+        },
         "button": {
           "close": "Close",
           "confirm": "Confirm",
@@ -723,6 +726,17 @@
         },
         "logout": {
           "title": "Logout"
+        }
+      },
+      "common": {
+        "notification": {
+          "title": "Notification",
+          "content": "Confirm logout?"
+        },
+        "button": {
+          "close": "Close",
+          "confirm": "Confirm",
+          "cancel": "Cancel"
         }
       }
     }

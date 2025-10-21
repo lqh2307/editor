@@ -203,6 +203,7 @@ export const ToolbarHelp = React.memo((): React.JSX.Element => {
                 (_, idx) => {
                   return (
                     <Typography
+                      key={idx}
                       sx={{ marginLeft: "1rem", fontSize: 12, fontWeight: 350 }}
                     >
                       {t(
@@ -223,6 +224,7 @@ export const ToolbarHelp = React.memo((): React.JSX.Element => {
                 (_, idx) => {
                   return (
                     <Typography
+                      key={idx}
                       sx={{ marginLeft: "1rem", fontSize: 12, fontWeight: 350 }}
                     >
                       {t(
@@ -243,6 +245,7 @@ export const ToolbarHelp = React.memo((): React.JSX.Element => {
                 (_, idx) => {
                   return (
                     <Typography
+                      key={idx}
                       sx={{ marginLeft: "1rem", fontSize: 12, fontWeight: 350 }}
                     >
                       {t(

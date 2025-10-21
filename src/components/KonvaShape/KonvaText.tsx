@@ -214,11 +214,20 @@ export const KonvaText = React.memo(
           textArea.style.height = `${newHeight}px`;
         }
 
+        let fontSize: number;
+
+        if (scaleXAbs.toPrecision(5) === scaleYAbs.toPrecision(5)) {
+          fontSize = Math.round(prop.shapeOption.fontSize * scaleXAbs);
+
+          if (fontSize < 1) {
+            fontSize = 1;
+          }
+        } else {
+          fontSize = prop.shapeOption.fontSize;
+        }
+
         Object.assign(prop.shapeOption, {
-          fontSize:
-            scaleXAbs.toPrecision(9) === scaleYAbs.toPrecision(9)
-              ? Math.round(prop.shapeOption.fontSize * scaleXAbs)
-              : prop.shapeOption.fontSize,
+          fontSize: fontSize,
           width: Math.round(prop.shapeOption.width * scaleXAbs),
           height: newHeight,
           rotation: node.rotation(),

@@ -183,15 +183,30 @@ export const KonvaLine = React.memo(
 
         const prop: KonvaShapeProp = currentPropRef.current;
 
+        let strokeWidth: number;
+
+        if (scaleXAbs.toPrecision(5) === scaleYAbs.toPrecision(5)) {
+          strokeWidth = Math.round(prop.shapeOption.strokeWidth * scaleXAbs);
+
+          if (strokeWidth < 1) {
+            strokeWidth = 1;
+          }
+        } else {
+          strokeWidth = prop.shapeOption.strokeWidth;
+        }
+
         Object.assign(prop.shapeOption, {
-          points: prop.shapeOption.points.map((point, idx) =>
-            idx % 2 === 0 ? point * scaleXAbs : point * scaleYAbs
-          ),
+          strokeWidth: strokeWidth,
           rotation: node.rotation(),
           scaleX: newScaleX,
           scaleY: newScaleY,
           x: node.x(),
           y: node.y(),
+        });
+
+        prop.shapeOption.points.forEach((point, idx) => {
+          prop.shapeOption.points[idx] =
+            idx % 2 === 0 ? point * scaleXAbs : point * scaleYAbs;
         });
 
         // Call callback function

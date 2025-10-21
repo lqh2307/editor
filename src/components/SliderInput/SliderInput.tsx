@@ -56,7 +56,7 @@ export const SliderInput = React.memo(
           flexDirection: "row",
           gap: "1rem",
           alignItems: "center",
-          flexGrow: 1,
+          width: "100%",
         }}
       >
         {icon && (

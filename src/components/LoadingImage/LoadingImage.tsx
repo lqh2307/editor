@@ -30,6 +30,8 @@ export const LoadingImage = React.memo(
           display: display,
           justifyContent: "center",
           alignItems: "center",
+          width: "100%",
+          height: "100%",
           ...prop,
           ...(sx ?? {}),
         }}

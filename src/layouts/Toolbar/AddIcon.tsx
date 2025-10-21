@@ -5,6 +5,7 @@ import { KonvaIcon, KonvaDragDrop } from "../../types/Konva";
 import { PopperButton } from "../../components/PopperButton";
 import { InsertEmoticonTwoTone } from "@mui/icons-material";
 import { createPathsFromSVG } from "../../utils/Shapes";
+import { abortRequest } from "../../utils/Request";
 import { CellComponentProps } from "react-window";
 import { useTranslation } from "react-i18next";
 import { IconInfo, ItemInfo } from "./Types";
@@ -58,8 +59,6 @@ export const ToolbarAddIcon = React.memo((): React.JSX.Element => {
     icons: [],
   });
 
-  const [iconInfo, setIconInfo] = React.useState<IconInfo>(iconInitRef.current);
-
   const iconConfigRef = React.useRef<ItemInfo>({
     renderColumn: 4,
     renderRow: 2,
@@ -68,12 +67,26 @@ export const ToolbarAddIcon = React.memo((): React.JSX.Element => {
     itemHeight: 32,
   });
 
+  const [iconInfo, setIconInfo] = React.useState<IconInfo>(iconInitRef.current);
+
+  const fetchIconControllerRef = React.useRef<AbortController>(undefined);
+
   const fetchIconHandler = React.useCallback(async (): Promise<void> => {
+    if (iconInfo.icons?.length) {
+      return;
+    }
+
     try {
       setIconInfo((prev) => ({
         ...prev,
         isLoading: true,
       }));
+
+      // Cancel previous request
+      fetchIconControllerRef.current = abortRequest(
+        fetchIconControllerRef.current,
+        true
+      );
 
       const response: AxiosResponse = await getIcons({});
 
@@ -89,7 +102,7 @@ export const ToolbarAddIcon = React.memo((): React.JSX.Element => {
         "error"
       );
     }
-  }, [updateSnackbarAlert, t]);
+  }, [iconInfo.icons, updateSnackbarAlert, t]);
 
   const IconCell = React.useCallback(
     (prop: CellComponentProps): React.JSX.Element => {

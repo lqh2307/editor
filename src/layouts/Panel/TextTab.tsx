@@ -1,12 +1,16 @@
 import { SelectInput, SelectInputOption } from "../../components/SelectInput";
+import { useShapesContext, useStageContext } from "../../contexts";
 import { useDebounceHotKey } from "../../hooks/useDebounceHotKey";
 import { TooltipButton } from "../../components/TooltipButton";
 import { NumberInput } from "../../components/NumberInput";
-import { useShapesContext } from "../../contexts";
-import { textFontFamilies } from "../../configs";
+import { abortRequest } from "../../utils/Request";
+import { TextFontFamily } from "../../types/Text";
 import { useTranslation } from "react-i18next";
 import { fixNumber } from "../../utils/Number";
+import { getFonts } from "../../apis/font";
+import { AxiosResponse } from "axios";
 import { TabPanel } from "@mui/lab";
+import { FontInfo } from "./Types";
 import React from "react";
 import {
   FormatStrikethroughTwoTone,
@@ -31,6 +35,8 @@ import {
 
 export const PanelTextTab = React.memo((): React.JSX.Element => {
   const { t } = useTranslation();
+
+  const { updateSnackbarAlert } = useStageContext();
 
   const { selectedShape, updateShape } = useShapesContext();
 
@@ -82,19 +88,6 @@ export const PanelTextTab = React.memo((): React.JSX.Element => {
       },
     }),
     [updateShape, selectedShape.type]
-  );
-
-  const textFontFamiliesRef = React.useRef<SelectInputOption[]>(
-    textFontFamilies.map((item) => ({
-      title: item.name,
-      value: item.name,
-      menuItemProp: {
-        sx: {
-          fontFamily: item.name,
-          fontSize: 12,
-        },
-      },
-    }))
   );
 
   const changeTextFontItalicHandler = React.useCallback((): void => {
@@ -152,6 +145,61 @@ export const PanelTextTab = React.memo((): React.JSX.Element => {
     }),
     [updateShape, selectedShape.type, selectedShape.textDecoration]
   );
+
+  const fontInitRef = React.useRef<FontInfo>({
+    isLoading: false,
+    fonts: [],
+  });
+
+  const [fontInfo, setFontInfo] = React.useState<FontInfo>(fontInitRef.current);
+
+  const fetchFontControllerRef = React.useRef<AbortController>(undefined);
+
+  const fetchFontHandler = React.useCallback(async (): Promise<void> => {
+    if (fontInfo.fonts?.length) {
+      return;
+    }
+
+    try {
+      setFontInfo((prev) => ({
+        ...prev,
+        isLoading: true,
+      }));
+
+      // Cancel previous request
+      fetchFontControllerRef.current = abortRequest(
+        fetchFontControllerRef.current,
+        true
+      );
+
+      const response: AxiosResponse = await getFonts({});
+
+      setFontInfo({
+        isLoading: false,
+        fonts: (response.data as TextFontFamily[]).map((item) => ({
+          title: item.name,
+          value: item.name,
+          menuItemProp: {
+            sx: {
+              fontFamily: item.name,
+              fontSize: 12,
+            },
+          },
+        })) as SelectInputOption[],
+      });
+    } catch (error) {
+      setFontInfo(fontInitRef.current);
+
+      updateSnackbarAlert(
+        `${t("panel.text.common.snackBarAlert.error")} ${error}`,
+        "error"
+      );
+    }
+  }, [fontInfo.fonts, updateSnackbarAlert, t]);
+
+  React.useEffect(() => {
+    fetchFontHandler();
+  }, []);
 
   useDebounceHotKey({
     keys: ["ctrl+b", "cmd+b"],
@@ -273,7 +321,7 @@ export const PanelTextTab = React.memo((): React.JSX.Element => {
           }}
         >
           <SelectInput
-            options={textFontFamiliesRef.current}
+            options={fontInfo.fonts}
             value={selectedShape.fontFamily}
             onChange={textHandler.changeFontFamily}
             label={t("panel.text.children.font.children.font.title")}

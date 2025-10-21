@@ -63,7 +63,7 @@ export const TooltipSwitch = React.memo(
           flexDirection: "row",
           gap: "0.5rem",
           alignItems: "center",
-          flexGrow: 1,
+          width: "100%",
         }}
       >
         <Tooltip title={title}>

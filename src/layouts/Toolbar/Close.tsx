@@ -14,18 +14,18 @@ export const ToolbarClose = React.memo((): React.JSX.Element => {
 
   const { updateSelectedIds } = useShapesContext();
 
-  const [isSettingOpen, setIsSettingOpen] = React.useState<boolean>(false);
+  const [isCloseOpen, setIsCloseOpen] = React.useState<boolean>(false);
 
-  const handler = React.useMemo(() => {
+  const closeHandler = React.useMemo(() => {
     return {
       open: (): void => {
-        setIsSettingOpen(true);
+        setIsCloseOpen(true);
       },
       cancel: (): void => {
-        setIsSettingOpen(false);
+        setIsCloseOpen(false);
       },
       confirm: (): void => {
-        setIsSettingOpen(() => {
+        setIsCloseOpen(() => {
           close();
 
           return false;
@@ -36,7 +36,7 @@ export const ToolbarClose = React.memo((): React.JSX.Element => {
           return;
         }
 
-        setIsSettingOpen(false);
+        setIsCloseOpen(false);
       },
     };
   }, []);
@@ -53,7 +53,7 @@ export const ToolbarClose = React.memo((): React.JSX.Element => {
     });
   }, [updateSelectedIds, setFreeDrawingMode]);
 
-  const dialogTitle: React.JSX.Element =
+  const closeDialogTitle: React.JSX.Element =
     React.useMemo((): React.JSX.Element => {
       return (
         <Box
@@ -63,10 +63,10 @@ export const ToolbarClose = React.memo((): React.JSX.Element => {
             alignItems: "center",
           }}
         >
-          {t("toolBar.close.children.notification.title")}
+          {t("toolBar.close.children.close.title")}
 
           <TooltipButton
-            onClick={handler.cancel}
+            onClick={closeHandler.cancel}
             icon={<CloseTwoTone fontSize="small" />}
             color={"error"}
             title={t("toolBar.close.common.button.close")}
@@ -75,7 +75,7 @@ export const ToolbarClose = React.memo((): React.JSX.Element => {
       );
     }, [t]);
 
-  const dialogContent: React.JSX.Element =
+  const closeDialogContent: React.JSX.Element =
     React.useMemo((): React.JSX.Element => {
       return (
         <Box
@@ -88,25 +88,25 @@ export const ToolbarClose = React.memo((): React.JSX.Element => {
           <Divider />
 
           <Typography sx={{ fontSize: 12 }}>
-            {t("toolBar.close.children.notification.content")}
+            {t("toolBar.close.common.notification.content")}
           </Typography>
         </Box>
       );
     }, [t]);
 
-  const dialogAction: React.JSX.Element =
+  const closeDialogAction: React.JSX.Element =
     React.useMemo((): React.JSX.Element => {
       return (
         <>
           <TooltipButton
-            onClick={handler.cancel}
+            onClick={closeHandler.cancel}
             title={t("toolBar.close.common.button.cancel")}
           >
             {t("toolBar.close.common.button.cancel")}
           </TooltipButton>
 
           <TooltipButton
-            onClick={handler.confirm}
+            onClick={closeHandler.confirm}
             title={t("toolBar.close.common.button.confirm")}
           >
             {t("toolBar.close.common.button.confirm")}
@@ -130,9 +130,9 @@ export const ToolbarClose = React.memo((): React.JSX.Element => {
     callback: (e) => {
       e.preventDefault();
 
-      handler.open();
+      closeHandler.open();
     },
-    deps: [handler.open],
+    deps: [closeHandler.open],
   });
 
   return (
@@ -142,18 +142,18 @@ export const ToolbarClose = React.memo((): React.JSX.Element => {
         <TooltipButton
           icon={<CloseTwoTone />}
           title={t("toolBar.close.title")}
-          onClick={handler.open}
+          onClick={closeHandler.open}
           color={"error"}
         />
       </ButtonGroup>
 
       {/* Close Dialog */}
       <BasicDialog
-        open={isSettingOpen}
-        onClose={handler.onClose}
-        dialogTitle={dialogTitle}
-        dialogContent={dialogContent}
-        dialogAction={dialogAction}
+        open={isCloseOpen}
+        onClose={closeHandler.onClose}
+        dialogTitle={closeDialogTitle}
+        dialogContent={closeDialogContent}
+        dialogAction={closeDialogAction}
       />
     </>
   );

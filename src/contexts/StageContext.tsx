@@ -565,8 +565,8 @@ export function StageProvider(prop: StageProviderProp): React.JSX.Element {
               cornerRadius: 5,
               height: 8,
               offsetY: 4,
-              width: 40,
-              offsetX: 20,
+              width: 20,
+              offsetX: 10,
             });
           } else if (
             anchor.hasName("middle-left") ||
@@ -577,8 +577,8 @@ export function StageProvider(prop: StageProviderProp): React.JSX.Element {
               stroke: "#ff0000",
               strokeWidth: 1,
               cornerRadius: 5,
-              height: 40,
-              offsetY: 20,
+              height: 20,
+              offsetY: 10,
               width: 8,
               offsetX: 4,
             });
@@ -588,10 +588,10 @@ export function StageProvider(prop: StageProviderProp): React.JSX.Element {
               stroke: "#ff0000",
               strokeWidth: 1.5,
               cornerRadius: 10,
-              height: 20,
-              offsetY: 10,
-              width: 20,
-              offsetX: 10,
+              height: 15,
+              offsetY: 7.5,
+              width: 15,
+              offsetX: 7.5,
             });
           } else {
             anchor.setAttrs({

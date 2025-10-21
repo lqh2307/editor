@@ -5,5 +5,4 @@ export const IMAGE_PROCESS_URL: string =
 export const IMAGE_STORAGE_URL: string =
   (window as any).IMAGE_STORAGE_URL || "http://localhost:8001";
 
-export * from "./textFontFamilies";
 export * from "./import-schema";

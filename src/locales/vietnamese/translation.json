@@ -702,12 +702,15 @@
     "close": {
       "title": "Đóng (Ctrl + W)",
       "children": {
-        "notification": {
-          "title": "Thông báo",
-          "content": "Xác nhận đóng?"
+        "close": {
+          "title": "Đóng"
         }
       },
       "common": {
+        "notification": {
+          "title": "Thông báo",
+          "content": "Xác nhận đóng?"
+        },
         "button": {
           "close": "Đóng",
           "confirm": "Xác nhận",
@@ -723,6 +726,17 @@
         },
         "logout": {
           "title": "Đăng xuất"
+        }
+      },
+      "common": {
+        "notification": {
+          "title": "Thông báo",
+          "content": "Xác nhận đăng xuất?"
+        },
+        "button": {
+          "close": "Đóng",
+          "confirm": "Xác nhận",
+          "cancel": "Hủy"
         }
       }
     }
