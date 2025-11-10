@@ -44,6 +44,8 @@ export const KonvaConvexPolygon = React.memo(
       node.setAttrs({
         ...prop.shapeOption,
         draggable: prop.isSelected,
+        sides: prop.shapeOption.sides,
+        radius: prop.shapeOption.radius,
         fill: parseHexToRGBAString(
           prop.shapeOption.fill as string,
           prop.shapeOption.fillOpacity

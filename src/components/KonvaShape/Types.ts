@@ -1,58 +1,56 @@
 import { Size } from "../../types/Common";
 import Konva from "konva";
 
-export type KonvaShape = Partial<
-  Konva.ImageConfig &
-    Konva.CircleConfig &
-    Konva.EllipseConfig &
-    Konva.RectConfig &
-    Konva.LineConfig &
-    Konva.TextConfig &
-    Konva.ArrowConfig &
-    Konva.RegularPolygonConfig &
-    Konva.StarConfig &
-    Konva.RingConfig &
-    Konva.WedgeConfig
-> & {
-  // Extend
-  type?: KonvaShapeType;
-  box?: KonvaShapeBox;
+export type KonvaShape = Partial<Konva.ImageConfig> &
+  Partial<Konva.CircleConfig> &
+  Partial<Konva.EllipseConfig> &
+  Partial<Konva.RectConfig> &
+  Partial<Konva.LineConfig> &
+  Partial<Konva.TextConfig> &
+  Partial<Konva.ArrowConfig> &
+  Partial<Konva.RegularPolygonConfig> &
+  Partial<Konva.StarConfig> &
+  Partial<Konva.RingConfig> &
+  Partial<Konva.WedgeConfig> & {
+    // Extend
+    type?: KonvaShapeType;
+    box?: KonvaShapeBox;
 
-  // Filter
-  brightness?: number;
-  contrast?: number;
-  blurRadius?: number;
-  enhance?: number;
-  noise?: number;
-  pixelSize?: number;
-  grayscale?: boolean;
-  invert?: boolean;
-  sepia?: boolean;
-  solarize?: boolean;
+    // Filter
+    brightness?: number;
+    contrast?: number;
+    blurRadius?: number;
+    enhance?: number;
+    noise?: number;
+    pixelSize?: number;
+    grayscale?: boolean;
+    invert?: boolean;
+    sepia?: boolean;
+    solarize?: boolean;
 
-  // Free drawing
-  lines?: KonvaFreeDrawingLine[];
+    // Free drawing
+    lines?: KonvaFreeDrawingLine[];
 
-  // Path
-  paths?: Konva.PathConfig[];
+    // Path
+    paths?: Konva.PathConfig[];
 
-  // Image/Video
-  imageURL?: string;
-  imageBlob?: Blob;
-  resolution?: Size;
-  isPlay?: boolean;
-  speed?: number;
-  volume?: number;
-  loop?: boolean;
-  inverse?: boolean;
+    // Image/Video
+    imageURL?: string;
+    imageBlob?: Blob;
+    resolution?: Size;
+    isPlay?: boolean;
+    speed?: number;
+    volume?: number;
+    loop?: boolean;
+    inverse?: boolean;
 
-  // Color
-  fillOpacity?: number;
-  strokeOpacity?: number;
+    // Color
+    fillOpacity?: number;
+    strokeOpacity?: number;
 
-  // Text
-  fontWeight?: string;
-};
+    // Text
+    fontWeight?: string;
+  };
 
 export type KonvaShapeType =
   | "image"

@@ -44,6 +44,8 @@ export const KonvaEllipse = React.memo(
       node.setAttrs({
         ...prop.shapeOption,
         draggable: prop.isSelected,
+        radiusX: prop.shapeOption.radiusX,
+        radiusY: prop.shapeOption.radiusY,
         fill: parseHexToRGBAString(
           prop.shapeOption.fill as string,
           prop.shapeOption.fillOpacity

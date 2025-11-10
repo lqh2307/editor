@@ -11,6 +11,7 @@ export const ImportFileButton = React.memo(
     delay = 200,
     onFileLoaded,
     acceptMimeType,
+    titlePlacement = "bottom",
     sx,
     ...props
   }: ImportFileButtonProp): React.JSX.Element => {
@@ -52,7 +53,7 @@ export const ImportFileButton = React.memo(
           display: display,
         }}
       >
-        <Tooltip title={title}>
+        <Tooltip title={title} placement={titlePlacement}>
           <Box>
             <Button
               fullWidth={true}

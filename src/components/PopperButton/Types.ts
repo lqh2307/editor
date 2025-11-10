@@ -1,8 +1,9 @@
-import { ButtonProps, PopperPlacementType } from "@mui/material";
+import { ButtonProps, PopperPlacementType, TooltipProps } from "@mui/material";
 import React from "react";
 
 export type PopperButtonProp = Omit<ButtonProps, "onClick"> & {
   title?: string;
+  titlePlacement?: TooltipProps["placement"];
   icon?: React.JSX.Element;
   display?: string;
 

@@ -19,6 +19,7 @@ export const TooltipButton = React.memo(
     isLoading,
     progress = 0,
     isDisplayProgress,
+    titlePlacement = "bottom",
     children,
     sx,
     ...props
@@ -50,6 +51,7 @@ export const TooltipButton = React.memo(
           display: display,
         }}
         title={title}
+        placement={titlePlacement}
       >
         <Box>
           <Button

@@ -49,7 +49,10 @@ export const ToolbarAddTemplate = React.memo((): React.JSX.Element => {
       }));
 
       // Cancel previous request
-      fetchTemplateControllerRef.current = abortRequest(fetchTemplateControllerRef.current, true)
+      fetchTemplateControllerRef.current = abortRequest(
+        fetchTemplateControllerRef.current,
+        true
+      );
 
       // Call API to search report
       const response: AxiosResponse = await searchReport({

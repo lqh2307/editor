@@ -11,6 +11,7 @@ export const PopperButton = React.memo(
     placement = "bottom-start",
     delay = 200,
     children,
+    titlePlacement = "bottom",
     onClick,
     sx,
     ...props
@@ -25,7 +26,7 @@ export const PopperButton = React.memo(
         onClick?.(target?.value);
       },
       delay,
-      []
+      [onClick]
     );
 
     const handleClick = React.useCallback(
@@ -37,7 +38,7 @@ export const PopperButton = React.memo(
         } else {
           setAnchorEl((prev) => (prev ? undefined : target));
 
-          onClick?.(e.currentTarget?.value);
+          onClick?.(target?.value);
         }
       },
       [delay, debouncedEmit, onClick]
@@ -54,7 +55,7 @@ export const PopperButton = React.memo(
             display: display,
           }}
         >
-          <Tooltip title={title}>
+          <Tooltip title={title} placement={titlePlacement}>
             <Box>
               <Button
                 disabled={false}

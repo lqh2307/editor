@@ -1,8 +1,15 @@
-import { BBox, Point, TileScheme, TileSize, Unit } from "../../types/Common";
 import { WindowSize } from "../../types/Window";
 import { convertLength } from "../Utils";
 import { loadImageSrc } from "../Image";
 import { limitValue } from "../Number";
+import {
+  TileScheme,
+  TileSize,
+  Point,
+  BBox,
+  Size,
+  Unit,
+} from "../../types/Common";
 
 /**
  * Convert coordinates from EPSG:4326 (lon, lat) to EPSG:3857 (x, y in meters)
@@ -180,7 +187,7 @@ export async function calculateZoomLevels(
 ): Promise<{ minZoom: number; maxZoom: number }> {
   tileSize = tileSize || 256;
 
-  const [xRes, yRes]: [number, number] = await calculateResolution(
+  const [xRes, yRes]: Size = await calculateResolution(
     {
       bbox: bbox,
       width: width,
@@ -521,17 +528,17 @@ export function scaleToZoom(
  * Calculate resolution
  * @param {{ image: string, bbox: BBox, width: number, height: number }} input Input object
  * @param {Unit} unit unit
- * @returns {Promise<[number, number]>} [X resolution (m/pixel), Y resolution (m/pixel)]
+ * @returns {Promise<Size>} [X resolution (m/pixel), Y resolution (m/pixel)]
  */
 export async function calculateResolution(
   input: { image?: string; bbox: BBox; width: number; height: number },
   unit?: Unit
-): Promise<[number, number]> {
+): Promise<Size> {
   // Convert bbox from EPSG:4326 to EPSG:3857
   const [minX, minY]: Point = lonLat4326ToXY3857(input.bbox[0], input.bbox[1]);
   const [maxX, maxY]: Point = lonLat4326ToXY3857(input.bbox[2], input.bbox[3]);
 
-  let resolution: [number, number];
+  let resolution: Size;
 
   // Get origin image size
   if (input.image) {

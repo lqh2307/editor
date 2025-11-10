@@ -1,7 +1,4 @@
 stages:
-  - build
-  - test
-  - package
   - deploy
 
 debian-pack:
@@ -11,7 +8,7 @@ debian-pack:
   variables:
     GIT_SUBMODULE_STRATEGY: recursive
     SERVER_HOST: localhost
-    SERVER_PORT: 30000
+    SERVER_PORT: 6969
   script:
     - make release-debian
   when: always

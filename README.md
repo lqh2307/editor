@@ -66,3 +66,5 @@ This section has moved here: https://facebook.github.io/create-react-app/docs/de
 ### `yarn build` fails to minify
 
 This section has moved here: https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify
+
+### Run with nodejs runtime `PATH=./nodejs-22.20.0/bin:/usr/local/bin:/usr/bin:/bin <command>`

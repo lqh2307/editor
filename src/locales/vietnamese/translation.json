@@ -686,6 +686,15 @@
                 }
               }
             },
+            "comingSoonFeature": {
+              "title": "Tính năng sắp phát triển",
+              "children": {
+                "cropImage": {
+                  "title": "Cắt ảnh",
+                  "content": "Cho phép cắt ảnh."
+                }
+              }
+            },
             "license": {
               "title": "Bản quyền",
               "content": "Sản phẩm được phát triển và sở hữu bản quyền bởi Viettel HighTech."
@@ -974,19 +983,19 @@
       "title": "Sắp xếp",
       "children": {
         "layer": {
-          "title": "Lớp",
+          "title": "Xếp lớp",
           "children": {
             "toFront": {
-              "title": "Đưa đầu"
+              "title": "Trên cùng"
             },
             "toBack": {
-              "title": "Đưa ra sau"
+              "title": "Dưới cùng"
             },
             "bringForward": {
-              "title": "Đưa trên"
+              "title": "Đưa lên"
             },
             "sendBackward": {
-              "title": "Đưa xuống dưới"
+              "title": "Đưa xuống"
             }
           }
         },
@@ -1023,7 +1032,7 @@
           }
         },
         "flip": {
-          "title": "Lật",
+          "title": "Lật hình",
           "children": {
             "horizontal": {
               "title": "Ngang"

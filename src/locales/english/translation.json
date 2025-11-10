@@ -647,7 +647,7 @@
                     },
                     "freeDrawing": {
                       "title": "Free Drawing",
-                      "content": "Allows users to draw freely on the screen, suitable for sketching or quick creative work."
+                      "content": "Allows drawing freely on the screen, suitable for sketching or quick creative work."
                     }
                   }
                 },
@@ -683,6 +683,15 @@
                 "other": {
                   "title": "Other Features",
                   "content": "Changing background color, displaying alignment guides, toggling grid, and many other useful features."
+                }
+              }
+            },
+            "comingSoonFeature": {
+              "title": "Coming Soon Features",
+              "children": {
+                "cropImage": {
+                  "title": "Crop image",
+                  "content": "Allows cropping image."
                 }
               }
             },

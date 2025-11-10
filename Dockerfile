@@ -1,4 +1,4 @@
-ARG BUILDER_IMAGE=node:22.18.0-alpine
+ARG BUILDER_IMAGE=node:22.20.0-alpine
 ARG TARGET_IMAGE=nginx:1.29.1-alpine
 
 FROM ${BUILDER_IMAGE} AS builder
@@ -8,6 +8,7 @@ WORKDIR /app
 COPY . .
 
 RUN yarn
+
 RUN yarn build
 
 

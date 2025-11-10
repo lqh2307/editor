@@ -5,9 +5,7 @@
   "license": "MIT",
   "author": "Huy Le <lqh23072000@gmail.com>",
   "keywords": [
-    "editor",
-    "konva",
-    "konva-editor"
+    "editor"
   ],
   "private": true,
   "peerDependencies": {
@@ -15,26 +13,26 @@
     "react-dom": ">=19.0.0"
   },
   "dependencies": {
-    "@mui/icons-material": "7.3.4",
+    "@mui/icons-material": "7.3.5",
     "react-hotkeys-hook": "5.2.1",
     "@emotion/styled": "11.14.1",
     "react-konva-utils": "2.0.0",
     "@emotion/react": "11.14.0",
-    "@mui/lab": "7.0.1-beta.18",
-    "react-i18next": "16.1.0",
-    "react-konva": "19.0.10",
-    "@mui/material": "7.3.4",
-    "react-window": "2.2.1",
-    "maplibre-gl": "5.9.0",
+    "@mui/lab": "7.0.1-beta.19",
+    "react-i18next": "16.2.4",
+    "@mui/material": "7.3.5",
+    "react-konva": "19.2.0",
+    "react-window": "2.2.3",
+    "maplibre-gl": "5.12.0",
     "async-mutex": "0.5.0",
     "react-dom": "19.2.0",
     "form-data": "4.0.4",
-    "i18next": "25.6.0",
+    "i18next": "25.6.1",
     "lodash": "4.17.21",
     "svgpath": "2.6.0",
-    "axios": "1.12.2",
+    "axios": "1.13.2",
     "react": "19.2.0",
-    "konva": "10.0.2",
+    "konva": "10.0.8",
     "nanoid": "5.1.6",
     "mime": "4.1.0",
     "ajv": "8.17.1"
@@ -49,7 +47,7 @@
     "@types/nanoid": "3.0.0",
     "react-scripts": "5.0.1",
     "@types/axios": "0.14.4",
-    "@types/node": "24.8.1",
+    "@types/node": "24.10.0",
     "typescript": "5.9.3",
     "@types/ajv": "1.0.4",
     "prettier": "3.6.2"
@@ -57,7 +55,8 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "format": "prettier --write \"src/**/*.{ts,tsx,css}\""
   },
   "browserslist": {
     "production": [

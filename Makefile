@@ -3,24 +3,24 @@
 ### -----------------------
 
 # Common infos
-MODULE_NAME := editor
+MODULE_NAME := ms-fe-report
 MODULE_VERSION := $(shell git describe --tags)
 
 # Debian infos
-DEB_REGISTRY ?= deb.registry.vn
+DEB_REGISTRY ?= https://deb.registry.vn/app
 DEB_USER ?= admin
 DEB_PASSWORD ?= admin
 DEB_PACKAGE ?= ${MODULE_NAME}
 DEB_VERSION ?= ${MODULE_VERSION}
 DEB_ARCHITECTURE ?= amd64
-DEB_MAINTAINER ?= Huy Le <huylq23072000@gmail.com>
+DEB_MAINTAINER ?= Huy Le <huylq142@viettel.com.vn>
 DEB_PRE_DEPENDS ?= nginx
 DEB_DEPENDS ?=
 DEB_RECOMMENDS ?=
 DEB_DESCRIPTION ?= Service for managing ${DEB_PACKAGE}
 
 # Docker infos
-DOCKER_REGISTRY ?= docker.registry.vn
+DOCKER_REGISTRY ?= lqh2307
 DOCKER_PROJECT ?= app
 DOCKER_USER ?= admin
 DOCKER_PASSWORD ?= admin

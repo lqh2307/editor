@@ -1,8 +1,9 @@
-import { ButtonProps } from "@mui/material/Button";
+import { ButtonProps, TooltipProps } from "@mui/material";
 import React from "react";
 
 export type TooltipButtonProp = Omit<ButtonProps, "onClick"> & {
   title?: string;
+  titlePlacement?: TooltipProps["placement"];
   icon?: React.JSX.Element;
   display?: string;
 

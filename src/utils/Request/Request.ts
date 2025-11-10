@@ -4,7 +4,10 @@
  * @param {boolean} create Create new controller
  * @returns {AbortController}
  */
-export function abortRequest(controller: AbortController, create?: boolean): AbortController {
+export function abortRequest(
+  controller: AbortController,
+  create?: boolean
+): AbortController {
   try {
     if (controller) {
       controller.abort();

@@ -57,7 +57,10 @@ export const ToolbarAddComponent = React.memo((): React.JSX.Element => {
       }));
 
       // Cancel previous request
-      fetchComponentControllerRef.current = abortRequest(fetchComponentControllerRef.current, true)
+      fetchComponentControllerRef.current = abortRequest(
+        fetchComponentControllerRef.current,
+        true
+      );
 
       // Call API to search report
       const response: AxiosResponse = await searchReport({

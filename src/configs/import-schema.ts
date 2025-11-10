@@ -3,5 +3,5 @@ export const importSchema: object = {
   items: {
     type: "object",
   },
-  minItems: 1
+  minItems: 1,
 };

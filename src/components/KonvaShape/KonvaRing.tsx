@@ -44,6 +44,8 @@ export const KonvaRing = React.memo(
       node.setAttrs({
         ...prop.shapeOption,
         draggable: prop.isSelected,
+        innerRadius: prop.shapeOption.innerRadius,
+        outerRadius: prop.shapeOption.outerRadius,
         fill: parseHexToRGBAString(
           prop.shapeOption.fill as string,
           prop.shapeOption.fillOpacity

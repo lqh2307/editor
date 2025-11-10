@@ -505,6 +505,40 @@ export const ToolbarHelp = React.memo((): React.JSX.Element => {
             </AccordionDetails>
           </Accordion>
 
+          {/* Coming Soon Feature */}
+          <Accordion>
+            <AccordionSummary expandIcon={<ExpandMoreTwoTone />}>
+              <Typography sx={{ fontSize: 12, textTransform: "uppercase" }}>
+                {t(
+                  "toolBar.help.children.about.children.comingSoonFeature.title"
+                )}
+              </Typography>
+            </AccordionSummary>
+
+            <AccordionDetails
+              sx={{
+                display: "flex",
+                flexDirection: "column",
+                justifyContent: "center",
+                gap: "0.5rem",
+              }}
+            >
+              <Typography sx={{ fontSize: 12 }}>
+                {t(
+                  "toolBar.help.children.about.children.comingSoonFeature.children.cropImage.title"
+                )}
+              </Typography>
+
+              <Typography
+                sx={{ marginLeft: "1rem", fontSize: 12, fontWeight: 350 }}
+              >
+                {`${t(
+                  "toolBar.help.children.about.children.comingSoonFeature.children.cropImage.title"
+                )}: ${t("toolBar.help.children.about.children.comingSoonFeature.children.cropImage.content")}`}
+              </Typography>
+            </AccordionDetails>
+          </Accordion>
+
           {/* License */}
           <Accordion>
             <AccordionSummary expandIcon={<ExpandMoreTwoTone />}>

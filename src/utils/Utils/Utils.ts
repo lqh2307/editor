@@ -278,6 +278,35 @@ export function convertDEGToDMS(deg: number): DDMMSS {
 }
 
 /**
+ * Convert degree to degree, mins, second string
+ * @param {number} deg
+ * @return {string}
+ */
+export function convertDEGToDMSString(deg: number): string {
+  const normalized: number = normalize180(deg % 360);
+
+  const absolute: number = Math.abs(normalized);
+  let degree: number = Math.floor(absolute);
+  const minuteNotTruncated: number = (absolute - degree) * 60;
+  let minute: number = Math.floor(minuteNotTruncated);
+  let second: number = Math.round((minuteNotTruncated - minute) * 60);
+
+  if (second === 60) {
+    minute += 1;
+
+    second = 0;
+  }
+
+  if (minute === 60) {
+    degree += 1;
+
+    minute = 0;
+  }
+
+  return `${normalized >= 0 ? degree : -degree}° ${minute}' ${second}"`;
+}
+
+/**
  * Convert degree, mins, second to degree
  * @param {DDMMSS} dms
  * @return {number}
