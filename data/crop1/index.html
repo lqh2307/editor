@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Image Crop</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        overflow: hidden;
+      }
+
+      button {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 60px;
+        line-height: 30px;
+        z-index: 1;
+      }
+    </style>
+    <script src="./konva.min.js"></script>
+  </head>
+  <body>
+    <div id="container"></div>
+
+    <script src="./index.js"></script>
+
+    <button onclick="target?.cropReset()">Reset</button>
+  </body>
+</html>
+
