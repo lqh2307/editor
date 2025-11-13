@@ -915,6 +915,14 @@
               "title": "Blur"
             }
           }
+        },
+        "crop": {
+          "title": "Crop",
+          "children": {
+            "crop": {
+              "title": "Crop"
+            }
+          }
         }
       }
     },

@@ -915,6 +915,14 @@
               "title": "Mờ"
             }
           }
+        },
+        "crop": {
+          "title": "Cắt hình",
+          "children": {
+            "crop": {
+              "title": "Cắt"
+            }
+          }
         }
       }
     },

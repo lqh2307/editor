@@ -1,5 +1,6 @@
 import { SelectInput, SelectInputOption } from "../../components/SelectInput";
 import translation from "../../locales/english/translation.json";
+import { TooltipButton } from "../../components/TooltipButton";
 import { TooltipSwitch } from "../../components/TooltipSwitch";
 import { NumberInput } from "../../components/NumberInput";
 import { SliderInput } from "../../components/SliderInput";
@@ -17,6 +18,7 @@ import {
   RotateRightTwoTone,
   BorderColorTwoTone,
   ExpandMoreTwoTone,
+  CropRotateTwoTone,
   LineWeightTwoTone,
   PentagonTwoTone,
   OpacityTwoTone,
@@ -843,6 +845,31 @@ export const PanelStyleTab = React.memo((): React.JSX.Element => {
             max={100}
             marks={percentMarks}
             onChange={updateShapeHandler.changeShadowBlur}
+          />
+        </AccordionDetails>
+      </Accordion>
+
+      {/* Crop */}
+      <Accordion>
+        <AccordionSummary expandIcon={<ExpandMoreTwoTone />}>
+          <Typography sx={{ fontSize: 12, textTransform: "uppercase" }}>
+            {t("panel.style.children.crop.title")}
+          </Typography>
+        </AccordionSummary>
+
+        <AccordionDetails
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "center",
+            gap: "1rem",
+          }}
+        >
+          {/* Crop */}
+          <TooltipButton
+            icon={<CropRotateTwoTone fontSize={"small"} />}
+            title={t("panel.style.children.crop.children.crop.title")}
+            onClick={undefined}
           />
         </AccordionDetails>
       </Accordion>

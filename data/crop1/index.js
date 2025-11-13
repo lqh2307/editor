@@ -1,97 +1,104 @@
+const stage = new Konva.Stage({
+  container: "container",
+  width: window.innerWidth,
+  height: window.innerHeight,
+});
+
+const layer = new Konva.Layer();
+stage.add(layer);
+
+const cropTransformer = new Konva.Transformer({
+  id: "crop-transformer",
+  borderDash: [5, 5],
+  anchorSize: 21,
+  anchorCornerRadius: 11,
+  nodes: [],
+});
+
+const transformer = new Konva.Transformer({
+  id: "transformer",
+  nodes: [],
+});
+
+layer.add(cropTransformer, transformer);
+
+let target;
+
+stage.on("click", (e) => {
+  target = e?.target;
+
+  if (target === stage) {
+    if (!target?.isCroppingElement) {
+      transformer.nodes([]);
+
+      cropTransformer.nodes([]);
+    }
+  }
+});
+
 // --- Mixin ---
 function makeCroppableImage(image) {
   let cropElement = null;
   let cropImage = null;
-  let transformer = null;
-  let cropTransformer = null;
 
-  const setCropTransform = (value) => {
-    if (!cropElement) {
-      cropElement = new Konva.Shape();
-    }
+  const resizeStart = () => {
+    transformer.nodes([image]);
+    transformer.moveToTop();
+  };
+
+  const cropUpdate = () => {
+    const options = image
+      .getAbsoluteTransform()
+      .copy()
+      .invert()
+      .multiply(cropImage.getAbsoluteTransform())
+      .decompose();
 
     cropElement.setAttrs({
-      ...value,
+      ...options,
       offsetX: 0,
       offsetY: 0,
     });
   };
 
-  const cropEnd = () => {
-    if (!cropImage) {
-      return;
-    }
-
-    transformer?.destroy();
-    transformer = null;
-
-    cropTransformer?.destroy();
-    cropTransformer = null;
-
-    cropImage.remove();
-    cropImage = null;
-
-    image.off("dragmove", cropUpdate);
-    image.off("transform", resizeAndCropUpdate);
-
-    image.getLayer()?.draw();
-  };
-
-  const cropUpdate = () => {
-    setCropTransform(
-      image
-        .getAbsoluteTransform()
-        .copy()
-        .invert()
-        .multiply(cropImage.getAbsoluteTransform())
-        .decompose()
-    );
-
-    image.getLayer()?.draw();
-  };
-
-  const resize = () => {
+  const resizeAndCropUpdate = () => {
     image.setAttrs({
       width: image.width() * image.scaleX(),
       height: image.height() * image.scaleY(),
       scaleX: 1,
       scaleY: 1,
     });
-  };
 
-  const resizeAndCropUpdate = () => {
-    resize();
     cropUpdate();
   };
 
-  image.cropReset = () => {
-    if (cropImage) {
-      cropEnd();
+  cropEnd = () => {
+    if (!cropImage) {
+      return;
     }
 
-    cropElement = null;
+    cropImage.remove();
+    cropImage = null;
 
-    image.getLayer()?.draw();
+    image.off("dragmove", cropUpdate);
+    image.off("transform", resizeAndCropUpdate);
   };
 
-  const cropStart = () => {
-    image
-      .getStage()
-      ?.find("Transformer")
-      .forEach((tr) => tr.destroy());
-
+  image.cropStart = () => {
     if (cropImage) {
       return;
     }
 
     if (!cropElement) {
-      setCropTransform({
+      cropElement = new Konva.Shape({
         x: 0,
         y: 0,
         width: image.width(),
         height: image.height(),
         rotation: 0,
-      });
+        offsetX: 0,
+        offsetY: 0,
+      }); // “holder” transform
     }
 
     const layer = image.getLayer();
@@ -120,18 +127,8 @@ function makeCroppableImage(image) {
 
     layer.add(cropImage);
 
-    cropTransformer = new Konva.Transformer({
-      borderDash: [5, 5],
-      anchorSize: 21,
-      anchorCornerRadius: 11,
-      nodes: [cropImage],
-    });
-
-    transformer = new Konva.Transformer({
-      nodes: [image],
-    });
-
-    layer.add(cropTransformer, transformer);
+    cropTransformer.nodes([cropImage]);
+    cropTransformer.moveToTop();
 
     cropImage.on("dragmove", cropUpdate);
     cropImage.on("transform", cropUpdate);
@@ -139,20 +136,29 @@ function makeCroppableImage(image) {
     image.on("transform", resizeAndCropUpdate);
 
     const endOnOutside = (e) => {
-      if (e.target !== cropImage && e.target !== image) {
+      const target = e?.target;
+
+      if (target instanceof Konva.Stage) {
         cropEnd();
 
-        image.getStage()?.off("click tap", endOnOutside);
+        target?.off("click", endOnOutside);
       }
     };
 
-    image.getStage()?.on("click tap", endOnOutside);
-
-    layer.draw();
+    image.getStage()?.on("click", endOnOutside);
   };
 
-  image.on("dblclick", cropStart);
+  image.cropReset = () => {
+    if (cropImage) {
+      cropEnd();
+    }
 
+    cropElement = null;
+  };
+
+  image.on("click", resizeStart);
+
+  // Overwrite sceneFunc
   image.setAttr("sceneFunc", (context) => {
     let width = image.width();
     let height = image.height();
@@ -179,26 +185,23 @@ function makeCroppableImage(image) {
 
       const cropWidth = image.cropWidth();
       const cropHeight = image.cropHeight();
-      let params;
 
-      if (cropWidth && cropHeight) {
-        params = [
-          img,
-          image.cropX(),
-          image.cropY(),
-          cropWidth,
-          cropHeight,
-          0,
-          0,
-          width,
-          height,
-        ];
-      } else {
-        params = [img, 0, 0, width, height];
-      }
-
-      // draw
-      context.drawImage.apply(context, params);
+      context.drawImage.apply(
+        context,
+        cropWidth && cropHeight
+          ? [
+            img,
+            image.cropX(),
+            image.cropY(),
+            cropWidth,
+            cropHeight,
+            0,
+            0,
+            width,
+            height,
+          ]
+          : [img, 0, 0, width, height]
+      );
 
       if (cropElement) {
         context.restore();
@@ -213,15 +216,6 @@ function makeCroppableImage(image) {
 }
 
 // --- Demo ---
-const stage = new Konva.Stage({
-  container: "container",
-  width: window.innerWidth,
-  height: window.innerHeight,
-});
-
-const layer = new Konva.Layer();
-stage.add(layer);
-
 Konva.Image.fromURL("./image.png", (img) => {
   img.setAttrs({
     y: 50,
@@ -234,30 +228,4 @@ Konva.Image.fromURL("./image.png", (img) => {
   makeCroppableImage(img);
 
   layer.add(img);
-  layer.draw();
-});
-
-let transformer;
-let target;
-
-stage.on("click tap", (e) => {
-  if (transformer) {
-    transformer.destroy();
-    transformer = null;
-  }
-
-  target = e?.target;
-
-  if (target === stage || target?.isCroppingElement) {
-    layer.draw();
-
-    return;
-  }
-
-  transformer = new Konva.Transformer({
-    nodes: [e.target],
-  });
-
-  layer.add(transformer);
-  layer.draw();
 });
