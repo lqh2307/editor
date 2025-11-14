@@ -10,8 +10,8 @@ stage.add(layer);
 const cropTransformer = new Konva.Transformer({
   id: "crop-transformer",
   borderDash: [5, 5],
-  anchorSize: 21,
-  anchorCornerRadius: 11,
+  anchorSize: 20,
+  anchorCornerRadius: 10,
   nodes: [],
 });
 
@@ -22,31 +22,14 @@ const transformer = new Konva.Transformer({
 
 layer.add(cropTransformer, transformer);
 
-let target;
-
-stage.on("click", (e) => {
-  target = e?.target;
-
-  if (target === stage) {
-    if (!target?.isCroppingElement) {
-      transformer.nodes([]);
-
-      cropTransformer.nodes([]);
-    }
-  }
-});
+let nodeTarget;
 
 // --- Mixin ---
-function makeCroppableImage(image) {
+function makeCroppableImage(image, cropTransformer, transformer) {
   let cropElement = null;
   let cropImage = null;
 
-  const resizeStart = () => {
-    transformer.nodes([image]);
-    transformer.moveToTop();
-  };
-
-  const cropUpdate = () => {
+  const updateCropElement = () => {
     const options = image
       .getAbsoluteTransform()
       .copy()
@@ -54,14 +37,10 @@ function makeCroppableImage(image) {
       .multiply(cropImage.getAbsoluteTransform())
       .decompose();
 
-    cropElement.setAttrs({
-      ...options,
-      offsetX: 0,
-      offsetY: 0,
-    });
+    cropElement.setAttrs(options);
   };
 
-  const resizeAndCropUpdate = () => {
+  const resizeAndUpdateCropElement = () => {
     image.setAttrs({
       width: image.width() * image.scaleX(),
       height: image.height() * image.scaleY(),
@@ -69,19 +48,29 @@ function makeCroppableImage(image) {
       scaleY: 1,
     });
 
-    cropUpdate();
+    updateCropElement();
   };
 
-  cropEnd = () => {
-    if (!cropImage) {
-      return;
+  image.resizeStart = () => {
+    transformer.nodes([image]);
+    transformer.moveToTop();
+
+    image.draggable(true);
+  };
+
+  image.resizeAndCropEnd = () => {
+    cropTransformer.nodes([]);
+    transformer.nodes([]);
+
+    image.draggable(false);
+
+    if (cropImage) {
+      cropImage.remove();
+      cropImage = null;
+
+      image.off("dragmove", updateCropElement);
+      image.off("transform", resizeAndUpdateCropElement);
     }
-
-    cropImage.remove();
-    cropImage = null;
-
-    image.off("dragmove", cropUpdate);
-    image.off("transform", resizeAndCropUpdate);
   };
 
   image.cropStart = () => {
@@ -91,78 +80,68 @@ function makeCroppableImage(image) {
 
     if (!cropElement) {
       cropElement = new Konva.Shape({
-        x: 0,
-        y: 0,
         width: image.width(),
         height: image.height(),
-        rotation: 0,
-        offsetX: 0,
-        offsetY: 0,
-      }); // “holder” transform
+        skewX: image.skewX(),
+        skewY: image.skewY(),
+      });
     }
 
     const layer = image.getLayer();
-    const transform = image.getAbsoluteTransform();
-    const transform2 = cropElement.getAbsoluteTransform();
-    const transform0 = layer.getAbsoluteTransform();
 
-    const options = transform0
+    const options = layer
+      .getAbsoluteTransform()
       .copy()
       .invert()
-      .multiply(transform) // * imageAbs
-      .multiply(transform2) // * cropElementAbs
-      .decompose(); // -> {x,y,rotation,scaleX,scaleY,...}
+      .multiply(image.getAbsoluteTransform())
+      .multiply(cropElement.getAbsoluteTransform())
+      .decompose();
 
     cropImage = new Konva.Image({
-      ...options,
       draggable: true,
       opacity: 0.5,
+      ...options,
       image: image.image(),
-      stroke: image.stroke(),
-      strokeWidth: image.strokeWidth(),
       width: cropElement.width(),
       height: cropElement.height(),
     });
-    cropImage.isCroppingElement = true;
 
     layer.add(cropImage);
 
     cropTransformer.nodes([cropImage]);
     cropTransformer.moveToTop();
 
-    cropImage.on("dragmove", cropUpdate);
-    cropImage.on("transform", cropUpdate);
-    image.on("dragmove", cropUpdate);
-    image.on("transform", resizeAndCropUpdate);
-
-    const endOnOutside = (e) => {
-      const target = e?.target;
-
-      if (target instanceof Konva.Stage) {
-        cropEnd();
-
-        target?.off("click", endOnOutside);
-      }
-    };
-
-    image.getStage()?.on("click", endOnOutside);
+    cropImage.on("dragmove", updateCropElement);
+    cropImage.on("transform", updateCropElement);
+    image.on("dragmove", updateCropElement);
+    image.on("transform", resizeAndUpdateCropElement);
   };
 
   image.cropReset = () => {
     if (cropImage) {
-      cropEnd();
+      cropTransformer.nodes([]);
+
+      cropImage.remove();
+      cropImage = null;
+
+      image.off("dragmove", updateCropElement);
+      image.off("transform", resizeAndUpdateCropElement);
     }
 
+    cropElement.remove();
     cropElement = null;
+
+    image.getLayer().batchDraw();
   };
 
-  image.on("click", resizeStart);
+  image.sceneFunc((context, shape) => {
+    const img = shape.image();
+    if (!img) {
+      return;
+    }
 
-  // Overwrite sceneFunc
-  image.setAttr("sceneFunc", (context) => {
-    let width = image.width();
-    let height = image.height();
-    const img = image.image();
+    let width = shape.width();
+    let height = shape.height();
 
     context.save();
     context.beginPath();
@@ -170,62 +149,69 @@ function makeCroppableImage(image) {
     context.closePath();
     context.clip();
 
-    if (image.hasFill() || image.hasStroke()) {
-      context.fillStrokeShape(image);
+    if (cropElement) {
+      context.save();
+
+      width = cropElement.width();
+      height = cropElement.height();
+
+      const m = cropElement.getAbsoluteTransform().getMatrix();
+      context.transform(m[0], m[1], m[2], m[3], m[4], m[5]);
     }
 
-    if (img) {
-      if (cropElement) {
-        context.save();
-        width = cropElement.width();
-        height = cropElement.height();
-        const m = cropElement.getAbsoluteTransform().getMatrix();
-        context.transform(m[0], m[1], m[2], m[3], m[4], m[5]);
-      }
+    context.drawImage(img, 0, 0, width, height);
+    context.fillStrokeShape(shape);
 
-      const cropWidth = image.cropWidth();
-      const cropHeight = image.cropHeight();
-
-      context.drawImage.apply(
-        context,
-        cropWidth && cropHeight
-          ? [
-            img,
-            image.cropX(),
-            image.cropY(),
-            cropWidth,
-            cropHeight,
-            0,
-            0,
-            width,
-            height,
-          ]
-          : [img, 0, 0, width, height]
-      );
-
-      if (cropElement) {
-        context.restore();
-      }
+    if (cropElement) {
+      context.restore();
     }
 
-    context.strokeShape(image);
     context.restore();
   });
-
-  return image;
 }
 
 // --- Demo ---
 Konva.Image.fromURL("./image.png", (img) => {
   img.setAttrs({
     y: 50,
-    x: 350,
+    x: 50,
     width: 300,
     height: 250,
-    draggable: true,
+    shadowColor: "rgba(255,125,125,0.5)",
+    shadowOffsetX: 50,
+    shadowOffsetY: 50,
+    stroke: "#000000",
+    fill: "rgba(125,125,125,0.5)",
   });
 
-  makeCroppableImage(img);
+  makeCroppableImage(img, cropTransformer, transformer);
 
   layer.add(img);
 });
+
+Konva.Image.fromURL("./image.png", (img) => {
+  img.setAttrs({
+    y: 250,
+    x: 650,
+    width: 300,
+    height: 250,
+  });
+
+  makeCroppableImage(img, cropTransformer, transformer);
+
+  layer.add(img);
+});
+
+stage.on(("click"), e => {
+  const target = e?.target;
+
+  if (target !== nodeTarget) {
+    nodeTarget?.resizeAndCropEnd();
+  }
+
+  if (target !== stage) {
+    nodeTarget = target;
+
+    nodeTarget.resizeStart();
+  }
+})

@@ -31,13 +31,13 @@ type StageState = {
 
 type StageAction = {
   type:
-    | "SET_RATIO"
-    | "SET_ZOOM"
-    | "SET_CANVAS_SIZE"
-    | "FIT_SCREEN"
-    | "DRAG"
-    | "EXPAND"
-    | "ZOOM";
+  | "SET_RATIO"
+  | "SET_ZOOM"
+  | "SET_CANVAS_SIZE"
+  | "FIT_SCREEN"
+  | "DRAG"
+  | "EXPAND"
+  | "ZOOM";
   payload?: Ratio | SetZoom | SetCanvasSize | Fit | Drag | Expand | Zoom;
 };
 
@@ -516,6 +516,98 @@ export function StageProvider(prop: StageProviderProp): React.JSX.Element {
     });
   }, []);
 
+  // Store cropper
+  const cropperRef = React.useRef<KonvaTransformerAPI>(undefined);
+
+  /**
+   * Get cropper
+   */
+  const getCropper = React.useCallback((): KonvaTransformerAPI => {
+    return cropperRef.current;
+  }, []);
+
+  /**
+   * Set cropper
+   */
+  const setCropper = React.useCallback((cropper: KonvaTransformerAPI): void => {
+    cropperRef.current = cropper;
+
+    cropper?.updateProp({
+      id: "cropper",
+      keepRatio: true,
+      rotationSnaps: [
+        -180, -165, -150, -135, -120, -105, -90, -75, -60, -45, -30, -15, 0, 15,
+        30, 45, 60, 75, 90, 105, 120, 135, 150, 165, 180,
+      ],
+      rotationSnapTolerance: 3,
+      ignoreStroke: false,
+      flipEnabled: true,
+      borderStroke: "#00ff00",
+      borderStrokeWidth: 1.5,
+      borderDash: [10, 10],
+      enabledAnchors: [
+        "top-left",
+        "top-center",
+        "top-right",
+        "middle-right",
+        "middle-left",
+        "bottom-left",
+        "bottom-center",
+        "bottom-right",
+      ],
+      anchorStyleFunc: (anchor) => {
+        if (anchor.hasName("top-center") || anchor.hasName("bottom-center")) {
+          anchor.setAttrs({
+            fill: "#a5ff00",
+            stroke: "#00ff00",
+            strokeWidth: 1,
+            cornerRadius: 5,
+            height: 8,
+            offsetY: 4,
+            width: 20,
+            offsetX: 10,
+          });
+        } else if (
+          anchor.hasName("middle-left") ||
+          anchor.hasName("middle-right")
+        ) {
+          anchor.setAttrs({
+            fill: "#a5ff00",
+            stroke: "#00ff00",
+            strokeWidth: 1,
+            cornerRadius: 5,
+            height: 20,
+            offsetY: 10,
+            width: 8,
+            offsetX: 4,
+          });
+        } else if (anchor.hasName("rotater")) {
+          anchor.setAttrs({
+            fill: "#a5ff00",
+            stroke: "#00ff00",
+            strokeWidth: 1.5,
+            cornerRadius: 7.5,
+            height: 15,
+            offsetY: 7.5,
+            width: 15,
+            offsetX: 7.5,
+          });
+        } else {
+          anchor.setAttrs({
+            fill: "#a5ff00",
+            stroke: "#00ff00",
+            strokeWidth: 1,
+            cornerRadius: 5,
+            height: 10,
+            offsetY: 5,
+            width: 10,
+            offsetX: 5,
+          });
+        }
+      },
+    });
+  }, []);
+
   // Store transformer
   const transformerRef = React.useRef<KonvaTransformerAPI>(undefined);
 
@@ -559,50 +651,50 @@ export function StageProvider(prop: StageProviderProp): React.JSX.Element {
         anchorStyleFunc: (anchor) => {
           if (anchor.hasName("top-center") || anchor.hasName("bottom-center")) {
             anchor.setAttrs({
-              fill: "#ffA500",
+              fill: "#ffa500",
               stroke: "#ff0000",
               strokeWidth: 1,
-              cornerRadius: 5,
-              height: 8,
-              offsetY: 4,
-              width: 20,
-              offsetX: 10,
+              cornerRadius: 2,
+              height: 4,
+              offsetY: 2,
+              width: 16,
+              offsetX: 8,
             });
           } else if (
             anchor.hasName("middle-left") ||
             anchor.hasName("middle-right")
           ) {
             anchor.setAttrs({
-              fill: "#ffA500",
+              fill: "#ffa500",
               stroke: "#ff0000",
               strokeWidth: 1,
-              cornerRadius: 5,
-              height: 20,
-              offsetY: 10,
-              width: 8,
-              offsetX: 4,
+              cornerRadius: 2,
+              height: 16,
+              offsetY: 8,
+              width: 4,
+              offsetX: 2,
             });
           } else if (anchor.hasName("rotater")) {
             anchor.setAttrs({
-              fill: "#ffA500",
+              fill: "#ffa500",
               stroke: "#ff0000",
               strokeWidth: 1.5,
-              cornerRadius: 10,
-              height: 15,
-              offsetY: 7.5,
-              width: 15,
-              offsetX: 7.5,
+              cornerRadius: 6,
+              height: 12,
+              offsetY: 6,
+              width: 12,
+              offsetX: 6,
             });
           } else {
             anchor.setAttrs({
-              fill: "#ffA500",
+              fill: "#ffa500",
               stroke: "#ff0000",
               strokeWidth: 1,
-              cornerRadius: 5,
-              height: 10,
-              offsetY: 5,
-              width: 10,
-              offsetX: 5,
+              cornerRadius: 4,
+              height: 8,
+              offsetY: 4,
+              width: 8,
+              offsetX: 4,
             });
           }
         },
@@ -817,7 +909,7 @@ export function StageProvider(prop: StageProviderProp): React.JSX.Element {
       };
 
       if (crop) {
-        const box: WindowRect = stage.find("#shapes")?.[0]?.getClientRect({
+        const box: WindowRect = stage.findOne("#shapes")?.getClientRect({
           skipTransform: false,
           skipShadow: false,
           skipStroke: false,
@@ -1022,6 +1114,9 @@ export function StageProvider(prop: StageProviderProp): React.JSX.Element {
 
       getStage,
       setStage,
+
+      getCropper,
+      setCropper,
 
       getTransformer,
       setTransformer,

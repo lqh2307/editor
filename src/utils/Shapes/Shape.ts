@@ -271,14 +271,6 @@ export function createShape(shape: KonvaShape): KonvaShape {
       newShape.offsetX = newShape.offsetX ?? newShape.width / 2;
       newShape.offsetY = newShape.offsetY ?? newShape.height / 2;
 
-      // // Crop
-      // newShape.crop = newShape.crop ?? {
-      //   x: 0,
-      //   y: 0,
-      //   width: newShape.width,
-      //   height: newShape.height,
-      // };
-
       break;
     }
 

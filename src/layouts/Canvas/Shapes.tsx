@@ -333,24 +333,26 @@ export const CanvasShapes = React.memo((): React.JSX.Element => {
       return;
     }
 
-    const nodes: Konva.Node[] = [];
+    const transformerNodes: Konva.Node[] = [];
 
-    const _selectedIds: string[] = selectedIds
-      ? Object.keys(selectedIds)
-      : undefined;
-    if (!freeDrawingMode && shapeRefs && _selectedIds) {
-      _selectedIds.forEach((item) => {
+    if (!freeDrawingMode && shapeRefs) {
+      Object.keys(selectedIds ?? {}).forEach((item) => {
         const node: Konva.Node = shapeRefs[item]?.getNode();
         if (node) {
-          nodes.push(node);
+          transformerNodes.push(node);
         }
       });
     }
 
     transformer.updateProp({
-      nodes: nodes,
+      nodes: transformerNodes,
     });
-  }, [shapeRefs, selectedIds, freeDrawingMode, getTransformer]);
+  }, [
+    shapeRefs,
+    selectedIds,
+    freeDrawingMode,
+    getTransformer
+  ]);
 
   const renderedShapeList = React.useMemo(() => {
     return shapeList?.map((item) => {

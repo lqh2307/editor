@@ -45,6 +45,8 @@ export const Canvas = React.memo((): React.JSX.Element => {
     setGrid,
     getGuideLines,
     setGuideLines,
+    getCropper,
+    setCropper,
     getTransformer,
     setTransformer,
     dragStage,
@@ -104,6 +106,15 @@ export const Canvas = React.memo((): React.JSX.Element => {
       }
     },
     [setGuideLines, getGuideLines]
+  );
+
+  const assignCropper = React.useCallback(
+    (cropper: KonvaTransformerAPI): void => {
+      if (!getCropper()) {
+        setCropper(cropper);
+      }
+    },
+    [setCropper, getCropper]
   );
 
   const assignTransformer = React.useCallback(
@@ -423,6 +434,8 @@ export const Canvas = React.memo((): React.JSX.Element => {
         {/* Shapes */}
         <Layer id={"shapes"} listening={true} draggable={false}>
           <CanvasShapes />
+
+          <KonvaTransformer ref={assignCropper} />
 
           <KonvaTransformer ref={assignTransformer} />
         </Layer>

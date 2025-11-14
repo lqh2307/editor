@@ -11,6 +11,8 @@ export const KonvaImage = React.memo(
     const nodeRef = React.useRef<Konva.Image>(undefined);
     const currentPropRef = React.useRef<KonvaShapeProp>(prop);
     const [isEnabled, setIsEnabled] = React.useState<boolean>(false);
+    const cropElementRef = React.useRef<Konva.Shape>(undefined);
+    const cropImageRef = React.useRef<Konva.Image>(undefined);
 
     React.useEffect(() => {
       currentPropRef.current = prop;
@@ -23,6 +25,7 @@ export const KonvaImage = React.memo(
         updateShape,
         getNode,
         getShape,
+        resetCrop,
       });
 
       return () => {
@@ -30,6 +33,92 @@ export const KonvaImage = React.memo(
         prop.onUnMounted?.(prop.shapeOption.id);
       };
     }, [prop]);
+
+    const updateCropElement = () => {
+      const node: Konva.Image = nodeRef.current;
+      if (!node || !cropImageRef.current || !cropElementRef.current) {
+        return;
+      }
+
+      const options = node
+        .getAbsoluteTransform()
+        .copy()
+        .invert()
+        .multiply(cropImageRef.current.getAbsoluteTransform())
+        .decompose();
+
+      cropElementRef.current.setAttrs(options);
+    };
+
+    const startCrop = () => {
+      const node: Konva.Image = nodeRef.current;
+      if (!node || cropImageRef.current) {
+        return;
+      }
+
+      if (!cropElementRef.current) {
+        cropElementRef.current = new Konva.Shape({
+          width: node.width(),
+          height: node.height(),
+          skewX: node.skewX(),
+          skewY: node.skewY(),
+        });
+      }
+
+      const layer = node.getLayer();
+      if (!layer) {
+        return;
+      }
+
+      const options = layer
+        .getAbsoluteTransform()
+        .copy()
+        .invert()
+        .multiply(node.getAbsoluteTransform())
+        .multiply(cropElementRef.current.getAbsoluteTransform())
+        .decompose();
+
+      cropImageRef.current = new Konva.Image({
+        draggable: true,
+        opacity: 0.5,
+        ...options,
+        image: node.image(),
+        width: cropElementRef.current.width(),
+        height: cropElementRef.current.height(),
+      });
+
+      layer.add(cropImageRef.current);
+
+      (layer.findOne("#cropper") as Konva.Transformer)?.nodes([
+        cropImageRef.current,
+      ]);
+    };
+
+    const endCrop = () => {
+      const node: Konva.Image = nodeRef.current;
+      if (!node) {
+        return;
+      }
+
+      (node.getLayer()?.findOne("#cropper") as Konva.Transformer)?.nodes([]);
+
+      if (cropImageRef.current) {
+        cropImageRef.current.remove();
+        cropImageRef.current = null;
+      }
+    };
+
+    const resetCrop = () => {
+      if (cropImageRef.current) {
+        cropImageRef.current.remove();
+        cropImageRef.current = null;
+      }
+
+      if (cropElementRef.current) {
+        cropElementRef.current.remove();
+        cropElementRef.current = null;
+      }
+    };
 
     // Apply prop
     const applyProp = React.useCallback((): void => {
@@ -245,6 +334,44 @@ export const KonvaImage = React.memo(
       });
     }, []);
 
+    const handleScene = React.useCallback(
+      (context: Konva.Context, shape: Konva.Shape): void => {
+        const img: CanvasImageSource = (shape as Konva.Image).image();
+        if (!img) {
+          return;
+        }
+
+        let width = shape.width();
+        let height = shape.height();
+
+        context.save();
+        context.beginPath();
+        context.rect(0, 0, width, height);
+        context.closePath();
+        context.clip();
+
+        if (cropElementRef.current) {
+          context.save();
+
+          width = cropElementRef.current.width();
+          height = cropElementRef.current.height();
+
+          const m = cropElementRef.current.getAbsoluteTransform().getMatrix();
+          context.transform(m[0], m[1], m[2], m[3], m[4], m[5]);
+        }
+
+        context.drawImage(img, 0, 0, width, height);
+        context.fillStrokeShape(shape);
+
+        if (cropElementRef.current) {
+          context.restore();
+        }
+
+        context.restore();
+      },
+      []
+    );
+
     return (
       <Portal selector={"#shapes"} enabled={isEnabled}>
         <Image
@@ -257,6 +384,7 @@ export const KonvaImage = React.memo(
           onDragMove={handleDragMove}
           onDragEnd={handleDragEnd}
           onTransformEnd={handleTransformEnd}
+          sceneFunc={handleScene}
         />
       </Portal>
     );

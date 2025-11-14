@@ -106,6 +106,11 @@ export type KonvaShapeAPI = {
   updateShape: (shape?: KonvaShape) => void;
   getNode: () => Konva.Node;
   getShape: () => KonvaShape;
+
+  // Crop
+  startCrop?: () => void;
+  endCrop?: () => void;
+  resetCrop?: () => void;
 };
 
 export type LayerAction = "back" | "front" | "backward" | "forward";
