@@ -41,34 +41,34 @@ type State = {
 
 type Action = {
   type:
-    | "SET_MAX_HISTORY"
-    | "UPDATE_SELECTED_IDS"
-    | "UPDATE_SHAPE"
-    | "ADD_SHAPES"
-    | "DO_SHAPE"
-    | "DELETE_SHAPES"
-    | "COPY_SHAPE"
-    | "DUPLICATE_SHAPE"
-    | "MOVE_SHAPES"
-    | "PASTE_SHAPE"
-    | "LAYER_SHAPE"
-    | "ALIGN_SHAPE"
-    | "FLIP_SHAPE"
-    | "CLEAN";
+  | "SET_MAX_HISTORY"
+  | "UPDATE_SELECTED_IDS"
+  | "UPDATE_SHAPE"
+  | "ADD_SHAPES"
+  | "DO_SHAPE"
+  | "DELETE_SHAPES"
+  | "COPY_SHAPE"
+  | "DUPLICATE_SHAPE"
+  | "MOVE_SHAPES"
+  | "PASTE_SHAPE"
+  | "LAYER_SHAPE"
+  | "ALIGN_SHAPE"
+  | "FLIP_SHAPE"
+  | "CLEAN";
   payload?:
-    | number
-    | UpdateSelectedIds
-    | Update
-    | Add
-    | Do
-    | Delete
-    | Copy
-    | Duplicate
-    | Move
-    | Paste
-    | Layer
-    | Align
-    | Flip;
+  | number
+  | UpdateSelectedIds
+  | Update
+  | Add
+  | Do
+  | Delete
+  | Copy
+  | Duplicate
+  | Move
+  | Paste
+  | Layer
+  | Align
+  | Flip;
 };
 
 type Layer = {
@@ -105,10 +105,12 @@ type Paste = {
 };
 
 type Delete = {
+  shapeRefs: Record<string, KonvaShapeAPI>;
   ids: string[];
 };
 
 type UpdateSelectedIds = {
+  shapeRefs: Record<string, KonvaShapeAPI>;
   ids: string[];
   overwrite: boolean;
 };
@@ -185,10 +187,10 @@ function reducer(state: State, action: Action): State {
         selectedIds: {},
       };
 
-      // id !== undefined & overwrite === true -> select many with overwrite
-      // id !== undefined & overwrite !== true -> select many without overwrite
-      // id === undefined & overwrite === true -> {}
-      // id === undefined & overwrite !== true -> select all
+      // ids !== undefined & overwrite === true -> select many with overwrite
+      // ids !== undefined & overwrite !== true -> select many without overwrite
+      // ids === undefined & overwrite === true -> {}
+      // ids === undefined & overwrite !== true -> select all
       if (updateSelectedIds.ids) {
         if (!updateSelectedIds.overwrite) {
           newState.selectedIds = {
@@ -204,6 +206,16 @@ function reducer(state: State, action: Action): State {
           state.shapeList.forEach((item) => {
             newState.selectedIds[item.id] = true;
           });
+        } else {
+          for (const id in state.selectedIds) {
+            const shapeAPI = updateSelectedIds.shapeRefs[id];
+            if (shapeAPI) {
+              const shape = shapeAPI.getShape();
+              if (shape.type === "image") {
+                shapeAPI.endCrop();
+              }
+            }
+          }
         }
       }
 
@@ -243,9 +255,9 @@ function reducer(state: State, action: Action): State {
       // Create new state
       return update.storeHistory
         ? {
-            ...state,
-            ...addHistory(state.shapeList),
-          }
+          ...state,
+          ...addHistory(state.shapeList),
+        }
         : state;
     }
 
@@ -963,6 +975,7 @@ export function ShapesProvider(prop: ShapesProviderProp): React.JSX.Element {
       dispatch({
         type: "UPDATE_SELECTED_IDS",
         payload: {
+          shapeRefs: shapeRefsRef.current,
           ids: ids,
           overwrite: overwrite,
         },
@@ -1034,6 +1047,7 @@ export function ShapesProvider(prop: ShapesProviderProp): React.JSX.Element {
     dispatch({
       type: "DELETE_SHAPES",
       payload: {
+        shapeRefs: shapeRefsRef.current,
         ids: ids,
       },
     });

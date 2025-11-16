@@ -18,9 +18,10 @@ import {
   RotateRightTwoTone,
   BorderColorTwoTone,
   ExpandMoreTwoTone,
-  CropRotateTwoTone,
   LineWeightTwoTone,
+  CropRotateTwoTone,
   PentagonTwoTone,
+  RestoreTwoTone,
   OpacityTwoTone,
   BlurOnTwoTone,
   StarTwoTone,
@@ -28,6 +29,7 @@ import {
 import {
   AccordionDetails,
   AccordionSummary,
+  ButtonGroup,
   Typography,
   Accordion,
   Stack,
@@ -43,7 +45,7 @@ import {
 export const PanelStyleTab = React.memo((): React.JSX.Element => {
   const { t } = useTranslation();
 
-  const { selectedShape, updateShape } = useShapesContext();
+  const { selectedShape, updateShape, shapeRefs } = useShapesContext();
 
   const updateShapeHandler = React.useMemo(
     () => ({
@@ -330,6 +332,16 @@ export const PanelStyleTab = React.memo((): React.JSX.Element => {
     [updateShape]
   );
 
+  const cropHandler = React.useCallback((value: string): void => {
+    if (selectedShape.type === "image") {
+      if (value) {
+        shapeRefs[selectedShape.id]?.startCrop();
+      } else {
+        shapeRefs[selectedShape.id]?.endCrop(true);
+      }
+    }
+  }, [selectedShape, shapeRefs]);
+
   const data = React.useMemo<Record<string, SelectInputOption[]>>(
     () => ({
       lineCaps: Object.keys(
@@ -398,8 +410,8 @@ export const PanelStyleTab = React.memo((): React.JSX.Element => {
           <NumberInput
             display={
               selectedShape.type === "circle" ||
-              selectedShape.type === "convex-polygon" ||
-              selectedShape.type === "wedge"
+                selectedShape.type === "convex-polygon" ||
+                selectedShape.type === "wedge"
                 ? "flex"
                 : "none"
             }
@@ -425,7 +437,7 @@ export const PanelStyleTab = React.memo((): React.JSX.Element => {
             sx={{
               display:
                 selectedShape.type === "concave-polygon" ||
-                selectedShape.type === "ring"
+                  selectedShape.type === "ring"
                   ? "flex"
                   : "none",
               flexDirection: "row",
@@ -481,9 +493,9 @@ export const PanelStyleTab = React.memo((): React.JSX.Element => {
             sx={{
               display:
                 selectedShape.type === "text" ||
-                selectedShape.type === "rectangle" ||
-                selectedShape.type === "image" ||
-                selectedShape.type === "video"
+                  selectedShape.type === "rectangle" ||
+                  selectedShape.type === "image" ||
+                  selectedShape.type === "video"
                   ? "flex"
                   : "none",
               flexDirection: "row",
@@ -508,7 +520,7 @@ export const PanelStyleTab = React.memo((): React.JSX.Element => {
           <NumberInput
             display={
               selectedShape.type === "rectangle" ||
-              selectedShape.type === "image"
+                selectedShape.type === "image"
                 ? "flex"
                 : "none"
             }
@@ -850,7 +862,9 @@ export const PanelStyleTab = React.memo((): React.JSX.Element => {
       </Accordion>
 
       {/* Crop */}
-      <Accordion>
+      <Accordion sx={{
+        display: selectedShape.type === "image" ? "block" : "none",
+      }}>
         <AccordionSummary expandIcon={<ExpandMoreTwoTone />}>
           <Typography sx={{ fontSize: 12, textTransform: "uppercase" }}>
             {t("panel.style.children.crop.title")}
@@ -862,15 +876,25 @@ export const PanelStyleTab = React.memo((): React.JSX.Element => {
             display: "flex",
             flexDirection: "column",
             justifyContent: "center",
-            gap: "1rem",
+            alignItems: "center",
           }}
         >
-          {/* Crop */}
-          <TooltipButton
-            icon={<CropRotateTwoTone fontSize={"small"} />}
-            title={t("panel.style.children.crop.children.crop.title")}
-            onClick={undefined}
-          />
+          {/* Crop/Restore */}
+          <ButtonGroup variant={"outlined"} size={"small"}>
+            <TooltipButton
+              icon={<CropRotateTwoTone fontSize={"small"} />}
+              title={t("panel.style.children.crop.children.crop.title")}
+              value={"true"}
+              onClick={cropHandler}
+            />
+
+            <TooltipButton
+              icon={<RestoreTwoTone fontSize={"small"} />}
+              title={t("panel.style.children.crop.children.restore.title")}
+              value={""}
+              onClick={cropHandler}
+            />
+          </ButtonGroup>
         </AccordionDetails>
       </Accordion>
     </TabPanel>

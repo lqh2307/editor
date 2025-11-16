@@ -14,33 +14,12 @@ export const KonvaImage = React.memo(
     const cropElementRef = React.useRef<Konva.Shape>(undefined);
     const cropImageRef = React.useRef<Konva.Image>(undefined);
 
-    React.useEffect(() => {
-      currentPropRef.current = prop;
-
-      applyProp();
-
-      // Call callback function
-      prop.onMounted?.(prop.shapeOption.id, {
-        updateProp,
-        updateShape,
-        getNode,
-        getShape,
-        resetCrop,
-      });
-
-      return () => {
-        // Call callback function
-        prop.onUnMounted?.(prop.shapeOption.id);
-      };
-    }, [prop]);
-
     const updateCropElement = () => {
-      const node: Konva.Image = nodeRef.current;
-      if (!node || !cropImageRef.current || !cropElementRef.current) {
+      if (!cropElementRef.current || !cropImageRef.current || !nodeRef.current) {
         return;
       }
 
-      const options = node
+      const options = nodeRef.current
         .getAbsoluteTransform()
         .copy()
         .invert()
@@ -52,7 +31,7 @@ export const KonvaImage = React.memo(
 
     const startCrop = () => {
       const node: Konva.Image = nodeRef.current;
-      if (!node || cropImageRef.current) {
+      if (cropImageRef.current || !node) {
         return;
       }
 
@@ -66,9 +45,6 @@ export const KonvaImage = React.memo(
       }
 
       const layer = node.getLayer();
-      if (!layer) {
-        return;
-      }
 
       const options = layer
         .getAbsoluteTransform()
@@ -87,6 +63,9 @@ export const KonvaImage = React.memo(
         height: cropElementRef.current.height(),
       });
 
+      cropImageRef.current.on("dragmove", updateCropElement);
+      cropImageRef.current.on("transform", updateCropElement);
+
       layer.add(cropImageRef.current);
 
       (layer.findOne("#cropper") as Konva.Transformer)?.nodes([
@@ -94,31 +73,41 @@ export const KonvaImage = React.memo(
       ]);
     };
 
-    const endCrop = () => {
+    const endCrop = (restore?: boolean) => {
       const node: Konva.Image = nodeRef.current;
-      if (!node) {
-        return;
-      }
+      if (cropImageRef.current && node) {
+        (node.getLayer().findOne("#cropper") as Konva.Transformer)?.nodes([]);
 
-      (node.getLayer()?.findOne("#cropper") as Konva.Transformer)?.nodes([]);
-
-      if (cropImageRef.current) {
-        cropImageRef.current.remove();
-        cropImageRef.current = null;
-      }
-    };
-
-    const resetCrop = () => {
-      if (cropImageRef.current) {
         cropImageRef.current.remove();
         cropImageRef.current = null;
       }
 
-      if (cropElementRef.current) {
+      if (restore && cropElementRef.current) {
         cropElementRef.current.remove();
         cropElementRef.current = null;
       }
     };
+
+    React.useEffect(() => {
+      currentPropRef.current = prop;
+
+      applyProp();
+
+      // Call callback function
+      prop.onMounted?.(prop.shapeOption.id, {
+        updateProp,
+        updateShape,
+        getNode,
+        getShape,
+        startCrop,
+        endCrop,
+      });
+
+      return () => {
+        // Call callback function
+        prop.onUnMounted?.(prop.shapeOption.id);
+      };
+    }, [prop]);
 
     // Apply prop
     const applyProp = React.useCallback((): void => {
@@ -128,35 +117,36 @@ export const KonvaImage = React.memo(
       }
 
       const prop: KonvaShapeProp = currentPropRef.current;
+      const shapeOption: KonvaShape = prop.shapeOption;
 
       // Update node attrs
       node.setAttrs({
-        ...prop.shapeOption,
+        ...shapeOption,
         draggable: prop.isSelected,
-        image: prop.shapeOption.image,
+        image: shapeOption.image,
         fill: parseHexToRGBAString(
-          prop.shapeOption.fill as string,
-          prop.shapeOption.fillOpacity
+          shapeOption.fill as string,
+          shapeOption.fillOpacity
         ),
         stroke: parseHexToRGBAString(
-          prop.shapeOption.stroke as string,
-          prop.shapeOption.strokeOpacity
+          shapeOption.stroke as string,
+          shapeOption.strokeOpacity
         ),
         filters: createFilter(
-          prop.shapeOption.grayscale,
-          prop.shapeOption.invert,
-          prop.shapeOption.sepia,
-          prop.shapeOption.solarize
+          shapeOption.grayscale,
+          shapeOption.invert,
+          shapeOption.sepia,
+          shapeOption.solarize
         ),
       });
 
       // Update shape box
-      prop.shapeOption.box = createShapeBox(node);
+      shapeOption.box = createShapeBox(node);
 
       // Cache
-      if (node.width() || node.height()) {
-        node.cache();
-      }
+      // if (shapeOption.width || shapeOption.height) {
+      //   node.cache();
+      // }
 
       // Call callback function
       prop.onAppliedProp?.(
@@ -225,6 +215,8 @@ export const KonvaImage = React.memo(
           box: createShapeBox(node),
         });
 
+        updateCropElement()
+
         // Call callback function
         prop.onDragMove?.({
           updateProp,
@@ -266,6 +258,25 @@ export const KonvaImage = React.memo(
       []
     );
 
+    const handleTransform = React.useCallback(
+      (e: Konva.KonvaEventObject<Event>): void => {
+        const node: Konva.Image = e.target as Konva.Image;
+        if (!cropElementRef.current || !cropImageRef.current || !node) {
+          return;
+        }
+
+        node.setAttrs({
+          width: node.width() * node.scaleX(),
+          height: node.height() * node.scaleY(),
+          scaleX: 1,
+          scaleY: 1,
+        } as any);
+
+        updateCropElement();
+      },
+      []
+    );
+
     const handleTransformEnd = React.useCallback(
       (e: Konva.KonvaEventObject<Event>): void => {
         const node: Konva.Image = e.target as Konva.Image;
@@ -280,15 +291,16 @@ export const KonvaImage = React.memo(
         const newScaleY: number = scaleY < 0 ? -1 : 1;
 
         const prop: KonvaShapeProp = currentPropRef.current;
+        const shapeOption: KonvaShape = prop.shapeOption;
 
         const newWidth: number = Math.round(
-          prop.shapeOption.width * scaleX * newScaleX
+          shapeOption.width * scaleX * newScaleX
         );
         const newHeight: number = Math.round(
-          prop.shapeOption.height * scaleY * newScaleY
+          shapeOption.height * scaleY * newScaleY
         );
 
-        Object.assign(prop.shapeOption, {
+        Object.assign(shapeOption, {
           width: newWidth,
           height: newHeight,
           rotation: node.rotation(),
@@ -345,27 +357,34 @@ export const KonvaImage = React.memo(
         let height = shape.height();
 
         context.save();
+
         context.beginPath();
         context.rect(0, 0, width, height);
-        context.closePath();
         context.clip();
 
         if (cropElementRef.current) {
           context.save();
 
-          width = cropElementRef.current.width();
-          height = cropElementRef.current.height();
-
           const m = cropElementRef.current.getAbsoluteTransform().getMatrix();
           context.transform(m[0], m[1], m[2], m[3], m[4], m[5]);
-        }
 
-        context.drawImage(img, 0, 0, width, height);
-        context.fillStrokeShape(shape);
+          context.drawImage(img, 0, 0, cropElementRef.current.width(), cropElementRef.current.height());
 
-        if (cropElementRef.current) {
           context.restore();
+        } else {
+          context.drawImage(img, 0, 0, width, height);
         }
+
+        context.save();
+        context.shadowColor = context.shadowColor;
+        context.shadowBlur = context.shadowBlur;
+        context.shadowOffsetX = context.shadowOffsetX;
+        context.shadowOffsetY = context.shadowOffsetY;
+
+        context.beginPath();
+        context.rect(0, 0, width, height);
+        context.fillStrokeShape(shape);
+        context.restore();
 
         context.restore();
       },
@@ -383,6 +402,7 @@ export const KonvaImage = React.memo(
           onMouseLeave={handleMouseLeave}
           onDragMove={handleDragMove}
           onDragEnd={handleDragEnd}
+          onTransform={handleTransform}
           onTransformEnd={handleTransformEnd}
           sceneFunc={handleScene}
         />

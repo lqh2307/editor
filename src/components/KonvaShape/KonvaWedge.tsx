@@ -39,25 +39,26 @@ export const KonvaWedge = React.memo(
       }
 
       const prop: KonvaShapeProp = currentPropRef.current;
+      const shapeOption: KonvaShape = prop.shapeOption;
 
       // Update node attrs
       node.setAttrs({
-        ...prop.shapeOption,
+        ...shapeOption,
         draggable: prop.isSelected,
-        angle: prop.shapeOption.angle,
-        radius: prop.shapeOption.radius,
+        angle: shapeOption.angle,
+        radius: shapeOption.radius,
         fill: parseHexToRGBAString(
-          prop.shapeOption.fill as string,
-          prop.shapeOption.fillOpacity
+          shapeOption.fill as string,
+          shapeOption.fillOpacity
         ),
         stroke: parseHexToRGBAString(
-          prop.shapeOption.stroke as string,
-          prop.shapeOption.strokeOpacity
+          shapeOption.stroke as string,
+          shapeOption.strokeOpacity
         ),
       });
 
       // Update shape box
-      prop.shapeOption.box = createShapeBox(node);
+      shapeOption.box = createShapeBox(node);
 
       // Call callback function
       prop.onAppliedProp?.(
@@ -184,23 +185,24 @@ export const KonvaWedge = React.memo(
         const scaleYAbs = scaleY * newScaleY;
 
         const prop: KonvaShapeProp = currentPropRef.current;
+        const shapeOption: KonvaShape = prop.shapeOption;
 
         let scaleAbs: number;
 
         if (scaleXAbs > scaleYAbs) {
           scaleAbs = scaleXAbs;
 
-          prop.shapeOption.scaleX = newScaleX;
-          prop.shapeOption.scaleY = (scaleYAbs / scaleXAbs) * newScaleY;
+          shapeOption.scaleX = newScaleX;
+          shapeOption.scaleY = (scaleYAbs / scaleXAbs) * newScaleY;
         } else {
           scaleAbs = scaleYAbs;
 
-          prop.shapeOption.scaleY = newScaleY;
-          prop.shapeOption.scaleX = (scaleXAbs / scaleYAbs) * newScaleX;
+          shapeOption.scaleY = newScaleY;
+          shapeOption.scaleX = (scaleXAbs / scaleYAbs) * newScaleX;
         }
 
-        Object.assign(prop.shapeOption, {
-          radius: Math.round(prop.shapeOption.radius * scaleAbs),
+        Object.assign(shapeOption, {
+          radius: Math.round(shapeOption.radius * scaleAbs),
           rotation: node.rotation(),
           x: node.x(),
           y: node.y(),

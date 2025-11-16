@@ -74,7 +74,7 @@ export const KonvaGrid = React.memo(
         }
 
         // Cache
-        if (node.width() || node.height()) {
+        if (prop.width || prop.height) {
           node.cache();
         }
       }, []);

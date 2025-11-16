@@ -5,7 +5,6 @@ import { Portal } from "react-konva-utils";
 import { Group } from "react-konva";
 import React from "react";
 import Konva from "konva";
-import { constants } from "node:sqlite";
 
 export const KonvaFreeDrawing = React.memo(
   (prop: KonvaShapeProp): React.JSX.Element => {
@@ -40,6 +39,7 @@ export const KonvaFreeDrawing = React.memo(
       }
 
       const prop: KonvaShapeProp = currentPropRef.current;
+      const shapeOption: KonvaShape = prop.shapeOption;
 
       // Process node attrs
       const {
@@ -51,7 +51,7 @@ export const KonvaFreeDrawing = React.memo(
         rotation,
         lines,
         ...lineOption
-      }: KonvaShape = prop.shapeOption;
+      }: KonvaShape = shapeOption;
 
       lineOption.fill = parseHexToRGBAString(
         lineOption.fill as string,
@@ -80,7 +80,7 @@ export const KonvaFreeDrawing = React.memo(
 
       // Update node attrs
       node.setAttrs({
-        ...prop.shapeOption,
+        ...shapeOption,
         id: id,
         x: x,
         y: y,
@@ -91,7 +91,7 @@ export const KonvaFreeDrawing = React.memo(
       });
 
       // Update shape box
-      prop.shapeOption.box = createShapeBox(node);
+      shapeOption.box = createShapeBox(node);
 
       // Call callback function
       prop.onAppliedProp?.(
@@ -218,20 +218,21 @@ export const KonvaFreeDrawing = React.memo(
         const scaleYAbs = scaleY * newScaleY;
 
         const prop: KonvaShapeProp = currentPropRef.current;
+        const shapeOption: KonvaShape = prop.shapeOption;
 
         let strokeWidth: number;
 
         if (scaleXAbs.toPrecision(5) === scaleYAbs.toPrecision(5)) {
-          strokeWidth = Math.round(prop.shapeOption.strokeWidth * scaleXAbs);
+          strokeWidth = Math.round(shapeOption.strokeWidth * scaleXAbs);
 
           if (strokeWidth < 1) {
             strokeWidth = 1;
           }
         } else {
-          strokeWidth = prop.shapeOption.strokeWidth;
+          strokeWidth = shapeOption.strokeWidth;
         }
 
-        Object.assign(prop.shapeOption, {
+        Object.assign(shapeOption, {
           strokeWidth: strokeWidth,
           rotation: node.rotation(),
           scaleX: newScaleX,
@@ -240,7 +241,7 @@ export const KonvaFreeDrawing = React.memo(
           y: node.y(),
         });
 
-        prop.shapeOption.lines.forEach((line) => {
+        shapeOption.lines.forEach((line) => {
           line.points.forEach((point, idx) => {
             line.points[idx] =
               idx % 2 === 0 ? point * scaleXAbs : point * scaleYAbs;

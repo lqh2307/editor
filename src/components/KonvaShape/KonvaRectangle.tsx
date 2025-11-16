@@ -39,23 +39,24 @@ export const KonvaRectangle = React.memo(
       }
 
       const prop: KonvaShapeProp = currentPropRef.current;
+      const shapeOption: KonvaShape = prop.shapeOption;
 
       // Update node attrs
       node.setAttrs({
-        ...prop.shapeOption,
+        ...shapeOption,
         draggable: prop.isSelected,
         fill: parseHexToRGBAString(
-          prop.shapeOption.fill as string,
-          prop.shapeOption.fillOpacity
+          shapeOption.fill as string,
+          shapeOption.fillOpacity
         ),
         stroke: parseHexToRGBAString(
-          prop.shapeOption.stroke as string,
-          prop.shapeOption.strokeOpacity
+          shapeOption.stroke as string,
+          shapeOption.strokeOpacity
         ),
       });
 
       // Update shape box
-      prop.shapeOption.box = createShapeBox(node);
+      shapeOption.box = createShapeBox(node);
 
       // Call callback function
       prop.onAppliedProp?.(
@@ -179,15 +180,16 @@ export const KonvaRectangle = React.memo(
         const newScaleY: number = scaleY < 0 ? -1 : 1;
 
         const prop: KonvaShapeProp = currentPropRef.current;
+        const shapeOption: KonvaShape = prop.shapeOption;
 
         const newWidth: number = Math.round(
-          prop.shapeOption.width * scaleX * newScaleX
+          shapeOption.width * scaleX * newScaleX
         );
         const newHeight: number = Math.round(
-          prop.shapeOption.height * scaleY * newScaleY
+          shapeOption.height * scaleY * newScaleY
         );
 
-        Object.assign(prop.shapeOption, {
+        Object.assign(shapeOption, {
           width: newWidth,
           height: newHeight,
           rotation: node.rotation(),

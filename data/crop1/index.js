@@ -30,6 +30,10 @@ function makeCroppableImage(image, cropTransformer, transformer) {
   let cropImage = null;
 
   const updateCropElement = () => {
+    if (!cropElement || !cropImage) {
+      return;
+    }
+
     const options = image
       .getAbsoluteTransform()
       .copy()
@@ -49,28 +53,6 @@ function makeCroppableImage(image, cropTransformer, transformer) {
     });
 
     updateCropElement();
-  };
-
-  image.resizeStart = () => {
-    transformer.nodes([image]);
-    transformer.moveToTop();
-
-    image.draggable(true);
-  };
-
-  image.resizeAndCropEnd = () => {
-    cropTransformer.nodes([]);
-    transformer.nodes([]);
-
-    image.draggable(false);
-
-    if (cropImage) {
-      cropImage.remove();
-      cropImage = null;
-
-      image.off("dragmove", updateCropElement);
-      image.off("transform", resizeAndUpdateCropElement);
-    }
   };
 
   image.cropStart = () => {
@@ -106,18 +88,18 @@ function makeCroppableImage(image, cropTransformer, transformer) {
       height: cropElement.height(),
     });
 
-    layer.add(cropImage);
-
-    cropTransformer.nodes([cropImage]);
-    cropTransformer.moveToTop();
-
     cropImage.on("dragmove", updateCropElement);
     cropImage.on("transform", updateCropElement);
     image.on("dragmove", updateCropElement);
     image.on("transform", resizeAndUpdateCropElement);
+
+    layer.add(cropImage);
+
+    cropTransformer.nodes([cropImage]);
+    cropTransformer.moveToTop();
   };
 
-  image.cropReset = () => {
+  image.cropEnd = (restore) => {
     if (cropImage) {
       cropTransformer.nodes([]);
 
@@ -128,8 +110,10 @@ function makeCroppableImage(image, cropTransformer, transformer) {
       image.off("transform", resizeAndUpdateCropElement);
     }
 
-    cropElement.remove();
-    cropElement = null;
+    if (restore && cropElement) {
+      cropElement.remove();
+      cropElement = null;
+    }
 
     image.getLayer().batchDraw();
   };
@@ -144,33 +128,40 @@ function makeCroppableImage(image, cropTransformer, transformer) {
     let height = shape.height();
 
     context.save();
+
     context.beginPath();
     context.rect(0, 0, width, height);
-    context.closePath();
     context.clip();
 
     if (cropElement) {
       context.save();
 
-      width = cropElement.width();
-      height = cropElement.height();
-
       const m = cropElement.getAbsoluteTransform().getMatrix();
       context.transform(m[0], m[1], m[2], m[3], m[4], m[5]);
-    }
 
-    context.drawImage(img, 0, 0, width, height);
-    context.fillStrokeShape(shape);
+      context.drawImage(img, 0, 0, cropElement.width(), cropElement.height());
 
-    if (cropElement) {
       context.restore();
+    } else {
+      context.drawImage(img, 0, 0, width, height);
     }
+
+    context.save();
+    context.shadowColor = context.shadowColor;
+    context.shadowBlur = context.shadowBlur;
+    context.shadowOffsetX = context.shadowOffsetX;
+    context.shadowOffsetY = context.shadowOffsetY;
+
+    context.beginPath();
+    context.rect(0, 0, width, height);
+    context.fillStrokeShape(shape);
+    context.restore();
 
     context.restore();
   });
 }
 
-// --- Demo ---
+// --- Demo with 2 images ---
 Konva.Image.fromURL("./image.png", (img) => {
   img.setAttrs({
     y: 50,
@@ -206,12 +197,19 @@ stage.on(("click"), e => {
   const target = e?.target;
 
   if (target !== nodeTarget) {
-    nodeTarget?.resizeAndCropEnd();
+    nodeTarget?.draggable(false);
+
+    transformer.nodes([]);
+
+    nodeTarget?.cropEnd();
   }
 
   if (target !== stage) {
     nodeTarget = target;
 
-    nodeTarget.resizeStart();
+    target.draggable(true);
+
+    transformer.nodes([target]);
+    transformer.moveToTop();
   }
 })

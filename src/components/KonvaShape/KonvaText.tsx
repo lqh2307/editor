@@ -43,32 +43,33 @@ export const KonvaText = React.memo(
       }
 
       const prop: KonvaShapeProp = currentPropRef.current;
+      const shapeOption: KonvaShape = prop.shapeOption;
 
       // Update node attrs
       node.setAttrs({
-        ...prop.shapeOption,
+        ...shapeOption,
         draggable: prop.isSelected,
         visible:
           !textareaRef.current ||
           textareaRef.current.style.visibility === "hidden",
         fill: parseHexToRGBAString(
-          prop.shapeOption.fill as string,
-          prop.shapeOption.fillOpacity
+          shapeOption.fill as string,
+          shapeOption.fillOpacity
         ),
         stroke: parseHexToRGBAString(
-          prop.shapeOption.stroke as string,
-          prop.shapeOption.strokeOpacity
+          shapeOption.stroke as string,
+          shapeOption.strokeOpacity
         ),
         fontStyle:
-          prop.shapeOption.fontWeight === "bold"
-            ? prop.shapeOption.fontStyle === "italic"
+          shapeOption.fontWeight === "bold"
+            ? shapeOption.fontStyle === "italic"
               ? "italic bold"
               : "bold"
-            : prop.shapeOption.fontStyle,
+            : shapeOption.fontStyle,
       });
 
       // Update shape box
-      prop.shapeOption.box = createShapeBox(node);
+      shapeOption.box = createShapeBox(node);
 
       // Call callback function
       prop.onAppliedProp?.(
@@ -195,14 +196,15 @@ export const KonvaText = React.memo(
         const scaleYAbs = scaleY * newScaleY;
 
         const prop: KonvaShapeProp = currentPropRef.current;
+        const shapeOption: KonvaShape = prop.shapeOption;
 
         let newHeight: number = Math.round(
-          prop.shapeOption.height * scaleY * newScaleY
+          shapeOption.height * scaleY * newScaleY
         );
 
         const textArea = textareaRef.current;
         if (textArea) {
-          textArea.style.width = `${prop.shapeOption.width}px`;
+          textArea.style.width = `${shapeOption.width}px`;
 
           // To calculate new height
           textArea.style.height = "auto";
@@ -217,18 +219,18 @@ export const KonvaText = React.memo(
         let fontSize: number;
 
         if (scaleXAbs.toPrecision(5) === scaleYAbs.toPrecision(5)) {
-          fontSize = Math.round(prop.shapeOption.fontSize * scaleXAbs);
+          fontSize = Math.round(shapeOption.fontSize * scaleXAbs);
 
           if (fontSize < 1) {
             fontSize = 1;
           }
         } else {
-          fontSize = prop.shapeOption.fontSize;
+          fontSize = shapeOption.fontSize;
         }
 
-        Object.assign(prop.shapeOption, {
+        Object.assign(shapeOption, {
           fontSize: fontSize,
-          width: Math.round(prop.shapeOption.width * scaleXAbs),
+          width: Math.round(shapeOption.width * scaleXAbs),
           height: newHeight,
           rotation: node.rotation(),
           scaleX: newScaleX,
@@ -281,27 +283,28 @@ export const KonvaText = React.memo(
         e.target?.visible(false);
 
         const prop: KonvaShapeProp = currentPropRef.current;
+        const shapeOption: KonvaShape = prop.shapeOption;
 
         Object.assign(textArea.style, {
           visibility: "visible",
-          fontSize: `${prop.shapeOption.fontSize}px`,
-          lineHeight: prop.shapeOption.lineHeight.toString(),
-          fontFamily: prop.shapeOption.fontFamily,
-          fontStyle: prop.shapeOption.fontStyle,
-          fontWeight: prop.shapeOption.fontWeight,
-          textAlign: prop.shapeOption.align as HorizontalAlign,
-          verticalAlign: prop.shapeOption.verticalAlign as VerticalAlign,
-          color: prop.shapeOption.fill as string,
-          transform: `rotateZ(${prop.shapeOption.rotation}deg)`,
-          width: `${prop.shapeOption.width}px`,
-          height: `${prop.shapeOption.height}px`,
-          left: `${prop.shapeOption.x}px`,
-          top: `${prop.shapeOption.y}px`,
-          padding: `${prop.shapeOption.padding}px`,
-          filter: `brightness(${(prop.shapeOption.brightness || 0) + 1})`,
+          fontSize: `${shapeOption.fontSize}px`,
+          lineHeight: shapeOption.lineHeight.toString(),
+          fontFamily: shapeOption.fontFamily,
+          fontStyle: shapeOption.fontStyle,
+          fontWeight: shapeOption.fontWeight,
+          textAlign: shapeOption.align as HorizontalAlign,
+          verticalAlign: shapeOption.verticalAlign as VerticalAlign,
+          color: shapeOption.fill as string,
+          transform: `rotateZ(${shapeOption.rotation}deg)`,
+          width: `${shapeOption.width}px`,
+          height: `${shapeOption.height}px`,
+          left: `${shapeOption.x}px`,
+          top: `${shapeOption.y}px`,
+          padding: `${shapeOption.padding}px`,
+          filter: `brightness(${(shapeOption.brightness || 0) + 1})`,
         });
 
-        textArea.value = prop.shapeOption.text;
+        textArea.value = shapeOption.text;
 
         textArea.focus();
       },
@@ -333,20 +336,21 @@ export const KonvaText = React.memo(
         }
 
         const prop: KonvaShapeProp = currentPropRef.current;
+        const shapeOption: KonvaShape = prop.shapeOption;
 
         // Update text
-        prop.shapeOption.text = textArea.value;
+        shapeOption.text = textArea.value;
 
         // To calculate new height
         textArea.style.height = "auto";
 
         const newHeight = textArea.scrollHeight;
 
-        if (newHeight >= prop.shapeOption.height) {
+        if (newHeight >= shapeOption.height) {
           textArea.style.height = `${newHeight}px`;
 
           // Update height
-          prop.shapeOption.height = newHeight;
+          shapeOption.height = newHeight;
 
           applyProp();
         }

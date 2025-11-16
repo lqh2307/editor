@@ -29,15 +29,14 @@ export const KonvaBackground = React.memo(
           node.clearCache();
 
           return;
-        }
+        } else {
+          // Update node attrs
+          node.setAttrs(prop);
 
-        // Update node attrs
-        node.setAttrs(prop);
-
-        // Cache
-        if (node.width() || node.height()) {
+          // Cache
           node.cache();
         }
+
       }, []);
 
       // Expose API

@@ -39,23 +39,24 @@ export const KonvaLine = React.memo(
       }
 
       const prop: KonvaShapeProp = currentPropRef.current;
+      const shapeOption: KonvaShape = prop.shapeOption;
 
       // Update node attrs
       node.setAttrs({
-        ...prop.shapeOption,
+        ...shapeOption,
         draggable: prop.isSelected,
         fill: parseHexToRGBAString(
-          prop.shapeOption.fill as string,
-          prop.shapeOption.fillOpacity
+          shapeOption.fill as string,
+          shapeOption.fillOpacity
         ),
         stroke: parseHexToRGBAString(
-          prop.shapeOption.stroke as string,
-          prop.shapeOption.strokeOpacity
+          shapeOption.stroke as string,
+          shapeOption.strokeOpacity
         ),
       });
 
       // Update shape box
-      prop.shapeOption.box = createShapeBox(node);
+      shapeOption.box = createShapeBox(node);
 
       // Call callback function
       prop.onAppliedProp?.(
@@ -182,20 +183,21 @@ export const KonvaLine = React.memo(
         const scaleYAbs = scaleY * newScaleY;
 
         const prop: KonvaShapeProp = currentPropRef.current;
+        const shapeOption: KonvaShape = prop.shapeOption;
 
         let strokeWidth: number;
 
         if (scaleXAbs.toPrecision(5) === scaleYAbs.toPrecision(5)) {
-          strokeWidth = Math.round(prop.shapeOption.strokeWidth * scaleXAbs);
+          strokeWidth = Math.round(shapeOption.strokeWidth * scaleXAbs);
 
           if (strokeWidth < 1) {
             strokeWidth = 1;
           }
         } else {
-          strokeWidth = prop.shapeOption.strokeWidth;
+          strokeWidth = shapeOption.strokeWidth;
         }
 
-        Object.assign(prop.shapeOption, {
+        Object.assign(shapeOption, {
           strokeWidth: strokeWidth,
           rotation: node.rotation(),
           scaleX: newScaleX,
@@ -204,8 +206,8 @@ export const KonvaLine = React.memo(
           y: node.y(),
         });
 
-        prop.shapeOption.points.forEach((point, idx) => {
-          prop.shapeOption.points[idx] =
+        shapeOption.points.forEach((point, idx) => {
+          shapeOption.points[idx] =
             idx % 2 === 0 ? point * scaleXAbs : point * scaleYAbs;
         });
 

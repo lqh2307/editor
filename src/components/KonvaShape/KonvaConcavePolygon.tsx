@@ -39,26 +39,27 @@ export const KonvaConcavePolygon = React.memo(
       }
 
       const prop: KonvaShapeProp = currentPropRef.current;
+      const shapeOption: KonvaShape = prop.shapeOption;
 
       // Update node attrs
       node.setAttrs({
-        ...prop.shapeOption,
+        ...shapeOption,
         draggable: prop.isSelected,
-        numPoints: prop.shapeOption.numPoints,
-        innerRadius: prop.shapeOption.innerRadius,
-        outerRadius: prop.shapeOption.outerRadius,
+        numPoints: shapeOption.numPoints,
+        innerRadius: shapeOption.innerRadius,
+        outerRadius: shapeOption.outerRadius,
         fill: parseHexToRGBAString(
-          prop.shapeOption.fill as string,
-          prop.shapeOption.fillOpacity
+          shapeOption.fill as string,
+          shapeOption.fillOpacity
         ),
         stroke: parseHexToRGBAString(
-          prop.shapeOption.stroke as string,
-          prop.shapeOption.strokeOpacity
+          shapeOption.stroke as string,
+          shapeOption.strokeOpacity
         ),
       });
 
       // Update shape box
-      prop.shapeOption.box = createShapeBox(node);
+      shapeOption.box = createShapeBox(node);
 
       // Call callback function
       prop.onAppliedProp?.(
@@ -185,24 +186,25 @@ export const KonvaConcavePolygon = React.memo(
         const scaleYAbs = scaleY * newScaleY;
 
         const prop: KonvaShapeProp = currentPropRef.current;
+        const shapeOption: KonvaShape = prop.shapeOption;
 
         let scaleAbs: number;
 
         if (scaleXAbs > scaleYAbs) {
           scaleAbs = scaleXAbs;
 
-          prop.shapeOption.scaleX = newScaleX;
-          prop.shapeOption.scaleY = (scaleYAbs / scaleXAbs) * newScaleY;
+          shapeOption.scaleX = newScaleX;
+          shapeOption.scaleY = (scaleYAbs / scaleXAbs) * newScaleY;
         } else {
           scaleAbs = scaleYAbs;
 
-          prop.shapeOption.scaleY = newScaleY;
-          prop.shapeOption.scaleX = (scaleXAbs / scaleYAbs) * newScaleX;
+          shapeOption.scaleY = newScaleY;
+          shapeOption.scaleX = (scaleXAbs / scaleYAbs) * newScaleX;
         }
 
-        Object.assign(prop.shapeOption, {
-          innerRadius: Math.round(prop.shapeOption.innerRadius * scaleAbs),
-          outerRadius: Math.round(prop.shapeOption.outerRadius * scaleAbs),
+        Object.assign(shapeOption, {
+          innerRadius: Math.round(shapeOption.innerRadius * scaleAbs),
+          outerRadius: Math.round(shapeOption.outerRadius * scaleAbs),
           rotation: node.rotation(),
           x: node.x(),
           y: node.y(),

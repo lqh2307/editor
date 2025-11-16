@@ -313,7 +313,7 @@ export const Canvas = React.memo((): React.JSX.Element => {
           // Mark drawing on
           freeDrawingInfo.isDrawing = true;
         } else if (e.target instanceof Konva.Stage) {
-          // Reset selected id
+          // Reset selected ids
           updateSelectedIds(undefined, true);
         }
       }
@@ -399,7 +399,7 @@ export const Canvas = React.memo((): React.JSX.Element => {
         !freeDrawingInfoRef.current.previousMode &&
         e.target instanceof Konva.Stage
       ) {
-        // Reset selected id
+        // Reset selected ids
         updateSelectedIds(undefined, true);
       }
     },

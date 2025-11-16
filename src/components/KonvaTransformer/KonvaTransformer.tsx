@@ -25,9 +25,6 @@ export const KonvaTransformer = React.memo(
 
         // Update node attrs
         node.setAttrs(currentPropRef.current);
-
-        // Draw layer
-        // node.getLayer()?.batchDraw();
       }, []);
 
       // Expose API

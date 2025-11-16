@@ -33,6 +33,5 @@ class ScaleTransformer extends Konva.Transformer {
 				}
 			},
 		});
-		console.log(this);
 	}
 }

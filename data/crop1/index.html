@@ -1,38 +1,40 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Image Crop</title>
-    <style>
-      * {
-        margin: 0;
-        padding: 0;
-      }
 
-      .toolbar {
-        position: fixed;
-        top: 10px;
-        left: 10px;
-        z-index: 10;
-      }
-    </style>
-    <script src="./konva.min.js"></script>
-  </head>
-  <body>
-    <div class="toolbar">
-      <button style="width: 60px; height: 30px" onclick="nodeTarget?.cropStart?.()">
-        Crop
-      </button>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Image Crop</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+    }
 
-      <button style="width: 60px; height: 30px" onclick="nodeTarget?.cropReset?.()">
-        Reset
-      </button>
-    </div>
+    .toolbar {
+      position: fixed;
+      top: 10px;
+      left: 10px;
+      z-index: 10;
+    }
+  </style>
+  <script src="./konva.min.js"></script>
+</head>
 
-    <div id="container"></div>
+<body>
+  <div class="toolbar">
+    <button style="width: 60px; height: 30px" onclick="nodeTarget?.cropStart?.()">
+      Crop
+    </button>
 
-    <script src="./index.js"></script>
-  </body>
+    <button style="width: 60px; height: 30px" onclick="nodeTarget?.cropEnd?.(true)">
+      Reset
+    </button>
+  </div>
+
+  <div id="container"></div>
+
+  <script src="./index.js"></script>
+</body>
+
 </html>
-

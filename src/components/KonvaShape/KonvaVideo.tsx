@@ -36,7 +36,7 @@ export const KonvaVideo = React.memo(
     React.useEffect(() => {
       if (nodeRef.current) {
         animRef.current = new Konva.Animation(
-          () => {},
+          () => { },
           nodeRef.current.getLayer()
         );
 
@@ -58,39 +58,40 @@ export const KonvaVideo = React.memo(
       }
 
       const prop: KonvaShapeProp = currentPropRef.current;
+      const shapeOption: KonvaShape = prop.shapeOption;
 
       // Update node attrs
       node.setAttrs({
-        ...prop.shapeOption,
+        ...shapeOption,
         draggable: prop.isSelected,
-        image: prop.shapeOption.image,
+        image: shapeOption.image,
         fill: parseHexToRGBAString(
-          prop.shapeOption.fill as string,
-          prop.shapeOption.fillOpacity
+          shapeOption.fill as string,
+          shapeOption.fillOpacity
         ),
         stroke: parseHexToRGBAString(
-          prop.shapeOption.stroke as string,
-          prop.shapeOption.strokeOpacity
+          shapeOption.stroke as string,
+          shapeOption.strokeOpacity
         ),
       });
 
       // Update video attrs
-      const image: HTMLVideoElement = prop.shapeOption
+      const image: HTMLVideoElement = shapeOption
         .image as HTMLVideoElement;
       if (image) {
-        image.loop = prop.shapeOption.loop ? true : false;
+        image.loop = shapeOption.loop ? true : false;
 
-        if (prop.shapeOption.speed !== undefined) {
-          image.playbackRate = prop.shapeOption.inverse
-            ? -prop.shapeOption.speed
-            : prop.shapeOption.speed;
+        if (shapeOption.speed !== undefined) {
+          image.playbackRate = shapeOption.inverse
+            ? -shapeOption.speed
+            : shapeOption.speed;
         }
 
-        if (prop.shapeOption.volume !== undefined) {
-          image.volume = prop.shapeOption.volume;
+        if (shapeOption.volume !== undefined) {
+          image.volume = shapeOption.volume;
         }
 
-        if (prop.shapeOption.isPlay) {
+        if (shapeOption.isPlay) {
           image.play();
         } else {
           image.pause();
@@ -98,7 +99,7 @@ export const KonvaVideo = React.memo(
       }
 
       // Update shape box
-      prop.shapeOption.box = createShapeBox(node);
+      shapeOption.box = createShapeBox(node);
 
       // Call callback function
       prop.onAppliedProp?.(
@@ -222,15 +223,16 @@ export const KonvaVideo = React.memo(
         const newScaleY: number = scaleY < 0 ? -1 : 1;
 
         const prop: KonvaShapeProp = currentPropRef.current;
+        const shapeOption: KonvaShape = prop.shapeOption;
 
         const newWidth: number = Math.round(
-          prop.shapeOption.width * scaleX * newScaleX
+          shapeOption.width * scaleX * newScaleX
         );
         const newHeight: number = Math.round(
-          prop.shapeOption.height * scaleY * newScaleY
+          shapeOption.height * scaleY * newScaleY
         );
 
-        Object.assign(prop.shapeOption, {
+        Object.assign(shapeOption, {
           width: newWidth,
           height: newHeight,
           rotation: node.rotation(),

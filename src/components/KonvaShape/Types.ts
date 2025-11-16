@@ -83,7 +83,6 @@ export type KonvaFreeDrawingLine = Omit<Konva.LineConfig, "points"> & {
 
 export type KonvaShapeProp = {
   isSelected?: boolean;
-  isCroped?: boolean;
 
   // Shape options
   shapeOption?: KonvaShape;
@@ -109,8 +108,7 @@ export type KonvaShapeAPI = {
 
   // Crop
   startCrop?: () => void;
-  endCrop?: () => void;
-  resetCrop?: () => void;
+  endCrop?: (restore?: boolean) => void;
 };
 
 export type LayerAction = "back" | "front" | "backward" | "forward";

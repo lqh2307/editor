@@ -921,6 +921,9 @@
           "children": {
             "crop": {
               "title": "Cắt"
+            },
+            "restore": {
+              "title": "Khôi phục"
             }
           }
         }

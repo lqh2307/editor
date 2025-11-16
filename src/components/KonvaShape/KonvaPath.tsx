@@ -40,10 +40,11 @@ export const KonvaPath = React.memo(
       }
 
       const prop: KonvaShapeProp = currentPropRef.current;
+      const shapeOption: KonvaShape = prop.shapeOption;
 
       // Process node attrs
       let { x, y, scaleX, scaleY, rotation, paths, ...pathOption }: KonvaShape =
-        prop.shapeOption;
+        shapeOption;
 
       pathOption.fill = parseHexToRGBAString(
         pathOption.fill as string,
@@ -81,7 +82,7 @@ export const KonvaPath = React.memo(
       });
 
       // Update shape box
-      prop.shapeOption.box = createShapeBox(node);
+      shapeOption.box = createShapeBox(node);
 
       // Call callback function
       prop.onAppliedProp?.(
@@ -208,8 +209,9 @@ export const KonvaPath = React.memo(
         const scaleYAbs = scaleY * newScaleY;
 
         const prop: KonvaShapeProp = currentPropRef.current;
+        const shapeOption: KonvaShape = prop.shapeOption;
 
-        Object.assign(prop.shapeOption, {
+        Object.assign(shapeOption, {
           rotation: node.rotation(),
           scaleX: newScaleX,
           scaleY: newScaleY,
@@ -217,7 +219,7 @@ export const KonvaPath = React.memo(
           y: node.y(),
         });
 
-        prop.shapeOption.paths.forEach((path) => {
+        shapeOption.paths.forEach((path) => {
           path.data = new svgPath(path.data)
             .scale(scaleXAbs, scaleYAbs)
             .toString();
