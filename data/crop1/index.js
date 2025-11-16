@@ -7,8 +7,8 @@ const stage = new Konva.Stage({
 const layer = new Konva.Layer();
 stage.add(layer);
 
-const cropTransformer = new Konva.Transformer({
-  id: "crop-transformer",
+const cropper = new Konva.Transformer({
+  id: "cropper",
   borderDash: [5, 5],
   anchorSize: 20,
   anchorCornerRadius: 10,
@@ -20,12 +20,12 @@ const transformer = new Konva.Transformer({
   nodes: [],
 });
 
-layer.add(cropTransformer, transformer);
+layer.add(cropper, transformer);
 
 let nodeTarget;
 
 // --- Mixin ---
-function makeCroppableImage(image, cropTransformer, transformer) {
+function makeCroppableImage(image, cropper) {
   let cropElement = null;
   let cropImage = null;
 
@@ -90,24 +90,19 @@ function makeCroppableImage(image, cropTransformer, transformer) {
 
     cropImage.on("dragmove", updateCropElement);
     cropImage.on("transform", updateCropElement);
-    image.on("dragmove", updateCropElement);
-    image.on("transform", resizeAndUpdateCropElement);
 
     layer.add(cropImage);
 
-    cropTransformer.nodes([cropImage]);
-    cropTransformer.moveToTop();
+    cropper.nodes([cropImage]);
+    cropper.moveToTop();
   };
 
   image.cropEnd = (restore) => {
     if (cropImage) {
-      cropTransformer.nodes([]);
+      cropper.nodes([]);
 
       cropImage.remove();
       cropImage = null;
-
-      image.off("dragmove", updateCropElement);
-      image.off("transform", resizeAndUpdateCropElement);
     }
 
     if (restore && cropElement) {
@@ -159,6 +154,9 @@ function makeCroppableImage(image, cropTransformer, transformer) {
 
     context.restore();
   });
+
+  image.on("dragmove", updateCropElement);
+  image.on("transform", resizeAndUpdateCropElement);
 }
 
 // --- Demo with 2 images ---
@@ -175,7 +173,7 @@ Konva.Image.fromURL("./image.png", (img) => {
     fill: "rgba(125,125,125,0.5)",
   });
 
-  makeCroppableImage(img, cropTransformer, transformer);
+  makeCroppableImage(img, cropper);
 
   layer.add(img);
 });
@@ -188,7 +186,7 @@ Konva.Image.fromURL("./image.png", (img) => {
     height: 250,
   });
 
-  makeCroppableImage(img, cropTransformer, transformer);
+  makeCroppableImage(img, cropper);
 
   layer.add(img);
 });
