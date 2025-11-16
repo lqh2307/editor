@@ -146,15 +146,8 @@ export const KonvaArrow = React.memo(
           return;
         }
 
-        const prop: KonvaShapeProp = currentPropRef.current;
-
-        Object.assign(prop.shapeOption, {
-          ...node.position(),
-          box: createShapeBox(node),
-        });
-
         // Call callback function
-        prop.onAppliedProp?.(
+        currentPropRef.current.onAppliedProp?.(
           {
             updateProp,
             updateShape,
@@ -174,6 +167,9 @@ export const KonvaArrow = React.memo(
           return;
         }
 
+        const prop: KonvaShapeProp = currentPropRef.current;
+        const shapeOption: KonvaShape = prop.shapeOption;
+
         const scaleX: number = node.scaleX();
         const scaleY: number = node.scaleY();
 
@@ -182,9 +178,6 @@ export const KonvaArrow = React.memo(
 
         const scaleXAbs = scaleX * newScaleX;
         const scaleYAbs = scaleY * newScaleY;
-
-        const prop: KonvaShapeProp = currentPropRef.current;
-        const shapeOption: KonvaShape = prop.shapeOption;
 
         let strokeWidth: number;
 

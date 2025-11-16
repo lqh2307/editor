@@ -25,7 +25,7 @@ layer.add(cropper, transformer);
 let nodeTarget;
 
 // --- Mixin ---
-function makeCroppableImage(image, cropper) {
+function makeCroppableImage(image) {
   let cropElement = null;
   let cropImage = null;
 
@@ -45,12 +45,14 @@ function makeCroppableImage(image, cropper) {
   };
 
   const resizeAndUpdateCropElement = () => {
-    image.setAttrs({
-      width: image.width() * image.scaleX(),
-      height: image.height() * image.scaleY(),
-      scaleX: 1,
-      scaleY: 1,
-    });
+    if (cropImage) {
+      image.setAttrs({
+        width: image.width() * image.scaleX(),
+        height: image.height() * image.scaleY(),
+        scaleX: 1,
+        scaleY: 1,
+      });
+    }
 
     updateCropElement();
   };
@@ -93,13 +95,17 @@ function makeCroppableImage(image, cropper) {
 
     layer.add(cropImage);
 
-    cropper.nodes([cropImage]);
-    cropper.moveToTop();
+    const cropper = layer.findOne("#cropper");
+    if (cropper) {
+      cropper.nodes([cropImage]);
+
+      cropper.moveToTop();
+    }
   };
 
   image.cropEnd = (restore) => {
     if (cropImage) {
-      cropper.nodes([]);
+      (image.getLayer().findOne("#cropper"))?.nodes([]);
 
       cropImage.remove();
       cropImage = null;
@@ -173,7 +179,7 @@ Konva.Image.fromURL("./image.png", (img) => {
     fill: "rgba(125,125,125,0.5)",
   });
 
-  makeCroppableImage(img, cropper);
+  makeCroppableImage(img);
 
   layer.add(img);
 });
@@ -186,7 +192,7 @@ Konva.Image.fromURL("./image.png", (img) => {
     height: 250,
   });
 
-  makeCroppableImage(img, cropper);
+  makeCroppableImage(img);
 
   layer.add(img);
 });

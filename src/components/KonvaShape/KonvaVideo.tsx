@@ -188,15 +188,8 @@ export const KonvaVideo = React.memo(
           return;
         }
 
-        const prop: KonvaShapeProp = currentPropRef.current;
-
-        Object.assign(prop.shapeOption, {
-          ...node.position(),
-          box: createShapeBox(node),
-        });
-
         // Call callback function
-        prop.onAppliedProp?.(
+        currentPropRef.current.onAppliedProp?.(
           {
             updateProp,
             updateShape,
@@ -216,14 +209,14 @@ export const KonvaVideo = React.memo(
           return;
         }
 
+        const prop: KonvaShapeProp = currentPropRef.current;
+        const shapeOption: KonvaShape = prop.shapeOption;
+
         const scaleX: number = node.scaleX();
         const scaleY: number = node.scaleY();
 
         const newScaleX: number = scaleX < 0 ? -1 : 1;
         const newScaleY: number = scaleY < 0 ? -1 : 1;
-
-        const prop: KonvaShapeProp = currentPropRef.current;
-        const shapeOption: KonvaShape = prop.shapeOption;
 
         const newWidth: number = Math.round(
           shapeOption.width * scaleX * newScaleX
