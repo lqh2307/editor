@@ -193,6 +193,42 @@ export const PanelStyleTab = React.memo((): React.JSX.Element => {
           true
         );
       },
+      changeScaleX: (value: string): void => {
+        updateShape(
+          {
+            scaleX: fixNumber(value, true),
+          },
+          true,
+          true
+        );
+      },
+      changeScaleY: (value: string): void => {
+        updateShape(
+          {
+            scaleY: fixNumber(value, true),
+          },
+          true,
+          true
+        );
+      },
+      changeSkewX: (value: string): void => {
+        updateShape(
+          {
+            skewX: fixNumber(value, true),
+          },
+          true,
+          true
+        );
+      },
+      changeSkewY: (value: string): void => {
+        updateShape(
+          {
+            skewY: fixNumber(value, true),
+          },
+          true,
+          true
+        );
+      },
       changeCornerRadius: (value: string): void => {
         updateShape(
           {
@@ -332,15 +368,18 @@ export const PanelStyleTab = React.memo((): React.JSX.Element => {
     [updateShape]
   );
 
-  const cropHandler = React.useCallback((value: string): void => {
-    if (selectedShape.type === "image") {
-      if (value) {
-        shapeRefs[selectedShape.id]?.startCrop();
-      } else {
-        shapeRefs[selectedShape.id]?.endCrop(true);
+  const cropHandler = React.useCallback(
+    (value: string): void => {
+      if (selectedShape.type === "image") {
+        if (value) {
+          shapeRefs[selectedShape.id]?.startCrop();
+        } else {
+          shapeRefs[selectedShape.id]?.endCrop(true);
+        }
       }
-    }
-  }, [selectedShape, shapeRefs]);
+    },
+    [selectedShape, shapeRefs]
+  );
 
   const data = React.useMemo<Record<string, SelectInputOption[]>>(
     () => ({
@@ -410,8 +449,8 @@ export const PanelStyleTab = React.memo((): React.JSX.Element => {
           <NumberInput
             display={
               selectedShape.type === "circle" ||
-                selectedShape.type === "convex-polygon" ||
-                selectedShape.type === "wedge"
+              selectedShape.type === "convex-polygon" ||
+              selectedShape.type === "wedge"
                 ? "flex"
                 : "none"
             }
@@ -437,7 +476,7 @@ export const PanelStyleTab = React.memo((): React.JSX.Element => {
             sx={{
               display:
                 selectedShape.type === "concave-polygon" ||
-                  selectedShape.type === "ring"
+                selectedShape.type === "ring"
                   ? "flex"
                   : "none",
               flexDirection: "row",
@@ -493,9 +532,9 @@ export const PanelStyleTab = React.memo((): React.JSX.Element => {
             sx={{
               display:
                 selectedShape.type === "text" ||
-                  selectedShape.type === "rectangle" ||
-                  selectedShape.type === "image" ||
-                  selectedShape.type === "video"
+                selectedShape.type === "rectangle" ||
+                selectedShape.type === "image" ||
+                selectedShape.type === "video"
                   ? "flex"
                   : "none",
               flexDirection: "row",
@@ -516,11 +555,63 @@ export const PanelStyleTab = React.memo((): React.JSX.Element => {
             />
           </Stack>
 
+          {/* ScaleX/ScaleY */}
+          <Stack
+            sx={{
+              display: "flex",
+              flexDirection: "row",
+              gap: "0.5rem",
+              alignItems: "center",
+            }}
+          >
+            <NumberInput
+              label={t("panel.style.children.general.children.scaleX.title")}
+              value={selectedShape.scaleX}
+              onChange={updateShapeHandler.changeScaleX}
+              min={0.01}
+              step={0.01}
+            />
+
+            <NumberInput
+              label={t("panel.style.children.general.children.scaleY.title")}
+              value={selectedShape.scaleY}
+              onChange={updateShapeHandler.changeScaleY}
+              min={0.01}
+              step={0.01}
+            />
+          </Stack>
+
+          {/* SkewX/SkewY */}
+          <Stack
+            sx={{
+              display: "flex",
+              flexDirection: "row",
+              gap: "0.5rem",
+              alignItems: "center",
+            }}
+          >
+            <NumberInput
+              label={t("panel.style.children.general.children.skewX.title")}
+              value={selectedShape.skewX}
+              onChange={updateShapeHandler.changeSkewX}
+              min={0}
+              step={0.01}
+            />
+
+            <NumberInput
+              label={t("panel.style.children.general.children.skewY.title")}
+              value={selectedShape.skewY}
+              onChange={updateShapeHandler.changeSkewY}
+              min={0}
+              step={0.01}
+            />
+          </Stack>
+
           {/* Corner Radius */}
           <NumberInput
             display={
               selectedShape.type === "rectangle" ||
-                selectedShape.type === "image"
+              selectedShape.type === "image"
                 ? "flex"
                 : "none"
             }
@@ -862,9 +953,11 @@ export const PanelStyleTab = React.memo((): React.JSX.Element => {
       </Accordion>
 
       {/* Crop */}
-      <Accordion sx={{
-        display: selectedShape.type === "image" ? "block" : "none",
-      }}>
+      <Accordion
+        sx={{
+          display: selectedShape.type === "image" ? "block" : "none",
+        }}
+      >
         <AccordionSummary expandIcon={<ExpandMoreTwoTone />}>
           <Typography sx={{ fontSize: 12, textTransform: "uppercase" }}>
             {t("panel.style.children.crop.title")}

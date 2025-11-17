@@ -41,6 +41,14 @@ export const KonvaRectangle = React.memo(
       const prop: KonvaShapeProp = currentPropRef.current;
       const shapeOption: KonvaShape = prop.shapeOption;
 
+      if (shapeOption.width != node.width()) {
+        shapeOption.offsetX = shapeOption.width / 2;
+      }
+
+      if (shapeOption.height != node.height()) {
+        shapeOption.offsetY = shapeOption.height / 2;
+      }
+
       // Update node attrs
       node.setAttrs({
         ...shapeOption,
@@ -166,36 +174,18 @@ export const KonvaRectangle = React.memo(
           return;
         }
 
-        const prop: KonvaShapeProp = currentPropRef.current;
-        const shapeOption: KonvaShape = prop.shapeOption;
-
-        const scaleX: number = node.scaleX();
-        const scaleY: number = node.scaleY();
-
-        const newScaleX: number = scaleX < 0 ? -1 : 1;
-        const newScaleY: number = scaleY < 0 ? -1 : 1;
-
-        const newWidth: number = Math.round(
-          shapeOption.width * scaleX * newScaleX
-        );
-        const newHeight: number = Math.round(
-          shapeOption.height * scaleY * newScaleY
-        );
-
-        Object.assign(shapeOption, {
-          width: newWidth,
-          height: newHeight,
+        Object.assign(currentPropRef.current.shapeOption, {
           rotation: node.rotation(),
-          scaleX: newScaleX,
-          scaleY: newScaleY,
+          scaleX: node.scaleX(),
+          scaleY: node.scaleY(),
+          skewX: node.skewX(),
+          skewY: node.skewY(),
           x: node.x(),
           y: node.y(),
-          offsetX: newWidth / 2,
-          offsetY: newHeight / 2,
         });
 
         // Call callback function
-        prop.onAppliedProp?.(
+        currentPropRef.current.onAppliedProp?.(
           {
             updateProp,
             updateShape,

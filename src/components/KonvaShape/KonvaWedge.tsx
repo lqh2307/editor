@@ -163,47 +163,23 @@ export const KonvaWedge = React.memo(
 
     const handleTransformEnd = React.useCallback(
       (e: Konva.KonvaEventObject<Event>): void => {
-        const node: Konva.Circle = e.target as Konva.Circle;
+        const node: Konva.Wedge = e.target as Konva.Wedge;
         if (!node) {
           return;
         }
 
-        const prop: KonvaShapeProp = currentPropRef.current;
-        const shapeOption: KonvaShape = prop.shapeOption;
-
-        const scaleX: number = node.scaleX();
-        const scaleY: number = node.scaleY();
-
-        const newScaleX: number = scaleX < 0 ? -1 : 1;
-        const newScaleY: number = scaleY < 0 ? -1 : 1;
-
-        const scaleXAbs = scaleX * newScaleX;
-        const scaleYAbs = scaleY * newScaleY;
-
-        let scaleAbs: number;
-
-        if (scaleXAbs > scaleYAbs) {
-          scaleAbs = scaleXAbs;
-
-          shapeOption.scaleX = newScaleX;
-          shapeOption.scaleY = (scaleYAbs / scaleXAbs) * newScaleY;
-        } else {
-          scaleAbs = scaleYAbs;
-
-          shapeOption.scaleY = newScaleY;
-          shapeOption.scaleX = (scaleXAbs / scaleYAbs) * newScaleX;
-        }
-
-        Object.assign(shapeOption, {
-          radius: Math.round(shapeOption.radius * scaleAbs),
+        Object.assign(currentPropRef.current.shapeOption, {
           rotation: node.rotation(),
+          scaleX: node.scaleX(),
+          scaleY: node.scaleY(),
+          skewX: node.skewX(),
+          skewY: node.skewY(),
           x: node.x(),
           y: node.y(),
         });
 
         // Call callback function
-        // Call callback function
-        prop.onAppliedProp?.(
+        currentPropRef.current.onAppliedProp?.(
           {
             updateProp,
             updateShape,

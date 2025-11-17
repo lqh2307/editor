@@ -824,6 +824,18 @@
             "height": {
               "title": "Dọc"
             },
+            "scaleX": {
+              "title": "Tỉ lệ ngang"
+            },
+            "scaleY": {
+              "title": "Tỉ lệ dọc"
+            },
+            "skewX": {
+              "title": "Nghiêng ngang"
+            },
+            "skewY": {
+              "title": "Nghiêng dọc"
+            },
             "cornerRadius": {
               "title": "Bo góc"
             },

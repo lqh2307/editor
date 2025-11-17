@@ -169,42 +169,18 @@ export const KonvaConcavePolygon = React.memo(
           return;
         }
 
-        const prop: KonvaShapeProp = currentPropRef.current;
-        const shapeOption: KonvaShape = prop.shapeOption;
-
-        const scaleX: number = node.scaleX();
-        const scaleY: number = node.scaleY();
-
-        const newScaleX: number = scaleX < 0 ? -1 : 1;
-        const newScaleY: number = scaleY < 0 ? -1 : 1;
-
-        const scaleXAbs = scaleX * newScaleX;
-        const scaleYAbs = scaleY * newScaleY;
-
-        let scaleAbs: number;
-
-        if (scaleXAbs > scaleYAbs) {
-          scaleAbs = scaleXAbs;
-
-          shapeOption.scaleX = newScaleX;
-          shapeOption.scaleY = (scaleYAbs / scaleXAbs) * newScaleY;
-        } else {
-          scaleAbs = scaleYAbs;
-
-          shapeOption.scaleY = newScaleY;
-          shapeOption.scaleX = (scaleXAbs / scaleYAbs) * newScaleX;
-        }
-
-        Object.assign(shapeOption, {
-          innerRadius: Math.round(shapeOption.innerRadius * scaleAbs),
-          outerRadius: Math.round(shapeOption.outerRadius * scaleAbs),
+        Object.assign(currentPropRef.current.shapeOption, {
           rotation: node.rotation(),
+          scaleX: node.scaleX(),
+          scaleY: node.scaleY(),
+          skewX: node.skewX(),
+          skewY: node.skewY(),
           x: node.x(),
           y: node.y(),
         });
 
         // Call callback function
-        prop.onAppliedProp?.(
+        currentPropRef.current.onAppliedProp?.(
           {
             updateProp,
             updateShape,

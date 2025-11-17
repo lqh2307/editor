@@ -824,6 +824,18 @@
             "height": {
               "title": "Height"
             },
+            "scaleX": {
+              "title": "Horizontal Scale"
+            },
+            "scaleY": {
+              "title": "Vertical Scale"
+            },
+            "skewX": {
+              "title": "Horizontal Skew"
+            },
+            "skewY": {
+              "title": "Vertical Skew"
+            },
             "cornerRadius": {
               "title": "Corner Radius"
             },

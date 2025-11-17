@@ -168,27 +168,18 @@ export const KonvaEllipse = React.memo(
           return;
         }
 
-        const prop: KonvaShapeProp = currentPropRef.current;
-        const shapeOption: KonvaShape = prop.shapeOption;
-
-        const scaleX: number = node.scaleX();
-        const scaleY: number = node.scaleY();
-
-        const newScaleX: number = scaleX < 0 ? -1 : 1;
-        const newScaleY: number = scaleY < 0 ? -1 : 1;
-
-        Object.assign(shapeOption, {
-          radiusX: Math.round(shapeOption.radiusX * scaleX * newScaleX),
-          radiusY: Math.round(shapeOption.radiusY * scaleY * newScaleY),
+        Object.assign(currentPropRef.current.shapeOption, {
           rotation: node.rotation(),
-          scaleX: newScaleX,
-          scaleY: newScaleY,
+          scaleX: node.scaleX(),
+          scaleY: node.scaleY(),
+          skewX: node.skewX(),
+          skewY: node.skewY(),
           x: node.x(),
           y: node.y(),
         });
 
         // Call callback function
-        prop.onAppliedProp?.(
+        currentPropRef.current.onAppliedProp?.(
           {
             updateProp,
             updateShape,
