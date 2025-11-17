@@ -44,19 +44,6 @@ function makeCroppableImage(image) {
     cropElement.setAttrs(options);
   };
 
-  const resizeAndUpdateCropElement = () => {
-    if (cropImage) {
-      image.setAttrs({
-        width: image.width() * image.scaleX(),
-        height: image.height() * image.scaleY(),
-        scaleX: 1,
-        scaleY: 1,
-      });
-    }
-
-    updateCropElement();
-  };
-
   image.cropStart = () => {
     if (cropImage) {
       return;
@@ -71,13 +58,9 @@ function makeCroppableImage(image) {
       });
     }
 
-    const layer = image.getLayer();
-
-    const options = layer
+    const options = image
       .getAbsoluteTransform()
       .copy()
-      .invert()
-      .multiply(image.getAbsoluteTransform())
       .multiply(cropElement.getAbsoluteTransform())
       .decompose();
 
@@ -90,8 +73,9 @@ function makeCroppableImage(image) {
       height: cropElement.height(),
     });
 
-    cropImage.on("dragmove", updateCropElement);
-    cropImage.on("transform", updateCropElement);
+    cropImage.on("dragmove transform", updateCropElement);
+
+    const layer = image.getLayer();
 
     layer.add(cropImage);
 
@@ -161,8 +145,7 @@ function makeCroppableImage(image) {
     context.restore();
   });
 
-  image.on("dragmove", updateCropElement);
-  image.on("transform", resizeAndUpdateCropElement);
+  image.on("dragmove transform", updateCropElement);
 }
 
 // --- Demo with 2 images ---
@@ -205,7 +188,7 @@ stage.on(("click"), e => {
 
     transformer.nodes([]);
 
-    nodeTarget?.cropEnd();
+    nodeTarget?.cropEnd?.();
   }
 
   if (target !== stage) {

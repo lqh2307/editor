@@ -44,13 +44,9 @@ export const KonvaImage = React.memo(
         });
       }
 
-      const layer = node.getLayer();
-
-      const options = layer
+      const options = node
         .getAbsoluteTransform()
         .copy()
-        .invert()
-        .multiply(node.getAbsoluteTransform())
         .multiply(cropElementRef.current.getAbsoluteTransform())
         .decompose();
 
@@ -63,16 +59,15 @@ export const KonvaImage = React.memo(
         height: cropElementRef.current.height(),
       });
 
-      cropImageRef.current.on("dragmove", updateCropElement);
-      cropImageRef.current.on("transform", updateCropElement);
+      cropImageRef.current.on("dragmove transform", updateCropElement);
+
+      const layer = node.getLayer();
 
       layer.add(cropImageRef.current);
 
       const cropper: Konva.Transformer = layer.findOne("#cropper") as Konva.Transformer;
       if (cropper) {
-        cropper.nodes([
-          cropImageRef.current,
-        ]);
+        cropper.nodes([cropImageRef.current]);
 
         cropper.moveToTop();
       }
@@ -256,6 +251,13 @@ export const KonvaImage = React.memo(
     );
 
     const handleTransform = React.useCallback(
+      (): void => {
+        updateCropElement();
+      },
+      []
+    );
+
+    const handleTransformEnd = React.useCallback(
       (e: Konva.KonvaEventObject<Event>): void => {
         const node: Konva.Image = e.target as Konva.Image;
         if (!node) {
@@ -263,52 +265,25 @@ export const KonvaImage = React.memo(
         }
 
         const prop: KonvaShapeProp = currentPropRef.current;
-        const shapeOption: KonvaShape = prop.shapeOption;
 
-        const scaleX: number = node.scaleX();
-        const scaleY: number = node.scaleY();
-
-        const newScaleX: number = scaleX < 0 ? -1 : 1;
-        const newScaleY: number = scaleY < 0 ? -1 : 1;
-
-        const newWidth: number = Math.round(
-          shapeOption.width * scaleX * newScaleX
-        );
-        const newHeight: number = Math.round(
-          shapeOption.height * scaleY * newScaleY
-        );
-
-        const newOption: any = {
-          width: newWidth,
-          height: newHeight,
+        Object.assign(prop.shapeOption, {
           rotation: node.rotation(),
-          scaleX: newScaleX,
-          scaleY: newScaleY,
+          scaleX: node.scaleX(),
+          scaleY: node.scaleY(),
           x: node.x(),
           y: node.y(),
-        }
+        });
 
-        node.setAttrs(newOption);
-
-        Object.assign(shapeOption, newOption);
-      },
-      []
-    );
-
-    const handleTransformEnd = React.useCallback(
-      (): void => {
-        if (!cropImageRef.current) {
-          // Call callback function
-          currentPropRef.current.onAppliedProp?.(
-            {
-              updateProp,
-              updateShape,
-              getNode,
-              getShape,
-            },
-            "transform-end"
-          );
-        }
+        // Call callback function
+        prop.onAppliedProp?.(
+          {
+            updateProp,
+            updateShape,
+            getNode,
+            getShape,
+          },
+          "transform-end"
+        );
       },
       []
     );

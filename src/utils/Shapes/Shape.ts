@@ -37,6 +37,10 @@ export function createShape(shape: KonvaShape): KonvaShape {
   newShape.shadowOffsetY = newShape.shadowOffsetY ?? 15;
   newShape.rotation = newShape.rotation ?? 0;
 
+  // Skew
+  newShape.skewX = newShape.skewX ?? 0;
+  newShape.skewY = newShape.skewY ?? 0;
+
   // Scale
   newShape.scaleX = newShape.scaleX ?? 1;
   newShape.scaleY = newShape.scaleY ?? 1;
