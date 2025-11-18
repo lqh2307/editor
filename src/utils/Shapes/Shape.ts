@@ -183,8 +183,8 @@ export function createShape(shape: KonvaShape): KonvaShape {
       newShape.wrap = newShape.wrap ?? "word";
 
       // Offset
-      newShape.offsetX = newShape.offsetX ?? 0;
-      newShape.offsetY = newShape.offsetY ?? 0;
+      newShape.offsetX = newShape.offsetX ?? newShape.width / 2;
+      newShape.offsetY = newShape.offsetY ?? newShape.height / 2;
 
       break;
     }

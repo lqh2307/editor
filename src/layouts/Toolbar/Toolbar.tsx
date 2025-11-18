@@ -1,7 +1,6 @@
 import { ToolbarGeneralSetting } from "./GeneralSetting";
 import { ToolbarStageSetting } from "./StageSetting";
 import { Box, Divider, Stack } from "@mui/material";
-import { useAppContext } from "../../contexts";
 import { ToolbarAddShape } from "./AddShape";
 import { ToolbarHistory } from "./History";
 import { ToolbarDrawing } from "./Drawing";
@@ -14,8 +13,6 @@ import { ToolbarIO } from "./IO";
 import React from "react";
 
 export const Toolbar = React.memo((): React.JSX.Element => {
-  const { panelWidth } = useAppContext();
-
   return (
     <Box
       sx={{
@@ -30,8 +27,9 @@ export const Toolbar = React.memo((): React.JSX.Element => {
           flexDirection: "row",
           justifyContent: "center",
           alignItems: "center",
-          width: innerWidth - panelWidth,
+          width: "85%",
           height: "100%",
+          overflowX: "auto",
         }}
         direction={"row"}
         divider={<Divider orientation={"vertical"} flexItem={true} />}
@@ -74,8 +72,9 @@ export const Toolbar = React.memo((): React.JSX.Element => {
           flexDirection: "row",
           justifyContent: "center",
           alignItems: "center",
-          width: panelWidth,
+          width: "15%",
           height: "100%",
+          overflowX: "auto",
         }}
         direction={"row"}
         divider={<Divider orientation={"vertical"} flexItem={true} />}

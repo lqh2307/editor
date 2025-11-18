@@ -154,9 +154,9 @@ export const KonvaImage = React.memo(
       shapeOption.box = createShapeBox(node);
 
       // Cache
-      // if (shapeOption.width || shapeOption.height) {
-      //   node.cache();
-      // }
+      if (shapeOption.width || shapeOption.height) {
+        node.cache();
+      }
 
       // Call callback function
       prop.onAppliedProp?.(

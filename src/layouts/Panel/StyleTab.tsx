@@ -558,7 +558,7 @@ export const PanelStyleTab = React.memo((): React.JSX.Element => {
           {/* ScaleX/ScaleY */}
           <Stack
             sx={{
-              display: "flex",
+              display: selectedShape.type !== "text" ? "flex" : "none",
               flexDirection: "row",
               gap: "0.5rem",
               alignItems: "center",

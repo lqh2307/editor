@@ -45,6 +45,9 @@ export const KonvaText = React.memo(
       const prop: KonvaShapeProp = currentPropRef.current;
       const shapeOption: KonvaShape = prop.shapeOption;
 
+      shapeOption.offsetX = shapeOption.width / 2;
+      shapeOption.offsetY = shapeOption.height / 2;
+
       // Update node attrs
       node.setAttrs({
         ...shapeOption,
