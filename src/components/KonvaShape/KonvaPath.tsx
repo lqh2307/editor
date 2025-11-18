@@ -3,7 +3,6 @@ import { KonvaShapeProp, KonvaShape } from "./Types";
 import { createShapeBox } from "../../utils/Shapes";
 import { Portal } from "react-konva-utils";
 import { Group } from "react-konva";
-import svgPath from "svgpath";
 import React from "react";
 import Konva from "konva";
 
@@ -42,9 +41,23 @@ export const KonvaPath = React.memo(
       const prop: KonvaShapeProp = currentPropRef.current;
       const shapeOption: KonvaShape = prop.shapeOption;
 
+      shapeOption.offsetX = shapeOption.width / 2;
+      shapeOption.offsetY = shapeOption.height / 2;
+
       // Process node attrs
-      let { x, y, scaleX, scaleY, rotation, paths, ...pathOption }: KonvaShape =
-        shapeOption;
+      let {
+        x,
+        y,
+        scaleX,
+        scaleY,
+        skewX,
+        skewY,
+        offsetX,
+        offsetY,
+        rotation,
+        paths,
+        ...pathOption
+      }: KonvaShape = shapeOption;
 
       pathOption.fill = parseHexToRGBAString(
         pathOption.fill as string,
@@ -77,6 +90,10 @@ export const KonvaPath = React.memo(
         y: y,
         scaleX: scaleX,
         scaleY: scaleY,
+        skewX: skewX,
+        skewY: skewY,
+        offsetX: offsetX,
+        offsetY: offsetY,
         rotation: rotation,
         draggable: prop.isSelected,
       });
@@ -192,34 +209,18 @@ export const KonvaPath = React.memo(
           return;
         }
 
-        const prop: KonvaShapeProp = currentPropRef.current;
-        const shapeOption: KonvaShape = prop.shapeOption;
-
-        const scaleX: number = node.scaleX();
-        const scaleY: number = node.scaleY();
-
-        const newScaleX: number = scaleX < 0 ? -1 : 1;
-        const newScaleY: number = scaleY < 0 ? -1 : 1;
-
-        const scaleXAbs = scaleX * newScaleX;
-        const scaleYAbs = scaleY * newScaleY;
-
-        Object.assign(shapeOption, {
+        Object.assign(currentPropRef.current.shapeOption, {
           rotation: node.rotation(),
-          scaleX: newScaleX,
-          scaleY: newScaleY,
+          scaleX: node.scaleX(),
+          scaleY: node.scaleY(),
+          skewX: node.skewX(),
+          skewY: node.skewY(),
           x: node.x(),
           y: node.y(),
         });
 
-        shapeOption.paths.forEach((path) => {
-          path.data = new svgPath(path.data)
-            .scale(scaleXAbs, scaleYAbs)
-            .toString();
-        });
-
         // Call callback function
-        prop.onAppliedProp?.(
+        currentPropRef.current.onAppliedProp?.(
           {
             updateProp,
             updateShape,

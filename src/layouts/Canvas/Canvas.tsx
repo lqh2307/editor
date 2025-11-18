@@ -257,43 +257,9 @@ export const Canvas = React.memo((): React.JSX.Element => {
         const freeDrawingInfo: FreeDrawingInfo = freeDrawingInfoRef.current;
 
         if (freeDrawingInfo.previousMode) {
-          if (freeDrawingInfo.lines) {
-            const pointer: Vector2d = getStagePointerPosition(
-              freeDrawingInfo.shapeId
-            );
-            if (!pointer) {
-              return;
-            }
-
-            // Add new line
-            freeDrawingInfo.lines.push({
-              id: nanoid(),
-              points: [pointer.x, pointer.y],
-              globalCompositeOperation:
-                freeDrawingInfo.previousMode === "pen"
-                  ? "source-over"
-                  : "destination-out",
-            });
-
-            // Update shape
-            updateShape(undefined, true, false);
-          } else {
-            const pointer: Vector2d = getStagePointerPosition();
-            if (!pointer) {
-              return;
-            }
-
+          if (!freeDrawingInfo.lines) {
             // Store free drawing lines
-            freeDrawingInfo.lines = [
-              {
-                id: nanoid(),
-                points: [pointer.x, pointer.y],
-                globalCompositeOperation:
-                  freeDrawingInfo.previousMode === "pen"
-                    ? "source-over"
-                    : "destination-out",
-              },
-            ];
+            freeDrawingInfo.lines = [];
 
             // Add new shape
             await addShapes(
@@ -308,7 +274,34 @@ export const Canvas = React.memo((): React.JSX.Element => {
               false,
               undefined
             );
+
+            const pointer: Vector2d = getStagePointerPosition(
+              freeDrawingInfo.shapeId
+            );
+            if (!pointer) {
+              return;
+            }
           }
+
+          const pointer: Vector2d = getStagePointerPosition(
+            freeDrawingInfo.shapeId
+          );
+          if (!pointer) {
+            return;
+          }
+
+          // Add new line
+          freeDrawingInfo.lines.push({
+            id: nanoid(),
+            points: [pointer.x, pointer.y],
+            globalCompositeOperation:
+              freeDrawingInfo.previousMode === "pen"
+                ? "source-over"
+                : "destination-out",
+          });
+
+          // Update shape
+          updateShape(undefined, true, false);
 
           // Mark drawing on
           freeDrawingInfo.isDrawing = true;

@@ -48,6 +48,8 @@ export const KonvaFreeDrawing = React.memo(
         y,
         scaleX,
         scaleY,
+        skewX,
+        skewY,
         rotation,
         lines,
         ...lineOption
@@ -86,6 +88,8 @@ export const KonvaFreeDrawing = React.memo(
         y: y,
         scaleX: scaleX,
         scaleY: scaleY,
+        skewX: skewX,
+        skewY: skewY,
         rotation: rotation,
         draggable: prop.isSelected,
       });
@@ -201,48 +205,18 @@ export const KonvaFreeDrawing = React.memo(
           return;
         }
 
-        const prop: KonvaShapeProp = currentPropRef.current;
-        const shapeOption: KonvaShape = prop.shapeOption;
-
-        const scaleX: number = node.scaleX();
-        const scaleY: number = node.scaleY();
-
-        const newScaleX: number = scaleX < 0 ? -1 : 1;
-        const newScaleY: number = scaleY < 0 ? -1 : 1;
-
-        const scaleXAbs = scaleX * newScaleX;
-        const scaleYAbs = scaleY * newScaleY;
-
-        let strokeWidth: number;
-
-        if (scaleXAbs.toPrecision(5) === scaleYAbs.toPrecision(5)) {
-          strokeWidth = Math.round(shapeOption.strokeWidth * scaleXAbs);
-
-          if (strokeWidth < 1) {
-            strokeWidth = 1;
-          }
-        } else {
-          strokeWidth = shapeOption.strokeWidth;
-        }
-
-        Object.assign(shapeOption, {
-          strokeWidth: strokeWidth,
+        Object.assign(currentPropRef.current.shapeOption, {
           rotation: node.rotation(),
-          scaleX: newScaleX,
-          scaleY: newScaleY,
+          scaleX: node.scaleX(),
+          scaleY: node.scaleY(),
+          skewX: node.skewX(),
+          skewY: node.skewY(),
           x: node.x(),
           y: node.y(),
         });
 
-        shapeOption.lines.forEach((line) => {
-          line.points.forEach((point, idx) => {
-            line.points[idx] =
-              idx % 2 === 0 ? point * scaleXAbs : point * scaleYAbs;
-          });
-        });
-
         // Call callback function
-        prop.onAppliedProp?.(
+        currentPropRef.current.onAppliedProp?.(
           {
             updateProp,
             updateShape,

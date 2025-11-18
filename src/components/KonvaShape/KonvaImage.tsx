@@ -126,13 +126,8 @@ export const KonvaImage = React.memo(
       const prop: KonvaShapeProp = currentPropRef.current;
       const shapeOption: KonvaShape = prop.shapeOption;
 
-      if (shapeOption.width != node.width()) {
-        shapeOption.offsetX = shapeOption.width / 2;
-      }
-
-      if (shapeOption.height != node.height()) {
-        shapeOption.offsetY = shapeOption.height / 2;
-      }
+      shapeOption.offsetX = shapeOption.width / 2;
+      shapeOption.offsetY = shapeOption.height / 2;
 
       // Update node attrs
       node.setAttrs({
