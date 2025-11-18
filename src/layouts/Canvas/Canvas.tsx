@@ -215,7 +215,7 @@ export const Canvas = React.memo((): React.JSX.Element => {
           const shapeOption: KonvaShape = data as KonvaShape;
 
           if (data.type === "path" && data.imageURL) {
-            shapeOption.paths = createPathsFromSVG(data.imageURL, 12.5, 12.5);
+            shapeOption.paths = createPathsFromSVG(data.imageURL, 200, 200);
           }
 
           shapeOptions = [shapeOption];

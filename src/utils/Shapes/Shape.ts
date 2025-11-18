@@ -412,76 +412,45 @@ export function cloneLines(
 /**
  * Create paths from SVG
  * @param svg
- * @param scaleX
- * @param scaleY
+ * @param width
+ * @param height
  * @returns
  */
 export function createPathsFromSVG(
   svgString: string,
-  scaleX?: number,
-  scaleY?: number
+  width?: number,
+  height?: number
 ): Konva.PathConfig[] {
   const result: Konva.PathConfig[] = [];
 
-  const shape: Record<string, (el: Element) => string> = {
-    rect(el: Element): string {
-      const x: string = el.getAttribute("x") || "0";
-      const y: string = el.getAttribute("y") || "0";
+  const root: Element = new DOMParser().parseFromString(svgString, "image/svg+xml").documentElement as Element;
 
-      const w: number = Number(el.getAttribute("width") || "0");
-      const h: number = Number(el.getAttribute("height") || "0");
+  let scaleX: number = 1;
+  let scaleY: number = 1;
 
-      let rx: number = Number(el.getAttribute("rx") || "0");
-      let ry: number = Number(el.getAttribute("ry") || "0");
-      if (!rx && ry) {
-        rx = ry;
-      }
-      if (!ry && rx) {
-        ry = rx;
-      }
+  const viewBox: string = root.getAttribute("viewBox");
+  if (viewBox) {
+    const parts: number[] = viewBox.split(/\s+/).map(Number);
 
-      return `M${x},${y}m${rx},0l${w - 2 * rx},0q${rx},0 ${rx},${ry}l0,${h - 2 * ry}q0,${ry} ${-rx},${ry}l${-w + 2 * rx},0q${-rx},0 ${-rx},${-ry}l0,${-h + 2 * ry}q0,${-ry} ${rx},${-ry}Z`;
-    },
-    circle(el: Element): string {
-      const cx: string = el.getAttribute("cx") || "0";
-      const cy: string = el.getAttribute("cy") || "0";
+    if (width && parts[2]) {
+      scaleX = width / parts[2];
+    }
 
-      const r: number = Number(el.getAttribute("r") || "0");
+    if (height && parts[3]) {
+      scaleY = height / parts[3];
+    }
+  } else {
+    const origWidth: number = Number(root.getAttribute("width") || "0");
+    const origHeight: number = Number(root.getAttribute("height") || "0");
 
-      return `M${cx},${cy}m${-r},0a${r},${r},0,1,0,${r * 2},0a${r},${r},0,1,0,${-r * 2},0Z`;
-    },
-    ellipse(el: Element): string {
-      const cx: number = Number(el.getAttribute("cx") || "0");
-      const cy: number = Number(el.getAttribute("cy") || "0");
+    if (width && origWidth) {
+      scaleX = width / origWidth;
+    }
 
-      const rx: number = Number(el.getAttribute("rx") || "0");
-      const ry: number = Number(el.getAttribute("ry") || "0");
-
-      return `M${cx - rx},${cy}a${rx},${ry},0,1,0,${rx * 2},0a${rx},${ry},0,1,0,${-rx * 2},0Z`;
-    },
-    line(el: Element): string {
-      const x1: string = el.getAttribute("x1") || "0";
-      const y1: string = el.getAttribute("y1") || "0";
-
-      const x2: string = el.getAttribute("x2") || "0";
-      const y2: string = el.getAttribute("y2") || "0";
-
-      return `M${x1},${y1}L${x2},${y2}`;
-    },
-    polygon(el: Element): string {
-      return (
-        el
-          .getAttribute("points")
-          .trim()
-          .split(/\s+/)
-          .map((p, i) => (i === 0 ? "M" : "L") + p)
-          .join("") + "Z"
-      );
-    },
-    path(el: Element): string {
-      return el.getAttribute("d");
-    },
-  };
+    if (height && origHeight) {
+      scaleY = height / origHeight;
+    }
+  }
 
   function traverse(node: Node) {
     if (node.nodeType !== 1) {
@@ -489,20 +458,91 @@ export function createPathsFromSVG(
     }
 
     const el: Element = node as Element;
-    const fn: (el: Element) => string = shape[el.tagName.toLowerCase()];
+    let data: string;
 
-    if (fn) {
+    switch (el.tagName) {
+      default: {
+        break;
+      }
+
+      case "rect": {
+        const x: string = el.getAttribute("x") || "0";
+        const y: string = el.getAttribute("y") || "0";
+
+        const w: number = Number(el.getAttribute("width") || "0");
+        const h: number = Number(el.getAttribute("height") || "0");
+
+        let rx: number = Number(el.getAttribute("rx") || "0");
+        let ry: number = Number(el.getAttribute("ry") || "0");
+        if (!rx && ry) {
+          rx = ry;
+        }
+        if (!ry && rx) {
+          ry = rx;
+        }
+
+        data = `M${x},${y}m${rx},0l${w - 2 * rx},0q${rx},0 ${rx},${ry}l0,${h - 2 * ry}q0,${ry} ${-rx},${ry}l${-w + 2 * rx},0q${-rx},0 ${-rx},${-ry}l0,${-h + 2 * ry}q0,${-ry} ${rx},${-ry}Z`;
+
+        break;
+      }
+
+      case "circle": {
+        const cx: string = el.getAttribute("cx") || "0";
+        const cy: string = el.getAttribute("cy") || "0";
+
+        const r: number = Number(el.getAttribute("r") || "0");
+
+        data = `M${cx},${cy}m${-r},0a${r},${r},0,1,0,${r * 2},0a${r},${r},0,1,0,${-r * 2},0Z`;
+
+        break;
+      }
+
+      case "ellipse": {
+        const cx: number = Number(el.getAttribute("cx") || "0");
+        const cy: number = Number(el.getAttribute("cy") || "0");
+
+        const rx: number = Number(el.getAttribute("rx") || "0");
+        const ry: number = Number(el.getAttribute("ry") || "0");
+
+        data = `M${cx - rx},${cy}a${rx},${ry},0,1,0,${rx * 2},0a${rx},${ry},0,1,0,${-rx * 2},0Z`;
+
+        break;
+      }
+
+      case "line": {
+        data = `M${el.getAttribute("x1") || "0"},${el.getAttribute("y1") || "0"}L${el.getAttribute("x2") || "0"},${el.getAttribute("y2") || "0"}`;
+
+        break;
+      }
+
+      case "polygon": {
+        data = el
+          .getAttribute("points")
+          .trim()
+          .split(/\s+/)
+          .map((p, i) => (i === 0 ? "M" : "L") + p)
+          .join("") + "Z"
+
+        break;
+      }
+
+      case "path": {
+        data = el.getAttribute("d");
+
+        break;
+      }
+    }
+
+    if (data) {
       result.push({
-        data: new svgPath(fn(el)).scale(scaleX, scaleY).toString(),
+        data: scaleX !== 1 || scaleY !== 1 ? new svgPath(data).scale(scaleX, scaleY).toString() : data,
       });
     }
 
-    el.childNodes.forEach((node) => traverse(node));
+    el.childNodes.forEach(traverse);
   }
 
-  traverse(
-    new DOMParser().parseFromString(svgString, "image/svg+xml").documentElement
-  );
+  traverse(root);
 
   return result;
 }

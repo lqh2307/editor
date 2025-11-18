@@ -30,7 +30,7 @@ export const ToolbarAddIcon = React.memo((): React.JSX.Element => {
           [
             {
               type: data.type,
-              paths: createPathsFromSVG(data.imageURL, 12.5, 12.5),
+              paths: createPathsFromSVG(data.imageURL, 200, 200),
             },
           ],
           false,
