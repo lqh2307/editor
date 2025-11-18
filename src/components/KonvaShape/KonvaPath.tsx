@@ -161,15 +161,13 @@ export const KonvaPath = React.memo(
           return;
         }
 
-        const prop: KonvaShapeProp = currentPropRef.current;
-
-        Object.assign(prop.shapeOption, {
+        Object.assign(currentPropRef.current.shapeOption, {
           ...node.position(),
           box: createShapeBox(node),
         });
 
         // Call callback function
-        prop.onDragMove?.({
+        currentPropRef.current.onDragMove?.({
           updateProp,
           updateShape,
           getNode,
@@ -179,28 +177,20 @@ export const KonvaPath = React.memo(
       []
     );
 
-    const handleDragEnd = React.useCallback(
-      (e: Konva.KonvaEventObject<DragEvent>): void => {
-        setIsEnabled(false);
+    const handleDragEnd = React.useCallback((): void => {
+      setIsEnabled(false);
 
-        const node: Konva.Group = e.target as Konva.Group;
-        if (!node) {
-          return;
-        }
-
-        // Call callback function
-        currentPropRef.current.onAppliedProp?.(
-          {
-            updateProp,
-            updateShape,
-            getNode,
-            getShape,
-          },
-          "drag-end"
-        );
-      },
-      []
-    );
+      // Call callback function
+      currentPropRef.current.onAppliedProp?.(
+        {
+          updateProp,
+          updateShape,
+          getNode,
+          getShape,
+        },
+        "drag-end"
+      );
+    }, []);
 
     const handleTransformEnd = React.useCallback(
       (e: Konva.KonvaEventObject<Event>): void => {

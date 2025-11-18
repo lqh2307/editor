@@ -13,29 +13,32 @@ export const KonvaImage = React.memo(
     const [isEnabled, setIsEnabled] = React.useState<boolean>(false);
     const cropElementRef = React.useRef<Konva.Shape>(undefined);
     const cropImageRef = React.useRef<Konva.Image>(undefined);
+    const isCroppingRef = React.useRef<boolean>(false);
 
-    const updateCropElement = () => {
-      if (
-        !cropElementRef.current ||
-        !cropImageRef.current ||
-        !nodeRef.current
-      ) {
+    const updateCropElement = React.useCallback((): void => {
+      if (!isCroppingRef.current) {
         return;
       }
 
-      const options = nodeRef.current
-        .getAbsoluteTransform()
-        .copy()
-        .invert()
-        .multiply(cropImageRef.current.getAbsoluteTransform())
-        .decompose();
+      if (cropElementRef.current && cropImageRef.current && nodeRef.current) {
+        const options = nodeRef.current
+          .getAbsoluteTransform()
+          .copy()
+          .invert()
+          .multiply(cropImageRef.current.getAbsoluteTransform())
+          .decompose();
 
-      cropElementRef.current.setAttrs(options);
-    };
+        cropElementRef.current.setAttrs(options);
+      }
+    }, []);
 
-    const startCrop = () => {
+    const startCrop = React.useCallback((): void => {
+      if (isCroppingRef.current) {
+        return;
+      }
+
       const node: Konva.Image = nodeRef.current;
-      if (cropImageRef.current || !node) {
+      if (!node) {
         return;
       }
 
@@ -48,52 +51,52 @@ export const KonvaImage = React.memo(
         });
       }
 
-      const options = node
-        .getAbsoluteTransform()
-        .copy()
-        .multiply(cropElementRef.current.getAbsoluteTransform())
-        .decompose();
+      if (cropImageRef.current) {
+        const options = node
+          .getAbsoluteTransform()
+          .copy()
+          .multiply(cropElementRef.current.getAbsoluteTransform())
+          .decompose();
 
-      cropImageRef.current = new Konva.Image({
-        draggable: true,
-        opacity: 0.5,
-        ...options,
-        image: node.image(),
-        width: cropElementRef.current.width(),
-        height: cropElementRef.current.height(),
-      });
+        cropImageRef.current.setAttrs({
+          ...options,
+          visible: true,
+          image: node.image(),
+          width: cropElementRef.current.width(),
+          height: cropElementRef.current.height(),
+        });
 
-      cropImageRef.current.on("dragmove transform", updateCropElement);
+        const cropper: Konva.Transformer = node
+          .getLayer()
+          .findOne("#cropper") as Konva.Transformer;
+        if (cropper) {
+          cropper.nodes([cropImageRef.current]);
 
-      const layer = node.getLayer();
-
-      layer.add(cropImageRef.current);
-
-      const cropper: Konva.Transformer = layer.findOne(
-        "#cropper"
-      ) as Konva.Transformer;
-      if (cropper) {
-        cropper.nodes([cropImageRef.current]);
-
-        cropper.moveToTop();
+          cropper.moveToTop();
+        }
       }
-    };
 
-    const endCrop = (restore?: boolean) => {
-      if (cropImageRef.current && nodeRef.current) {
-        (
-          nodeRef.current.getLayer().findOne("#cropper") as Konva.Transformer
-        )?.nodes([]);
+      isCroppingRef.current = true;
+    }, []);
 
-        cropImageRef.current.remove();
-        cropImageRef.current = null;
+    const endCrop = React.useCallback((restore?: boolean): void => {
+      if (!isCroppingRef.current) {
+        return;
       }
+
+      (
+        nodeRef.current?.getLayer().findOne("#cropper") as Konva.Transformer
+      )?.nodes([]);
+
+      cropImageRef.current?.visible(false);
 
       if (restore && cropElementRef.current) {
         cropElementRef.current.remove();
-        cropElementRef.current = null;
+        cropElementRef.current = undefined;
       }
-    };
+
+      isCroppingRef.current = false;
+    }, []);
 
     React.useEffect(() => {
       currentPropRef.current = prop;
@@ -218,9 +221,7 @@ export const KonvaImage = React.memo(
           return;
         }
 
-        const prop: KonvaShapeProp = currentPropRef.current;
-
-        Object.assign(prop.shapeOption, {
+        Object.assign(currentPropRef.current.shapeOption, {
           ...node.position(),
           box: createShapeBox(node),
         });
@@ -228,7 +229,7 @@ export const KonvaImage = React.memo(
         updateCropElement();
 
         // Call callback function
-        prop.onDragMove?.({
+        currentPropRef.current.onDragMove?.({
           updateProp,
           updateShape,
           getNode,
@@ -238,28 +239,20 @@ export const KonvaImage = React.memo(
       []
     );
 
-    const handleDragEnd = React.useCallback(
-      (e: Konva.KonvaEventObject<DragEvent>): void => {
-        setIsEnabled(false);
+    const handleDragEnd = React.useCallback((): void => {
+      setIsEnabled(false);
 
-        const node: Konva.Image = e.target as Konva.Image;
-        if (!node) {
-          return;
-        }
-
-        // Call callback function
-        currentPropRef.current.onAppliedProp?.(
-          {
-            updateProp,
-            updateShape,
-            getNode,
-            getShape,
-          },
-          "drag-end"
-        );
-      },
-      []
-    );
+      // Call callback function
+      currentPropRef.current.onAppliedProp?.(
+        {
+          updateProp,
+          updateShape,
+          getNode,
+          getShape,
+        },
+        "drag-end"
+      );
+    }, []);
 
     const handleTransform = React.useCallback((): void => {
       updateCropElement();
@@ -381,6 +374,17 @@ export const KonvaImage = React.memo(
           onTransform={handleTransform}
           onTransformEnd={handleTransformEnd}
           sceneFunc={handleScene}
+        />
+
+        <Image
+          listening={true}
+          draggable={true}
+          visible={false}
+          ref={cropImageRef}
+          image={undefined}
+          opacity={0.5}
+          onDragMove={updateCropElement}
+          onTransform={updateCropElement}
         />
       </Portal>
     );
