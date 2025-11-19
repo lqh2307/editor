@@ -41,34 +41,34 @@ type State = {
 
 type Action = {
   type:
-  | "SET_MAX_HISTORY"
-  | "UPDATE_SELECTED_IDS"
-  | "UPDATE_SHAPE"
-  | "ADD_SHAPES"
-  | "DO_SHAPE"
-  | "DELETE_SHAPES"
-  | "COPY_SHAPE"
-  | "DUPLICATE_SHAPE"
-  | "MOVE_SHAPES"
-  | "PASTE_SHAPE"
-  | "LAYER_SHAPE"
-  | "ALIGN_SHAPE"
-  | "FLIP_SHAPE"
-  | "CLEAN";
+    | "SET_MAX_HISTORY"
+    | "UPDATE_SELECTED_IDS"
+    | "UPDATE_SHAPE"
+    | "ADD_SHAPES"
+    | "DO_SHAPE"
+    | "DELETE_SHAPES"
+    | "COPY_SHAPE"
+    | "DUPLICATE_SHAPE"
+    | "MOVE_SHAPES"
+    | "PASTE_SHAPE"
+    | "LAYER_SHAPE"
+    | "ALIGN_SHAPE"
+    | "FLIP_SHAPE"
+    | "CLEAN";
   payload?:
-  | number
-  | UpdateSelectedIds
-  | Update
-  | Add
-  | Do
-  | Delete
-  | Copy
-  | Duplicate
-  | Move
-  | Paste
-  | Layer
-  | Align
-  | Flip;
+    | number
+    | UpdateSelectedIds
+    | Update
+    | Add
+    | Do
+    | Delete
+    | Copy
+    | Duplicate
+    | Move
+    | Paste
+    | Layer
+    | Align
+    | Flip;
 };
 
 type Layer = {
@@ -255,9 +255,9 @@ function reducer(state: State, action: Action): State {
       // Create new state
       return update.storeHistory
         ? {
-          ...state,
-          ...addHistory(state.shapeList),
-        }
+            ...state,
+            ...addHistory(state.shapeList),
+          }
         : state;
     }
 
@@ -427,8 +427,18 @@ function reducer(state: State, action: Action): State {
       const newShapeList: KonvaShape[] = state.shapeList.filter((item) => {
         const isKeep: boolean = !shapeIds.includes(item.id);
 
-        if (isKeep && state.selectedIds[item.id]) {
-          selectedIds[item.id] = true;
+        if (isKeep) {
+          if (state.selectedIds[item.id]) {
+            selectedIds[item.id] = true;
+          }
+        } else {
+          const shapeAPI = del.shapeRefs[item.id];
+          if (shapeAPI) {
+            const shape = shapeAPI.getShape();
+            if (shape.type === "image") {
+              shapeAPI.endCrop();
+            }
+          }
         }
 
         return isKeep;

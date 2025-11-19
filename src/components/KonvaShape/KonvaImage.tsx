@@ -33,10 +33,6 @@ export const KonvaImage = React.memo(
     }, []);
 
     const startCrop = React.useCallback((): void => {
-      if (isCroppingRef.current) {
-        return;
-      }
-
       const node: Konva.Image = nodeRef.current;
       if (!node) {
         return;
@@ -52,9 +48,13 @@ export const KonvaImage = React.memo(
       }
 
       if (cropImageRef.current) {
-        const options = node
+        const layer: Konva.Layer = node.getLayer();
+
+        const options = layer
           .getAbsoluteTransform()
           .copy()
+          .invert()
+          .multiply(node.getAbsoluteTransform())
           .multiply(cropElementRef.current.getAbsoluteTransform())
           .decompose();
 
@@ -66,13 +66,11 @@ export const KonvaImage = React.memo(
           height: cropElementRef.current.height(),
         });
 
-        const cropper: Konva.Transformer = node
-          .getLayer()
-          .findOne("#cropper") as Konva.Transformer;
+        const cropper: Konva.Transformer = layer.findOne(
+          "#cropper"
+        ) as Konva.Transformer;
         if (cropper) {
           cropper.nodes([cropImageRef.current]);
-
-          cropper.moveToTop();
         }
       }
 
@@ -80,13 +78,12 @@ export const KonvaImage = React.memo(
     }, []);
 
     const endCrop = React.useCallback((restore?: boolean): void => {
-      if (!isCroppingRef.current) {
+      const node: Konva.Image = nodeRef.current;
+      if (!node) {
         return;
       }
 
-      (
-        nodeRef.current?.getLayer().findOne("#cropper") as Konva.Transformer
-      )?.nodes([]);
+      (node.getLayer().findOne("#cropper") as Konva.Transformer)?.nodes([]);
 
       cropImageRef.current?.visible(false);
 
@@ -254,10 +251,6 @@ export const KonvaImage = React.memo(
       );
     }, []);
 
-    const handleTransform = React.useCallback((): void => {
-      updateCropElement();
-    }, []);
-
     const handleTransformEnd = React.useCallback(
       (e: Konva.KonvaEventObject<Event>): void => {
         const node: Konva.Image = e.target as Konva.Image;
@@ -316,14 +309,23 @@ export const KonvaImage = React.memo(
           return;
         }
 
-        let width = shape.width();
-        let height = shape.height();
+        const width: number = shape.width();
+        const height: number = shape.height();
 
         context.save();
 
         context.beginPath();
         context.rect(0, 0, width, height);
         context.clip();
+
+        context.save();
+
+        context.shadowColor = shape.shadowColor();
+        context.shadowBlur = shape.shadowBlur();
+        context.shadowOffsetX = shape.shadowOffsetX();
+        context.shadowOffsetY = shape.shadowOffsetY();
+
+        context.restore();
 
         if (cropElementRef.current) {
           context.save();
@@ -344,16 +346,7 @@ export const KonvaImage = React.memo(
           context.drawImage(img, 0, 0, width, height);
         }
 
-        context.save();
-        context.shadowColor = context.shadowColor;
-        context.shadowBlur = context.shadowBlur;
-        context.shadowOffsetX = context.shadowOffsetX;
-        context.shadowOffsetY = context.shadowOffsetY;
-
-        context.beginPath();
-        context.rect(0, 0, width, height);
         context.fillStrokeShape(shape);
-        context.restore();
 
         context.restore();
       },
@@ -364,20 +357,6 @@ export const KonvaImage = React.memo(
       <Portal selector={"#shapes"} enabled={isEnabled}>
         <Image
           listening={true}
-          ref={nodeRef}
-          image={undefined}
-          onClick={handleClick}
-          onMouseOver={handleMouseOver}
-          onMouseLeave={handleMouseLeave}
-          onDragMove={handleDragMove}
-          onDragEnd={handleDragEnd}
-          onTransform={handleTransform}
-          onTransformEnd={handleTransformEnd}
-          sceneFunc={handleScene}
-        />
-
-        <Image
-          listening={true}
           draggable={true}
           visible={false}
           ref={cropImageRef}
@@ -385,6 +364,20 @@ export const KonvaImage = React.memo(
           opacity={0.5}
           onDragMove={updateCropElement}
           onTransform={updateCropElement}
+        />
+
+        <Image
+          listening={true}
+          ref={nodeRef}
+          image={undefined}
+          onClick={handleClick}
+          onMouseOver={handleMouseOver}
+          onMouseLeave={handleMouseLeave}
+          onDragMove={handleDragMove}
+          onDragEnd={handleDragEnd}
+          onTransform={updateCropElement}
+          onTransformEnd={handleTransformEnd}
+          sceneFunc={handleScene}
         />
       </Portal>
     );

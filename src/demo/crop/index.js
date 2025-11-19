@@ -30,25 +30,19 @@ function makeCroppableImage(image) {
   let cropImage = null;
 
   const updateCropElement = () => {
-    if (!cropElement || !cropImage) {
-      return;
+    if (cropElement && cropImage) {
+      const options = image
+        .getAbsoluteTransform()
+        .copy()
+        .invert()
+        .multiply(cropImage.getAbsoluteTransform())
+        .decompose();
+
+      cropElement.setAttrs(options);
     }
-
-    const options = image
-      .getAbsoluteTransform()
-      .copy()
-      .invert()
-      .multiply(cropImage.getAbsoluteTransform())
-      .decompose();
-
-    cropElement.setAttrs(options);
   };
 
   image.cropStart = () => {
-    if (cropImage) {
-      return;
-    }
-
     if (!cropElement) {
       cropElement = new Konva.Shape({
         width: image.width(),
@@ -58,9 +52,13 @@ function makeCroppableImage(image) {
       });
     }
 
-    const options = image
+    const layer = image.getLayer();
+
+    const options = layer
       .getAbsoluteTransform()
       .copy()
+      .invert()
+      .multiply(image.getAbsoluteTransform())
       .multiply(cropElement.getAbsoluteTransform())
       .decompose();
 
@@ -75,8 +73,6 @@ function makeCroppableImage(image) {
 
     cropImage.on("dragmove transform", updateCropElement);
 
-    const layer = image.getLayer();
-
     layer.add(cropImage);
 
     const cropper = layer.findOne("#cropper");
@@ -88,9 +84,9 @@ function makeCroppableImage(image) {
   };
 
   image.cropEnd = (restore) => {
-    if (cropImage) {
-      (image.getLayer().findOne("#cropper"))?.nodes([]);
+    (image.getLayer().findOne("#cropper"))?.nodes([]);
 
+    if (cropImage) {
       cropImage.remove();
       cropImage = null;
     }
@@ -109,14 +105,23 @@ function makeCroppableImage(image) {
       return;
     }
 
-    let width = shape.width();
-    let height = shape.height();
+    const width = shape.width();
+    const height = shape.height();
 
     context.save();
 
     context.beginPath();
     context.rect(0, 0, width, height);
     context.clip();
+
+    context.save();
+
+    context.shadowColor = shape.shadowColor();
+    context.shadowBlur = shape.shadowBlur();
+    context.shadowOffsetX = shape.shadowOffsetX();
+    context.shadowOffsetY = shape.shadowOffsetY();
+
+    context.restore();
 
     if (cropElement) {
       context.save();
@@ -131,16 +136,7 @@ function makeCroppableImage(image) {
       context.drawImage(img, 0, 0, width, height);
     }
 
-    context.save();
-    context.shadowColor = context.shadowColor;
-    context.shadowBlur = context.shadowBlur;
-    context.shadowOffsetX = context.shadowOffsetX;
-    context.shadowOffsetY = context.shadowOffsetY;
-
-    context.beginPath();
-    context.rect(0, 0, width, height);
     context.fillStrokeShape(shape);
-    context.restore();
 
     context.restore();
   });
