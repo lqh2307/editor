@@ -16,19 +16,20 @@ export const KonvaImage = React.memo(
     const isCroppingRef = React.useRef<boolean>(false);
 
     const updateCropElement = React.useCallback((): void => {
-      if (!isCroppingRef.current) {
-        return;
-      }
-
-      if (cropElementRef.current && cropImageRef.current && nodeRef.current) {
-        const options = nodeRef.current
-          .getAbsoluteTransform()
-          .copy()
-          .invert()
-          .multiply(cropImageRef.current.getAbsoluteTransform())
-          .decompose();
-
-        cropElementRef.current.setAttrs(options);
+      if (
+        isCroppingRef.current &&
+        cropElementRef.current &&
+        cropImageRef.current &&
+        nodeRef.current
+      ) {
+        cropElementRef.current.setAttrs(
+          nodeRef.current
+            .getAbsoluteTransform()
+            .copy()
+            .invert()
+            .multiply(cropImageRef.current.getAbsoluteTransform())
+            .decompose()
+        );
       }
     }, []);
 
@@ -42,24 +43,20 @@ export const KonvaImage = React.memo(
         cropElementRef.current = new Konva.Shape({
           width: node.width(),
           height: node.height(),
-          skewX: node.skewX(),
-          skewY: node.skewY(),
         });
       }
 
       if (cropImageRef.current) {
         const layer: Konva.Layer = node.getLayer();
 
-        const options = layer
-          .getAbsoluteTransform()
-          .copy()
-          .invert()
-          .multiply(node.getAbsoluteTransform())
-          .multiply(cropElementRef.current.getAbsoluteTransform())
-          .decompose();
-
         cropImageRef.current.setAttrs({
-          ...options,
+          ...layer
+            .getAbsoluteTransform()
+            .copy()
+            .invert()
+            .multiply(node.getAbsoluteTransform())
+            .multiply(cropElementRef.current.getAbsoluteTransform())
+            .decompose(),
           visible: true,
           image: node.image(),
           width: cropElementRef.current.width(),
@@ -74,16 +71,24 @@ export const KonvaImage = React.memo(
         }
       }
 
+      node.clearCache();
+
       isCroppingRef.current = true;
     }, []);
 
     const endCrop = React.useCallback((restore?: boolean): void => {
-      const node: Konva.Image = nodeRef.current;
-      if (!node) {
-        return;
-      }
+      if (nodeRef.current) {
+        (
+          nodeRef.current.getLayer().findOne("#cropper") as Konva.Transformer
+        )?.nodes([]);
 
-      (node.getLayer().findOne("#cropper") as Konva.Transformer)?.nodes([]);
+        if (
+          currentPropRef.current.shapeOption.width ||
+          currentPropRef.current.shapeOption.height
+        ) {
+          nodeRef.current.cache();
+        }
+      }
 
       cropImageRef.current?.visible(false);
 
@@ -119,47 +124,48 @@ export const KonvaImage = React.memo(
     // Apply prop
     const applyProp = React.useCallback((): void => {
       const node: Konva.Image = nodeRef.current;
-      if (!node) {
-        return;
-      }
+      if (node) {
+        const shapeOption: KonvaShape = currentPropRef.current.shapeOption;
 
-      const prop: KonvaShapeProp = currentPropRef.current;
-      const shapeOption: KonvaShape = prop.shapeOption;
+        // Update offset
+        shapeOption.offsetX = shapeOption.width / 2;
+        shapeOption.offsetY = shapeOption.height / 2;
 
-      shapeOption.offsetX = shapeOption.width / 2;
-      shapeOption.offsetY = shapeOption.height / 2;
+        // Update node attrs
+        node.setAttrs({
+          ...shapeOption,
+          draggable: currentPropRef.current.isSelected,
+          image: shapeOption.image,
+          fill: parseHexToRGBAString(
+            shapeOption.fill as string,
+            shapeOption.fillOpacity
+          ),
+          stroke: parseHexToRGBAString(
+            shapeOption.stroke as string,
+            shapeOption.strokeOpacity
+          ),
+          filters: createFilter(
+            shapeOption.grayscale,
+            shapeOption.invert,
+            shapeOption.sepia,
+            shapeOption.solarize
+          ),
+        });
 
-      // Update node attrs
-      node.setAttrs({
-        ...shapeOption,
-        draggable: prop.isSelected,
-        image: shapeOption.image,
-        fill: parseHexToRGBAString(
-          shapeOption.fill as string,
-          shapeOption.fillOpacity
-        ),
-        stroke: parseHexToRGBAString(
-          shapeOption.stroke as string,
-          shapeOption.strokeOpacity
-        ),
-        filters: createFilter(
-          shapeOption.grayscale,
-          shapeOption.invert,
-          shapeOption.sepia,
-          shapeOption.solarize
-        ),
-      });
+        // Update shape box
+        shapeOption.box = createShapeBox(node);
 
-      // Update shape box
-      shapeOption.box = createShapeBox(node);
-
-      // Cache
-      if (shapeOption.width || shapeOption.height) {
-        node.cache();
+        // Cache
+        if (
+          !isCroppingRef.current &&
+          (shapeOption.width || shapeOption.height)
+        ) {
+          node.cache();
+        }
       }
 
       // Call callback function
-      prop.onAppliedProp?.(
+      currentPropRef.current.onAppliedProp?.(
         {
           updateProp,
           updateShape,
@@ -214,14 +220,12 @@ export const KonvaImage = React.memo(
     const handleDragMove = React.useCallback(
       (e: Konva.KonvaEventObject<DragEvent>): void => {
         const node: Konva.Image = e.target as Konva.Image;
-        if (!node) {
-          return;
+        if (node) {
+          Object.assign(currentPropRef.current.shapeOption, {
+            ...node.position(),
+            box: createShapeBox(node),
+          });
         }
-
-        Object.assign(currentPropRef.current.shapeOption, {
-          ...node.position(),
-          box: createShapeBox(node),
-        });
 
         updateCropElement();
 
@@ -254,19 +258,17 @@ export const KonvaImage = React.memo(
     const handleTransformEnd = React.useCallback(
       (e: Konva.KonvaEventObject<Event>): void => {
         const node: Konva.Image = e.target as Konva.Image;
-        if (!node) {
-          return;
+        if (node) {
+          Object.assign(currentPropRef.current.shapeOption, {
+            rotation: node.rotation(),
+            scaleX: node.scaleX(),
+            scaleY: node.scaleY(),
+            skewX: node.skewX(),
+            skewY: node.skewY(),
+            x: node.x(),
+            y: node.y(),
+          });
         }
-
-        Object.assign(currentPropRef.current.shapeOption, {
-          rotation: node.rotation(),
-          scaleX: node.scaleX(),
-          scaleY: node.scaleY(),
-          skewX: node.skewX(),
-          skewY: node.skewY(),
-          x: node.x(),
-          y: node.y(),
-        });
 
         // Call callback function
         currentPropRef.current.onAppliedProp?.(

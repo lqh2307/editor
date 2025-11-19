@@ -34,71 +34,68 @@ export const KonvaFreeDrawing = React.memo(
     // Apply prop
     const applyProp = React.useCallback((): void => {
       const node: Konva.Group = nodeRef.current;
-      if (!node) {
-        return;
+      if (node) {
+        const shapeOption: KonvaShape = currentPropRef.current.shapeOption;
+
+        // Process node attrs
+        const {
+          id,
+          x,
+          y,
+          scaleX,
+          scaleY,
+          skewX,
+          skewY,
+          rotation,
+          lines,
+          ...lineOption
+        }: KonvaShape = shapeOption;
+
+        lineOption.fill = parseHexToRGBAString(
+          lineOption.fill as string,
+          lineOption.fillOpacity
+        );
+
+        lineOption.stroke = parseHexToRGBAString(
+          lineOption.stroke as string,
+          lineOption.strokeOpacity
+        );
+
+        node.destroyChildren();
+
+        // Add lines
+        lines.forEach((item) => {
+          node.add(
+            new Konva.Line({
+              ...item,
+              ...lineOption,
+              listening: true,
+              draggable: false,
+              key: item.id,
+            })
+          );
+        });
+
+        // Update node attrs
+        node.setAttrs({
+          ...shapeOption,
+          id: id,
+          x: x,
+          y: y,
+          scaleX: scaleX,
+          scaleY: scaleY,
+          skewX: skewX,
+          skewY: skewY,
+          rotation: rotation,
+          draggable: currentPropRef.current.isSelected,
+        });
+
+        // Update shape box
+        shapeOption.box = createShapeBox(node);
       }
 
-      const prop: KonvaShapeProp = currentPropRef.current;
-      const shapeOption: KonvaShape = prop.shapeOption;
-
-      // Process node attrs
-      const {
-        id,
-        x,
-        y,
-        scaleX,
-        scaleY,
-        skewX,
-        skewY,
-        rotation,
-        lines,
-        ...lineOption
-      }: KonvaShape = shapeOption;
-
-      lineOption.fill = parseHexToRGBAString(
-        lineOption.fill as string,
-        lineOption.fillOpacity
-      );
-
-      lineOption.stroke = parseHexToRGBAString(
-        lineOption.stroke as string,
-        lineOption.strokeOpacity
-      );
-
-      node.destroyChildren();
-
-      // Add lines
-      lines.forEach((item) => {
-        node.add(
-          new Konva.Line({
-            ...item,
-            ...lineOption,
-            listening: true,
-            draggable: false,
-            key: item.id,
-          })
-        );
-      });
-
-      // Update node attrs
-      node.setAttrs({
-        ...shapeOption,
-        id: id,
-        x: x,
-        y: y,
-        scaleX: scaleX,
-        scaleY: scaleY,
-        skewX: skewX,
-        skewY: skewY,
-        rotation: rotation,
-        draggable: prop.isSelected,
-      });
-
-      // Update shape box
-      shapeOption.box = createShapeBox(node);
-
       // Call callback function
-      prop.onAppliedProp?.(
+      currentPropRef.current.onAppliedProp?.(
         {
           updateProp,
           updateShape,
@@ -153,14 +150,12 @@ export const KonvaFreeDrawing = React.memo(
     const handleDragMove = React.useCallback(
       (e: Konva.KonvaEventObject<DragEvent>): void => {
         const node: Konva.Group = e.target as Konva.Group;
-        if (!node) {
-          return;
+        if (node) {
+          Object.assign(currentPropRef.current.shapeOption, {
+            ...node.position(),
+            box: createShapeBox(node),
+          });
         }
-
-        Object.assign(currentPropRef.current.shapeOption, {
-          ...node.position(),
-          box: createShapeBox(node),
-        });
 
         // Call callback function
         currentPropRef.current.onDragMove?.({
@@ -191,19 +186,17 @@ export const KonvaFreeDrawing = React.memo(
     const handleTransformEnd = React.useCallback(
       (e: Konva.KonvaEventObject<Event>): void => {
         const node: Konva.Group = e.target as Konva.Group;
-        if (!node) {
-          return;
+        if (node) {
+          Object.assign(currentPropRef.current.shapeOption, {
+            rotation: node.rotation(),
+            scaleX: node.scaleX(),
+            scaleY: node.scaleY(),
+            skewX: node.skewX(),
+            skewY: node.skewY(),
+            x: node.x(),
+            y: node.y(),
+          });
         }
-
-        Object.assign(currentPropRef.current.shapeOption, {
-          rotation: node.rotation(),
-          scaleX: node.scaleX(),
-          scaleY: node.scaleY(),
-          skewX: node.skewX(),
-          skewY: node.skewY(),
-          x: node.x(),
-          y: node.y(),
-        });
 
         // Call callback function
         currentPropRef.current.onAppliedProp?.(

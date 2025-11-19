@@ -34,34 +34,31 @@ export const KonvaEllipse = React.memo(
     // Apply prop
     const applyProp = React.useCallback((): void => {
       const node: Konva.Ellipse = nodeRef.current;
-      if (!node) {
-        return;
+      if (node) {
+        const shapeOption: KonvaShape = currentPropRef.current.shapeOption;
+
+        // Update node attrs
+        node.setAttrs({
+          ...shapeOption,
+          draggable: currentPropRef.current.isSelected,
+          radiusX: shapeOption.radiusX,
+          radiusY: shapeOption.radiusY,
+          fill: parseHexToRGBAString(
+            shapeOption.fill as string,
+            shapeOption.fillOpacity
+          ),
+          stroke: parseHexToRGBAString(
+            shapeOption.stroke as string,
+            shapeOption.strokeOpacity
+          ),
+        });
+
+        // Update shape box
+        shapeOption.box = createShapeBox(node);
       }
 
-      const prop: KonvaShapeProp = currentPropRef.current;
-      const shapeOption: KonvaShape = prop.shapeOption;
-
-      // Update node attrs
-      node.setAttrs({
-        ...shapeOption,
-        draggable: prop.isSelected,
-        radiusX: shapeOption.radiusX,
-        radiusY: shapeOption.radiusY,
-        fill: parseHexToRGBAString(
-          shapeOption.fill as string,
-          shapeOption.fillOpacity
-        ),
-        stroke: parseHexToRGBAString(
-          shapeOption.stroke as string,
-          shapeOption.strokeOpacity
-        ),
-      });
-
-      // Update shape box
-      shapeOption.box = createShapeBox(node);
-
       // Call callback function
-      prop.onAppliedProp?.(
+      currentPropRef.current.onAppliedProp?.(
         {
           updateProp,
           updateShape,
@@ -116,14 +113,12 @@ export const KonvaEllipse = React.memo(
     const handleDragMove = React.useCallback(
       (e: Konva.KonvaEventObject<DragEvent>): void => {
         const node: Konva.Ellipse = e.target as Konva.Ellipse;
-        if (!node) {
-          return;
+        if (node) {
+          Object.assign(currentPropRef.current.shapeOption, {
+            ...node.position(),
+            box: createShapeBox(node),
+          });
         }
-
-        Object.assign(currentPropRef.current.shapeOption, {
-          ...node.position(),
-          box: createShapeBox(node),
-        });
 
         // Call callback function
         currentPropRef.current.onDragMove?.({
@@ -154,19 +149,17 @@ export const KonvaEllipse = React.memo(
     const handleTransformEnd = React.useCallback(
       (e: Konva.KonvaEventObject<Event>): void => {
         const node: Konva.Ellipse = e.target as Konva.Ellipse;
-        if (!node) {
-          return;
+        if (node) {
+          Object.assign(currentPropRef.current.shapeOption, {
+            rotation: node.rotation(),
+            scaleX: node.scaleX(),
+            scaleY: node.scaleY(),
+            skewX: node.skewX(),
+            skewY: node.skewY(),
+            x: node.x(),
+            y: node.y(),
+          });
         }
-
-        Object.assign(currentPropRef.current.shapeOption, {
-          rotation: node.rotation(),
-          scaleX: node.scaleX(),
-          scaleY: node.scaleY(),
-          skewX: node.skewX(),
-          skewY: node.skewY(),
-          x: node.x(),
-          y: node.y(),
-        });
 
         // Call callback function
         currentPropRef.current.onAppliedProp?.(

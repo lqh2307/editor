@@ -38,44 +38,42 @@ export const KonvaText = React.memo(
     // Apply prop
     const applyProp = React.useCallback((): void => {
       const node: Konva.Text = nodeRef.current;
-      if (!node) {
-        return;
+      if (node) {
+        const shapeOption: KonvaShape = currentPropRef.current.shapeOption;
+
+        // Update offset
+        shapeOption.offsetX = shapeOption.width / 2;
+        shapeOption.offsetY = shapeOption.height / 2;
+
+        // Update node attrs
+        node.setAttrs({
+          ...shapeOption,
+          draggable: currentPropRef.current.isSelected,
+          visible:
+            !textareaRef.current ||
+            textareaRef.current.style.visibility === "hidden",
+          fill: parseHexToRGBAString(
+            shapeOption.fill as string,
+            shapeOption.fillOpacity
+          ),
+          stroke: parseHexToRGBAString(
+            shapeOption.stroke as string,
+            shapeOption.strokeOpacity
+          ),
+          fontStyle:
+            shapeOption.fontWeight === "bold"
+              ? shapeOption.fontStyle === "italic"
+                ? "italic bold"
+                : "bold"
+              : shapeOption.fontStyle,
+        });
+
+        // Update shape box
+        shapeOption.box = createShapeBox(node);
       }
 
-      const prop: KonvaShapeProp = currentPropRef.current;
-      const shapeOption: KonvaShape = prop.shapeOption;
-
-      shapeOption.offsetX = shapeOption.width / 2;
-      shapeOption.offsetY = shapeOption.height / 2;
-
-      // Update node attrs
-      node.setAttrs({
-        ...shapeOption,
-        draggable: prop.isSelected,
-        visible:
-          !textareaRef.current ||
-          textareaRef.current.style.visibility === "hidden",
-        fill: parseHexToRGBAString(
-          shapeOption.fill as string,
-          shapeOption.fillOpacity
-        ),
-        stroke: parseHexToRGBAString(
-          shapeOption.stroke as string,
-          shapeOption.strokeOpacity
-        ),
-        fontStyle:
-          shapeOption.fontWeight === "bold"
-            ? shapeOption.fontStyle === "italic"
-              ? "italic bold"
-              : "bold"
-            : shapeOption.fontStyle,
-      });
-
-      // Update shape box
-      shapeOption.box = createShapeBox(node);
-
       // Call callback function
-      prop.onAppliedProp?.(
+      currentPropRef.current.onAppliedProp?.(
         {
           updateProp,
           updateShape,
@@ -130,14 +128,12 @@ export const KonvaText = React.memo(
     const handleDragMove = React.useCallback(
       (e: Konva.KonvaEventObject<DragEvent>): void => {
         const node: Konva.Text = e.target as Konva.Text;
-        if (!node) {
-          return;
+        if (node) {
+          Object.assign(currentPropRef.current.shapeOption, {
+            ...node.position(),
+            box: createShapeBox(node),
+          });
         }
-
-        Object.assign(currentPropRef.current.shapeOption, {
-          ...node.position(),
-          box: createShapeBox(node),
-        });
 
         // Call callback function
         currentPropRef.current.onDragMove?.({
@@ -168,65 +164,62 @@ export const KonvaText = React.memo(
     const handleTransformEnd = React.useCallback(
       (e: Konva.KonvaEventObject<Event>): void => {
         const node: Konva.Text = e.target as Konva.Text;
-        if (!node) {
-          return;
-        }
+        if (node) {
+          const shapeOption: KonvaShape = currentPropRef.current.shapeOption;
 
-        const prop: KonvaShapeProp = currentPropRef.current;
-        const shapeOption: KonvaShape = prop.shapeOption;
+          const scaleX: number = node.scaleX();
+          const scaleY: number = node.scaleY();
 
-        const scaleX: number = node.scaleX();
-        const scaleY: number = node.scaleY();
+          const newScaleX: number = scaleX < 0 ? -1 : 1;
+          const newScaleY: number = scaleY < 0 ? -1 : 1;
 
-        const newScaleX: number = scaleX < 0 ? -1 : 1;
-        const newScaleY: number = scaleY < 0 ? -1 : 1;
+          const scaleXAbs = scaleX * newScaleX;
+          const scaleYAbs = scaleY * newScaleY;
 
-        const scaleXAbs = scaleX * newScaleX;
-        const scaleYAbs = scaleY * newScaleY;
+          let newHeight: number = Math.round(
+            shapeOption.height * scaleY * newScaleY
+          );
 
-        let newHeight: number = Math.round(
-          shapeOption.height * scaleY * newScaleY
-        );
+          const textArea = textareaRef.current;
+          if (textArea) {
+            textArea.style.width = `${shapeOption.width}px`;
 
-        const textArea = textareaRef.current;
-        if (textArea) {
-          textArea.style.width = `${shapeOption.width}px`;
+            // To calculate new height
+            textArea.style.height = "auto";
 
-          // To calculate new height
-          textArea.style.height = "auto";
+            if (textArea.scrollHeight > newHeight) {
+              newHeight = Math.round(textArea.scrollHeight);
+            }
 
-          if (textArea.scrollHeight > newHeight) {
-            newHeight = Math.round(textArea.scrollHeight);
+            textArea.style.height = `${newHeight}px`;
           }
 
-          textArea.style.height = `${newHeight}px`;
-        }
+          let fontSize: number;
 
-        let fontSize: number;
+          if (scaleXAbs.toPrecision(5) === scaleYAbs.toPrecision(5)) {
+            fontSize = Math.round(shapeOption.fontSize * scaleXAbs);
 
-        if (scaleXAbs.toPrecision(5) === scaleYAbs.toPrecision(5)) {
-          fontSize = Math.round(shapeOption.fontSize * scaleXAbs);
-
-          if (fontSize < 1) {
-            fontSize = 1;
+            if (fontSize < 1) {
+              fontSize = 1;
+            }
+          } else {
+            fontSize = shapeOption.fontSize;
           }
-        } else {
-          fontSize = shapeOption.fontSize;
-        }
 
-        Object.assign(shapeOption, {
-          fontSize: fontSize,
-          width: Math.round(shapeOption.width * scaleXAbs),
-          height: newHeight,
-          rotation: node.rotation(),
-          scaleX: newScaleX,
-          scaleY: newScaleY,
-          x: node.x(),
-          y: node.y(),
-        });
+          Object.assign(shapeOption, {
+            fontSize: fontSize,
+            width: Math.round(shapeOption.width * scaleXAbs),
+            height: newHeight,
+            rotation: node.rotation(),
+            scaleX: newScaleX,
+            scaleY: newScaleY,
+            x: node.x(),
+            y: node.y(),
+          });
+        }
 
         // Call callback function
-        prop.onAppliedProp?.(
+        currentPropRef.current.onAppliedProp?.(
           {
             updateProp,
             updateShape,
@@ -266,8 +259,7 @@ export const KonvaText = React.memo(
           return;
         }
 
-        const prop: KonvaShapeProp = currentPropRef.current;
-        const shapeOption: KonvaShape = prop.shapeOption;
+        const shapeOption: KonvaShape = currentPropRef.current.shapeOption;
 
         e.target?.visible(false);
 
@@ -321,8 +313,7 @@ export const KonvaText = React.memo(
           return;
         }
 
-        const prop: KonvaShapeProp = currentPropRef.current;
-        const shapeOption: KonvaShape = prop.shapeOption;
+        const shapeOption: KonvaShape = currentPropRef.current.shapeOption;
 
         // Update text
         shapeOption.text = textArea.value;

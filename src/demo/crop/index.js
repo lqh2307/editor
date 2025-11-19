@@ -47,25 +47,21 @@ function makeCroppableImage(image) {
       cropElement = new Konva.Shape({
         width: image.width(),
         height: image.height(),
-        skewX: image.skewX(),
-        skewY: image.skewY(),
       });
     }
 
     const layer = image.getLayer();
 
-    const options = layer
-      .getAbsoluteTransform()
-      .copy()
-      .invert()
-      .multiply(image.getAbsoluteTransform())
-      .multiply(cropElement.getAbsoluteTransform())
-      .decompose();
-
     cropImage = new Konva.Image({
+      ...layer
+        .getAbsoluteTransform()
+        .copy()
+        .invert()
+        .multiply(image.getAbsoluteTransform())
+        .multiply(cropElement.getAbsoluteTransform())
+        .decompose(),
       draggable: true,
       opacity: 0.5,
-      ...options,
       image: image.image(),
       width: cropElement.width(),
       height: cropElement.height(),

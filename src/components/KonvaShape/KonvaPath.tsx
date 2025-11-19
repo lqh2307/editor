@@ -34,75 +34,72 @@ export const KonvaPath = React.memo(
     // Apply prop
     const applyProp = React.useCallback((): void => {
       const node: Konva.Group = nodeRef.current;
-      if (!node) {
-        return;
+      if (node) {
+        const shapeOption: KonvaShape = currentPropRef.current.shapeOption;
+
+        shapeOption.offsetX = shapeOption.width / 2;
+        shapeOption.offsetY = shapeOption.height / 2;
+
+        // Process node attrs
+        let {
+          x,
+          y,
+          scaleX,
+          scaleY,
+          skewX,
+          skewY,
+          offsetX,
+          offsetY,
+          rotation,
+          paths,
+          ...pathOption
+        }: KonvaShape = shapeOption;
+
+        pathOption.fill = parseHexToRGBAString(
+          pathOption.fill as string,
+          pathOption.fillOpacity
+        );
+
+        pathOption.stroke = parseHexToRGBAString(
+          pathOption.stroke as string,
+          pathOption.strokeOpacity
+        );
+
+        node.destroyChildren();
+
+        // Add paths
+        paths.forEach((item) => {
+          node.add(
+            new Konva.Path({
+              ...item,
+              ...pathOption,
+              listening: true,
+              draggable: false,
+            })
+          );
+        });
+
+        // Update node attrs
+        node.setAttrs({
+          ...pathOption,
+          x: x,
+          y: y,
+          scaleX: scaleX,
+          scaleY: scaleY,
+          skewX: skewX,
+          skewY: skewY,
+          offsetX: offsetX,
+          offsetY: offsetY,
+          rotation: rotation,
+          draggable: currentPropRef.current.isSelected,
+        });
+
+        // Update shape box
+        shapeOption.box = createShapeBox(node);
       }
 
-      const prop: KonvaShapeProp = currentPropRef.current;
-      const shapeOption: KonvaShape = prop.shapeOption;
-
-      shapeOption.offsetX = shapeOption.width / 2;
-      shapeOption.offsetY = shapeOption.height / 2;
-
-      // Process node attrs
-      let {
-        x,
-        y,
-        scaleX,
-        scaleY,
-        skewX,
-        skewY,
-        offsetX,
-        offsetY,
-        rotation,
-        paths,
-        ...pathOption
-      }: KonvaShape = shapeOption;
-
-      pathOption.fill = parseHexToRGBAString(
-        pathOption.fill as string,
-        pathOption.fillOpacity
-      );
-
-      pathOption.stroke = parseHexToRGBAString(
-        pathOption.stroke as string,
-        pathOption.strokeOpacity
-      );
-
-      node.destroyChildren();
-
-      // Add paths
-      paths.forEach((item) => {
-        node.add(
-          new Konva.Path({
-            ...item,
-            ...pathOption,
-            listening: true,
-            draggable: false,
-          })
-        );
-      });
-
-      // Update node attrs
-      node.setAttrs({
-        ...pathOption,
-        x: x,
-        y: y,
-        scaleX: scaleX,
-        scaleY: scaleY,
-        skewX: skewX,
-        skewY: skewY,
-        offsetX: offsetX,
-        offsetY: offsetY,
-        rotation: rotation,
-        draggable: prop.isSelected,
-      });
-
-      // Update shape box
-      shapeOption.box = createShapeBox(node);
-
       // Call callback function
-      prop.onAppliedProp?.(
+      currentPropRef.current.onAppliedProp?.(
         {
           updateProp,
           updateShape,
@@ -157,14 +154,12 @@ export const KonvaPath = React.memo(
     const handleDragMove = React.useCallback(
       (e: Konva.KonvaEventObject<DragEvent>): void => {
         const node: Konva.Group = e.target as Konva.Group;
-        if (!node) {
-          return;
+        if (node) {
+          Object.assign(currentPropRef.current.shapeOption, {
+            ...node.position(),
+            box: createShapeBox(node),
+          });
         }
-
-        Object.assign(currentPropRef.current.shapeOption, {
-          ...node.position(),
-          box: createShapeBox(node),
-        });
 
         // Call callback function
         currentPropRef.current.onDragMove?.({
@@ -195,19 +190,17 @@ export const KonvaPath = React.memo(
     const handleTransformEnd = React.useCallback(
       (e: Konva.KonvaEventObject<Event>): void => {
         const node: Konva.Group = e.target as Konva.Group;
-        if (!node) {
-          return;
+        if (node) {
+          Object.assign(currentPropRef.current.shapeOption, {
+            rotation: node.rotation(),
+            scaleX: node.scaleX(),
+            scaleY: node.scaleY(),
+            skewX: node.skewX(),
+            skewY: node.skewY(),
+            x: node.x(),
+            y: node.y(),
+          });
         }
-
-        Object.assign(currentPropRef.current.shapeOption, {
-          rotation: node.rotation(),
-          scaleX: node.scaleX(),
-          scaleY: node.scaleY(),
-          skewX: node.skewX(),
-          skewY: node.skewY(),
-          x: node.x(),
-          y: node.y(),
-        });
 
         // Call callback function
         currentPropRef.current.onAppliedProp?.(
