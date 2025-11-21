@@ -347,12 +347,7 @@ export const CanvasShapes = React.memo((): React.JSX.Element => {
     transformer.updateProp({
       nodes: transformerNodes,
     });
-  }, [
-    shapeRefs,
-    selectedIds,
-    freeDrawingMode,
-    getTransformer
-  ]);
+  }, [shapeRefs, selectedIds, freeDrawingMode, getTransformer]);
 
   const renderedShapeList = React.useMemo(() => {
     return shapeList?.map((item) => {

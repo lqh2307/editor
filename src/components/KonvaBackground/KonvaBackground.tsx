@@ -36,7 +36,6 @@ export const KonvaBackground = React.memo(
           // Cache
           node.cache();
         }
-
       }, []);
 
       // Expose API

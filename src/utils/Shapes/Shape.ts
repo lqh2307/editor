@@ -423,7 +423,10 @@ export function createPathsFromSVG(
 ): Konva.PathConfig[] {
   const result: Konva.PathConfig[] = [];
 
-  const root: Element = new DOMParser().parseFromString(svgString, "image/svg+xml").documentElement as Element;
+  const root: Element = new DOMParser().parseFromString(
+    svgString,
+    "image/svg+xml"
+  ).documentElement as Element;
 
   let scaleX: number = 1;
   let scaleY: number = 1;
@@ -516,12 +519,13 @@ export function createPathsFromSVG(
       }
 
       case "polygon": {
-        data = el
-          .getAttribute("points")
-          .trim()
-          .split(/\s+/)
-          .map((p, i) => (i === 0 ? "M" : "L") + p)
-          .join("") + "Z"
+        data =
+          el
+            .getAttribute("points")
+            .trim()
+            .split(/\s+/)
+            .map((p, i) => (i === 0 ? "M" : "L") + p)
+            .join("") + "Z";
 
         break;
       }
@@ -535,7 +539,10 @@ export function createPathsFromSVG(
 
     if (data) {
       result.push({
-        data: scaleX !== 1 || scaleY !== 1 ? new svgPath(data).scale(scaleX, scaleY).toString() : data,
+        data:
+          scaleX !== 1 || scaleY !== 1
+            ? new svgPath(data).scale(scaleX, scaleY).toString()
+            : data,
       });
     }
 

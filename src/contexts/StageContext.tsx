@@ -31,13 +31,13 @@ type StageState = {
 
 type StageAction = {
   type:
-  | "SET_RATIO"
-  | "SET_ZOOM"
-  | "SET_CANVAS_SIZE"
-  | "FIT_SCREEN"
-  | "DRAG"
-  | "EXPAND"
-  | "ZOOM";
+    | "SET_RATIO"
+    | "SET_ZOOM"
+    | "SET_CANVAS_SIZE"
+    | "FIT_SCREEN"
+    | "DRAG"
+    | "EXPAND"
+    | "ZOOM";
   payload?: Ratio | SetZoom | SetCanvasSize | Fit | Drag | Expand | Zoom;
 };
 

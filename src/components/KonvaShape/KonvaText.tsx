@@ -192,6 +192,7 @@ export const KonvaText = React.memo(
             }
 
             textArea.style.height = `${newHeight}px`;
+            textArea.style.top = `${shapeOption.y - newHeight / 2}px`;
           }
 
           let fontSize: number;
@@ -276,8 +277,8 @@ export const KonvaText = React.memo(
           transform: `rotateZ(${shapeOption.rotation}deg)`,
           width: `${shapeOption.width}px`,
           height: `${shapeOption.height}px`,
-          left: `${shapeOption.x}px`,
-          top: `${shapeOption.y}px`,
+          left: `${shapeOption.x - shapeOption.offsetX}px`,
+          top: `${shapeOption.y - shapeOption.offsetY}px`,
           padding: `${shapeOption.padding}px`,
           filter: `brightness(${(shapeOption.brightness || 0) + 1})`,
         });
@@ -325,6 +326,7 @@ export const KonvaText = React.memo(
 
         if (newHeight >= shapeOption.height) {
           textArea.style.height = `${newHeight}px`;
+          textArea.style.top = `${shapeOption.y - newHeight / 2}px`;
 
           // Update height
           shapeOption.height = newHeight;
