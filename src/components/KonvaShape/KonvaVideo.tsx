@@ -159,7 +159,8 @@ export const KonvaVideo = React.memo(
         const node: Konva.Image = e.target as Konva.Image;
         if (node) {
           Object.assign(currentPropRef.current.shapeOption, {
-            ...node.position(),
+            x: node.x(),
+            y: node.y(),
             box: createShapeBox(node),
           });
         }

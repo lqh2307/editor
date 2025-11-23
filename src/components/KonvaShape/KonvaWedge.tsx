@@ -115,7 +115,8 @@ export const KonvaWedge = React.memo(
         const node: Konva.Wedge = e.target as Konva.Wedge;
         if (node) {
           Object.assign(currentPropRef.current.shapeOption, {
-            ...node.position(),
+            x: node.x(),
+            y: node.y(),
             box: createShapeBox(node),
           });
         }

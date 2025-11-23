@@ -152,7 +152,8 @@ export const KonvaFreeDrawing = React.memo(
         const node: Konva.Group = e.target as Konva.Group;
         if (node) {
           Object.assign(currentPropRef.current.shapeOption, {
-            ...node.position(),
+            x: node.x(),
+            y: node.y(),
             box: createShapeBox(node),
           });
         }

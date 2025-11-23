@@ -130,7 +130,8 @@ export const KonvaText = React.memo(
         const node: Konva.Text = e.target as Konva.Text;
         if (node) {
           Object.assign(currentPropRef.current.shapeOption, {
-            ...node.position(),
+            x: node.x(),
+            y: node.y(),
             box: createShapeBox(node),
           });
         }

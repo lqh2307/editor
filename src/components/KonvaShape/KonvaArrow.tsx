@@ -114,7 +114,8 @@ export const KonvaArrow = React.memo(
         const node: Konva.Arrow = e.target as Konva.Arrow;
         if (node) {
           Object.assign(currentPropRef.current.shapeOption, {
-            ...node.position(),
+            x: node.x(),
+            y: node.y(),
             box: createShapeBox(node),
           });
         }

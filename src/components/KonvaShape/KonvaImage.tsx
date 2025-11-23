@@ -222,7 +222,8 @@ export const KonvaImage = React.memo(
         const node: Konva.Image = e.target as Konva.Image;
         if (node) {
           Object.assign(currentPropRef.current.shapeOption, {
-            ...node.position(),
+            x: node.x(),
+            y: node.y(),
             box: createShapeBox(node),
           });
         }
@@ -311,43 +312,23 @@ export const KonvaImage = React.memo(
           return;
         }
 
-        const width: number = shape.width();
-        const height: number = shape.height();
+        let width: number = shape.width();
+        let height: number = shape.height();
 
         context.save();
-
-        context.beginPath();
-        context.rect(0, 0, width, height);
-        context.clip();
-
-        context.save();
-
-        context.shadowColor = shape.shadowColor();
-        context.shadowBlur = shape.shadowBlur();
-        context.shadowOffsetX = shape.shadowOffsetX();
-        context.shadowOffsetY = shape.shadowOffsetY();
-
-        context.restore();
 
         if (cropElementRef.current) {
-          context.save();
+          width = cropElementRef.current.width();
+          height = cropElementRef.current.height();
 
-          const m = cropElementRef.current.getAbsoluteTransform().getMatrix();
+          const m: number[] = cropElementRef.current
+            .getAbsoluteTransform()
+            .getMatrix();
           context.transform(m[0], m[1], m[2], m[3], m[4], m[5]);
-
-          context.drawImage(
-            img,
-            0,
-            0,
-            cropElementRef.current.width(),
-            cropElementRef.current.height()
-          );
-
-          context.restore();
-        } else {
-          context.drawImage(img, 0, 0, width, height);
         }
 
+        context.rect(0, 0, width, height);
+        context.drawImage(img, 0, 0, width, height);
         context.fillStrokeShape(shape);
 
         context.restore();

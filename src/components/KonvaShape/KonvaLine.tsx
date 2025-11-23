@@ -113,7 +113,8 @@ export const KonvaLine = React.memo(
         const node: Konva.Line = e.target as Konva.Line;
         if (node) {
           Object.assign(currentPropRef.current.shapeOption, {
-            ...node.position(),
+            x: node.x(),
+            y: node.y(),
             box: createShapeBox(node),
           });
         }

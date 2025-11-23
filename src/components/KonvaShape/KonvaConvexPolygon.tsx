@@ -115,7 +115,8 @@ export const KonvaConvexPolygon = React.memo(
         const node: Konva.RegularPolygon = e.target as Konva.RegularPolygon;
         if (node) {
           Object.assign(currentPropRef.current.shapeOption, {
-            ...node.position(),
+            x: node.x(),
+            y: node.y(),
             box: createShapeBox(node),
           });
         }

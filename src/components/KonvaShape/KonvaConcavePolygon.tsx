@@ -116,7 +116,8 @@ export const KonvaConcavePolygon = React.memo(
         const node: Konva.Star = e.target as Konva.Star;
         if (node) {
           Object.assign(currentPropRef.current.shapeOption, {
-            ...node.position(),
+            x: node.x(),
+            y: node.y(),
             box: createShapeBox(node),
           });
         }

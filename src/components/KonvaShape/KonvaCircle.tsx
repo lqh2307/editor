@@ -114,7 +114,8 @@ export const KonvaCircle = React.memo(
         const node: Konva.Circle = e.target as Konva.Circle;
         if (node) {
           Object.assign(currentPropRef.current.shapeOption, {
-            ...node.position(),
+            x: node.x(),
+            y: node.y(),
             box: createShapeBox(node),
           });
         }

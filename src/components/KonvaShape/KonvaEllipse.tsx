@@ -115,7 +115,8 @@ export const KonvaEllipse = React.memo(
         const node: Konva.Ellipse = e.target as Konva.Ellipse;
         if (node) {
           Object.assign(currentPropRef.current.shapeOption, {
-            ...node.position(),
+            x: node.x(),
+            y: node.y(),
             box: createShapeBox(node),
           });
         }

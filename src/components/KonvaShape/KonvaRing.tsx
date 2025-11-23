@@ -115,7 +115,8 @@ export const KonvaRing = React.memo(
         const node: Konva.Ring = e.target as Konva.Ring;
         if (node) {
           Object.assign(currentPropRef.current.shapeOption, {
-            ...node.position(),
+            x: node.x(),
+            y: node.y(),
             box: createShapeBox(node),
           });
         }

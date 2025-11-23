@@ -117,7 +117,8 @@ export const KonvaRectangle = React.memo(
         const node: Konva.Rect = e.target as Konva.Rect;
         if (node) {
           Object.assign(currentPropRef.current.shapeOption, {
-            ...node.position(),
+            x: node.x(),
+            y: node.y(),
             box: createShapeBox(node),
           });
         }
