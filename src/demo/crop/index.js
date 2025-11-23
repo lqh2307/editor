@@ -31,14 +31,12 @@ function makeCroppableImage(image) {
 
   const updateCropElement = () => {
     if (cropElement && cropImage) {
-      const options = image
+      cropElement.setAttrs(image
         .getAbsoluteTransform()
         .copy()
         .invert()
         .multiply(cropImage.getAbsoluteTransform())
-        .decompose();
-
-      cropElement.setAttrs(options);
+        .decompose());
     }
   };
 
@@ -109,15 +107,6 @@ function makeCroppableImage(image) {
     context.beginPath();
     context.rect(0, 0, width, height);
     context.clip();
-
-    context.save();
-
-    context.shadowColor = shape.shadowColor();
-    context.shadowBlur = shape.shadowBlur();
-    context.shadowOffsetX = shape.shadowOffsetX();
-    context.shadowOffsetY = shape.shadowOffsetY();
-
-    context.restore();
 
     if (cropElement) {
       context.save();
