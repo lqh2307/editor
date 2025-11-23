@@ -344,7 +344,6 @@ export const KonvaImage = React.memo(
           visible={false}
           ref={cropImageRef}
           image={undefined}
-          opacity={0.5}
           onDragMove={updateCropElement}
           onTransform={updateCropElement}
         />
