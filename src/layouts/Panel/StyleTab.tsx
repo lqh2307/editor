@@ -374,7 +374,7 @@ export const PanelStyleTab = React.memo((): React.JSX.Element => {
         if (value) {
           shapeRefs[selectedShape.id]?.startCrop();
         } else {
-          shapeRefs[selectedShape.id]?.endCrop(true);
+          shapeRefs[selectedShape.id]?.restoreCrop();
         }
       }
     },

@@ -7,6 +7,7 @@ import svgPath from "svgpath";
 import Konva from "konva";
 import {
   KonvaFreeDrawingLine,
+  KonvaShapeClip,
   KonvaShapeBox,
   KonvaShape,
 } from "../../components/KonvaShape";
@@ -407,6 +408,17 @@ export function cloneLines(
     ...line,
     points: line.points.slice(0),
   }));
+}
+
+/**
+ * Clone clip
+ * @param clip
+ * @returns
+ */
+export function cloneClip(clip: KonvaShapeClip): KonvaShapeClip {
+  return {
+    ...clip,
+  };
 }
 
 /**

@@ -16,6 +16,7 @@ import {
   calculateGroupShapeBox,
   createShape,
   cloneLines,
+  cloneClip,
 } from "../utils/Shapes";
 import {
   detectContentTypeFromFormat,
@@ -153,12 +154,14 @@ function reducer(state: State, action: Action): State {
 
     // Create new history by clone
     const newHistory: KonvaShape[] = shapes.map((item) => {
-      const newShape: KonvaShape = {
-        ...item,
-      };
+      const { lines, clip, ...newShape }: KonvaShape = item;
 
       if (newShape.type === "free-drawing") {
-        newShape.lines = cloneLines(newShape.lines);
+        newShape.lines = cloneLines(lines);
+      } else if (newShape.type === "image") {
+        if (clip) {
+          newShape.clip = cloneClip(clip);
+        }
       }
 
       return newShape;
@@ -382,12 +385,14 @@ function reducer(state: State, action: Action): State {
       // Clone shape list and Assign selected ids
       const newShapeList: KonvaShape[] = state.history[newHistoryIndex].map(
         (item) => {
-          const newShape: KonvaShape = {
-            ...item,
-          };
+          const { lines, clip, ...newShape }: KonvaShape = item;
 
           if (newShape.type === "free-drawing") {
-            newShape.lines = cloneLines(newShape.lines);
+            newShape.lines = cloneLines(lines);
+          } else if (newShape.type === "image") {
+            if (clip) {
+              newShape.clip = cloneClip(clip);
+            }
           }
 
           if (state.selectedIds[newShape.id]) {
@@ -476,13 +481,14 @@ function reducer(state: State, action: Action): State {
 
       // Clone shapes
       const newCopiedShapes: KonvaShape[] = matchedShapes.map((item) => {
-        const { lines, ...newCopiedShape }: KonvaShape = item;
+        const { lines, clip, ...newCopiedShape }: KonvaShape = item;
 
         if (newCopiedShape.type === "free-drawing") {
-          newCopiedShape.lines = lines.map((item) => ({
-            ...item,
-            points: item.points.slice(0),
-          }));
+          newCopiedShape.lines = cloneLines(lines);
+        } else if (newCopiedShape.type === "image") {
+          if (clip) {
+            newCopiedShape.clip = cloneClip(clip);
+          }
         }
 
         return newCopiedShape;
@@ -543,13 +549,14 @@ function reducer(state: State, action: Action): State {
 
       // Create new shapes and Assign selected ids
       const newShapes: KonvaShape[] = state.copiedShapes.map((item) => {
-        const { id, lines, ...newCopiedShape }: KonvaShape = item;
+        const { id, clip, lines, ...newCopiedShape }: KonvaShape = item;
 
         if (newCopiedShape.type === "free-drawing") {
-          newCopiedShape.lines = lines.map((item) => ({
-            ...item,
-            points: item.points.slice(0),
-          }));
+          newCopiedShape.lines = cloneLines(lines);
+        } else if (newCopiedShape.type === "image") {
+          if (clip) {
+            newCopiedShape.clip = cloneClip(clip);
+          }
         }
 
         newCopiedShape.x += offsetX;
@@ -613,13 +620,14 @@ function reducer(state: State, action: Action): State {
 
       // Create new shapes and Assign selected ids
       const newShapes: KonvaShape[] = matchedShapes.map((item) => {
-        const { id, lines, ...newCopiedShape }: KonvaShape = item;
+        const { id, clip, lines, ...newCopiedShape }: KonvaShape = item;
 
         if (newCopiedShape.type === "free-drawing") {
-          newCopiedShape.lines = lines.map((item) => ({
-            ...item,
-            points: item.points.slice(0),
-          }));
+          newCopiedShape.lines = cloneLines(lines);
+        } else if (newCopiedShape.type === "image") {
+          if (clip) {
+            newCopiedShape.clip = cloneClip(clip);
+          }
         }
 
         newCopiedShape.x += offsetX;

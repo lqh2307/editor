@@ -22,7 +22,8 @@ export const KonvaImage = React.memo(
         cropImageRef.current &&
         nodeRef.current
       ) {
-        cropElementRef.current.setAttrs(
+        Object.assign(
+          currentPropRef.current.shapeOption.clip,
           nodeRef.current
             .getAbsoluteTransform()
             .copy()
@@ -30,53 +31,80 @@ export const KonvaImage = React.memo(
             .multiply(cropImageRef.current.getAbsoluteTransform())
             .decompose()
         );
+
+        cropElementRef.current.setAttrs(
+          currentPropRef.current.shapeOption.clip
+        );
       }
     }, []);
 
     const startCrop = React.useCallback((): void => {
       const node: Konva.Image = nodeRef.current;
-      if (!node) {
-        return;
-      }
+      if (!isCroppingRef.current && node) {
+        if (!cropElementRef.current) {
+          currentPropRef.current.shapeOption.clip = {
+            width: node.width(),
+            height: node.height(),
+          };
 
-      if (!cropElementRef.current) {
-        cropElementRef.current = new Konva.Shape({
-          width: node.width(),
-          height: node.height(),
-        });
-      }
-
-      if (cropImageRef.current) {
-        const layer: Konva.Layer = node.getLayer();
-
-        cropImageRef.current.setAttrs({
-          ...layer
-            .getAbsoluteTransform()
-            .copy()
-            .invert()
-            .multiply(node.getAbsoluteTransform())
-            .multiply(cropElementRef.current.getAbsoluteTransform())
-            .decompose(),
-          visible: true,
-          image: node.image(),
-          width: cropElementRef.current.width(),
-          height: cropElementRef.current.height(),
-        });
-
-        const cropper: Konva.Transformer = layer.findOne(
-          "#cropper"
-        ) as Konva.Transformer;
-        if (cropper) {
-          cropper.nodes([cropImageRef.current]);
+          cropElementRef.current = new Konva.Shape(
+            currentPropRef.current.shapeOption.clip
+          );
         }
-      }
 
-      node.clearCache();
+        if (cropImageRef.current) {
+          const layer: Konva.Layer = node.getLayer();
+
+          cropImageRef.current.setAttrs({
+            ...layer
+              .getAbsoluteTransform()
+              .copy()
+              .invert()
+              .multiply(node.getAbsoluteTransform())
+              .multiply(cropElementRef.current.getAbsoluteTransform())
+              .decompose(),
+            visible: true,
+            image: node.image(),
+            width: cropElementRef.current.width(),
+            height: cropElementRef.current.height(),
+          });
+
+          const cropper: Konva.Transformer = layer.findOne(
+            "#cropper"
+          ) as Konva.Transformer;
+          if (cropper) {
+            cropper.nodes([cropImageRef.current]);
+          }
+        }
+
+        node.clearCache();
+      }
 
       isCroppingRef.current = true;
     }, []);
 
-    const endCrop = React.useCallback((restore?: boolean): void => {
+    const endCrop = React.useCallback((): void => {
+      if (isCroppingRef.current) {
+        if (nodeRef.current) {
+          (
+            nodeRef.current.getLayer().findOne("#cropper") as Konva.Transformer
+          )?.nodes([]);
+
+          if (
+            currentPropRef.current.shapeOption.width ||
+            currentPropRef.current.shapeOption.height
+          ) {
+            nodeRef.current.cache();
+          }
+        }
+
+        cropImageRef.current?.visible(false);
+      }
+
+      isCroppingRef.current = false;
+    }, []);
+
+    const restoreCrop = React.useCallback((): void => {
       if (nodeRef.current) {
         (
           nodeRef.current.getLayer().findOne("#cropper") as Konva.Transformer
@@ -92,10 +120,12 @@ export const KonvaImage = React.memo(
 
       cropImageRef.current?.visible(false);
 
-      if (restore && cropElementRef.current) {
+      if (cropElementRef.current) {
         cropElementRef.current.remove();
         cropElementRef.current = undefined;
       }
+
+      currentPropRef.current.shapeOption.clip = undefined;
 
       isCroppingRef.current = false;
     }, []);
@@ -113,6 +143,7 @@ export const KonvaImage = React.memo(
         getShape,
         startCrop,
         endCrop,
+        restoreCrop,
       });
 
       return () => {
@@ -154,6 +185,16 @@ export const KonvaImage = React.memo(
 
         // Update shape box
         shapeOption.box = createShapeBox(node);
+
+        if (shapeOption.clip) {
+          if (cropElementRef.current) {
+            cropElementRef.current.setAttrs(shapeOption.clip);
+          } else {
+            cropElementRef.current = new Konva.Shape(shapeOption.clip);
+          }
+        } else {
+          endCrop();
+        }
 
         // Cache
         if (

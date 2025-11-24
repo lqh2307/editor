@@ -15,6 +15,7 @@ export type KonvaShape = Partial<Konva.ImageConfig> &
     // Extend
     type?: KonvaShapeType;
     box?: KonvaShapeBox;
+    clip?: KonvaShapeClip;
 
     // Filter
     brightness?: number;
@@ -77,6 +78,18 @@ export type KonvaShapeBox = {
   centerY?: number;
 };
 
+export type KonvaShapeClip = {
+  width?: number;
+  height?: number;
+  x?: number;
+  y?: number;
+  rotation?: number;
+  scaleX?: number;
+  scaleY?: number;
+  skewX?: number;
+  skewY?: number;
+};
+
 export type KonvaFreeDrawingLine = Omit<Konva.LineConfig, "points"> & {
   points: number[];
 };
@@ -108,7 +121,8 @@ export type KonvaShapeAPI = {
 
   // Crop
   startCrop?: () => void;
-  endCrop?: (restore?: boolean) => void;
+  endCrop?: () => void;
+  restoreCrop?: () => void;
 };
 
 export type LayerAction = "back" | "front" | "backward" | "forward";
