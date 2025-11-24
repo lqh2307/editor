@@ -33,7 +33,8 @@ export const KonvaGuideLines = React.memo(
           return;
         }
 
-        const dash = prop.style === "dotted" ? dashRef.current : undefined;
+        const dash: number[] =
+          prop.style === "dotted" ? dashRef.current : undefined;
 
         // Add horizontal lines
         prop.horizontalLines?.forEach((points, idx) => {

@@ -128,6 +128,10 @@ export const PanelControlTab = React.memo((): React.JSX.Element => {
     video.addEventListener("timeupdate", updateProgress);
 
     return () => {
+      if (!video) {
+        return;
+      }
+
       video.removeEventListener("timeupdate", updateProgress);
     };
   }, [video]);

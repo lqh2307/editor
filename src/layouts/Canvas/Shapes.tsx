@@ -102,10 +102,8 @@ export const CanvasShapes = React.memo((): React.JSX.Element => {
       // Calculate box
       let box: KonvaShapeBox;
 
-      const _selectedIds: string[] = selectedIds
-        ? Object.keys(selectedIds)
-        : undefined;
-      if (_selectedIds?.length) {
+      const _selectedIds: string[] = Object.keys(selectedIds);
+      if (_selectedIds.length) {
         const shapes: KonvaShape[] = [];
 
         _selectedIds.forEach((item) => {
@@ -139,7 +137,7 @@ export const CanvasShapes = React.memo((): React.JSX.Element => {
 
       for (const shape of shapeList) {
         const shapeBox: KonvaShapeBox = shape.box;
-        if (selectedIds?.[shape.id] || !shapeBox) {
+        if (selectedIds[shape.id] || !shapeBox) {
           continue;
         }
 
@@ -229,10 +227,8 @@ export const CanvasShapes = React.memo((): React.JSX.Element => {
           // Calculate box
           let box: KonvaShapeBox = currentShape?.box;
 
-          const _selectedIds: string[] = selectedIds
-            ? Object.keys(selectedIds)
-            : undefined;
-          if (_selectedIds?.length) {
+          const _selectedIds: string[] = Object.keys(selectedIds);
+          if (_selectedIds.length) {
             const shapes: KonvaShape[] = [];
 
             _selectedIds.forEach((item) => {
@@ -282,7 +278,7 @@ export const CanvasShapes = React.memo((): React.JSX.Element => {
 
             // Move shape
             moveShapes(
-              _selectedIds?.length ? _selectedIds : [currentShape.id],
+              _selectedIds.length ? _selectedIds : [currentShape.id],
               offSetX,
               offSetY
             );
@@ -321,7 +317,9 @@ export const CanvasShapes = React.memo((): React.JSX.Element => {
 
   const handleOnUnMounted = React.useCallback(
     (id: string): void => {
-      delete shapeRefs[id];
+      if (shapeRefs[id]) {
+        delete shapeRefs[id];
+      }
     },
     [shapeRefs]
   );
@@ -335,8 +333,8 @@ export const CanvasShapes = React.memo((): React.JSX.Element => {
 
     const transformerNodes: Konva.Node[] = [];
 
-    if (!freeDrawingMode && shapeRefs) {
-      Object.keys(selectedIds ?? {}).forEach((item) => {
+    if (!freeDrawingMode && shapeRefs && selectedIds) {
+      Object.keys(selectedIds).forEach((item) => {
         const node: Konva.Node = shapeRefs[item]?.getNode();
         if (node) {
           transformerNodes.push(node);

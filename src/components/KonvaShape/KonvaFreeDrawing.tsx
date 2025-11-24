@@ -64,14 +64,14 @@ export const KonvaFreeDrawing = React.memo(
         node.destroyChildren();
 
         // Add lines
-        lines.forEach((item) => {
+        lines.forEach((line) => {
           node.add(
             new Konva.Line({
-              ...item,
+              ...line,
               ...lineOption,
               listening: true,
               draggable: false,
-              key: item.id,
+              key: line.id,
             })
           );
         });

@@ -68,10 +68,10 @@ export const KonvaPath = React.memo(
         node.destroyChildren();
 
         // Add paths
-        paths.forEach((item) => {
+        paths.forEach((path) => {
           node.add(
             new Konva.Path({
-              ...item,
+              ...path,
               ...pathOption,
               listening: true,
               draggable: false,

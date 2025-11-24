@@ -162,7 +162,7 @@ Konva.Image.fromURL("./image.png", (img) => {
 });
 
 stage.on(("click"), e => {
-  const target = e?.target;
+  const target = e.target;
 
   if (target !== nodeTarget) {
     nodeTarget?.draggable(false);

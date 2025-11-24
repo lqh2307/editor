@@ -967,7 +967,7 @@ export function ShapesProvider(prop: ShapesProviderProp): React.JSX.Element {
     }
 
     return shapeId
-      ? state.shapeList.find((item) => item.id === shapeId) || {}
+      ? (state.shapeList.find((item) => item.id === shapeId) ?? {})
       : {};
   }, [state.shapeList, state.selectedIds]);
 
