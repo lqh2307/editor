@@ -13,7 +13,9 @@ import {
   RectangleTwoTone,
   PentagonTwoTone,
   CategoryTwoTone,
+  TimelineTwoTone,
   CircleTwoTone,
+  ShareTwoTone,
   StarTwoTone,
 } from "@mui/icons-material";
 
@@ -196,6 +198,46 @@ export const ToolbarAddRegularShape = React.memo((): React.JSX.Element => {
             onClick={addRegularShapeHandler}
             value={JSON.stringify({
               type: "wedge",
+            })}
+            onDragStart={dragRegularShapeHandler}
+            draggable={true}
+            sx={{
+              minWidth: 36,
+              minHeight: 32,
+            }}
+          />
+        </Box>
+
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: "row",
+            alignItems: "center",
+            justifyContent: "center",
+            gap: "0.5rem",
+          }}
+        >
+          <TooltipButton
+            icon={<ShareTwoTone fontSize={"small"} />}
+            title={t("toolBar.addShape.children.quadraticCurve.title")}
+            onClick={addRegularShapeHandler}
+            value={JSON.stringify({
+              type: "quadratic-curve",
+            })}
+            onDragStart={dragRegularShapeHandler}
+            draggable={true}
+            sx={{
+              minWidth: 36,
+              minHeight: 32,
+            }}
+          />
+
+          <TooltipButton
+            icon={<TimelineTwoTone fontSize={"small"} />}
+            title={t("toolBar.addShape.children.bezierCurve.title")}
+            onClick={addRegularShapeHandler}
+            value={JSON.stringify({
+              type: "bezier-curve",
             })}
             onDragStart={dragRegularShapeHandler}
             draggable={true}

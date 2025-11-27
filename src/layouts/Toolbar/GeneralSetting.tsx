@@ -123,7 +123,7 @@ export const ToolbarGeneralSetting = React.memo((): React.JSX.Element => {
     [setStageRatio]
   );
 
-  const languages = React.useMemo<SelectInputOption[]>(
+  const languages: SelectInputOption[] = React.useMemo<SelectInputOption[]>(
     () =>
       Object.keys(
         translation.toolBar.setting.children.language.children.language.content

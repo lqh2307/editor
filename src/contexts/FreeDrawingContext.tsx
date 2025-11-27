@@ -12,7 +12,7 @@ export function FreeDrawingProvider(
   const [freeDrawingMode, setFreeDrawingMode] =
     React.useState<FreeDrawingMode>(undefined);
 
-  const contextValue = React.useMemo<IFreeDrawingContext>(
+  const contextValue: IFreeDrawingContext = React.useMemo<IFreeDrawingContext>(
     () => ({
       freeDrawingMode,
       setFreeDrawingMode,

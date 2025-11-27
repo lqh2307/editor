@@ -4,8 +4,10 @@ import { calculateGroupShapeBox } from "../../utils/Shapes";
 import Konva from "konva";
 import React from "react";
 import {
+  KonvaQuadraticCurve,
   KonvaConcavePolygon,
   KonvaConvexPolygon,
+  KonvaBezierCurve,
   KonvaFreeDrawing,
   KonvaRectangle,
   KonvaShapeBox,
@@ -59,11 +61,16 @@ export const CanvasShapes = React.memo((): React.JSX.Element => {
         return;
       }
 
-      const currentShape: KonvaShape = shapeAPI.getShape();
-      if (currentShape) {
-        // Set selected ids
-        updateSelectedIds([currentShape.id], e.evt?.ctrlKey ? false : true);
+      const shape: KonvaShape = shapeAPI.getShape();
+
+      const selectedIds: string[] = [shape.id];
+
+      if (shape.groupWithIds) {
+        selectedIds.push(...shape.groupWithIds);
       }
+
+      // Set selected ids
+      updateSelectedIds(selectedIds, e.evt?.ctrlKey ? false : true);
     },
     [freeDrawingMode, updateSelectedIds]
   );
@@ -74,11 +81,10 @@ export const CanvasShapes = React.memo((): React.JSX.Element => {
         return;
       }
 
-      const currentShape: KonvaShape = shapeAPI.getShape();
-      if (currentShape) {
-        // Set cursor style
-        setPointerStyle(selectedIds?.[currentShape.id] ? "move" : "pointer");
-      }
+      // Set cursor style
+      setPointerStyle(
+        selectedIds?.[shapeAPI.getShape().id] ? "move" : "pointer"
+      );
     },
     [freeDrawingMode, selectedIds, setPointerStyle]
   );
@@ -115,7 +121,7 @@ export const CanvasShapes = React.memo((): React.JSX.Element => {
 
         box = calculateGroupShapeBox(shapes);
       } else {
-        box = shapeAPI.getShape()?.box;
+        box = shapeAPI.getShape().box;
       }
 
       if (!box) {
@@ -185,7 +191,7 @@ export const CanvasShapes = React.memo((): React.JSX.Element => {
   const handleAppliedProp = React.useCallback(
     (shapeAPI: KonvaShapeAPI, reason: RenderReason): void => {
       if (reason === "apply-prop") {
-        const box: KonvaShapeBox = shapeAPI.getShape()?.box;
+        const box: KonvaShapeBox = shapeAPI.getShape().box;
         if (!box) {
           return;
         }
@@ -207,13 +213,8 @@ export const CanvasShapes = React.memo((): React.JSX.Element => {
           expandStage(box.bottom * expandRatio, true);
         }
       } else if (reason === "transform-end" || reason === "commit") {
-        const currentShape: KonvaShape = shapeAPI.getShape();
-        if (!currentShape) {
-          return;
-        }
-
         // Update shape
-        updateShape(currentShape, true, true);
+        updateShape(shapeAPI.getShape(), true, true);
       } else if (reason === "drag-end") {
         const guideLines: KonvaGuideLinesAPI = getGuideLines();
         if (!guideLines) {
@@ -225,7 +226,7 @@ export const CanvasShapes = React.memo((): React.JSX.Element => {
           const currentShape: KonvaShape = shapeAPI.getShape();
 
           // Calculate box
-          let box: KonvaShapeBox = currentShape?.box;
+          let box: KonvaShapeBox = currentShape.box;
 
           const _selectedIds: string[] = Object.keys(selectedIds);
           if (_selectedIds.length) {
@@ -580,6 +581,40 @@ export const CanvasShapes = React.memo((): React.JSX.Element => {
         case "path": {
           return (
             <KonvaPath
+              onClick={handleShapeClick}
+              onMounted={handleOnMounted}
+              onUnMounted={handleOnUnMounted}
+              onMouseOver={handleShapeMouseOver}
+              onMouseLeave={handleShapeMouseLeave}
+              onDragMove={handleShapeDragMove}
+              onAppliedProp={handleAppliedProp}
+              isSelected={isSelected}
+              shapeOption={item}
+              key={item.id}
+            />
+          );
+        }
+
+        case "quadratic-curve": {
+          return (
+            <KonvaQuadraticCurve
+              onClick={handleShapeClick}
+              onMounted={handleOnMounted}
+              onUnMounted={handleOnUnMounted}
+              onMouseOver={handleShapeMouseOver}
+              onMouseLeave={handleShapeMouseLeave}
+              onDragMove={handleShapeDragMove}
+              onAppliedProp={handleAppliedProp}
+              isSelected={isSelected}
+              shapeOption={item}
+              key={item.id}
+            />
+          );
+        }
+
+        case "bezier-curve": {
+          return (
+            <KonvaBezierCurve
               onClick={handleShapeClick}
               onMounted={handleOnMounted}
               onUnMounted={handleOnUnMounted}

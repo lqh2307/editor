@@ -310,6 +310,37 @@ export function createShape(shape: KonvaShape): KonvaShape {
 
       break;
     }
+
+    case "quadratic-curve":
+    case "bezier-curve": {
+      // Common
+      newShape.x = newShape.x ?? 150;
+      newShape.y = newShape.y ?? 150;
+      newShape.fillEnabled = newShape.fillEnabled ?? true;
+      newShape.fill = newShape.fill ?? randomColor;
+      newShape.fillOpacity = newShape.fillOpacity ?? 1;
+      newShape.strokeEnabled = newShape.strokeEnabled ?? true;
+      newShape.stroke = newShape.stroke ?? randomColor;
+      newShape.strokeOpacity = newShape.strokeOpacity ?? 1;
+      newShape.strokeScaleEnabled = newShape.strokeScaleEnabled ?? false;
+      newShape.strokeWidth = newShape.strokeWidth ?? 10;
+      newShape.bezier = newShape.bezier ?? true;
+
+      // Points
+      if (newShape.type === "quadratic-curve") {
+        newShape.points = newShape.points ?? [0, 0, 200, 0, 200, 0, 200, 200];
+      } else {
+        newShape.points = newShape.points ?? [
+          0, 0, 64.6, 135.4, 135.4, 64.6, 200, 200,
+        ];
+      }
+
+      // Offset
+      newShape.offsetX = newShape.offsetX ?? 0;
+      newShape.offsetY = newShape.offsetY ?? 0;
+
+      break;
+    }
   }
 
   return newShape;
@@ -627,12 +658,7 @@ export function calculateCrop(
  * @param solarize
  * @returns
  */
-export function createFilter(
-  grayscale?: boolean,
-  invert?: boolean,
-  sepia?: boolean,
-  solarize?: boolean
-) {
+export function createFilter(option: KonvaShape): Filter[] {
   const filters: Filter[] = [
     Konva.Filters.Pixelate,
     Konva.Filters.Brighten,
@@ -642,21 +668,104 @@ export function createFilter(
     Konva.Filters.Noise,
   ];
 
-  if (grayscale) {
+  if (option.grayscale) {
     filters.push(Konva.Filters.Grayscale);
   }
 
-  if (invert) {
+  if (option.invert) {
     filters.push(Konva.Filters.Invert);
   }
 
-  if (sepia) {
+  if (option.sepia) {
     filters.push(Konva.Filters.Sepia);
   }
 
-  if (solarize) {
+  if (option.solarize) {
     filters.push(Konva.Filters.Solarize);
   }
 
   return filters;
+}
+
+/* Transform point */
+export function transformPoint(point: Vector2d, option: KonvaShape): Vector2d {
+  // // offset translate
+  // let x: number = point.x - option.offsetX;
+  // let y: number = point.y - option.offsetY;
+
+  // // scale
+  // x = x * option.scaleX;
+  // y = y * option.scaleY;
+
+  // // skew
+  // const sx: number = x + option.skewX * y;
+  // const ys: number = option.skewY * x + y;
+  // x = sx;
+  // y = ys;
+
+  // // rotate
+  // const rad: number = (Math.PI / 180) * option.rotation;
+  // const cos: number = Math.cos(rad);
+  // const sin: number = Math.sin(rad);
+  // const xr = x * cos - y * sin;
+  // const yr = x * sin + y * cos;
+  // x = xr;
+  // y = yr;
+
+  // // position translate
+  // x = x + option.x;
+  // y = y + option.y;
+
+  // return { x, y };
+
+  return new Konva.Transform()
+    .translate(option.x, option.y)
+    .rotate((Math.PI / 180) * option.rotation)
+    .skew(option.skewX, option.skewY)
+    .scale(option.scaleX, option.scaleY)
+    .translate(-option.offsetX, -option.offsetY)
+    .point(point);
+}
+
+/* Invert point */
+export function invertPoint(point: Vector2d, option: KonvaShape): Vector2d {
+  // // undo position translate
+  // let x: number = point.x - option.x;
+  // let y: number = point.y - option.y;
+
+  // // undo rotate
+  // const rad: number = (Math.PI / 180) * option.rotation;
+  // const cos: number = Math.cos(-rad);
+  // const sin: number = Math.sin(-rad);
+  // const xr: number = x * cos - y * sin;
+  // const yr: number = x * sin + y * cos;
+  // x = xr;
+  // y = yr;
+
+  // // undo skew
+  // const det: number = 1 - option.skewX * option.skewY;
+
+  // const xs: number = (x - option.skewX * y) / det;
+  // const ys: number = (-option.skewY * x + y) / det;
+  // x = xs;
+  // y = ys;
+
+  // // undo scale
+  // x = x / option.scaleX;
+  // y = y / option.scaleY;
+
+  // // undo offset translate
+  // x = x + option.offsetX;
+  // y = y + option.offsetY;
+
+  // return { x, y };
+
+  return new Konva.Transform()
+    .translate(option.x, option.y)
+    .rotate((Math.PI / 180) * option.rotation)
+    .skew(option.skewX, option.skewY)
+    .scale(option.scaleX, option.scaleY)
+    .translate(-option.offsetX, -option.offsetY)
+    .invert()
+    .point(point);
 }

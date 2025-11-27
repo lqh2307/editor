@@ -13,9 +13,10 @@ export function useDebounceHotKey({
 
   useHotkeys(
     keys,
-    (event, handler) => {
-      event.preventDefault();
-      debounced(event, handler);
+    (e, handler) => {
+      e.preventDefault();
+
+      debounced(e, handler);
     },
     options,
     deps

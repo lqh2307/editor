@@ -48,7 +48,7 @@ export function AppProvider(prop: AppProviderProp): React.JSX.Element {
     prop.toolbarColor
   );
 
-  const contextValue = React.useMemo<IAppContext>(
+  const contextValue: IAppContext = React.useMemo<IAppContext>(
     () => ({
       language,
       updateLanguage,

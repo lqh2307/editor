@@ -401,7 +401,9 @@ export const ToolbarIO = React.memo((): React.JSX.Element => {
     [addShapes, updateSnackbarAlert, t]
   );
 
-  const data = React.useMemo<Record<string, SelectInputOption[]>>(
+  const data: Record<string, SelectInputOption[]> = React.useMemo<
+    Record<string, SelectInputOption[]>
+  >(
     () => ({
       types: Object.keys(translation.toolBar.save.common.type).map((item) => ({
         title: t(`toolBar.save.common.type.${item}`),
@@ -1474,7 +1476,6 @@ export const ToolbarIO = React.memo((): React.JSX.Element => {
                   title={t("toolBar.export.common.button.next")}
                   onClick={settingHandler.changePreviewActive}
                   variant={"text"}
-                  value={""}
                   disabled={
                     !previewImageNum ||
                     exportInfo.previewActive === previewImageNum - 1
@@ -1649,9 +1650,7 @@ export const ToolbarIO = React.memo((): React.JSX.Element => {
 
   useDebounceHotKey({
     keys: ["ctrl+shift+s", "cmd+shift+s"],
-    callback: (e) => {
-      e.preventDefault();
-
+    callback: () => {
       saveToCloudHandler();
     },
     deps: [saveToCloudHandler],

@@ -57,9 +57,7 @@ export const ToolbarZoom = React.memo((): React.JSX.Element => {
 
   useDebounceHotKey({
     keys: ["ctrl+plus", "cmd+plus"],
-    callback: (e) => {
-      e.preventDefault();
-
+    callback: () => {
       zoomStageToPointerHandler("");
     },
     deps: [zoomStageToPointerHandler],
@@ -67,9 +65,7 @@ export const ToolbarZoom = React.memo((): React.JSX.Element => {
 
   useDebounceHotKey({
     keys: ["ctrl+minus", "cmd+minus"],
-    callback: (e) => {
-      e.preventDefault();
-
+    callback: () => {
       zoomStageToPointerHandler("true");
     },
     deps: [zoomStageToPointerHandler],
@@ -77,9 +73,7 @@ export const ToolbarZoom = React.memo((): React.JSX.Element => {
 
   useDebounceHotKey({
     keys: ["ctrl+0", "cmd+0"],
-    callback: (e) => {
-      e.preventDefault();
-
+    callback: () => {
       fitStageScreenHandler();
     },
     deps: [fitStageScreenHandler],
@@ -92,7 +86,6 @@ export const ToolbarZoom = React.memo((): React.JSX.Element => {
         icon={<ZoomInTwoTone />}
         title={t("toolBar.zoom.children.in.title")}
         disabled={stageZoom === stageZoomMax}
-        value={""}
         onClick={zoomStageHandler}
       />
 

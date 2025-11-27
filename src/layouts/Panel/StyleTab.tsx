@@ -370,18 +370,24 @@ export const PanelStyleTab = React.memo((): React.JSX.Element => {
 
   const cropHandler = React.useCallback(
     (value: string): void => {
-      if (selectedShape.type === "image") {
-        if (value) {
-          shapeRefs[selectedShape.id]?.startCrop();
-        } else {
-          shapeRefs[selectedShape.id]?.restoreCrop();
-        }
+      if (value) {
+        shapeRefs[value]?.startCrop();
+      } else {
+        updateShape(
+          {
+            clip: undefined,
+          },
+          true,
+          true
+        );
       }
     },
-    [selectedShape, shapeRefs]
+    [updateShape, shapeRefs]
   );
 
-  const data = React.useMemo<Record<string, SelectInputOption[]>>(
+  const data: Record<string, SelectInputOption[]> = React.useMemo<
+    Record<string, SelectInputOption[]>
+  >(
     () => ({
       lineCaps: Object.keys(
         translation.panel.style.children.stroke.children.lineCap.content
@@ -977,14 +983,13 @@ export const PanelStyleTab = React.memo((): React.JSX.Element => {
             <TooltipButton
               icon={<CropRotateTwoTone fontSize={"small"} />}
               title={t("panel.style.children.crop.children.crop.title")}
-              value={"true"}
+              value={selectedShape.id}
               onClick={cropHandler}
             />
 
             <TooltipButton
               icon={<RestoreTwoTone fontSize={"small"} />}
               title={t("panel.style.children.crop.children.restore.title")}
-              value={""}
               onClick={cropHandler}
             />
           </ButtonGroup>

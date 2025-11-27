@@ -253,6 +253,9 @@
         }
       }
     },
+    "group": {
+      "title": "Gom nhóm (Ctrl + G)"
+    },
     "selectAll": {
       "title": "Chọn tất cả (Ctrl + A)"
     },
@@ -322,6 +325,12 @@
         },
         "wedge": {
           "title": "Rẻ quạt"
+        },
+        "quadraticCurve": {
+          "title": "Đường cong bậc hai"
+        },
+        "bezierCurve": {
+          "title": "Đường cong bậc ba"
         }
       },
       "common": {

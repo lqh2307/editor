@@ -28,31 +28,32 @@ export interface IShapesContext {
 
   setMaxHistory?: (max: number) => void;
 
+  groupShapes?: (ids?: string[]) => void;
   moveShapes?: (ids: string[], offsetX: number, offsetY: number) => void;
   exportShapes?: (save?: boolean, fileName?: string) => Promise<string>;
-  updateSelectedIds?: (ids: string[], overwrite?: boolean) => void;
+  updateSelectedIds?: (ids?: string[], overwrite?: boolean) => void;
   addShapes?: (
     shapes: KonvaShape[],
     overwrite?: boolean,
     processBase64ImageURL?: boolean,
     position?: Vector2d
   ) => Promise<void>;
-  deleteShapes?: (ids: string[]) => void;
+  deleteShapes?: (ids?: string[]) => void;
   updateShape?: (
     shape?: KonvaShape,
     render?: boolean,
     storeHistory?: boolean
   ) => void;
   pasteShape?: (position?: Vector2d) => void;
-  duplicateShape?: (ids: string[], position?: Vector2d) => void;
-  copyShape?: (ids: string[], cut?: boolean) => void;
-  layerShape?: (id: string, type: LayerAction) => void;
+  duplicateShape?: (ids?: string[], position?: Vector2d) => void;
+  copyShape?: (ids?: string[], cut?: boolean) => void;
+  layerShape?: (id?: string, type?: LayerAction) => void;
   alignShape?: (
-    id: string,
+    id?: string,
     horizontalAlign?: HorizontalAlign,
     verticalAlign?: VerticalAlign
   ) => void;
-  flipShape?: (id: string, vertical?: boolean) => void;
+  flipShape?: (id?: string, vertical?: boolean) => void;
   clean?: () => void;
   doShapes?: (redo?: boolean) => void;
 }

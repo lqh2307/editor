@@ -31,9 +31,7 @@ export const ToolbarHistory = React.memo((): React.JSX.Element => {
 
   useDebounceHotKey({
     keys: ["ctrl+z", "cmd+z"],
-    callback: (e) => {
-      e.preventDefault();
-
+    callback: () => {
       doShapesHandler("");
     },
     deps: [doShapesHandler],
@@ -41,9 +39,7 @@ export const ToolbarHistory = React.memo((): React.JSX.Element => {
 
   useDebounceHotKey({
     keys: ["ctrl+y", "cmd+y"],
-    callback: (e) => {
-      e.preventDefault();
-
+    callback: () => {
       doShapesHandler("true");
     },
     deps: [doShapesHandler],
@@ -56,7 +52,6 @@ export const ToolbarHistory = React.memo((): React.JSX.Element => {
         icon={<UndoTwoTone />}
         title={t("toolBar.undo.title")}
         disabled={!canUndo}
-        value={""}
         onClick={doShapesHandler}
       />
 

@@ -177,7 +177,6 @@ export const PanelControlTab = React.memo((): React.JSX.Element => {
               <TooltipButton
                 icon={<Replay10TwoTone fontSize={"small"} />}
                 title={t("panel.control.children.general.children.relay.title")}
-                value={""}
                 onClick={updateVideoHandler.forward}
               />
 
@@ -187,7 +186,6 @@ export const PanelControlTab = React.memo((): React.JSX.Element => {
                   title={t(
                     "panel.control.children.general.children.pause.title"
                   )}
-                  value={""}
                   onClick={updateShapeHandler.changePlay}
                 />
               ) : (

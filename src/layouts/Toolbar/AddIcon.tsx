@@ -61,7 +61,7 @@ export const ToolbarAddIcon = React.memo((): React.JSX.Element => {
 
   const iconConfigRef = React.useRef<ItemInfo>({
     renderColumn: 4,
-    renderRow: 2,
+    renderRow: 3,
     itemSize: 20,
     itemWidth: 36,
     itemHeight: 32,

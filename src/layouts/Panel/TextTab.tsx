@@ -203,9 +203,7 @@ export const PanelTextTab = React.memo((): React.JSX.Element => {
 
   useDebounceHotKey({
     keys: ["ctrl+b", "cmd+b"],
-    callback: (e) => {
-      e.preventDefault();
-
+    callback: () => {
       changeTextFontBoldHandler();
     },
     deps: [changeTextFontBoldHandler],
@@ -213,9 +211,7 @@ export const PanelTextTab = React.memo((): React.JSX.Element => {
 
   useDebounceHotKey({
     keys: ["ctrl+i", "cmd+i"],
-    callback: (e) => {
-      e.preventDefault();
-
+    callback: () => {
       changeTextFontItalicHandler();
     },
     deps: [changeTextFontItalicHandler],
@@ -223,9 +219,7 @@ export const PanelTextTab = React.memo((): React.JSX.Element => {
 
   useDebounceHotKey({
     keys: ["ctrl+u", "cmd+u"],
-    callback: (e) => {
-      e.preventDefault();
-
+    callback: () => {
       changeTextDecorationHandler.underline();
     },
     deps: [changeTextDecorationHandler.underline],
@@ -233,9 +227,7 @@ export const PanelTextTab = React.memo((): React.JSX.Element => {
 
   useDebounceHotKey({
     keys: ["ctrl+t", "cmd+t"],
-    callback: (e) => {
-      e.preventDefault();
-
+    callback: () => {
       changeTextDecorationHandler.lineThrough();
     },
     deps: [changeTextDecorationHandler.lineThrough],
@@ -243,9 +235,7 @@ export const PanelTextTab = React.memo((): React.JSX.Element => {
 
   useDebounceHotKey({
     keys: ["ctrl+l", "cmd+l"],
-    callback: (e) => {
-      e.preventDefault();
-
+    callback: () => {
       textHandler.horizontalAlign("left");
     },
     deps: [textHandler.horizontalAlign],
@@ -253,9 +243,7 @@ export const PanelTextTab = React.memo((): React.JSX.Element => {
 
   useDebounceHotKey({
     keys: ["ctrl+e", "cmd+e"],
-    callback: (e) => {
-      e.preventDefault();
-
+    callback: () => {
       textHandler.horizontalAlign("center");
     },
     deps: [textHandler.horizontalAlign],
@@ -263,9 +251,7 @@ export const PanelTextTab = React.memo((): React.JSX.Element => {
 
   useDebounceHotKey({
     keys: ["ctrl+r", "cmd+r"],
-    callback: (e) => {
-      e.preventDefault();
-
+    callback: () => {
       textHandler.horizontalAlign("right");
     },
     deps: [textHandler.horizontalAlign],
@@ -273,9 +259,7 @@ export const PanelTextTab = React.memo((): React.JSX.Element => {
 
   useDebounceHotKey({
     keys: ["ctrl+shift+l", "cmd+shift+l"],
-    callback: (e) => {
-      e.preventDefault();
-
+    callback: () => {
       textHandler.verticalAlign("top");
     },
     deps: [textHandler.verticalAlign],
@@ -283,9 +267,7 @@ export const PanelTextTab = React.memo((): React.JSX.Element => {
 
   useDebounceHotKey({
     keys: ["ctrl+shift+e", "cmd+shift+e"],
-    callback: (e) => {
-      e.preventDefault();
-
+    callback: () => {
       textHandler.verticalAlign("middle");
     },
     deps: [textHandler.verticalAlign],
@@ -293,9 +275,7 @@ export const PanelTextTab = React.memo((): React.JSX.Element => {
 
   useDebounceHotKey({
     keys: ["ctrl+shift+r", "cmd+shift+r"],
-    callback: (e) => {
-      e.preventDefault();
-
+    callback: () => {
       textHandler.verticalAlign("bottom");
     },
     deps: [textHandler.verticalAlign],

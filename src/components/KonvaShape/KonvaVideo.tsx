@@ -1,5 +1,5 @@
+import { KonvaShape, KonvaShapeAPI, KonvaShapeProp } from "./Types";
 import { parseHexToRGBAString } from "../../utils/Color";
-import { KonvaShape, KonvaShapeProp } from "./Types";
 import { createShapeBox } from "../../utils/Shapes";
 import { Portal } from "react-konva-utils";
 import { Image } from "react-konva";
@@ -11,44 +11,9 @@ export const KonvaVideo = React.memo(
     const nodeRef = React.useRef<Konva.Image>(undefined);
     const currentPropRef = React.useRef<KonvaShapeProp>(prop);
     const [isEnabled, setIsEnabled] = React.useState<boolean>(false);
+
+    // Store animation
     const animRef = React.useRef<Konva.Animation>(undefined);
-
-    React.useEffect(() => {
-      currentPropRef.current = prop;
-
-      applyProp();
-
-      // Call callback function
-      prop.onMounted?.(prop.shapeOption.id, {
-        updateProp,
-        updateShape,
-        getNode,
-        getShape,
-      });
-
-      return () => {
-        // Call callback function
-        prop.onUnMounted?.(prop.shapeOption.id);
-      };
-    }, [prop]);
-
-    // Create animation
-    React.useEffect(() => {
-      if (nodeRef.current) {
-        animRef.current = new Konva.Animation(
-          () => {},
-          nodeRef.current.getLayer()
-        );
-
-        animRef.current.start();
-      }
-
-      return () => {
-        animRef.current?.stop();
-
-        animRef.current = undefined;
-      };
-    }, []);
 
     // Apply prop
     const applyProp = React.useCallback((): void => {
@@ -102,15 +67,7 @@ export const KonvaVideo = React.memo(
       }
 
       // Call callback function
-      currentPropRef.current.onAppliedProp?.(
-        {
-          updateProp,
-          updateShape,
-          getNode,
-          getShape,
-        },
-        "apply-prop"
-      );
+      currentPropRef.current.onAppliedProp?.(shapeAPI, "apply-prop");
     }, []);
 
     // Update prop
@@ -131,6 +88,14 @@ export const KonvaVideo = React.memo(
       applyProp();
     }, []);
 
+    // Get stage
+    const getStage = React.useCallback((): Konva.Stage => {
+      const node: Konva.Image = nodeRef.current;
+      if (node) {
+        return node.getStage();
+      }
+    }, []);
+
     // Get node
     const getNode = React.useCallback((): Konva.Image => {
       return nodeRef.current;
@@ -141,15 +106,55 @@ export const KonvaVideo = React.memo(
       return currentPropRef.current.shapeOption;
     }, []);
 
+    // Shape API
+    const shapeAPI: KonvaShapeAPI = React.useMemo(
+      () => ({
+        updateProp,
+        updateShape,
+        getStage,
+        getNode,
+        getShape,
+      }),
+      []
+    );
+
+    // Update shape
+    React.useEffect(() => {
+      currentPropRef.current = prop;
+
+      applyProp();
+
+      // Call callback function
+      prop.onMounted?.(prop.shapeOption.id, shapeAPI);
+
+      return () => {
+        // Call callback function
+        prop.onUnMounted?.(prop.shapeOption.id);
+      };
+    }, [prop]);
+
+    // Create animation
+    React.useEffect(() => {
+      if (nodeRef.current) {
+        animRef.current = new Konva.Animation(
+          () => {},
+          nodeRef.current.getLayer()
+        );
+
+        animRef.current.start();
+      }
+
+      return () => {
+        animRef.current?.stop();
+
+        animRef.current = undefined;
+      };
+    }, []);
+
     const handleClick = React.useCallback(
       (e: Konva.KonvaEventObject<MouseEvent>): void => {
         // Call callback function
-        currentPropRef.current.onClick?.(e, {
-          updateProp,
-          updateShape,
-          getNode,
-          getShape,
-        });
+        currentPropRef.current.onClick?.(e, shapeAPI);
       },
       []
     );
@@ -166,12 +171,7 @@ export const KonvaVideo = React.memo(
         }
 
         // Call callback function
-        currentPropRef.current.onDragMove?.({
-          updateProp,
-          updateShape,
-          getNode,
-          getShape,
-        });
+        currentPropRef.current.onDragMove?.(shapeAPI);
       },
       []
     );
@@ -180,15 +180,7 @@ export const KonvaVideo = React.memo(
       setIsEnabled(false);
 
       // Call callback function
-      currentPropRef.current.onAppliedProp?.(
-        {
-          updateProp,
-          updateShape,
-          getNode,
-          getShape,
-        },
-        "drag-end"
-      );
+      currentPropRef.current.onAppliedProp?.(shapeAPI, "drag-end");
     }, []);
 
     const handleTransformEnd = React.useCallback(
@@ -207,37 +199,19 @@ export const KonvaVideo = React.memo(
         }
 
         // Call callback function
-        currentPropRef.current.onAppliedProp?.(
-          {
-            updateProp,
-            updateShape,
-            getNode,
-            getShape,
-          },
-          "transform-end"
-        );
+        currentPropRef.current.onAppliedProp?.(shapeAPI, "transform-end");
       },
       []
     );
 
     const handleMouseOver = React.useCallback((): void => {
       // Call callback function
-      currentPropRef.current.onMouseOver?.({
-        updateProp,
-        updateShape,
-        getNode,
-        getShape,
-      });
+      currentPropRef.current.onMouseOver?.(shapeAPI);
     }, []);
 
     const handleMouseLeave = React.useCallback((): void => {
       // Call callback function
-      currentPropRef.current.onMouseLeave?.({
-        updateProp,
-        updateShape,
-        getNode,
-        getShape,
-      });
+      currentPropRef.current.onMouseLeave?.(shapeAPI);
     }, []);
 
     return (

@@ -255,7 +255,6 @@ export const PanelArrangeTab = React.memo((): React.JSX.Element => {
             <TooltipButton
               icon={<FlipTwoTone fontSize={"small"} />}
               title={t("panel.arrange.children.flip.children.horizontal.title")}
-              value={""}
               onClick={flipHandler}
             />
 

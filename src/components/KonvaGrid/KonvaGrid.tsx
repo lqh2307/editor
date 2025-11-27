@@ -35,7 +35,8 @@ export const KonvaGrid = React.memo(
           return;
         }
 
-        const dash = prop.style === "dotted" ? dashRef.current : undefined;
+        const dash: number[] =
+          prop.style === "dotted" ? dashRef.current : undefined;
 
         // Vertical lines
         const xCount: number = Math.floor(prop.width / prop.gap);

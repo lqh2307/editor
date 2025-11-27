@@ -1083,7 +1083,7 @@ export function StageProvider(prop: StageProviderProp): React.JSX.Element {
     });
   }, [stageState.stageWidth, stageState.stageHeight]);
 
-  const contextValue = React.useMemo<IStageContext>(
+  const contextValue: IStageContext = React.useMemo<IStageContext>(
     () => ({
       canvasWidth: stageState.canvasWidth,
       canvasHeight: stageState.canvasHeight,

@@ -1,7 +1,8 @@
 import { Size } from "../../types/Common";
 import Konva from "konva";
 
-export type KonvaShape = Partial<Konva.ImageConfig> &
+export type KonvaShape = Partial<Konva.ShapeConfig> &
+  Partial<Konva.ImageConfig> &
   Partial<Konva.CircleConfig> &
   Partial<Konva.EllipseConfig> &
   Partial<Konva.RectConfig> &
@@ -13,6 +14,7 @@ export type KonvaShape = Partial<Konva.ImageConfig> &
   Partial<Konva.RingConfig> &
   Partial<Konva.WedgeConfig> & {
     // Extend
+    groupWithIds?: string[];
     type?: KonvaShapeType;
     box?: KonvaShapeBox;
     clip?: KonvaShapeClip;
@@ -67,7 +69,9 @@ export type KonvaShapeType =
   | "path"
   | "arrow"
   | "ring"
-  | "wedge";
+  | "wedge"
+  | "quadratic-curve"
+  | "bezier-curve";
 
 export type KonvaShapeBox = {
   left?: number;
@@ -116,13 +120,13 @@ export type KonvaShapeProp = {
 export type KonvaShapeAPI = {
   updateProp: (prop?: KonvaShapeProp) => void;
   updateShape: (shape?: KonvaShape) => void;
+  getStage: () => Konva.Stage;
   getNode: () => Konva.Node;
   getShape: () => KonvaShape;
 
   // Crop
   startCrop?: () => void;
-  endCrop?: () => void;
-  restoreCrop?: () => void;
+  endCrop?: (restore?: boolean) => void;
 };
 
 export type LayerAction = "back" | "front" | "backward" | "forward";

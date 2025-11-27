@@ -11,6 +11,7 @@ import {
   ContentCopyRounded,
   ContentCutTwoTone,
   SelectAllTwoTone,
+  QueueTwoTone,
 } from "@mui/icons-material";
 
 export const ToolbarAction = React.memo((): React.JSX.Element => {
@@ -25,13 +26,18 @@ export const ToolbarAction = React.memo((): React.JSX.Element => {
     duplicateShape,
     updateSelectedIds,
     deleteShapes,
+    groupShapes,
     copyShape,
     pasteShape,
   } = useShapesContext();
 
-  const isDisabled = React.useMemo<boolean>(() => {
+  const isDisabled: boolean = React.useMemo<boolean>(() => {
     return selectedIds && !Object.keys(selectedIds).length;
   }, [selectedIds]);
+
+  const groupShapesHandler = React.useCallback((): void => {
+    groupShapes();
+  }, [groupShapes]);
 
   const selectAllHandler = React.useCallback((): void => {
     updateSelectedIds(undefined, false);
@@ -99,10 +105,16 @@ export const ToolbarAction = React.memo((): React.JSX.Element => {
   }, [deleteShapes, updateSnackbarAlert, t]);
 
   useDebounceHotKey({
-    keys: ["ctrl+a", "cmd+a"],
-    callback: (e) => {
-      e.preventDefault();
+    keys: ["ctrl+g", "cmd+g"],
+    callback: () => {
+      groupShapesHandler();
+    },
+    deps: [groupShapesHandler],
+  });
 
+  useDebounceHotKey({
+    keys: ["ctrl+a", "cmd+a"],
+    callback: () => {
       selectAllHandler();
     },
     deps: [selectAllHandler],
@@ -110,9 +122,7 @@ export const ToolbarAction = React.memo((): React.JSX.Element => {
 
   useDebounceHotKey({
     keys: ["del", "delete"],
-    callback: (e) => {
-      e.preventDefault();
-
+    callback: () => {
       deleteShapeHandler();
     },
     deps: [deleteShapeHandler],
@@ -120,9 +130,7 @@ export const ToolbarAction = React.memo((): React.JSX.Element => {
 
   useDebounceHotKey({
     keys: ["ctrl+x", "cmd+x"],
-    callback: (e) => {
-      e.preventDefault();
-
+    callback: () => {
       copyShapeHandler("true");
     },
     deps: [copyShapeHandler],
@@ -130,9 +138,7 @@ export const ToolbarAction = React.memo((): React.JSX.Element => {
 
   useDebounceHotKey({
     keys: ["ctrl+c", "cmd+c"],
-    callback: (e) => {
-      e.preventDefault();
-
+    callback: () => {
       copyShapeHandler("");
     },
     deps: [copyShapeHandler],
@@ -140,9 +146,7 @@ export const ToolbarAction = React.memo((): React.JSX.Element => {
 
   useDebounceHotKey({
     keys: ["ctrl+v", "cmd+v"],
-    callback: (e) => {
-      e.preventDefault();
-
+    callback: () => {
       pasteShapeToPositionHandler();
     },
     deps: [pasteShapeToPositionHandler],
@@ -150,19 +154,24 @@ export const ToolbarAction = React.memo((): React.JSX.Element => {
 
   useDebounceHotKey({
     keys: ["ctrl+d", "cmd+d"],
-    callback: (e) => {
-      e.preventDefault();
-
+    callback: () => {
       duplicateShapeToPositionHandler();
     },
     deps: [duplicateShapeToPositionHandler],
   });
 
   {
-    /* Select All/Delete/Cut/Duplicate/Copy/Paste */
+    /* Select Group/Select All/Delete/Cut/Duplicate/Copy/Paste */
   }
   return (
     <ButtonGroup variant={"contained"} size={"small"}>
+      <TooltipButton
+        icon={<QueueTwoTone />}
+        title={t("toolBar.group.title")}
+        disabled={selectedIds && Object.keys(selectedIds).length < 2}
+        onClick={groupShapesHandler}
+      />
+
       <TooltipButton
         icon={<SelectAllTwoTone />}
         title={t("toolBar.selectAll.title")}
@@ -196,7 +205,6 @@ export const ToolbarAction = React.memo((): React.JSX.Element => {
         icon={<ContentCopyTwoTone />}
         title={t("toolBar.copy.title")}
         disabled={isDisabled}
-        value={""}
         onClick={copyShapeHandler}
       />
 

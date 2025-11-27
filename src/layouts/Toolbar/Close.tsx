@@ -117,9 +117,7 @@ export const ToolbarClose = React.memo((): React.JSX.Element => {
 
   useDebounceHotKey({
     keys: ["esc", "escape"],
-    callback: (e) => {
-      e.preventDefault();
-
+    callback: () => {
       pressESCButtonHandler();
     },
     deps: [pressESCButtonHandler],
@@ -127,9 +125,7 @@ export const ToolbarClose = React.memo((): React.JSX.Element => {
 
   useDebounceHotKey({
     keys: "ctrl+w",
-    callback: (e) => {
-      e.preventDefault();
-
+    callback: () => {
       closeHandler.open();
     },
     deps: [closeHandler.open],

@@ -45,6 +45,7 @@ type Action = {
     | "SET_MAX_HISTORY"
     | "UPDATE_SELECTED_IDS"
     | "UPDATE_SHAPE"
+    | "GROUP_SHAPES"
     | "ADD_SHAPES"
     | "DO_SHAPE"
     | "DELETE_SHAPES"
@@ -60,6 +61,7 @@ type Action = {
     | number
     | UpdateSelectedIds
     | Update
+    | Group
     | Add
     | Do
     | Delete
@@ -89,6 +91,10 @@ type Move = {
   ids: string[];
   offsetX: number;
   offsetY: number;
+};
+
+type Group = {
+  ids: string[];
 };
 
 type Add = {
@@ -213,7 +219,7 @@ function reducer(state: State, action: Action): State {
           for (const id in state.selectedIds) {
             const shapeAPI = updateSelectedIds.shapeRefs[id];
             if (shapeAPI) {
-              const shape = shapeAPI.getShape();
+              const shape: KonvaShape = shapeAPI.getShape();
               if (shape.type === "image") {
                 shapeAPI.endCrop();
               }
@@ -262,6 +268,33 @@ function reducer(state: State, action: Action): State {
             ...addHistory(state.shapeList),
           }
         : state;
+    }
+
+    case "GROUP_SHAPES": {
+      const group: Group = action.payload as Group;
+
+      // Get shape ids
+      let shapeIds: string[] = group.ids;
+      if (!shapeIds) {
+        const selectedIds: string[] = Object.keys(state.selectedIds);
+        if (selectedIds.length > 1) {
+          shapeIds = selectedIds;
+        } else {
+          return state;
+        }
+      }
+
+      // Add group with ids
+      state.shapeList.forEach((item) => {
+        if (shapeIds.includes(item.id)) {
+          item.groupWithIds = shapeIds.filter((id) => id !== item.id);
+        }
+      });
+
+      return {
+        ...state,
+        ...addHistory(state.shapeList),
+      };
     }
 
     case "ADD_SHAPES": {
@@ -331,6 +364,20 @@ function reducer(state: State, action: Action): State {
                 item.y =
                   add.position.y -
                   (item.points[1] + item.points[3]) / 2 +
+                  item.offsetY;
+
+                break;
+              }
+
+              case "quadratic-curve":
+              case "bezier-curve": {
+                item.x =
+                  add.position.x -
+                  (item.points[0] + item.points[6]) / 2 +
+                  item.offsetX;
+                item.y =
+                  add.position.y -
+                  (item.points[1] + item.points[7]) / 2 +
                   item.offsetY;
 
                 break;
@@ -439,7 +486,7 @@ function reducer(state: State, action: Action): State {
         } else {
           const shapeAPI = del.shapeRefs[item.id];
           if (shapeAPI) {
-            const shape = shapeAPI.getShape();
+            const shape: KonvaShape = shapeAPI.getShape();
             if (shape.type === "image") {
               shapeAPI.endCrop();
             }
@@ -726,7 +773,18 @@ function reducer(state: State, action: Action): State {
 
       switch (layer.type) {
         default: {
-          return state;
+          // Check is last element
+          if (matchedShapeIndex === state.shapeList.length - 1) {
+            return state;
+          }
+
+          // Clone shape list and Swap
+          newShapeList = state.shapeList.slice(0);
+          const temp: KonvaShape = newShapeList[matchedShapeIndex];
+          newShapeList[matchedShapeIndex] = newShapeList[matchedShapeIndex + 1];
+          newShapeList[matchedShapeIndex + 1] = temp;
+
+          break;
         }
 
         case "backward": {
@@ -740,21 +798,6 @@ function reducer(state: State, action: Action): State {
           const temp: KonvaShape = newShapeList[matchedShapeIndex];
           newShapeList[matchedShapeIndex] = newShapeList[matchedShapeIndex - 1];
           newShapeList[matchedShapeIndex - 1] = temp;
-
-          break;
-        }
-
-        case "forward": {
-          // Check is last element
-          if (matchedShapeIndex === state.shapeList.length - 1) {
-            return state;
-          }
-
-          // Clone shape list and Swap
-          newShapeList = state.shapeList.slice(0);
-          const temp: KonvaShape = newShapeList[matchedShapeIndex];
-          newShapeList[matchedShapeIndex] = newShapeList[matchedShapeIndex + 1];
-          newShapeList[matchedShapeIndex + 1] = temp;
 
           break;
         }
@@ -865,9 +908,13 @@ function reducer(state: State, action: Action): State {
 
       // Get shape
       const shapeAPI: KonvaShapeAPI = align.shapeRefs[shapeId];
-      const currentShape: KonvaShape = shapeAPI?.getShape();
-      const box: KonvaShapeBox = currentShape?.box;
-      const stage: Konva.Stage = shapeAPI.getNode()?.getStage();
+      if (!shapeAPI) {
+        return state;
+      }
+
+      const currentShape: KonvaShape = shapeAPI.getShape();
+      const box: KonvaShapeBox = currentShape.box;
+      const stage: Konva.Stage = shapeAPI.getStage();
       if (!box || !stage) {
         return state;
       }
@@ -958,30 +1005,27 @@ export function ShapesProvider(prop: ShapesProviderProp): React.JSX.Element {
   /**
    * Selected shape
    */
-  const selectedShape = React.useMemo<KonvaShape>(() => {
-    // Get shape id
+  const selectedShape: KonvaShape = React.useMemo<KonvaShape>(() => {
     let shapeId: string;
     const selectedIds: string[] = Object.keys(state.selectedIds);
     if (selectedIds.length === 1) {
       shapeId = selectedIds[0];
     }
 
-    return shapeId
-      ? (state.shapeList.find((item) => item.id === shapeId) ?? {})
-      : {};
+    return state.shapeList.find((item) => item.id === shapeId) ?? {};
   }, [state.shapeList, state.selectedIds]);
 
   /**
    * Can undo
    */
-  const canUndo = React.useMemo<boolean>(() => {
+  const canUndo: boolean = React.useMemo<boolean>(() => {
     return state.historyIndex > 0;
   }, [state.historyIndex]);
 
   /**
    * Can redo
    */
-  const canRedo = React.useMemo<boolean>(() => {
+  const canRedo: boolean = React.useMemo<boolean>(() => {
     return state.historyIndex < state.history.length - 1;
   }, [state.historyIndex, state.history]);
 
@@ -989,7 +1033,7 @@ export function ShapesProvider(prop: ShapesProviderProp): React.JSX.Element {
    * Update selected ids
    */
   const updateSelectedIds = React.useCallback(
-    (ids: string[], overwrite?: boolean): void => {
+    (ids?: string[], overwrite?: boolean): void => {
       dispatch({
         type: "UPDATE_SELECTED_IDS",
         payload: {
@@ -1061,7 +1105,7 @@ export function ShapesProvider(prop: ShapesProviderProp): React.JSX.Element {
   /**
    * Delete shapes
    */
-  const deleteShapes = React.useCallback((ids: string[]): void => {
+  const deleteShapes = React.useCallback((ids?: string[]): void => {
     dispatch({
       type: "DELETE_SHAPES",
       payload: {
@@ -1074,7 +1118,7 @@ export function ShapesProvider(prop: ShapesProviderProp): React.JSX.Element {
   /**
    * Copy shape
    */
-  const copyShape = React.useCallback((ids: string[], cut?: boolean): void => {
+  const copyShape = React.useCallback((ids?: string[], cut?: boolean): void => {
     dispatch({
       type: "COPY_SHAPE",
       payload: {
@@ -1100,7 +1144,7 @@ export function ShapesProvider(prop: ShapesProviderProp): React.JSX.Element {
    * Duplicate shape
    */
   const duplicateShape = React.useCallback(
-    (ids: string[], position?: Vector2d): void => {
+    (ids?: string[], position?: Vector2d): void => {
       dispatch({
         type: "DUPLICATE_SHAPE",
         payload: {
@@ -1131,6 +1175,18 @@ export function ShapesProvider(prop: ShapesProviderProp): React.JSX.Element {
   );
 
   /**
+   * Group shapes
+   */
+  const groupShapes = React.useCallback((ids?: string[]): void => {
+    dispatch({
+      type: "GROUP_SHAPES",
+      payload: {
+        ids: ids,
+      },
+    });
+  }, []);
+
+  /**
    * Move shapes
    */
   const moveShapes = React.useCallback(
@@ -1152,7 +1208,7 @@ export function ShapesProvider(prop: ShapesProviderProp): React.JSX.Element {
    * Layer shape
    */
   const layerShape = React.useCallback(
-    (id: string, type: LayerAction): void => {
+    (id?: string, type?: LayerAction): void => {
       dispatch({
         type: "LAYER_SHAPE",
         payload: {
@@ -1168,7 +1224,7 @@ export function ShapesProvider(prop: ShapesProviderProp): React.JSX.Element {
    * Flip shape
    */
   const flipShape = React.useCallback(
-    (id: string, vertical?: boolean): void => {
+    (id?: string, vertical?: boolean): void => {
       dispatch({
         type: "FLIP_SHAPE",
         payload: {
@@ -1186,7 +1242,7 @@ export function ShapesProvider(prop: ShapesProviderProp): React.JSX.Element {
    */
   const alignShape = React.useCallback(
     (
-      id: string,
+      id?: string,
       horizontalAlign?: HorizontalAlign,
       verticalAlign?: VerticalAlign
     ): void => {
@@ -1273,7 +1329,7 @@ export function ShapesProvider(prop: ShapesProviderProp): React.JSX.Element {
     });
   }, []);
 
-  const contextValue = React.useMemo<IShapesContext>(
+  const contextValue: IShapesContext = React.useMemo<IShapesContext>(
     () => ({
       maxHistory: state.maxHistory,
       canUndo,
@@ -1288,6 +1344,7 @@ export function ShapesProvider(prop: ShapesProviderProp): React.JSX.Element {
       exportShapes,
       updateSelectedIds,
       addShapes,
+      groupShapes,
       moveShapes,
       deleteShapes,
       copyShape,
