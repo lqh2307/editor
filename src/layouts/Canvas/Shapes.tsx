@@ -63,14 +63,11 @@ export const CanvasShapes = React.memo((): React.JSX.Element => {
 
       const shape: KonvaShape = shapeAPI.getShape();
 
-      const selectedIds: string[] = [shape.id];
-
-      if (shape.groupWithIds) {
-        selectedIds.push(...shape.groupWithIds);
-      }
-
       // Set selected ids
-      updateSelectedIds(selectedIds, e.evt?.ctrlKey ? false : true);
+      updateSelectedIds(
+        shape.groupWithIds ? shape.groupWithIds : [shape.id],
+        e.evt?.ctrlKey ? false : true
+      );
     },
     [freeDrawingMode, updateSelectedIds]
   );
@@ -335,8 +332,8 @@ export const CanvasShapes = React.memo((): React.JSX.Element => {
     const transformerNodes: Konva.Node[] = [];
 
     if (!freeDrawingMode && shapeRefs && selectedIds) {
-      Object.keys(selectedIds).forEach((item) => {
-        const node: Konva.Node = shapeRefs[item]?.getNode();
+      Object.keys(selectedIds).forEach((id) => {
+        const node: Konva.Node = shapeRefs[id]?.getNode();
         if (node) {
           transformerNodes.push(node);
         }

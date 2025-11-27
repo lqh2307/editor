@@ -3,6 +3,7 @@ import { IShapesContext } from "./Interfaces";
 import { ShapesProviderProp } from "./Types";
 import { limitValue } from "../utils/Number";
 import { Vector2d } from "konva/lib/types";
+import { nanoid } from "nanoid";
 import Konva from "konva";
 import React from "react";
 import {
@@ -95,6 +96,7 @@ type Move = {
 
 type Group = {
   ids: string[];
+  unGroup: boolean;
 };
 
 type Add = {
@@ -284,10 +286,14 @@ function reducer(state: State, action: Action): State {
         }
       }
 
-      // Add group with ids
+      // Add/Remove group with ids
       state.shapeList.forEach((item) => {
         if (shapeIds.includes(item.id)) {
-          item.groupWithIds = shapeIds.filter((id) => id !== item.id);
+          if (group.unGroup) {
+            delete item.groupWithIds;
+          } else {
+            item.groupWithIds = shapeIds;
+          }
         }
       });
 
@@ -591,12 +597,34 @@ function reducer(state: State, action: Action): State {
         }
       }
 
+      // Create new ids
+      const oldToNewId: Record<string, string> = {};
+
+      state.copiedShapes.forEach((s) => {
+        oldToNewId[s.id] = nanoid();
+      });
+
+      const groupMap: Record<string, string[]> = {};
+
+      state.copiedShapes.forEach((shape) => {
+        if (
+          shape.groupWithIds &&
+          !groupMap[oldToNewId[shape.groupWithIds[0]]]
+        ) {
+          groupMap[oldToNewId[shape.groupWithIds[0]]] = shape.groupWithIds.map(
+            (id) => oldToNewId[id]
+          );
+        }
+      });
+
       // Create new selected ids
       const selectedIds: Record<string, boolean> = {};
 
-      // Create new shapes and Assign selected ids
       const newShapes: KonvaShape[] = state.copiedShapes.map((item) => {
-        const { id, clip, lines, ...newCopiedShape }: KonvaShape = item;
+        const { id, clip, lines, groupWithIds, ...newCopiedShape }: KonvaShape =
+          item;
+
+        newCopiedShape.id = oldToNewId[item.id];
 
         if (newCopiedShape.type === "free-drawing") {
           newCopiedShape.lines = cloneLines(lines);
@@ -608,6 +636,10 @@ function reducer(state: State, action: Action): State {
 
         newCopiedShape.x += offsetX;
         newCopiedShape.y += offsetY;
+
+        if (groupWithIds) {
+          newCopiedShape.groupWithIds = groupMap[oldToNewId[groupWithIds[0]]];
+        }
 
         const newShape: KonvaShape = createShape(newCopiedShape);
 
@@ -662,12 +694,34 @@ function reducer(state: State, action: Action): State {
         }
       }
 
+      // Create new ids
+      const oldToNewId: Record<string, string> = {};
+
+      state.copiedShapes.forEach((s) => {
+        oldToNewId[s.id] = nanoid();
+      });
+
+      const groupMap: Record<string, string[]> = {};
+
+      state.copiedShapes.forEach((shape) => {
+        if (
+          shape.groupWithIds &&
+          !groupMap[oldToNewId[shape.groupWithIds[0]]]
+        ) {
+          groupMap[oldToNewId[shape.groupWithIds[0]]] = shape.groupWithIds.map(
+            (id) => oldToNewId[id]
+          );
+        }
+      });
+
       // Create new selected ids
       const selectedIds: Record<string, boolean> = {};
 
-      // Create new shapes and Assign selected ids
-      const newShapes: KonvaShape[] = matchedShapes.map((item) => {
-        const { id, clip, lines, ...newCopiedShape }: KonvaShape = item;
+      const newShapes: KonvaShape[] = state.copiedShapes.map((item) => {
+        const { id, clip, lines, groupWithIds, ...newCopiedShape }: KonvaShape =
+          item;
+
+        newCopiedShape.id = oldToNewId[item.id];
 
         if (newCopiedShape.type === "free-drawing") {
           newCopiedShape.lines = cloneLines(lines);
@@ -679,6 +733,10 @@ function reducer(state: State, action: Action): State {
 
         newCopiedShape.x += offsetX;
         newCopiedShape.y += offsetY;
+
+        if (groupWithIds) {
+          newCopiedShape.groupWithIds = groupMap[oldToNewId[groupWithIds[0]]];
+        }
 
         const newShape: KonvaShape = createShape(newCopiedShape);
 
@@ -1177,14 +1235,18 @@ export function ShapesProvider(prop: ShapesProviderProp): React.JSX.Element {
   /**
    * Group shapes
    */
-  const groupShapes = React.useCallback((ids?: string[]): void => {
-    dispatch({
-      type: "GROUP_SHAPES",
-      payload: {
-        ids: ids,
-      },
-    });
-  }, []);
+  const groupShapes = React.useCallback(
+    (ids?: string[], unGroup?: boolean): void => {
+      dispatch({
+        type: "GROUP_SHAPES",
+        payload: {
+          ids: ids,
+          unGroup: unGroup,
+        },
+      });
+    },
+    []
+  );
 
   /**
    * Move shapes

@@ -14,7 +14,7 @@ export const ToolbarHistory = React.memo((): React.JSX.Element => {
   const { canUndo, canRedo, doShapes } = useShapesContext();
 
   const doShapesHandler = React.useCallback(
-    (value: string): void => {
+    (value?: string): void => {
       const redo: boolean = !!value;
 
       doShapes(redo);
@@ -32,7 +32,7 @@ export const ToolbarHistory = React.memo((): React.JSX.Element => {
   useDebounceHotKey({
     keys: ["ctrl+z", "cmd+z"],
     callback: () => {
-      doShapesHandler("");
+      doShapesHandler();
     },
     deps: [doShapesHandler],
   });

@@ -28,7 +28,7 @@ export interface IShapesContext {
 
   setMaxHistory?: (max: number) => void;
 
-  groupShapes?: (ids?: string[]) => void;
+  groupShapes?: (ids?: string[], unGroup?: boolean) => void;
   moveShapes?: (ids: string[], offsetX: number, offsetY: number) => void;
   exportShapes?: (save?: boolean, fileName?: string) => Promise<string>;
   updateSelectedIds?: (ids?: string[], overwrite?: boolean) => void;

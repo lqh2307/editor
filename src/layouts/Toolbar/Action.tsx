@@ -9,9 +9,10 @@ import {
   ContentPasteTwoTone,
   ContentCopyTwoTone,
   ContentCopyRounded,
+  GroupRemoveTwoTone,
   ContentCutTwoTone,
   SelectAllTwoTone,
-  QueueTwoTone,
+  GroupAdd,
 } from "@mui/icons-material";
 
 export const ToolbarAction = React.memo((): React.JSX.Element => {
@@ -35,16 +36,23 @@ export const ToolbarAction = React.memo((): React.JSX.Element => {
     return selectedIds && !Object.keys(selectedIds).length;
   }, [selectedIds]);
 
-  const groupShapesHandler = React.useCallback((): void => {
-    groupShapes();
-  }, [groupShapes]);
+  const isGroupDisabled: boolean = React.useMemo<boolean>(() => {
+    return selectedIds && Object.keys(selectedIds).length < 2;
+  }, [selectedIds]);
+
+  const groupShapesHandler = React.useCallback(
+    (value?: string): void => {
+      groupShapes(undefined, !!value);
+    },
+    [groupShapes]
+  );
 
   const selectAllHandler = React.useCallback((): void => {
     updateSelectedIds(undefined, false);
   }, [updateSelectedIds]);
 
   const copyShapeHandler = React.useCallback(
-    (value: string): void => {
+    (value?: string): void => {
       const cut: boolean = !!value;
 
       copyShape(undefined, cut);
@@ -113,6 +121,14 @@ export const ToolbarAction = React.memo((): React.JSX.Element => {
   });
 
   useDebounceHotKey({
+    keys: ["ctrl+shift+g", "cmd+shift+g"],
+    callback: () => {
+      groupShapesHandler("true");
+    },
+    deps: [groupShapesHandler],
+  });
+
+  useDebounceHotKey({
     keys: ["ctrl+a", "cmd+a"],
     callback: () => {
       selectAllHandler();
@@ -139,7 +155,7 @@ export const ToolbarAction = React.memo((): React.JSX.Element => {
   useDebounceHotKey({
     keys: ["ctrl+c", "cmd+c"],
     callback: () => {
-      copyShapeHandler("");
+      copyShapeHandler();
     },
     deps: [copyShapeHandler],
   });
@@ -161,14 +177,22 @@ export const ToolbarAction = React.memo((): React.JSX.Element => {
   });
 
   {
-    /* Select Group/Select All/Delete/Cut/Duplicate/Copy/Paste */
+    /* Group/Ungroup/Select All/Delete/Cut/Duplicate/Copy/Paste */
   }
   return (
     <ButtonGroup variant={"contained"} size={"small"}>
       <TooltipButton
-        icon={<QueueTwoTone />}
+        icon={<GroupAdd />}
         title={t("toolBar.group.title")}
-        disabled={selectedIds && Object.keys(selectedIds).length < 2}
+        disabled={isGroupDisabled}
+        onClick={groupShapesHandler}
+      />
+
+      <TooltipButton
+        icon={<GroupRemoveTwoTone />}
+        title={t("toolBar.unGroup.title")}
+        disabled={isGroupDisabled}
+        value={"true"}
         onClick={groupShapesHandler}
       />
 

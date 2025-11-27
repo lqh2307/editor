@@ -256,6 +256,9 @@
     "group": {
       "title": "Group (Ctrl + G)"
     },
+    "unGroup": {
+      "title": "Ungroup (Ctrl + Shift + G)"
+    },
     "selectAll": {
       "title": "Select All (Ctrl + A)"
     },

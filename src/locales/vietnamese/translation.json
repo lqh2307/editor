@@ -256,6 +256,9 @@
     "group": {
       "title": "Gom nhóm (Ctrl + G)"
     },
+    "unGroup": {
+      "title": "Tách nhóm (Ctrl + Shift + G)"
+    },
     "selectAll": {
       "title": "Chọn tất cả (Ctrl + A)"
     },

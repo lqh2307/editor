@@ -38,7 +38,7 @@ export const ToolbarZoom = React.memo((): React.JSX.Element => {
   );
 
   const zoomStageToPointerHandler = React.useCallback(
-    (value: string): void => {
+    (value?: string): void => {
       if (value && stageZoom > stageZoomMin) {
         zoomStage(true, true);
       } else if (!value && stageZoom < stageZoomMax) {
@@ -58,7 +58,7 @@ export const ToolbarZoom = React.memo((): React.JSX.Element => {
   useDebounceHotKey({
     keys: ["ctrl+plus", "cmd+plus"],
     callback: () => {
-      zoomStageToPointerHandler("");
+      zoomStageToPointerHandler();
     },
     deps: [zoomStageToPointerHandler],
   });

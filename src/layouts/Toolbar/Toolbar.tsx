@@ -44,7 +44,7 @@ export const Toolbar = React.memo((): React.JSX.Element => {
         {/* Zoom In/Zoom Out/Fit Screen */}
         <ToolbarZoom />
 
-        {/* Group/Select All/Delete/Cut/Duplicate/Copy/Paste */}
+        {/* Group/Ungroup/Select All/Delete/Cut/Duplicate/Copy/Paste */}
         <ToolbarAction />
 
         {/* Add Shapes (Line/Arrow/Circle/Polygon/Rectangle)/Add Icons/Add Image/Add Text */}
