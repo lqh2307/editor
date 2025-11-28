@@ -14,6 +14,7 @@ import { useTranslation } from "react-i18next";
 import { downloadFile } from "../../apis/file";
 import { AxiosResponse } from "axios";
 import { Box } from "@mui/material";
+import { nanoid } from "nanoid";
 import React from "react";
 
 export const ToolbarAddComponent = React.memo((): React.JSX.Element => {
@@ -94,13 +95,39 @@ export const ToolbarAddComponent = React.memo((): React.JSX.Element => {
           responseType: "json",
         });
 
+        const shapes: KonvaShape[] = fileResponse.data as KonvaShape[];
+
+        // Create new ids
+        const newShapeIds: Record<string, string> = {};
+
+        shapes.forEach((shape) => {
+          newShapeIds[shape.id] = nanoid();
+        });
+
+        const groups: Record<string, string[]> = {};
+
+        shapes.forEach((shape) => {
+          if (shape.groupIds && !groups[newShapeIds[shape.groupIds[0]]]) {
+            groups[newShapeIds[shape.groupIds[0]]] = shape.groupIds.map(
+              (id) => newShapeIds[id]
+            );
+          }
+        });
+
+        const newShapes: KonvaShape[] = shapes.map((item) => {
+          const { id, groupIds, ...newShape }: KonvaShape = item;
+
+          newShape.id = newShapeIds[item.id];
+
+          if (groupIds) {
+            newShape.groupIds = groups[newShapeIds[groupIds[0]]];
+          }
+
+          return newShape;
+        });
+
         // Add shapes
-        await addShapes(
-          fileResponse.data as KonvaShape[],
-          false,
-          true,
-          getStageCenter()
-        );
+        await addShapes(newShapes, false, true, getStageCenter());
       } catch (error) {
         updateSnackbarAlert(
           `${t("toolBar.addTComponent.common.snackBarAlert.error")} ${error}`,

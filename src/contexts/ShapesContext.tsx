@@ -17,7 +17,6 @@ import {
   calculateGroupShapeBox,
   createShape,
   cloneLines,
-  cloneClip,
 } from "../utils/Shapes";
 import {
   detectContentTypeFromFormat,
@@ -162,14 +161,10 @@ function reducer(state: State, action: Action): State {
 
     // Create new history by clone
     const newHistory: KonvaShape[] = shapes.map((item) => {
-      const { lines, clip, ...newShape }: KonvaShape = item;
+      const { lines, ...newShape }: KonvaShape = item;
 
       if (newShape.type === "free-drawing") {
         newShape.lines = cloneLines(lines);
-      } else if (newShape.type === "image") {
-        if (clip) {
-          newShape.clip = cloneClip(clip);
-        }
       }
 
       return newShape;
@@ -286,13 +281,13 @@ function reducer(state: State, action: Action): State {
         }
       }
 
-      // Add/Remove group with ids
+      // Add/Remove group ids
       state.shapeList.forEach((item) => {
         if (shapeIds.includes(item.id)) {
           if (group.unGroup) {
-            delete item.groupWithIds;
+            delete item.groupIds;
           } else {
-            item.groupWithIds = shapeIds;
+            item.groupIds = shapeIds;
           }
         }
       });
@@ -438,14 +433,10 @@ function reducer(state: State, action: Action): State {
       // Clone shape list and Assign selected ids
       const newShapeList: KonvaShape[] = state.history[newHistoryIndex].map(
         (item) => {
-          const { lines, clip, ...newShape }: KonvaShape = item;
+          const { lines, ...newShape }: KonvaShape = item;
 
           if (newShape.type === "free-drawing") {
             newShape.lines = cloneLines(lines);
-          } else if (newShape.type === "image") {
-            if (clip) {
-              newShape.clip = cloneClip(clip);
-            }
           }
 
           if (state.selectedIds[newShape.id]) {
@@ -534,14 +525,10 @@ function reducer(state: State, action: Action): State {
 
       // Clone shapes
       const newCopiedShapes: KonvaShape[] = matchedShapes.map((item) => {
-        const { lines, clip, ...newCopiedShape }: KonvaShape = item;
+        const { lines, ...newCopiedShape }: KonvaShape = item;
 
         if (newCopiedShape.type === "free-drawing") {
           newCopiedShape.lines = cloneLines(lines);
-        } else if (newCopiedShape.type === "image") {
-          if (clip) {
-            newCopiedShape.clip = cloneClip(clip);
-          }
         }
 
         return newCopiedShape;
@@ -598,21 +585,18 @@ function reducer(state: State, action: Action): State {
       }
 
       // Create new ids
-      const oldToNewId: Record<string, string> = {};
-
-      state.copiedShapes.forEach((s) => {
-        oldToNewId[s.id] = nanoid();
-      });
-
-      const groupMap: Record<string, string[]> = {};
+      const newShapeIds: Record<string, string> = {};
 
       state.copiedShapes.forEach((shape) => {
-        if (
-          shape.groupWithIds &&
-          !groupMap[oldToNewId[shape.groupWithIds[0]]]
-        ) {
-          groupMap[oldToNewId[shape.groupWithIds[0]]] = shape.groupWithIds.map(
-            (id) => oldToNewId[id]
+        newShapeIds[shape.id] = nanoid();
+      });
+
+      const groups: Record<string, string[]> = {};
+
+      state.copiedShapes.forEach((shape) => {
+        if (shape.groupIds && !groups[newShapeIds[shape.groupIds[0]]]) {
+          groups[newShapeIds[shape.groupIds[0]]] = shape.groupIds.map(
+            (id) => newShapeIds[id]
           );
         }
       });
@@ -621,24 +605,19 @@ function reducer(state: State, action: Action): State {
       const selectedIds: Record<string, boolean> = {};
 
       const newShapes: KonvaShape[] = state.copiedShapes.map((item) => {
-        const { id, clip, lines, groupWithIds, ...newCopiedShape }: KonvaShape =
-          item;
+        const { id, lines, groupIds, ...newCopiedShape }: KonvaShape = item;
 
-        newCopiedShape.id = oldToNewId[item.id];
+        newCopiedShape.id = newShapeIds[item.id];
 
         if (newCopiedShape.type === "free-drawing") {
           newCopiedShape.lines = cloneLines(lines);
-        } else if (newCopiedShape.type === "image") {
-          if (clip) {
-            newCopiedShape.clip = cloneClip(clip);
-          }
         }
 
         newCopiedShape.x += offsetX;
         newCopiedShape.y += offsetY;
 
-        if (groupWithIds) {
-          newCopiedShape.groupWithIds = groupMap[oldToNewId[groupWithIds[0]]];
+        if (groupIds) {
+          newCopiedShape.groupIds = groups[newShapeIds[groupIds[0]]];
         }
 
         const newShape: KonvaShape = createShape(newCopiedShape);
@@ -695,21 +674,18 @@ function reducer(state: State, action: Action): State {
       }
 
       // Create new ids
-      const oldToNewId: Record<string, string> = {};
-
-      state.copiedShapes.forEach((s) => {
-        oldToNewId[s.id] = nanoid();
-      });
-
-      const groupMap: Record<string, string[]> = {};
+      const newShapeIds: Record<string, string> = {};
 
       state.copiedShapes.forEach((shape) => {
-        if (
-          shape.groupWithIds &&
-          !groupMap[oldToNewId[shape.groupWithIds[0]]]
-        ) {
-          groupMap[oldToNewId[shape.groupWithIds[0]]] = shape.groupWithIds.map(
-            (id) => oldToNewId[id]
+        newShapeIds[shape.id] = nanoid();
+      });
+
+      const groups: Record<string, string[]> = {};
+
+      state.copiedShapes.forEach((shape) => {
+        if (shape.groupIds && !groups[newShapeIds[shape.groupIds[0]]]) {
+          groups[newShapeIds[shape.groupIds[0]]] = shape.groupIds.map(
+            (id) => newShapeIds[id]
           );
         }
       });
@@ -718,24 +694,19 @@ function reducer(state: State, action: Action): State {
       const selectedIds: Record<string, boolean> = {};
 
       const newShapes: KonvaShape[] = state.copiedShapes.map((item) => {
-        const { id, clip, lines, groupWithIds, ...newCopiedShape }: KonvaShape =
-          item;
+        const { id, lines, groupIds, ...newCopiedShape }: KonvaShape = item;
 
-        newCopiedShape.id = oldToNewId[item.id];
+        newCopiedShape.id = newShapeIds[item.id];
 
         if (newCopiedShape.type === "free-drawing") {
           newCopiedShape.lines = cloneLines(lines);
-        } else if (newCopiedShape.type === "image") {
-          if (clip) {
-            newCopiedShape.clip = cloneClip(clip);
-          }
         }
 
         newCopiedShape.x += offsetX;
         newCopiedShape.y += offsetY;
 
-        if (groupWithIds) {
-          newCopiedShape.groupWithIds = groupMap[oldToNewId[groupWithIds[0]]];
+        if (groupIds) {
+          newCopiedShape.groupIds = groups[newShapeIds[groupIds[0]]];
         }
 
         const newShape: KonvaShape = createShape(newCopiedShape);

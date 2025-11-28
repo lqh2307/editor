@@ -31,15 +31,15 @@ export const KonvaImage = React.memo(
         cropImageNodeRef.current &&
         nodeRef.current
       ) {
-        Object.assign(
-          currentPropRef.current.shapeOption.clip,
-          nodeRef.current
+        currentPropRef.current.shapeOption.clip = {
+          ...currentPropRef.current.shapeOption.clip,
+          ...nodeRef.current
             .getAbsoluteTransform()
             .copy()
             .invert()
             .multiply(cropImageNodeRef.current.getAbsoluteTransform())
-            .decompose()
-        );
+            .decompose(),
+        };
 
         cropElementNodeRef.current.setAttrs(
           currentPropRef.current.shapeOption.clip

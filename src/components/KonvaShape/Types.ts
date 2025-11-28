@@ -14,7 +14,7 @@ export type KonvaShape = Partial<Konva.ShapeConfig> &
   Partial<Konva.RingConfig> &
   Partial<Konva.WedgeConfig> & {
     // Extend
-    groupWithIds?: string[];
+    groupIds?: string[];
     type?: KonvaShapeType;
     box?: KonvaShapeBox;
     clip?: KonvaShapeClip;
