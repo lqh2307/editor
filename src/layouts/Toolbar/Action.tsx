@@ -48,7 +48,7 @@ export const ToolbarAction = React.memo((): React.JSX.Element => {
   );
 
   const selectAllHandler = React.useCallback((): void => {
-    updateSelectedIds(undefined, false);
+    updateSelectedIds({}, false);
   }, [updateSelectedIds]);
 
   const copyShapeHandler = React.useCallback(

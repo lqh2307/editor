@@ -16,12 +16,13 @@ export const KonvaEllipse = React.memo(
     const applyProp = React.useCallback((): void => {
       const node: Konva.Ellipse = nodeRef.current;
       if (node) {
-        const shapeOption: KonvaShape = currentPropRef.current.shapeOption;
+        const prop: KonvaShapeProp = currentPropRef.current;
+        const shapeOption: KonvaShape = prop.shapeOption;
 
         // Update node attrs
         node.setAttrs({
           ...shapeOption,
-          draggable: currentPropRef.current.isSelected,
+          draggable: prop.isSelected,
           radiusX: shapeOption.radiusX,
           radiusY: shapeOption.radiusY,
           fill: parseHexToRGBAString(
@@ -39,7 +40,7 @@ export const KonvaEllipse = React.memo(
       }
 
       // Call callback function
-      currentPropRef.current.onAppliedProp?.(shapeAPI, "apply-prop");
+      prop.onAppliedProp?.(shapeAPI, "apply-prop");
     }, []);
 
     // Update prop

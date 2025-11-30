@@ -45,7 +45,7 @@ import {
 export const PanelStyleTab = React.memo((): React.JSX.Element => {
   const { t } = useTranslation();
 
-  const { selectedShape, updateShape, shapeRefs } = useShapesContext();
+  const { selectedShape, updateSelectedIds, updateShape } = useShapesContext();
 
   const updateShapeHandler = React.useMemo(
     () => ({
@@ -371,7 +371,15 @@ export const PanelStyleTab = React.memo((): React.JSX.Element => {
   const cropHandler = React.useCallback(
     (value: string): void => {
       if (value) {
-        shapeRefs[value]?.startCrop();
+        const selectedIds: string[] = [value];
+
+        updateSelectedIds(
+          {
+            croppeds: selectedIds,
+            selecteds: selectedIds,
+          },
+          true
+        );
       } else {
         updateShape(
           {
@@ -382,7 +390,7 @@ export const PanelStyleTab = React.memo((): React.JSX.Element => {
         );
       }
     },
-    [updateShape, shapeRefs]
+    [updateShape, updateSelectedIds]
   );
 
   const data: Record<string, SelectInputOption[]> = React.useMemo<

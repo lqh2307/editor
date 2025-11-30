@@ -16,7 +16,8 @@ export const KonvaFreeDrawing = React.memo(
     const applyProp = React.useCallback((): void => {
       const node: Konva.Group = nodeRef.current;
       if (node) {
-        const shapeOption: KonvaShape = currentPropRef.current.shapeOption;
+        const prop: KonvaShapeProp = currentPropRef.current;
+        const shapeOption: KonvaShape = prop.shapeOption;
 
         // Process node attrs
         const {
@@ -68,7 +69,7 @@ export const KonvaFreeDrawing = React.memo(
           skewX: skewX,
           skewY: skewY,
           rotation: rotation,
-          draggable: currentPropRef.current.isSelected,
+          draggable: prop.isSelected,
         });
 
         // Update shape box
@@ -76,7 +77,7 @@ export const KonvaFreeDrawing = React.memo(
       }
 
       // Call callback function
-      currentPropRef.current.onAppliedProp?.(shapeAPI, "apply-prop");
+      prop.onAppliedProp?.(shapeAPI, "apply-prop");
     }, []);
 
     // Update prop

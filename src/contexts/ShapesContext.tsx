@@ -1,6 +1,6 @@
 import { HorizontalAlign, VerticalAlign } from "../types/Window";
+import { SelectedIds, ShapesProviderProp } from "./Types";
 import { IShapesContext } from "./Interfaces";
-import { ShapesProviderProp } from "./Types";
 import { limitValue } from "../utils/Number";
 import { Vector2d } from "konva/lib/types";
 import { nanoid } from "nanoid";
@@ -32,6 +32,7 @@ import {
 export const ShapesContext = React.createContext<IShapesContext>({});
 
 type State = {
+  croppedIds: Record<string, boolean>;
   selectedIds: Record<string, boolean>;
   shapeList: KonvaShape[];
   copiedShapes: KonvaShape[];
@@ -119,7 +120,7 @@ type Delete = {
 
 type UpdateSelectedIds = {
   shapeRefs: Record<string, KonvaShapeAPI>;
-  ids: string[];
+  selectedIds: SelectedIds;
   overwrite: boolean;
 };
 
@@ -190,6 +191,7 @@ function reducer(state: State, action: Action): State {
 
       const newState: State = {
         ...state,
+        croppedIds: {},
         selectedIds: {},
       };
 
@@ -197,14 +199,14 @@ function reducer(state: State, action: Action): State {
       // ids !== undefined & overwrite !== true -> select many without overwrite
       // ids === undefined & overwrite === true -> {}
       // ids === undefined & overwrite !== true -> select all
-      if (updateSelectedIds.ids) {
+      if (updateSelectedIds.selectedIds.selecteds) {
         if (!updateSelectedIds.overwrite) {
           newState.selectedIds = {
             ...state.selectedIds,
           };
         }
 
-        updateSelectedIds.ids.forEach((item) => {
+        updateSelectedIds.selectedIds.selecteds.forEach((item) => {
           newState.selectedIds[item] = true;
         });
       } else {
@@ -212,17 +214,15 @@ function reducer(state: State, action: Action): State {
           state.shapeList.forEach((item) => {
             newState.selectedIds[item.id] = true;
           });
-        } else {
-          for (const id in state.selectedIds) {
-            const shapeAPI = updateSelectedIds.shapeRefs[id];
-            if (shapeAPI) {
-              const shape: KonvaShape = shapeAPI.getShape();
-              if (shape.type === "image") {
-                shapeAPI.endCrop();
-              }
-            }
-          }
         }
+      }
+
+      if (updateSelectedIds.selectedIds.croppeds) {
+        updateSelectedIds.selectedIds.croppeds.forEach((item) => {
+          if (newState.selectedIds[item]) {
+            newState.croppedIds[item] = true;
+          }
+        });
       }
 
       return newState;
@@ -469,8 +469,9 @@ function reducer(state: State, action: Action): State {
         }
       }
 
-      // Create new selected ids
+      // Create new selected ids and new cropped ids
       const selectedIds: Record<string, boolean> = {};
+      const croppedIds: Record<string, boolean> = {};
 
       // Clone shape list without deleted shapes and Assign selected ids
       const newShapeList: KonvaShape[] = state.shapeList.filter((item) => {
@@ -479,13 +480,9 @@ function reducer(state: State, action: Action): State {
         if (isKeep) {
           if (state.selectedIds[item.id]) {
             selectedIds[item.id] = true;
-          }
-        } else {
-          const shapeAPI = del.shapeRefs[item.id];
-          if (shapeAPI) {
-            const shape: KonvaShape = shapeAPI.getShape();
-            if (shape.type === "image") {
-              shapeAPI.endCrop();
+
+            if (state.croppedIds[item.id]) {
+              croppedIds[item.id] = true;
             }
           }
         }
@@ -633,6 +630,7 @@ function reducer(state: State, action: Action): State {
       // Create new state
       return {
         ...state,
+        croppedIds: {},
         selectedIds: selectedIds,
         shapeList: newShapeList,
         ...addHistory(newShapeList),
@@ -722,6 +720,7 @@ function reducer(state: State, action: Action): State {
       // Create new state
       return {
         ...state,
+        croppedIds: {},
         selectedIds: selectedIds,
         shapeList: newShapeList,
         ...addHistory(newShapeList),
@@ -979,10 +978,6 @@ function reducer(state: State, action: Action): State {
     }
 
     case "CLEAN": {
-      if (!state.copiedShapes && history.length === 1) {
-        return state;
-      }
-
       return {
         ...state,
         copiedShapes: undefined,
@@ -1020,6 +1015,7 @@ function reducer(state: State, action: Action): State {
 export function ShapesProvider(prop: ShapesProviderProp): React.JSX.Element {
   // Store shape info
   const [state, dispatch] = React.useReducer(reducer, {
+    croppedIds: {},
     selectedIds: {},
     shapeList: [],
     copiedShapes: undefined,
@@ -1062,12 +1058,12 @@ export function ShapesProvider(prop: ShapesProviderProp): React.JSX.Element {
    * Update selected ids
    */
   const updateSelectedIds = React.useCallback(
-    (ids?: string[], overwrite?: boolean): void => {
+    (selectedIds: SelectedIds, overwrite?: boolean): void => {
       dispatch({
         type: "UPDATE_SELECTED_IDS",
         payload: {
           shapeRefs: shapeRefsRef.current,
-          ids: ids,
+          selectedIds: selectedIds,
           overwrite: overwrite,
         },
       });
@@ -1368,6 +1364,7 @@ export function ShapesProvider(prop: ShapesProviderProp): React.JSX.Element {
       canUndo,
       canRedo,
 
+      croppedIds: state.croppedIds,
       selectedIds: state.selectedIds,
       shapeList: state.shapeList,
       copiedShapes: state.copiedShapes,

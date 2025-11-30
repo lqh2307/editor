@@ -562,10 +562,10 @@ export function StageProvider(prop: StageProviderProp): React.JSX.Element {
             stroke: "#00ff00",
             strokeWidth: 1,
             cornerRadius: 5,
-            height: 8,
-            offsetY: 4,
-            width: 20,
-            offsetX: 10,
+            height: 10,
+            offsetY: 5,
+            width: 30,
+            offsetX: 15,
           });
         } else if (
           anchor.hasName("middle-left") ||
@@ -576,21 +576,21 @@ export function StageProvider(prop: StageProviderProp): React.JSX.Element {
             stroke: "#00ff00",
             strokeWidth: 1,
             cornerRadius: 5,
-            height: 20,
-            offsetY: 10,
-            width: 8,
-            offsetX: 4,
+            height: 30,
+            offsetY: 15,
+            width: 10,
+            offsetX: 5,
           });
         } else if (anchor.hasName("rotater")) {
           anchor.setAttrs({
             fill: "#a5ff00",
             stroke: "#00ff00",
             strokeWidth: 1.5,
-            cornerRadius: 7.5,
-            height: 15,
-            offsetY: 7.5,
-            width: 15,
-            offsetX: 7.5,
+            cornerRadius: 10,
+            height: 20,
+            offsetY: 10,
+            width: 20,
+            offsetX: 10,
           });
         } else {
           anchor.setAttrs({
@@ -598,10 +598,10 @@ export function StageProvider(prop: StageProviderProp): React.JSX.Element {
             stroke: "#00ff00",
             strokeWidth: 1,
             cornerRadius: 5,
-            height: 10,
-            offsetY: 5,
-            width: 10,
-            offsetX: 5,
+            height: 15,
+            offsetY: 7.5,
+            width: 15,
+            offsetX: 7.5,
           });
         }
       },

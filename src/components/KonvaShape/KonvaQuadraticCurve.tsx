@@ -25,7 +25,7 @@ export const KonvaQuadraticCurve = React.memo(
 
     // Apply prop
     const applyProp = React.useCallback((): void => {
-      const isSelected: boolean = currentPropRef.current.isSelected;
+      const prop: KonvaShapeProp = currentPropRef.current;
       const shapeOption: KonvaShape = currentPropRef.current.shapeOption;
 
       const node: Konva.Line = nodeRef.current;
@@ -33,7 +33,7 @@ export const KonvaQuadraticCurve = React.memo(
         // Update node attrs
         node.setAttrs({
           ...shapeOption,
-          draggable: isSelected,
+          draggable: prop.isSelected,
           fill: parseHexToRGBAString(
             shapeOption.fill as string,
             shapeOption.fillOpacity
@@ -50,7 +50,7 @@ export const KonvaQuadraticCurve = React.memo(
 
       // Update controll attrs
       lineNodeRef.current?.setAttrs({
-        visible: isSelected,
+        visible: prop.isSelected,
         rotation: shapeOption.rotation,
         scaleX: shapeOption.scaleX,
         scaleY: shapeOption.scaleY,
@@ -64,7 +64,7 @@ export const KonvaQuadraticCurve = React.memo(
       });
 
       startNodeRef.current?.setAttrs({
-        visible: isSelected,
+        visible: prop.isSelected,
         offsetX: shapeOption.offsetX,
         offsetY: shapeOption.offsetY,
         ...transformPoint(
@@ -77,7 +77,7 @@ export const KonvaQuadraticCurve = React.memo(
       });
 
       controlNodeRef.current?.setAttrs({
-        visible: isSelected,
+        visible: prop.isSelected,
         offsetX: shapeOption.offsetX,
         offsetY: shapeOption.offsetY,
         ...transformPoint(
@@ -90,7 +90,7 @@ export const KonvaQuadraticCurve = React.memo(
       });
 
       endNodeRef.current?.setAttrs({
-        visible: isSelected,
+        visible: prop.isSelected,
         offsetX: shapeOption.offsetX,
         offsetY: shapeOption.offsetY,
         ...transformPoint(
@@ -103,7 +103,7 @@ export const KonvaQuadraticCurve = React.memo(
       });
 
       // Call callback function
-      currentPropRef.current.onAppliedProp?.(shapeAPI, "apply-prop");
+      prop.onAppliedProp?.(shapeAPI, "apply-prop");
     }, []);
 
     // Update prop

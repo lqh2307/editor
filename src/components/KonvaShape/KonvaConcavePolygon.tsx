@@ -16,12 +16,13 @@ export const KonvaConcavePolygon = React.memo(
     const applyProp = React.useCallback((): void => {
       const node: Konva.Star = nodeRef.current;
       if (node) {
-        const shapeOption: KonvaShape = currentPropRef.current.shapeOption;
+        const prop: KonvaShapeProp = currentPropRef.current;
+        const shapeOption: KonvaShape = prop.shapeOption;
 
         // Update node attrs
         node.setAttrs({
           ...shapeOption,
-          draggable: currentPropRef.current.isSelected,
+          draggable: prop.isSelected,
           numPoints: shapeOption.numPoints,
           innerRadius: shapeOption.innerRadius,
           outerRadius: shapeOption.outerRadius,
@@ -40,7 +41,7 @@ export const KonvaConcavePolygon = React.memo(
       }
 
       // Call callback function
-      currentPropRef.current.onAppliedProp?.(shapeAPI, "apply-prop");
+      prop.onAppliedProp?.(shapeAPI, "apply-prop");
     }, []);
 
     // Update prop

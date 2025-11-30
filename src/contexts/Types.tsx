@@ -45,3 +45,8 @@ export type ShapesProviderProp = {
 
   maxHistory: number;
 };
+
+export type SelectedIds = {
+  selecteds?: string[];
+  croppeds?: string[];
+};

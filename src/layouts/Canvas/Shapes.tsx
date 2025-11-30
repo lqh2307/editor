@@ -39,6 +39,7 @@ export const CanvasShapes = React.memo((): React.JSX.Element => {
     stageWidth,
     stageHeight,
     getGuideLines,
+    getCropper,
     getTransformer,
     expandStage,
     setPointerStyle,
@@ -46,6 +47,7 @@ export const CanvasShapes = React.memo((): React.JSX.Element => {
 
   const {
     shapeList,
+    croppedIds,
     selectedIds,
     shapeRefs,
     updateSelectedIds,
@@ -65,7 +67,9 @@ export const CanvasShapes = React.memo((): React.JSX.Element => {
 
       // Set selected ids
       updateSelectedIds(
-        shape.groupIds ? shape.groupIds : [shape.id],
+        {
+          selecteds: shape.groupIds ? shape.groupIds : [shape.id],
+        },
         e.evt?.ctrlKey ? false : true
       );
     },
@@ -322,32 +326,48 @@ export const CanvasShapes = React.memo((): React.JSX.Element => {
     [shapeRefs]
   );
 
-  // Update transformer
+  // Update cropper/transformer
   React.useEffect(() => {
+    const cropper: KonvaTransformerAPI = getCropper?.();
     const transformer: KonvaTransformerAPI = getTransformer?.();
-    if (!transformer) {
+    if (!cropper || !transformer) {
       return;
     }
 
+    const cropperNodes: Konva.Node[] = [];
     const transformerNodes: Konva.Node[] = [];
 
-    if (!freeDrawingMode && shapeRefs && selectedIds) {
+    if (!freeDrawingMode && shapeRefs && croppedIds && selectedIds) {
       Object.keys(selectedIds).forEach((id) => {
         const node: Konva.Node = shapeRefs[id]?.getNode();
         if (node) {
+          if (croppedIds[id]) {
+            const cropNode: Konva.Node = node
+              .getStage()
+              ?.findOne(`#${id}-image`);
+            if (cropNode) {
+              cropperNodes.push(cropNode);
+            }
+          }
+
           transformerNodes.push(node);
         }
       });
     }
 
+    cropper.updateProp({
+      nodes: cropperNodes,
+    });
+
     transformer.updateProp({
       nodes: transformerNodes,
     });
-  }, [shapeRefs, selectedIds, freeDrawingMode, getTransformer]);
+  }, [shapeRefs, selectedIds, freeDrawingMode, getCropper, getTransformer]);
 
   const renderedShapeList = React.useMemo(() => {
     return shapeList?.map((item) => {
       const isSelected: boolean = !!selectedIds?.[item.id];
+      const isCropped: boolean = !!croppedIds?.[item.id];
 
       switch (item.type) {
         default: {
@@ -500,6 +520,7 @@ export const CanvasShapes = React.memo((): React.JSX.Element => {
               onMouseLeave={handleShapeMouseLeave}
               onDragMove={handleShapeDragMove}
               onAppliedProp={handleAppliedProp}
+              isCropped={isCropped}
               isSelected={isSelected}
               shapeOption={item}
               key={item.id}

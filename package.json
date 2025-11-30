@@ -51,7 +51,7 @@
     "@types/node": "24.10.1",
     "typescript": "5.9.3",
     "@types/ajv": "1.0.4",
-    "prettier": "3.7.1"
+    "prettier": "3.7.3"
   },
   "scripts": {
     "start": "react-scripts start",

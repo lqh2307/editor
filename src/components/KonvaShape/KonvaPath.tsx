@@ -16,7 +16,8 @@ export const KonvaPath = React.memo(
     const applyProp = React.useCallback((): void => {
       const node: Konva.Group = nodeRef.current;
       if (node) {
-        const shapeOption: KonvaShape = currentPropRef.current.shapeOption;
+        const prop: KonvaShapeProp = currentPropRef.current;
+        const shapeOption: KonvaShape = prop.shapeOption;
 
         shapeOption.offsetX = shapeOption.width / 2;
         shapeOption.offsetY = shapeOption.height / 2;
@@ -72,7 +73,7 @@ export const KonvaPath = React.memo(
           offsetX: offsetX,
           offsetY: offsetY,
           rotation: rotation,
-          draggable: currentPropRef.current.isSelected,
+          draggable: prop.isSelected,
         });
 
         // Update shape box
@@ -80,7 +81,7 @@ export const KonvaPath = React.memo(
       }
 
       // Call callback function
-      currentPropRef.current.onAppliedProp?.(shapeAPI, "apply-prop");
+      prop.onAppliedProp?.(shapeAPI, "apply-prop");
     }, []);
 
     // Update prop

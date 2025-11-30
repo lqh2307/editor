@@ -16,12 +16,13 @@ export const KonvaArrow = React.memo(
     const applyProp = React.useCallback((): void => {
       const node: Konva.Arrow = nodeRef.current;
       if (node) {
+        const prop: KonvaShapeProp = currentPropRef.current;
         const shapeOption: KonvaShape = currentPropRef.current.shapeOption;
 
         // Update node attrs
         node.setAttrs({
           ...shapeOption,
-          draggable: currentPropRef.current.isSelected,
+          draggable: prop.isSelected,
           points: shapeOption.points,
           fill: parseHexToRGBAString(
             shapeOption.fill as string,
@@ -38,7 +39,7 @@ export const KonvaArrow = React.memo(
       }
 
       // Call callback function
-      currentPropRef.current.onAppliedProp?.(shapeAPI, "apply-prop");
+      prop.onAppliedProp?.(shapeAPI, "apply-prop");
     }, []);
 
     // Update prop

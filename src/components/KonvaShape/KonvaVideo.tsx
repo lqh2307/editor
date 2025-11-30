@@ -19,7 +19,8 @@ export const KonvaVideo = React.memo(
     const applyProp = React.useCallback((): void => {
       const node: Konva.Image = nodeRef.current;
       if (node) {
-        const shapeOption: KonvaShape = currentPropRef.current.shapeOption;
+        const prop: KonvaShapeProp = currentPropRef.current;
+        const shapeOption: KonvaShape = prop.shapeOption;
 
         // update offset
         shapeOption.offsetX = shapeOption.width / 2;
@@ -28,7 +29,7 @@ export const KonvaVideo = React.memo(
         // Update node attrs
         node.setAttrs({
           ...shapeOption,
-          draggable: currentPropRef.current.isSelected,
+          draggable: prop.isSelected,
           image: shapeOption.image,
           fill: parseHexToRGBAString(
             shapeOption.fill as string,
@@ -67,7 +68,7 @@ export const KonvaVideo = React.memo(
       }
 
       // Call callback function
-      currentPropRef.current.onAppliedProp?.(shapeAPI, "apply-prop");
+      prop.onAppliedProp?.(shapeAPI, "apply-prop");
     }, []);
 
     // Update prop

@@ -20,7 +20,8 @@ export const KonvaText = React.memo(
     const applyProp = React.useCallback((): void => {
       const node: Konva.Text = nodeRef.current;
       if (node) {
-        const shapeOption: KonvaShape = currentPropRef.current.shapeOption;
+        const prop: KonvaShapeProp = currentPropRef.current;
+        const shapeOption: KonvaShape = prop.shapeOption;
 
         // Update offset
         shapeOption.offsetX = shapeOption.width / 2;
@@ -29,7 +30,7 @@ export const KonvaText = React.memo(
         // Update node attrs
         node.setAttrs({
           ...shapeOption,
-          draggable: currentPropRef.current.isSelected,
+          draggable: prop.isSelected,
           visible:
             !textareaRef.current ||
             textareaRef.current.style.visibility === "hidden",
@@ -54,7 +55,7 @@ export const KonvaText = React.memo(
       }
 
       // Call callback function
-      currentPropRef.current.onAppliedProp?.(shapeAPI, "apply-prop");
+      prop.onAppliedProp?.(shapeAPI, "apply-prop");
     }, []);
 
     // Update prop

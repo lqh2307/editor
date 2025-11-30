@@ -275,6 +275,19 @@ export function createShape(shape: KonvaShape): KonvaShape {
       newShape.offsetX = newShape.offsetX ?? newShape.width / 2;
       newShape.offsetY = newShape.offsetY ?? newShape.height / 2;
 
+      // Clip
+      newShape.clip = newShape.clip ?? {
+        width: newShape.width,
+        height: newShape.height,
+        x: 0,
+        y: 0,
+        rotation: 0,
+        scaleX: 1,
+        scaleY: 1,
+        skewX: 0,
+        skewY: 0,
+      }
+
       break;
     }
 
