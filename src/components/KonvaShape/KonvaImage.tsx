@@ -62,6 +62,7 @@ export const KonvaImage = React.memo(
             .multiply(node.getAbsoluteTransform())
             .multiply(cropElementNode.getAbsoluteTransform())
             .decompose(),
+          draggable: currentPropRef.current.isCropped,
           visible: currentPropRef.current.isCropped,
           image: node.image(),
           width: cropElementNode.width(),
@@ -311,8 +312,6 @@ export const KonvaImage = React.memo(
         <Image
           id={`${prop.shapeOption.id}-image`}
           listening={true}
-          draggable={true}
-          visible={false}
           ref={cropImageNodeRef}
           image={undefined}
           opacity={0.75}

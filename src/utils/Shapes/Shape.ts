@@ -286,7 +286,7 @@ export function createShape(shape: KonvaShape): KonvaShape {
         scaleY: 1,
         skewX: 0,
         skewY: 0,
-      }
+      };
 
       break;
     }
