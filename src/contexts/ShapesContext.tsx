@@ -32,6 +32,7 @@ import {
 export const ShapesContext = React.createContext<IShapesContext>({});
 
 type State = {
+  singleIds: Record<string, boolean>;
   croppedIds: Record<string, boolean>;
   selectedIds: Record<string, boolean>;
   shapeList: KonvaShape[];
@@ -221,6 +222,14 @@ function reducer(state: State, action: Action): State {
         updateSelectedIds.selectedIds.croppeds.forEach((item) => {
           if (newState.selectedIds[item]) {
             newState.croppedIds[item] = true;
+          }
+        });
+      }
+
+      if (updateSelectedIds.selectedIds.singles) {
+        updateSelectedIds.selectedIds.singles.forEach((item) => {
+          if (newState.selectedIds[item]) {
+            newState.singleIds[item] = true;
           }
         });
       }
@@ -472,6 +481,7 @@ function reducer(state: State, action: Action): State {
       // Create new selected ids and new cropped ids
       const selectedIds: Record<string, boolean> = {};
       const croppedIds: Record<string, boolean> = {};
+      const singleIds: Record<string, boolean> = {};
 
       // Clone shape list without deleted shapes and Assign selected ids
       const newShapeList: KonvaShape[] = state.shapeList.filter((item) => {
@@ -484,6 +494,10 @@ function reducer(state: State, action: Action): State {
             if (state.croppedIds[item.id]) {
               croppedIds[item.id] = true;
             }
+
+            if (state.singleIds[item.id]) {
+              singleIds[item.id] = true;
+            }
           }
         }
 
@@ -492,7 +506,9 @@ function reducer(state: State, action: Action): State {
 
       return {
         ...state,
+        croppedIds: croppedIds,
         selectedIds: selectedIds,
+        singleIds: singleIds,
         shapeList: newShapeList,
         ...addHistory(newShapeList),
       };
@@ -1017,6 +1033,7 @@ export function ShapesProvider(prop: ShapesProviderProp): React.JSX.Element {
   const [state, dispatch] = React.useReducer(reducer, {
     croppedIds: {},
     selectedIds: {},
+    singleIds: {},
     shapeList: [],
     copiedShapes: undefined,
     history: [[]],
@@ -1366,6 +1383,7 @@ export function ShapesProvider(prop: ShapesProviderProp): React.JSX.Element {
 
       croppedIds: state.croppedIds,
       selectedIds: state.selectedIds,
+      singleIds: state.singleIds,
       shapeList: state.shapeList,
       copiedShapes: state.copiedShapes,
       shapeRefs: shapeRefsRef.current,

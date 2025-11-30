@@ -49,4 +49,5 @@ export type ShapesProviderProp = {
 export type SelectedIds = {
   selecteds?: string[];
   croppeds?: string[];
+  singles?: string[];
 };

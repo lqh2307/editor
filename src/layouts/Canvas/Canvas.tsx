@@ -49,6 +49,8 @@ export const Canvas = React.memo((): React.JSX.Element => {
     setCropper,
     getTransformer,
     setTransformer,
+    getSingleTransformer,
+    setSingleTransformer,
     dragStage,
     zoomStage,
     getIsStageDragable,
@@ -106,6 +108,15 @@ export const Canvas = React.memo((): React.JSX.Element => {
       }
     },
     [setGuideLines, getGuideLines]
+  );
+
+  const assignSingleTransformer = React.useCallback(
+    (singleTransformer: KonvaTransformerAPI): void => {
+      if (!getSingleTransformer()) {
+        setSingleTransformer(singleTransformer);
+      }
+    },
+    [setSingleTransformer, getSingleTransformer]
   );
 
   const assignCropper = React.useCallback(
@@ -431,6 +442,8 @@ export const Canvas = React.memo((): React.JSX.Element => {
           <KonvaTransformer ref={assignCropper} />
 
           <KonvaTransformer ref={assignTransformer} />
+
+          <KonvaTransformer ref={assignSingleTransformer} />
         </Layer>
 
         {/* Guide line/Tooltip */}

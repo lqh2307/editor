@@ -23,6 +23,7 @@ export interface IShapesContext {
 
   croppedIds?: Record<string, boolean>;
   selectedIds?: Record<string, boolean>;
+  singleIds?: Record<string, boolean>;
   selectedShape?: KonvaShape;
   shapeList?: KonvaShape[];
   copiedShapes?: KonvaShape[];
@@ -101,11 +102,15 @@ export interface IStageContext {
   getStage?: () => Konva.Stage;
   setStage?: (stage: Konva.Stage) => void;
 
+
   getCropper?: () => KonvaTransformerAPI;
   setCropper?: (cropper: KonvaTransformerAPI) => void;
 
   getTransformer?: () => KonvaTransformerAPI;
   setTransformer?: (transformer: KonvaTransformerAPI) => void;
+
+  getSingleTransformer?: () => KonvaTransformerAPI;
+  setSingleTransformer?: (singleTransformer: KonvaTransformerAPI) => void;
 
   getGuideLines?: () => KonvaGuideLinesAPI;
   setGuideLines?: (guideLines: KonvaGuideLinesAPI) => void;

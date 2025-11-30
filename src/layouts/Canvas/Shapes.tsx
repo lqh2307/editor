@@ -39,6 +39,7 @@ export const CanvasShapes = React.memo((): React.JSX.Element => {
     stageWidth,
     stageHeight,
     getGuideLines,
+    getSingleTransformer,
     getCropper,
     getTransformer,
     expandStage,
@@ -49,6 +50,7 @@ export const CanvasShapes = React.memo((): React.JSX.Element => {
     shapeList,
     croppedIds,
     selectedIds,
+    singleIds,
     shapeRefs,
     updateSelectedIds,
     updateShape,
@@ -58,6 +60,25 @@ export const CanvasShapes = React.memo((): React.JSX.Element => {
   const { freeDrawingMode } = useFreeDrawingContext();
 
   const handleShapeClick = React.useCallback(
+    (e: Konva.KonvaEventObject<MouseEvent>, shapeAPI: KonvaShapeAPI): void => {
+      if (freeDrawingMode) {
+        return;
+      }
+
+      const shape: KonvaShape = shapeAPI.getShape();
+
+      // Set selected ids
+      updateSelectedIds(
+        {
+          selecteds: shape.groupIds ? shape.groupIds : [shape.id],
+        },
+        e.evt?.ctrlKey ? false : true
+      );
+    },
+    [freeDrawingMode, updateSelectedIds]
+  );
+
+  const handleShapeDblClick = React.useCallback(
     (e: Konva.KonvaEventObject<MouseEvent>, shapeAPI: KonvaShapeAPI): void => {
       if (freeDrawingMode) {
         return;
@@ -328,12 +349,14 @@ export const CanvasShapes = React.memo((): React.JSX.Element => {
 
   // Update cropper/transformer
   React.useEffect(() => {
+    const singleTransformer: KonvaTransformerAPI = getSingleTransformer?.();
     const cropper: KonvaTransformerAPI = getCropper?.();
     const transformer: KonvaTransformerAPI = getTransformer?.();
-    if (!cropper || !transformer) {
+    if (!singleTransformer || !cropper || !transformer) {
       return;
     }
 
+    const singleTransformerNodes: Konva.Node[] = [];
     const cropperNodes: Konva.Node[] = [];
     const transformerNodes: Konva.Node[] = [];
 
@@ -348,6 +371,8 @@ export const CanvasShapes = React.memo((): React.JSX.Element => {
             if (cropNode) {
               cropperNodes.push(cropNode);
             }
+          } else if (singleIds[id]) {
+            singleTransformerNodes.push(node);
           }
 
           transformerNodes.push(node);
@@ -362,7 +387,18 @@ export const CanvasShapes = React.memo((): React.JSX.Element => {
     transformer.updateProp({
       nodes: transformerNodes,
     });
-  }, [shapeRefs, selectedIds, freeDrawingMode, getCropper, getTransformer]);
+
+    singleTransformer.updateProp({
+      nodes: singleTransformerNodes,
+    });
+  }, [
+    shapeRefs,
+    selectedIds,
+    freeDrawingMode,
+    getSingleTransformer,
+    getCropper,
+    getTransformer,
+  ]);
 
   const renderedShapeList = React.useMemo(() => {
     return shapeList?.map((item) => {
@@ -378,6 +414,7 @@ export const CanvasShapes = React.memo((): React.JSX.Element => {
           return (
             <KonvaRectangle
               onClick={handleShapeClick}
+              onDblClick={handleShapeDblClick}
               onMounted={handleOnMounted}
               onUnMounted={handleOnUnMounted}
               onMouseOver={handleShapeMouseOver}
@@ -395,6 +432,7 @@ export const CanvasShapes = React.memo((): React.JSX.Element => {
           return (
             <KonvaEllipse
               onClick={handleShapeClick}
+              onDblClick={handleShapeDblClick}
               onMounted={handleOnMounted}
               onUnMounted={handleOnUnMounted}
               onMouseOver={handleShapeMouseOver}
@@ -412,6 +450,7 @@ export const CanvasShapes = React.memo((): React.JSX.Element => {
           return (
             <KonvaConvexPolygon
               onClick={handleShapeClick}
+              onDblClick={handleShapeDblClick}
               onMounted={handleOnMounted}
               onUnMounted={handleOnUnMounted}
               onMouseOver={handleShapeMouseOver}
@@ -429,6 +468,7 @@ export const CanvasShapes = React.memo((): React.JSX.Element => {
           return (
             <KonvaConcavePolygon
               onClick={handleShapeClick}
+              onDblClick={handleShapeDblClick}
               onMounted={handleOnMounted}
               onUnMounted={handleOnUnMounted}
               onMouseOver={handleShapeMouseOver}
@@ -446,6 +486,7 @@ export const CanvasShapes = React.memo((): React.JSX.Element => {
           return (
             <KonvaRing
               onClick={handleShapeClick}
+              onDblClick={handleShapeDblClick}
               onMounted={handleOnMounted}
               onUnMounted={handleOnUnMounted}
               onMouseOver={handleShapeMouseOver}
@@ -463,6 +504,7 @@ export const CanvasShapes = React.memo((): React.JSX.Element => {
           return (
             <KonvaWedge
               onClick={handleShapeClick}
+              onDblClick={handleShapeDblClick}
               onMounted={handleOnMounted}
               onUnMounted={handleOnUnMounted}
               onMouseOver={handleShapeMouseOver}
@@ -480,6 +522,7 @@ export const CanvasShapes = React.memo((): React.JSX.Element => {
           return (
             <KonvaCircle
               onClick={handleShapeClick}
+              onDblClick={handleShapeDblClick}
               onMounted={handleOnMounted}
               onUnMounted={handleOnUnMounted}
               onMouseOver={handleShapeMouseOver}
@@ -497,6 +540,7 @@ export const CanvasShapes = React.memo((): React.JSX.Element => {
           return (
             <KonvaArrow
               onClick={handleShapeClick}
+              onDblClick={handleShapeDblClick}
               onMounted={handleOnMounted}
               onUnMounted={handleOnUnMounted}
               onMouseOver={handleShapeMouseOver}
@@ -514,6 +558,7 @@ export const CanvasShapes = React.memo((): React.JSX.Element => {
           return (
             <KonvaImage
               onClick={handleShapeClick}
+              onDblClick={handleShapeDblClick}
               onMounted={handleOnMounted}
               onUnMounted={handleOnUnMounted}
               onMouseOver={handleShapeMouseOver}
@@ -532,6 +577,7 @@ export const CanvasShapes = React.memo((): React.JSX.Element => {
           return (
             <KonvaVideo
               onClick={handleShapeClick}
+              onDblClick={handleShapeDblClick}
               onMounted={handleOnMounted}
               onUnMounted={handleOnUnMounted}
               onMouseOver={handleShapeMouseOver}
@@ -549,6 +595,7 @@ export const CanvasShapes = React.memo((): React.JSX.Element => {
           return (
             <KonvaLine
               onClick={handleShapeClick}
+              onDblClick={handleShapeDblClick}
               onMounted={handleOnMounted}
               onUnMounted={handleOnUnMounted}
               onMouseOver={handleShapeMouseOver}
@@ -583,6 +630,7 @@ export const CanvasShapes = React.memo((): React.JSX.Element => {
           return (
             <KonvaFreeDrawing
               onClick={handleShapeClick}
+              onDblClick={handleShapeDblClick}
               onMounted={handleOnMounted}
               onUnMounted={handleOnUnMounted}
               onMouseOver={handleShapeMouseOver}
@@ -600,6 +648,7 @@ export const CanvasShapes = React.memo((): React.JSX.Element => {
           return (
             <KonvaPath
               onClick={handleShapeClick}
+              onDblClick={handleShapeDblClick}
               onMounted={handleOnMounted}
               onUnMounted={handleOnUnMounted}
               onMouseOver={handleShapeMouseOver}
@@ -617,6 +666,7 @@ export const CanvasShapes = React.memo((): React.JSX.Element => {
           return (
             <KonvaQuadraticCurve
               onClick={handleShapeClick}
+              onDblClick={handleShapeDblClick}
               onMounted={handleOnMounted}
               onUnMounted={handleOnUnMounted}
               onMouseOver={handleShapeMouseOver}
@@ -634,6 +684,7 @@ export const CanvasShapes = React.memo((): React.JSX.Element => {
           return (
             <KonvaBezierCurve
               onClick={handleShapeClick}
+              onDblClick={handleShapeDblClick}
               onMounted={handleOnMounted}
               onUnMounted={handleOnUnMounted}
               onMouseOver={handleShapeMouseOver}

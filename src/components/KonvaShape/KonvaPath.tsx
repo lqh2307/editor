@@ -155,6 +155,14 @@ export const KonvaPath = React.memo(
       []
     );
 
+    const handleDblClick = React.useCallback(
+      (e: Konva.KonvaEventObject<MouseEvent>): void => {
+        // Call callback function
+        currentPropRef.current.onDblClick?.(e, shapeAPI);
+      },
+      []
+    );
+
     const handleDragMove = React.useCallback(
       (e: Konva.KonvaEventObject<DragEvent>): void => {
         const node: Konva.Group = e.target as Konva.Group;
@@ -216,6 +224,7 @@ export const KonvaPath = React.memo(
           listening={true}
           ref={nodeRef}
           onClick={handleClick}
+          onDblClick={handleDblClick}
           onMouseOver={handleMouseOver}
           onMouseLeave={handleMouseLeave}
           onDragMove={handleDragMove}

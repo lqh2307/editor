@@ -516,6 +516,101 @@ export function StageProvider(prop: StageProviderProp): React.JSX.Element {
     });
   }, []);
 
+  // Store single transformer
+  const singleTransformerRef = React.useRef<KonvaTransformerAPI>(undefined);
+
+  /**
+   * Get single transformer
+   */
+  const getSingleTransformer = React.useCallback((): KonvaTransformerAPI => {
+    return singleTransformerRef.current;
+  }, []);
+
+  /**
+   * Set single transformer
+   */
+  const setSingleTransformer = React.useCallback(
+    (singleTransformer: KonvaTransformerAPI): void => {
+      singleTransformerRef.current = singleTransformer;
+
+      singleTransformer?.updateProp({
+        id: "single-node-transformer",
+        keepRatio: true,
+        rotationSnaps: [
+          -180, -165, -150, -135, -120, -105, -90, -75, -60, -45, -30, -15, 0,
+          15, 30, 45, 60, 75, 90, 105, 120, 135, 150, 165, 180,
+        ],
+        rotationSnapTolerance: 3,
+        ignoreStroke: false,
+        flipEnabled: true,
+        borderStroke: "#0000ff",
+        borderStrokeWidth: 1.5,
+        borderDash: [10, 10],
+        enabledAnchors: [
+          "top-left",
+          "top-center",
+          "top-right",
+          "middle-right",
+          "middle-left",
+          "bottom-left",
+          "bottom-center",
+          "bottom-right",
+        ],
+        anchorStyleFunc: (anchor) => {
+          if (anchor.hasName("top-center") || anchor.hasName("bottom-center")) {
+            anchor.setAttrs({
+              fill: "#00a5ff",
+              stroke: "#0000ff",
+              strokeWidth: 1,
+              cornerRadius: 5,
+              height: 10,
+              offsetY: 5,
+              width: 30,
+              offsetX: 15,
+            });
+          } else if (
+            anchor.hasName("middle-left") ||
+            anchor.hasName("middle-right")
+          ) {
+            anchor.setAttrs({
+              fill: "#00a5ff",
+              stroke: "#0000ff",
+              strokeWidth: 1,
+              cornerRadius: 5,
+              height: 30,
+              offsetY: 15,
+              width: 10,
+              offsetX: 5,
+            });
+          } else if (anchor.hasName("rotater")) {
+            anchor.setAttrs({
+              fill: "#00a5ff",
+              stroke: "#0000ff",
+              strokeWidth: 1.5,
+              cornerRadius: 10,
+              height: 20,
+              offsetY: 10,
+              width: 20,
+              offsetX: 10,
+            });
+          } else {
+            anchor.setAttrs({
+              fill: "#00a5ff",
+              stroke: "#0000ff",
+              strokeWidth: 1,
+              cornerRadius: 5,
+              height: 15,
+              offsetY: 7.5,
+              width: 15,
+              offsetX: 7.5,
+            });
+          }
+        },
+      });
+    },
+    []
+  );
+
   // Store cropper
   const cropperRef = React.useRef<KonvaTransformerAPI>(undefined);
 
@@ -1120,6 +1215,9 @@ export function StageProvider(prop: StageProviderProp): React.JSX.Element {
 
       getTransformer,
       setTransformer,
+
+      getSingleTransformer,
+      setSingleTransformer,
 
       getGuideLines,
       setGuideLines,

@@ -61,6 +61,7 @@ export const TooltipButton = React.memo(
             type={"button"}
             size={"small"}
             onClick={handleClick}
+            onDblClick={handleDblClick}
             {...props}
             sx={{
               minWidth: 0,

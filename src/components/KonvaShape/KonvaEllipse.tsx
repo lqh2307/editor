@@ -114,6 +114,14 @@ export const KonvaEllipse = React.memo(
       []
     );
 
+    const handleDblClick = React.useCallback(
+      (e: Konva.KonvaEventObject<MouseEvent>): void => {
+        // Call callback function
+        currentPropRef.current.onDblClick?.(e, shapeAPI);
+      },
+      []
+    );
+
     const handleDragMove = React.useCallback(
       (e: Konva.KonvaEventObject<DragEvent>): void => {
         const node: Konva.Ellipse = e.target as Konva.Ellipse;
@@ -177,6 +185,7 @@ export const KonvaEllipse = React.memo(
           radiusX={undefined}
           radiusY={undefined}
           onClick={handleClick}
+          onDblClick={handleDblClick}
           onMouseOver={handleMouseOver}
           onMouseLeave={handleMouseLeave}
           onDragMove={handleDragMove}
