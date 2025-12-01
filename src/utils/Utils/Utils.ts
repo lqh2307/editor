@@ -402,7 +402,11 @@ export function fromPixel(pixels: number, unit: Unit, ppi: number): number {
  * @param {boolean} emptyAsUndefined Undefined as empty
  * @returns {string[]} Result
  */
-export function differanceArray(arr1: string[], arr2: string[], emptyAsUndefined: boolean): string[] {
+export function differanceArray(
+  arr1: string[],
+  arr2: string[],
+  emptyAsUndefined: boolean
+): string[] {
   const arr2Set: Set<string> = new Set(arr2);
   const result: string[] = [];
 

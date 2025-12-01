@@ -105,7 +105,6 @@ export interface IStageContext {
   getStage?: () => Konva.Stage;
   setStage?: (stage: Konva.Stage) => void;
 
-
   getCropper?: () => KonvaTransformerAPI;
   setCropper?: (cropper: KonvaTransformerAPI) => void;
 
