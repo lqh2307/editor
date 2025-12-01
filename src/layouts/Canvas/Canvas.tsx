@@ -318,7 +318,7 @@ export const Canvas = React.memo((): React.JSX.Element => {
           freeDrawingInfo.isDrawing = true;
         } else if (e.target instanceof Konva.Stage) {
           // Reset selected ids
-          updateSelectedIds({}, true);
+          updateSelectedIds(undefined, true);
         }
       }
     },
@@ -404,7 +404,7 @@ export const Canvas = React.memo((): React.JSX.Element => {
         e.target instanceof Konva.Stage
       ) {
         // Reset selected ids
-        updateSelectedIds({}, true);
+        updateSelectedIds(undefined, true);
       }
     },
     [updateSelectedIds]

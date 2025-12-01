@@ -112,14 +112,6 @@ export const KonvaCircle = React.memo(
       []
     );
 
-    const handleDblClick = React.useCallback(
-      (e: Konva.KonvaEventObject<MouseEvent>): void => {
-        // Call callback function
-        currentPropRef.current.onDblClick?.(e, shapeAPI);
-      },
-      []
-    );
-
     const handleDragMove = React.useCallback(
       (e: Konva.KonvaEventObject<DragEvent>): void => {
         const node: Konva.Circle = e.target as Konva.Circle;
@@ -182,7 +174,6 @@ export const KonvaCircle = React.memo(
           ref={nodeRef}
           radius={undefined}
           onClick={handleClick}
-          onDblClick={handleDblClick}
           onMouseOver={handleMouseOver}
           onMouseLeave={handleMouseLeave}
           onDragMove={handleDragMove}

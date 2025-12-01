@@ -73,7 +73,6 @@ export const PopperButton = React.memo(
                   ...(sx ?? {}),
                 }}
                 onClick={handleClick}
-                onDblClick={handleDblClick}
               >
                 {icon ? icon : <></>}
               </Button>

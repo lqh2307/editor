@@ -8,7 +8,6 @@ import { FreeDrawingMode } from "../types/FreeDrawing";
 import { ImageFormat } from "../types/Common";
 import { AlertColor } from "@mui/material";
 import { Vector2d } from "konva/lib/types";
-import { SelectedIds } from "./Types";
 import Konva from "konva";
 import {
   KonvaShapeAPI,
@@ -21,9 +20,14 @@ export interface IShapesContext {
   canUndo?: boolean;
   canRedo?: boolean;
 
-  croppedIds?: Record<string, boolean>;
+  croppedId?: string;
+  updateCroppedId?: (id?: string) => void;
   selectedIds?: Record<string, boolean>;
-  singleIds?: Record<string, boolean>;
+  updateSelectedIds?: (ids?: string[], overwrite?: boolean) => void;
+  singleSelectedIds?: Record<string, boolean>;
+  updateSingleSelectedIds?: (ids?: string[], overwrite?: boolean) => void;
+
+  selectedGroupIds?: string[];
   selectedShape?: KonvaShape;
   shapeList?: KonvaShape[];
   copiedShapes?: KonvaShape[];
@@ -34,7 +38,6 @@ export interface IShapesContext {
   groupShapes?: (ids?: string[], unGroup?: boolean) => void;
   moveShapes?: (ids: string[], offsetX: number, offsetY: number) => void;
   exportShapes?: (save?: boolean, fileName?: string) => Promise<string>;
-  updateSelectedIds?: (selectedIds: SelectedIds, overwrite?: boolean) => void;
   addShapes?: (
     shapes: KonvaShape[],
     overwrite?: boolean,

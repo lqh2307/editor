@@ -218,14 +218,6 @@ export const KonvaImage = React.memo(
       []
     );
 
-    const handleDblClick = React.useCallback(
-      (e: Konva.KonvaEventObject<MouseEvent>): void => {
-        // Call callback function
-        currentPropRef.current.onDblClick?.(e, shapeAPI);
-      },
-      []
-    );
-
     const handleDragMove = React.useCallback(
       (e: Konva.KonvaEventObject<DragEvent>): void => {
         const node: Konva.Image = e.target as Konva.Image;
@@ -332,7 +324,6 @@ export const KonvaImage = React.memo(
           ref={nodeRef}
           image={undefined}
           onClick={handleClick}
-          onDblClick={handleDblClick}
           onMouseOver={handleMouseOver}
           onMouseLeave={handleMouseLeave}
           onDragMove={handleDragMove}

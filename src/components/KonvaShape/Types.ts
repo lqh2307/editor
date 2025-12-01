@@ -113,10 +113,6 @@ export type KonvaShapeProp = {
     e?: Konva.KonvaEventObject<MouseEvent>,
     shapeAPI?: KonvaShapeAPI
   ) => void;
-  onDblClick?: (
-    e?: Konva.KonvaEventObject<MouseEvent>,
-    shapeAPI?: KonvaShapeAPI
-  ) => void;
   onDragMove?: (shapeAPI?: KonvaShapeAPI) => void;
   onMouseOver?: (shapeAPI?: KonvaShapeAPI) => void;
   onMouseLeave?: (shapeAPI?: KonvaShapeAPI) => void;

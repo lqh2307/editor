@@ -210,7 +210,8 @@ export const ToolbarIO = React.memo((): React.JSX.Element => {
   }, []);
 
   const openSaveToCloudHandler = React.useCallback((): void => {
-    updateSelectedIds({}, true);
+    // Reset selected ids
+    updateSelectedIds(undefined, true);
 
     fitStageScreen(true);
 
@@ -671,7 +672,8 @@ export const ToolbarIO = React.memo((): React.JSX.Element => {
   );
 
   const openSettingHandler = React.useCallback((): void => {
-    updateSelectedIds({}, true);
+    // Reset selected ids
+    updateSelectedIds(undefined, true);
 
     fitStageScreen(true);
 

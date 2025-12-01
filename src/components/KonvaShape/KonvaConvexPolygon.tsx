@@ -114,14 +114,6 @@ export const KonvaConvexPolygon = React.memo(
       []
     );
 
-    const handleDblClick = React.useCallback(
-      (e: Konva.KonvaEventObject<MouseEvent>): void => {
-        // Call callback function
-        currentPropRef.current.onDblClick?.(e, shapeAPI);
-      },
-      []
-    );
-
     const handleDragMove = React.useCallback(
       (e: Konva.KonvaEventObject<DragEvent>): void => {
         const node: Konva.RegularPolygon = e.target as Konva.RegularPolygon;
@@ -185,7 +177,6 @@ export const KonvaConvexPolygon = React.memo(
           sides={undefined}
           radius={undefined}
           onClick={handleClick}
-          onDblClick={handleDblClick}
           onMouseOver={handleMouseOver}
           onMouseLeave={handleMouseLeave}
           onDragMove={handleDragMove}
