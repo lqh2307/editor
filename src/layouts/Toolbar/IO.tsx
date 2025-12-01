@@ -117,8 +117,13 @@ export const ToolbarIO = React.memo((): React.JSX.Element => {
   const { fitStageScreen, exportStage, updateSnackbarAlert } =
     useStageContext();
 
-  const { shapeList, addShapes, exportShapes, clean, updateSelectedIds } =
-    useShapesContext();
+  const {
+    shapeList,
+    addShapes,
+    exportShapes,
+    cleanHistory,
+    updateSelectedIds,
+  } = useShapesContext();
 
   // Reports
   const reportInitRef = React.useRef<SelectInputOption[]>([]);
@@ -234,7 +239,7 @@ export const ToolbarIO = React.memo((): React.JSX.Element => {
         });
 
         // Clean
-        clean();
+        cleanHistory();
 
         updateSnackbarAlert(
           t("toolBar.save.common.snackBarAlert.save"),
@@ -249,7 +254,13 @@ export const ToolbarIO = React.memo((): React.JSX.Element => {
         toCloudHandler.close();
       }
     }
-  }, [exportShapes, openSaveToCloudHandler, clean, updateSnackbarAlert, t]);
+  }, [
+    exportShapes,
+    openSaveToCloudHandler,
+    cleanHistory,
+    updateSnackbarAlert,
+    t,
+  ]);
 
   const saveToCloudHandler = React.useCallback(async (): Promise<void> => {
     try {
@@ -284,8 +295,8 @@ export const ToolbarIO = React.memo((): React.JSX.Element => {
       // Store report info
       reportInfoRef.current = reportResponse.data;
 
-      // Clean
-      clean();
+      // Clean history
+      cleanHistory();
 
       updateSnackbarAlert(
         t("toolBar.save.common.snackBarAlert.save"),
@@ -304,7 +315,7 @@ export const ToolbarIO = React.memo((): React.JSX.Element => {
     exportShapes,
     exportStage,
     openSaveToCloudHandler,
-    clean,
+    cleanHistory,
     updateSnackbarAlert,
     t,
   ]);

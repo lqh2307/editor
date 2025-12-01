@@ -57,7 +57,7 @@ export interface IShapesContext {
     verticalAlign?: VerticalAlign
   ) => void;
   flipShape?: (id?: string, vertical?: boolean) => void;
-  clean?: () => void;
+  cleanHistory?: () => void;
   doShapes?: (redo?: boolean) => void;
 }
 

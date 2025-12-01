@@ -58,7 +58,7 @@ type Action = {
     | "LAYER_SHAPE"
     | "ALIGN_SHAPE"
     | "FLIP_SHAPE"
-    | "CLEAN";
+    | "CLEAN_HISTORY";
   payload?:
     | number
     | UpdateSelectedIds
@@ -993,7 +993,7 @@ function reducer(state: State, action: Action): State {
       };
     }
 
-    case "CLEAN": {
+    case "CLEAN_HISTORY": {
       return {
         ...state,
         copiedShapes: undefined,
@@ -1005,21 +1005,24 @@ function reducer(state: State, action: Action): State {
     case "SET_MAX_HISTORY": {
       const newMaxHistory: number = action.payload as number;
 
-      if (newMaxHistory <= state.history.length) {
+      if (newMaxHistory > state.history.length) {
         return {
           ...state,
           maxHistory: newMaxHistory,
         };
+      } else if (newMaxHistory === state.history.length) {
+        return state;
+      } else {
+        const cutIndex: number = state.history.length - newMaxHistory;
+        const historyIndex: number = state.historyIndex - cutIndex;
+
+        return {
+          ...state,
+          maxHistory: newMaxHistory,
+          history: state.history.slice(cutIndex),
+          historyIndex: historyIndex < 0 ? 0 : historyIndex,
+        };
       }
-
-      const cutIndex: number = state.history.length - newMaxHistory;
-
-      return {
-        ...state,
-        maxHistory: newMaxHistory,
-        history: state.history.slice(cutIndex),
-        historyIndex: Math.max(0, state.historyIndex - cutIndex),
-      };
     }
 
     default: {
@@ -1350,17 +1353,22 @@ export function ShapesProvider(prop: ShapesProviderProp): React.JSX.Element {
   );
 
   /**
-   * Clean
+   * Clean history
    */
-  const clean = React.useCallback((): void => {
-    dispatch({ type: "CLEAN" });
+  const cleanHistory = React.useCallback((): void => {
+    dispatch({
+      type: "CLEAN_HISTORY",
+    });
   }, []);
 
   /**
    * Set max history
    */
   const setMaxHistory = React.useCallback((max: number): void => {
-    dispatch({ type: "SET_MAX_HISTORY", payload: max });
+    dispatch({
+      type: "SET_MAX_HISTORY",
+      payload: max,
+    });
   }, []);
 
   /**
@@ -1402,7 +1410,7 @@ export function ShapesProvider(prop: ShapesProviderProp): React.JSX.Element {
       layerShape,
       alignShape,
       flipShape,
-      clean,
+      cleanHistory,
       setMaxHistory,
       doShapes,
     }),
