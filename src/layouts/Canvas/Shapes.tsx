@@ -379,15 +379,15 @@ export const CanvasShapes = React.memo((): React.JSX.Element => {
       });
     }
 
-    cropper.updateProp({
+    cropper.updateTransformer({
       nodes: cropperNodes,
     });
 
-    transformer.updateProp({
+    transformer.updateTransformer({
       nodes: transformerNodes,
     });
 
-    singleTransformer.updateProp({
+    singleTransformer.updateTransformer({
       nodes: singleTransformerNodes,
     });
   }, [

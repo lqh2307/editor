@@ -30,6 +30,7 @@ import {
 import {
   KonvaTransformerAPI,
   KonvaTransformer,
+  KonvaTFM,
 } from "../../components/KonvaTransformer";
 
 export const Canvas = React.memo((): React.JSX.Element => {
@@ -110,31 +111,202 @@ export const Canvas = React.memo((): React.JSX.Element => {
     [setGuideLines, getGuideLines]
   );
 
-  const assignSingleTransformer = React.useCallback(
-    (singleTransformer: KonvaTransformerAPI): void => {
-      if (!getSingleTransformer()) {
-        setSingleTransformer(singleTransformer);
+  const cropperOptionRef = React.useRef<KonvaTFM>({
+    id: "cropper",
+    borderStroke: "#00ff00",
+    borderStrokeWidth: 1.5,
+    borderDash: [10, 10],
+    anchorStyleFunc: (anchor) => {
+      if (anchor.hasName("top-center") || anchor.hasName("bottom-center")) {
+        anchor.setAttrs({
+          fill: "#a5ff00",
+          stroke: "#00ff00",
+          strokeWidth: 1,
+          cornerRadius: 5,
+          height: 10,
+          offsetY: 5,
+          width: 30,
+          offsetX: 15,
+        });
+      } else if (
+        anchor.hasName("middle-left") ||
+        anchor.hasName("middle-right")
+      ) {
+        anchor.setAttrs({
+          fill: "#a5ff00",
+          stroke: "#00ff00",
+          strokeWidth: 1,
+          cornerRadius: 5,
+          height: 30,
+          offsetY: 15,
+          width: 10,
+          offsetX: 5,
+        });
+      } else if (anchor.hasName("rotater")) {
+        anchor.setAttrs({
+          fill: "#a5ff00",
+          stroke: "#00ff00",
+          strokeWidth: 1.5,
+          cornerRadius: 10,
+          height: 20,
+          offsetY: 10,
+          width: 20,
+          offsetX: 10,
+        });
+      } else {
+        anchor.setAttrs({
+          fill: "#a5ff00",
+          stroke: "#00ff00",
+          strokeWidth: 1,
+          cornerRadius: 5,
+          height: 15,
+          offsetY: 7.5,
+          width: 15,
+          offsetX: 7.5,
+        });
       }
     },
-    [setSingleTransformer, getSingleTransformer]
-  );
+  });
 
-  const assignCropper = React.useCallback(
-    (cropper: KonvaTransformerAPI): void => {
-      if (!getCropper()) {
-        setCropper(cropper);
+  const transformerOptionRef = React.useRef<KonvaTFM>({
+    id: "transformer",
+    keepRatio: true,
+    borderStroke: "#ff0000",
+    borderStrokeWidth: 1.5,
+    borderDash: [20, 10],
+    anchorStyleFunc: (anchor) => {
+      if (anchor.hasName("top-center") || anchor.hasName("bottom-center")) {
+        anchor.setAttrs({
+          fill: "#ffa500",
+          stroke: "#ff0000",
+          strokeWidth: 1,
+          cornerRadius: 2,
+          height: 4,
+          offsetY: 2,
+          width: 16,
+          offsetX: 8,
+        });
+      } else if (
+        anchor.hasName("middle-left") ||
+        anchor.hasName("middle-right")
+      ) {
+        anchor.setAttrs({
+          fill: "#ffa500",
+          stroke: "#ff0000",
+          strokeWidth: 1,
+          cornerRadius: 2,
+          height: 16,
+          offsetY: 8,
+          width: 4,
+          offsetX: 2,
+        });
+      } else if (anchor.hasName("rotater")) {
+        anchor.setAttrs({
+          fill: "#ffa500",
+          stroke: "#ff0000",
+          strokeWidth: 1.5,
+          cornerRadius: 6,
+          height: 12,
+          offsetY: 6,
+          width: 12,
+          offsetX: 6,
+        });
+      } else {
+        anchor.setAttrs({
+          fill: "#ffa500",
+          stroke: "#ff0000",
+          strokeWidth: 1,
+          cornerRadius: 4,
+          height: 8,
+          offsetY: 4,
+          width: 8,
+          offsetX: 4,
+        });
       }
     },
-    [setCropper, getCropper]
-  );
+  });
+
+  const singleTransformerOptionRef = React.useRef<KonvaTFM>({
+    id: "single-transformer",
+    borderStroke: "#0000ff",
+    borderStrokeWidth: 1.5,
+    borderDash: [20, 10],
+    anchorStyleFunc: (anchor) => {
+      if (anchor.hasName("top-center") || anchor.hasName("bottom-center")) {
+        anchor.setAttrs({
+          fill: "#00a5ff",
+          stroke: "#0000ff",
+          strokeWidth: 1,
+          cornerRadius: 2,
+          height: 4,
+          offsetY: 2,
+          width: 16,
+          offsetX: 8,
+        });
+      } else if (
+        anchor.hasName("middle-left") ||
+        anchor.hasName("middle-right")
+      ) {
+        anchor.setAttrs({
+          fill: "#00a5ff",
+          stroke: "#0000ff",
+          strokeWidth: 1,
+          cornerRadius: 2,
+          height: 16,
+          offsetY: 8,
+          width: 4,
+          offsetX: 2,
+        });
+      } else if (anchor.hasName("rotater")) {
+        anchor.setAttrs({
+          fill: "#00a5ff",
+          stroke: "#0000ff",
+          strokeWidth: 1.5,
+          cornerRadius: 6,
+          height: 12,
+          offsetY: 6,
+          width: 12,
+          offsetX: 6,
+        });
+      } else {
+        anchor.setAttrs({
+          fill: "#00a5ff",
+          stroke: "#0000ff",
+          strokeWidth: 1,
+          cornerRadius: 4,
+          height: 8,
+          offsetY: 4,
+          width: 8,
+          offsetX: 4,
+        });
+      }
+    },
+  });
 
   const assignTransformer = React.useCallback(
-    (transformer: KonvaTransformerAPI): void => {
-      if (!getTransformer()) {
-        setTransformer(transformer);
+    (id?: string, transformer?: KonvaTransformerAPI): void => {
+      if (id === "cropper") {
+        if (!getCropper()) {
+          setCropper(transformer);
+        }
+      } else if (id === "transformer") {
+        if (!getTransformer()) {
+          setTransformer(transformer);
+        }
+      } else if (id === "single-transformer") {
+        if (!getSingleTransformer()) {
+          setSingleTransformer(transformer);
+        }
       }
     },
-    [setTransformer, getTransformer]
+    [
+      setCropper,
+      getCropper,
+      setTransformer,
+      getTransformer,
+      setSingleTransformer,
+      getSingleTransformer,
+    ]
   );
 
   // Update if selected shape id is changed
@@ -439,11 +611,20 @@ export const Canvas = React.memo((): React.JSX.Element => {
         <Layer id={"shapes"} listening={true} draggable={false}>
           <CanvasShapes />
 
-          <KonvaTransformer ref={assignCropper} />
+          <KonvaTransformer
+            transformerOption={cropperOptionRef.current}
+            onMounted={assignTransformer}
+          />
 
-          <KonvaTransformer ref={assignTransformer} />
+          <KonvaTransformer
+            transformerOption={transformerOptionRef.current}
+            onMounted={assignTransformer}
+          />
 
-          <KonvaTransformer ref={assignSingleTransformer} />
+          <KonvaTransformer
+            transformerOption={singleTransformerOptionRef.current}
+            onMounted={assignTransformer}
+          />
         </Layer>
 
         {/* Guide line/Tooltip */}
