@@ -396,9 +396,9 @@ export const CanvasShapes = React.memo((): React.JSX.Element => {
     selectedIds,
     singleSelectedIds,
     freeDrawingMode,
-    getSingleTransformer,
     getCropper,
     getTransformer,
+    getSingleTransformer,
   ]);
 
   const renderedShapeList = React.useMemo(() => {

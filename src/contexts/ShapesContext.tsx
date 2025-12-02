@@ -630,7 +630,7 @@ function reducer(state: State, action: Action): State {
         } else {
           const ids: string[] = Object.keys(state.selectedIds);
           if (ids.length) {
-            const idsSet: Set<string> = new Set(singleIds);
+            const idsSet: Set<string> = new Set(ids);
 
             // Clone shape list without deleted shapes and Assign selected ids
             newShapeList = state.shapeList.filter((item) => {
