@@ -1,3 +1,4 @@
+import { KonvaTransformerAPI } from "../components/KonvaTransformer";
 import { HorizontalAlign, VerticalAlign } from "../types/Window";
 import { IShapesContext } from "./Interfaces";
 import { ShapesProviderProp } from "./Types";
@@ -1232,6 +1233,11 @@ export function ShapesProvider(prop: ShapesProviderProp): React.JSX.Element {
   // Store shape refs
   const shapeRefsRef = React.useRef<Record<string, KonvaShapeAPI>>({});
 
+  // Store transformer refs
+  const transformerRefsRef = React.useRef<Record<string, KonvaTransformerAPI>>(
+    {}
+  );
+
   /**
    * Selected group ids
    */
@@ -1652,6 +1658,7 @@ export function ShapesProvider(prop: ShapesProviderProp): React.JSX.Element {
       shapeList: state.shapeList,
       copiedShapes: state.copiedShapes,
       shapeRefs: shapeRefsRef.current,
+      transformerRefs: transformerRefsRef.current,
 
       exportShapes,
       addShapes,

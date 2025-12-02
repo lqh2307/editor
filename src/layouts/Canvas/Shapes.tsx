@@ -39,17 +39,15 @@ export const CanvasShapes = React.memo((): React.JSX.Element => {
     stageWidth,
     stageHeight,
     getGuideLines,
-    getCropper,
     expandStage,
-    getTransformer,
     setPointerStyle,
-    getSingleTransformer,
   } = useStageContext();
 
   const {
     shapeList,
     croppedId,
     shapeRefs,
+    transformerRefs,
     selectedIds,
     selectedGroupIds,
     singleSelectedIds,
@@ -340,9 +338,10 @@ export const CanvasShapes = React.memo((): React.JSX.Element => {
 
   // Update cropper/transformer
   React.useEffect(() => {
-    const cropper: KonvaTransformerAPI = getCropper?.();
-    const transformer: KonvaTransformerAPI = getTransformer?.();
-    const singleTransformer: KonvaTransformerAPI = getSingleTransformer?.();
+    const cropper: KonvaTransformerAPI = transformerRefs?.["cropper"];
+    const transformer: KonvaTransformerAPI = transformerRefs?.["transformer"];
+    const singleTransformer: KonvaTransformerAPI =
+      transformerRefs?.["single-transformer"];
     if (!cropper || !transformer || !singleTransformer) {
       return;
     }
@@ -392,13 +391,11 @@ export const CanvasShapes = React.memo((): React.JSX.Element => {
     });
   }, [
     shapeRefs,
+    transformerRefs,
     croppedId,
     selectedIds,
     singleSelectedIds,
     freeDrawingMode,
-    getSingleTransformer,
-    getCropper,
-    getTransformer,
   ]);
 
   const renderedShapeList = React.useMemo(() => {

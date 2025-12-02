@@ -46,12 +46,6 @@ export const Canvas = React.memo((): React.JSX.Element => {
     setGrid,
     getGuideLines,
     setGuideLines,
-    getCropper,
-    setCropper,
-    getTransformer,
-    setTransformer,
-    getSingleTransformer,
-    setSingleTransformer,
     dragStage,
     zoomStage,
     getIsStageDragable,
@@ -62,8 +56,13 @@ export const Canvas = React.memo((): React.JSX.Element => {
     updateSnackbarAlert,
   } = useStageContext();
 
-  const { selectedShape, updateShape, addShapes, updateSelectedIds } =
-    useShapesContext();
+  const {
+    selectedShape,
+    updateShape,
+    addShapes,
+    updateSelectedIds,
+    transformerRefs,
+  } = useShapesContext();
 
   const { freeDrawingMode, setFreeDrawingMode } = useFreeDrawingContext();
 
@@ -285,28 +284,11 @@ export const Canvas = React.memo((): React.JSX.Element => {
 
   const assignTransformer = React.useCallback(
     (id?: string, transformer?: KonvaTransformerAPI): void => {
-      if (id === "cropper") {
-        if (!getCropper()) {
-          setCropper(transformer);
-        }
-      } else if (id === "transformer") {
-        if (!getTransformer()) {
-          setTransformer(transformer);
-        }
-      } else if (id === "single-transformer") {
-        if (!getSingleTransformer()) {
-          setSingleTransformer(transformer);
-        }
+      if (!transformerRefs[id]) {
+        transformerRefs[id] = transformer;
       }
     },
-    [
-      setCropper,
-      getCropper,
-      setTransformer,
-      getTransformer,
-      setSingleTransformer,
-      getSingleTransformer,
-    ]
+    [transformerRefs]
   );
 
   // Update if selected shape id is changed

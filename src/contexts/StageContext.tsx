@@ -516,63 +516,6 @@ export function StageProvider(prop: StageProviderProp): React.JSX.Element {
     });
   }, []);
 
-  // Store cropper
-  const cropperRef = React.useRef<KonvaTransformerAPI>(undefined);
-
-  /**
-   * Get cropper
-   */
-  const getCropper = React.useCallback((): KonvaTransformerAPI => {
-    return cropperRef.current;
-  }, []);
-
-  /**
-   * Set cropper
-   */
-  const setCropper = React.useCallback((cropper: KonvaTransformerAPI): void => {
-    cropperRef.current = cropper;
-  }, []);
-
-  // Store transformer
-  const transformerRef = React.useRef<KonvaTransformerAPI>(undefined);
-
-  /**
-   * Get transformer
-   */
-  const getTransformer = React.useCallback((): KonvaTransformerAPI => {
-    return transformerRef.current;
-  }, []);
-
-  /**
-   * Set transformer
-   */
-  const setTransformer = React.useCallback(
-    (transformer: KonvaTransformerAPI): void => {
-      transformerRef.current = transformer;
-    },
-    []
-  );
-
-  // Store single transformer
-  const singleTransformerRef = React.useRef<KonvaTransformerAPI>(undefined);
-
-  /**
-   * Get single transformer
-   */
-  const getSingleTransformer = React.useCallback((): KonvaTransformerAPI => {
-    return singleTransformerRef.current;
-  }, []);
-
-  /**
-   * Set single transformer
-   */
-  const setSingleTransformer = React.useCallback(
-    (singleTransformer: KonvaTransformerAPI): void => {
-      singleTransformerRef.current = singleTransformer;
-    },
-    []
-  );
-
   // Store guideLines
   const guideLinesRef = React.useRef<KonvaGuideLinesAPI>(undefined);
 
@@ -984,15 +927,6 @@ export function StageProvider(prop: StageProviderProp): React.JSX.Element {
 
       getStage,
       setStage,
-
-      getCropper,
-      setCropper,
-
-      getTransformer,
-      setTransformer,
-
-      getSingleTransformer,
-      setSingleTransformer,
 
       getGuideLines,
       setGuideLines,

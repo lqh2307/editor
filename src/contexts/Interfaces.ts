@@ -32,6 +32,7 @@ export interface IShapesContext {
   shapeList?: KonvaShape[];
   copiedShapes?: KonvaShape[];
   shapeRefs?: Record<string, KonvaShapeAPI>;
+  transformerRefs?: Record<string, KonvaTransformerAPI>;
 
   setMaxHistory?: (max: number) => void;
 
@@ -104,15 +105,6 @@ export interface IStageContext {
 
   getStage?: () => Konva.Stage;
   setStage?: (stage: Konva.Stage) => void;
-
-  getCropper?: () => KonvaTransformerAPI;
-  setCropper?: (cropper: KonvaTransformerAPI) => void;
-
-  getTransformer?: () => KonvaTransformerAPI;
-  setTransformer?: (transformer: KonvaTransformerAPI) => void;
-
-  getSingleTransformer?: () => KonvaTransformerAPI;
-  setSingleTransformer?: (singleTransformer: KonvaTransformerAPI) => void;
 
   getGuideLines?: () => KonvaGuideLinesAPI;
   setGuideLines?: (guideLines: KonvaGuideLinesAPI) => void;
