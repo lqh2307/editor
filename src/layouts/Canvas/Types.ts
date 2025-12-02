@@ -6,4 +6,8 @@ export type FreeDrawingInfo = {
   lines?: KonvaFreeDrawingLine[];
   isDrawing?: boolean;
   shapeId?: string;
+  // Polyline specific state
+  polylinePoints?: number[];
+  polylineOrigin?: { x: number; y: number };
+  isPolylineDrawing?: boolean;
 };

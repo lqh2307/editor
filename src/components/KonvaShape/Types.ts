@@ -65,6 +65,7 @@ export type KonvaShapeType =
   | "concave-polygon"
   | "text"
   | "line"
+  | "polyline"
   | "free-drawing"
   | "path"
   | "arrow"

@@ -70,6 +70,9 @@ export const Canvas = React.memo((): React.JSX.Element => {
     lines: undefined,
     isDrawing: false,
     shapeId: undefined,
+    polylinePoints: undefined,
+    polylineOrigin: undefined,
+    isPolylineDrawing: false,
   });
 
   // Marquee selection state/refs
@@ -157,6 +160,9 @@ export const Canvas = React.memo((): React.JSX.Element => {
         lines: undefined,
         isDrawing: false,
         shapeId: undefined,
+        polylinePoints: undefined,
+        polylineOrigin: undefined,
+        isPolylineDrawing: false,
       };
     }
   }, [selectedShape.id, setPointerStyle, setFreeDrawingMode]);
@@ -172,12 +178,27 @@ export const Canvas = React.memo((): React.JSX.Element => {
       setPointerStyle("crosshair");
 
       // Store free drawing info
-      freeDrawingInfoRef.current = {
-        previousMode: freeDrawingMode,
-        isDrawing: false,
-        lines: selectedShape.lines,
-        shapeId: selectedShape.lines ? selectedShape.id : nanoid(),
-      };
+      if (freeDrawingMode === "polyline") {
+        freeDrawingInfoRef.current = {
+          previousMode: freeDrawingMode,
+          isDrawing: false,
+          lines: undefined,
+          shapeId: nanoid(),
+          polylinePoints: [],
+          polylineOrigin: undefined,
+          isPolylineDrawing: false,
+        };
+      } else {
+        freeDrawingInfoRef.current = {
+          previousMode: freeDrawingMode,
+          isDrawing: false,
+          lines: selectedShape.lines,
+          shapeId: selectedShape.lines ? selectedShape.id : nanoid(),
+          polylinePoints: undefined,
+          polylineOrigin: undefined,
+          isPolylineDrawing: false,
+        };
+      }
     } else if (freeDrawingInfoRef.current.previousMode) {
       // Reset cursor style
       setPointerStyle();
@@ -188,6 +209,9 @@ export const Canvas = React.memo((): React.JSX.Element => {
         lines: undefined,
         isDrawing: false,
         shapeId: undefined,
+        polylinePoints: undefined,
+        polylineOrigin: undefined,
+        isPolylineDrawing: false,
       };
     }
   }, [freeDrawingMode, selectedShape.id, selectedShape.lines, setPointerStyle]);
@@ -269,7 +293,7 @@ export const Canvas = React.memo((): React.JSX.Element => {
       } else if (e.evt?.button === 0) {
         const freeDrawingInfo: FreeDrawingInfo = freeDrawingInfoRef.current;
 
-        if (freeDrawingInfo.previousMode) {
+        if (freeDrawingInfo.previousMode && freeDrawingInfo.previousMode !== "polyline") {
           if (!freeDrawingInfo.lines) {
             // Store free drawing lines
             freeDrawingInfo.lines = [];
@@ -318,6 +342,51 @@ export const Canvas = React.memo((): React.JSX.Element => {
 
           // Mark drawing on
           freeDrawingInfo.isDrawing = true;
+        } else if (freeDrawingInfo.previousMode === "polyline") {
+          const pointer: Vector2d = getStagePointerPosition();
+          if (!pointer) return;
+
+          // First click: create shape
+          if (!freeDrawingInfo.polylinePoints || !freeDrawingInfo.polylinePoints.length) {
+            freeDrawingInfo.polylineOrigin = { x: pointer.x, y: pointer.y };
+            freeDrawingInfo.polylinePoints = [0, 0, 0, 0]; // first anchor + dynamic endpoint
+            // Add new line shape
+            await addShapes(
+              [
+                {
+                  id: freeDrawingInfo.shapeId,
+                  type: "polyline",
+                  x: pointer.x,
+                  y: pointer.y,
+                  offsetX: 0,
+                  offsetY: 0,
+                  points: freeDrawingInfo.polylinePoints.slice(0),
+                  strokeEnabled: true,
+                  strokeWidth: 2,
+                  fillEnabled: false,
+                },
+              ],
+              undefined,
+              false,
+              undefined
+            );
+            freeDrawingInfo.isPolylineDrawing = true;
+          } else {
+            // Subsequent click: fix last dynamic point and append new dynamic endpoint
+            const ox = freeDrawingInfo.polylineOrigin.x;
+            const oy = freeDrawingInfo.polylineOrigin.y;
+            const relX = pointer.x - ox;
+            const relY = pointer.y - oy;
+            const pts = freeDrawingInfo.polylinePoints;
+            // Replace dynamic endpoint with fixed anchor
+            pts[pts.length - 2] = relX;
+            pts[pts.length - 1] = relY;
+            // Add new dynamic endpoint duplicated
+            pts.push(relX, relY);
+            freeDrawingInfo.isPolylineDrawing = true;
+            // Update shape
+            updateShape({ id: freeDrawingInfo.shapeId, points: pts.slice(0), type: "polyline" }, true, false);
+          }
         } else if (e.target instanceof Konva.Stage) {
           // Start marquee selection
           const p: Vector2d = getStagePointerPosition();
@@ -349,7 +418,21 @@ export const Canvas = React.memo((): React.JSX.Element => {
 
     const freeDrawingInfo: FreeDrawingInfo = freeDrawingInfoRef.current;
 
-    if (freeDrawingInfo.isDrawing) {
+    if (freeDrawingInfo.previousMode === "polyline") {
+      if (freeDrawingInfo.isPolylineDrawing && freeDrawingInfo.polylinePoints?.length) {
+        const pointer: Vector2d = getStagePointerPosition();
+        if (!pointer) return;
+        const ox = freeDrawingInfo.polylineOrigin.x;
+        const oy = freeDrawingInfo.polylineOrigin.y;
+        const relX = pointer.x - ox;
+        const relY = pointer.y - oy;
+        const pts = freeDrawingInfo.polylinePoints;
+        // Update dynamic endpoint
+        pts[pts.length - 2] = relX;
+        pts[pts.length - 1] = relY;
+        updateShape({ id: freeDrawingInfo.shapeId, points: pts.slice(0), type: "polyline" }, true, false);
+      }
+    } else if (freeDrawingInfo.isDrawing) {
       const pointer: Vector2d = getStagePointerPosition(
         freeDrawingInfo.shapeId
       );
@@ -395,7 +478,7 @@ export const Canvas = React.memo((): React.JSX.Element => {
         // Disable draggable stage
         setStageDragable(false);
       } else if (e.evt?.button === 0) {
-        if (freeDrawingInfo.previousMode) {
+        if (freeDrawingInfo.previousMode && freeDrawingInfo.previousMode !== "polyline") {
           const pointer: Vector2d = getStagePointerPosition(
             freeDrawingInfo.shapeId
           );
@@ -460,6 +543,8 @@ export const Canvas = React.memo((): React.JSX.Element => {
             updateSelectedIds({}, true);
           }
         }
+      } else if (freeDrawingInfo.previousMode === "polyline") {
+        // Nothing on mouse up for polyline (points added on mousedown)
       }
     },
     [
@@ -471,6 +556,23 @@ export const Canvas = React.memo((): React.JSX.Element => {
       setPointerStyle,
       getStagePointerPosition,
     ]
+  );
+
+  const handleStageDblClick = React.useCallback(
+    (): void => {
+      const info: FreeDrawingInfo = freeDrawingInfoRef.current;
+      if (info.previousMode === "polyline" && info.polylinePoints?.length) {
+        // Remove trailing dynamic duplicate point
+        if (info.polylinePoints.length >= 4) {
+          info.polylinePoints.splice(info.polylinePoints.length - 2, 2);
+        }
+        // Final update commit history
+        updateShape({ id: info.shapeId, points: info.polylinePoints.slice(0), type: "polyline" }, true, true);
+        // Exit polyline mode
+        setFreeDrawingMode(undefined);
+      }
+    },
+    [setFreeDrawingMode, updateShape]
   );
 
   const handleStageClick = React.useCallback(
@@ -508,6 +610,7 @@ export const Canvas = React.memo((): React.JSX.Element => {
         onMouseDown={handleStageMouseDown}
         onMouseMove={handleStageMouseMove}
         onMouseUp={handleStageMouseUp}
+        onDblClick={handleStageDblClick}
         onContextMenu={handleStageContextMenu}
       >
         {/* Backgroud/Grid */}

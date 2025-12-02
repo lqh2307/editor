@@ -12,6 +12,7 @@ export * from "./KonvaImage";
 export * from "./KonvaVideo";
 export * from "./KonvaPath";
 export * from "./KonvaLine";
+export * from "./KonvaPolyline";
 export * from "./KonvaRing";
 export * from "./KonvaText";
 export * from "./Types";

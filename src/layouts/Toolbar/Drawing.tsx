@@ -1,5 +1,5 @@
 import { useFreeDrawingContext, useShapesContext } from "../../contexts";
-import { Crop169TwoTone, DrawTwoTone } from "@mui/icons-material";
+import { Crop169TwoTone, DrawTwoTone, TimelineTwoTone } from "@mui/icons-material";
 import { TooltipButton } from "../../components/TooltipButton";
 import { useTranslation } from "react-i18next";
 import { ButtonGroup } from "@mui/material";
@@ -28,6 +28,10 @@ export const ToolbarDrawing = React.memo((): React.JSX.Element => {
             case "eraser": {
               return "pen";
             }
+
+            case "polyline": {
+              return "pen";
+            }
           }
         }),
       handleFreeDrawingEraser: (): void =>
@@ -43,6 +47,30 @@ export const ToolbarDrawing = React.memo((): React.JSX.Element => {
 
             case "eraser": {
               return undefined;
+            }
+
+            case "polyline": {
+              return "eraser";
+            }
+          }
+        }),
+      handlePolyline: (): void =>
+        setFreeDrawingMode((prev) => {
+          switch (prev) {
+            default: {
+              return "polyline";
+            }
+
+            case "polyline": {
+              return undefined;
+            }
+
+            case "pen": {
+              return "polyline";
+            }
+
+            case "eraser": {
+              return "polyline";
             }
           }
         }),
@@ -69,6 +97,15 @@ export const ToolbarDrawing = React.memo((): React.JSX.Element => {
         }}
         onClick={changeFreeDrawingModeHandler.handleFreeDrawingEraser}
         disabled={selectedShape.type !== "free-drawing"}
+      />
+
+      <TooltipButton
+        icon={<TimelineTwoTone />}
+        title={t("toolBar.polyline.title", { defaultValue: "Polyline" })}
+        sx={{
+          background: freeDrawingMode === "polyline" ? "grey" : "",
+        }}
+        onClick={changeFreeDrawingModeHandler.handlePolyline}
       />
     </ButtonGroup>
   );

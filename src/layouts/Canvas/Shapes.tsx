@@ -24,6 +24,7 @@ import {
   KonvaText,
   KonvaRing,
   KonvaPath,
+  KonvaPolyline,
 } from "../../components/KonvaShape";
 import {
   useFreeDrawingContext,
@@ -548,6 +549,23 @@ export const CanvasShapes = React.memo((): React.JSX.Element => {
         case "line": {
           return (
             <KonvaLine
+              onClick={handleShapeClick}
+              onMounted={handleOnMounted}
+              onUnMounted={handleOnUnMounted}
+              onMouseOver={handleShapeMouseOver}
+              onMouseLeave={handleShapeMouseLeave}
+              onDragMove={handleShapeDragMove}
+              onAppliedProp={handleAppliedProp}
+              isSelected={isSelected}
+              shapeOption={item}
+              key={item.id}
+            />
+          );
+        }
+
+        case "polyline": {
+          return (
+            <KonvaPolyline
               onClick={handleShapeClick}
               onMounted={handleOnMounted}
               onUnMounted={handleOnUnMounted}

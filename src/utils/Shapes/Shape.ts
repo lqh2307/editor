@@ -46,8 +46,8 @@ export function createShape(shape: KonvaShape): KonvaShape {
   newShape.scaleY = newShape.scaleY ?? 1;
 
   // Line style
-  newShape.lineCap = newShape.lineCap ?? "butt";
-  newShape.lineJoin = newShape.lineJoin ?? "miter";
+  newShape.lineCap = newShape.lineCap ?? (newShape.type === "polyline" ? "round" : "butt");
+  newShape.lineJoin = newShape.lineJoin ?? (newShape.type === "polyline" ? "round" : "miter");
   // Easier hit detection on strokes
   newShape.hitStrokeWidth = newShape.hitStrokeWidth ?? 20;
 
@@ -58,7 +58,8 @@ export function createShape(shape: KonvaShape): KonvaShape {
     }
 
     case "arrow":
-    case "line": {
+    case "line":
+    case "polyline": {
       // Size
       if (newShape.type === "arrow") {
         newShape.pointerWidth =
@@ -78,11 +79,20 @@ export function createShape(shape: KonvaShape): KonvaShape {
       newShape.strokeOpacity = newShape.strokeOpacity ?? 1;
       newShape.strokeScaleEnabled = newShape.strokeScaleEnabled ?? false;
       newShape.strokeWidth = newShape.strokeWidth ?? 10;
-      newShape.points = newShape.points ?? [0, 0, 200, 0];
+      if (newShape.type === "polyline") {
+        newShape.points = newShape.points ?? [0, 0, 200, 0, 300, 50];
+      } else {
+        newShape.points = newShape.points ?? [0, 0, 200, 0];
+      }
 
-      // Offset
-      newShape.offsetX = newShape.offsetX ?? 100;
-      newShape.offsetY = newShape.offsetY ?? 0;
+      // Offset (polyline should not use default centering offset)
+      if (newShape.type === "polyline") {
+        newShape.offsetX = newShape.offsetX ?? 0;
+        newShape.offsetY = newShape.offsetY ?? 0;
+      } else {
+        newShape.offsetX = newShape.offsetX ?? 100;
+        newShape.offsetY = newShape.offsetY ?? 0;
+      }
 
       break;
     }
