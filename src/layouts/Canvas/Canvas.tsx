@@ -5,7 +5,7 @@ import { createPathsFromSVG } from "../../utils/Shapes";
 import { KonvaDragDrop } from "../../types/Konva";
 import { useTranslation } from "react-i18next";
 import { downloadFile } from "../../apis/file";
-import { Stage, Layer } from "react-konva";
+import { Stage, Layer, Rect } from "react-konva";
 import { Vector2d } from "konva/lib/types";
 import { FreeDrawingInfo } from "./Types";
 import { CanvasShapes } from "./Shapes";
@@ -59,7 +59,7 @@ export const Canvas = React.memo((): React.JSX.Element => {
     updateSnackbarAlert,
   } = useStageContext();
 
-  const { selectedShape, updateShape, addShapes, updateSelectedIds } =
+  const { selectedShape, updateShape, addShapes, updateSelectedIds, shapeList } =
     useShapesContext();
 
   const { freeDrawingMode, setFreeDrawingMode } = useFreeDrawingContext();
@@ -71,6 +71,19 @@ export const Canvas = React.memo((): React.JSX.Element => {
     isDrawing: false,
     shapeId: undefined,
   });
+
+  // Marquee selection state/refs
+  const selectingRef = React.useRef<boolean>(false);
+  const selectStartRef = React.useRef<Vector2d>(undefined);
+  const extendSelectRef = React.useRef<boolean>(false);
+  const didSelectRef = React.useRef<boolean>(false);
+  const [selectRect, setSelectRect] = React.useState<{
+    x: number;
+    y: number;
+    width: number;
+    height: number;
+    visible: boolean;
+  }>({ x: 0, y: 0, width: 0, height: 0, visible: false });
 
   const assignStage = React.useCallback(
     (stage: Konva.Stage): void => {
@@ -306,13 +319,19 @@ export const Canvas = React.memo((): React.JSX.Element => {
           // Mark drawing on
           freeDrawingInfo.isDrawing = true;
         } else if (e.target instanceof Konva.Stage) {
-          // Reset selected ids
-          updateSelectedIds({}, true);
+          // Start marquee selection
+          const p: Vector2d = getStagePointerPosition();
+          if (!p) return;
+
+          selectingRef.current = true;
+          extendSelectRef.current = !!(e.evt?.ctrlKey || e.evt?.shiftKey);
+          didSelectRef.current = false;
+          selectStartRef.current = p;
+          setSelectRect({ x: p.x, y: p.y, width: 0, height: 0, visible: true });
         }
       }
     },
     [
-      updateSelectedIds,
       updateShape,
       addShapes,
       setPointerStyle,
@@ -346,6 +365,22 @@ export const Canvas = React.memo((): React.JSX.Element => {
 
       // Update shape
       updateShape(undefined, true, false);
+      return;
+    }
+
+    // Update marquee selection rect
+    if (selectingRef.current) {
+      const p: Vector2d = getStagePointerPosition();
+      if (!p || !selectStartRef.current) return;
+      const x1 = selectStartRef.current.x;
+      const y1 = selectStartRef.current.y;
+      const x2 = p.x;
+      const y2 = p.y;
+      const x = Math.min(x1, x2);
+      const y = Math.min(y1, y2);
+      const width = Math.abs(x2 - x1);
+      const height = Math.abs(y2 - y1);
+      setSelectRect({ x, y, width, height, visible: true });
     }
   }, [updateShape, dragStage, getIsStageDragable, getStagePointerPosition]);
 
@@ -380,9 +415,62 @@ export const Canvas = React.memo((): React.JSX.Element => {
 
         // Mark drawing off
         freeDrawingInfo.isDrawing = false;
+
+        // Finish marquee selection
+        if (selectingRef.current) {
+          selectingRef.current = false;
+          const { x, y, width, height } = selectRect;
+          setSelectRect((r) => ({ ...r, visible: false }));
+
+          // Ignore tiny clicks (let stage click handler manage clear)
+          if (width < 3 && height < 3) {
+            return;
+          }
+
+          const x1 = x;
+          const y1 = y;
+          const x2 = x + width;
+          const y2 = y + height;
+
+          // Compute intersections with shapes' boxes
+          const selectedIds: string[] = [];
+          const addId = (id: string) => {
+            if (!selectedIds.includes(id)) selectedIds.push(id);
+          };
+
+          shapeList?.forEach((shape) => {
+            const box = shape.box;
+            if (!box) return;
+            const intersects =
+              !(box.right < x1 || box.left > x2 || box.bottom < y1 || box.top > y2);
+            if (intersects) {
+              if (shape.groupIds && shape.groupIds.length) {
+                shape.groupIds.forEach(addId);
+              } else {
+                addId(shape.id);
+              }
+            }
+          });
+
+          if (selectedIds.length) {
+            updateSelectedIds({ selecteds: selectedIds }, !extendSelectRef.current);
+            didSelectRef.current = true;
+          } else if (!extendSelectRef.current) {
+            // Nothing selected: clear selection if not extending
+            updateSelectedIds({}, true);
+          }
+        }
       }
     },
-    [updateShape, setStageDragable, setPointerStyle, getStagePointerPosition]
+    [
+      selectRect,
+      shapeList,
+      updateSelectedIds,
+      updateShape,
+      setStageDragable,
+      setPointerStyle,
+      getStagePointerPosition,
+    ]
   );
 
   const handleStageClick = React.useCallback(
@@ -392,6 +480,11 @@ export const Canvas = React.memo((): React.JSX.Element => {
         !freeDrawingInfoRef.current.previousMode &&
         e.target instanceof Konva.Stage
       ) {
+        if (didSelectRef.current) {
+          // Skip clearing if we just did marquee selection
+          didSelectRef.current = false;
+          return;
+        }
         // Reset selected ids
         updateSelectedIds({}, true);
       }
@@ -435,6 +528,19 @@ export const Canvas = React.memo((): React.JSX.Element => {
 
         {/* Guide line/Tooltip */}
         <Layer id={"guide"} listening={false} draggable={false}>
+          {/* Marquee selection rectangle */}
+          {selectRect.visible && (
+            <Rect
+              x={selectRect.x}
+              y={selectRect.y}
+              width={selectRect.width}
+              height={selectRect.height}
+              fill={"rgba(51,153,255,0.15)"}
+              stroke={"#3399ff"}
+              strokeWidth={1}
+              dash={[4, 4]}
+            />
+          )}
           <KonvaGuideLines ref={assignGuideLines} />
         </Layer>
       </Stage>
