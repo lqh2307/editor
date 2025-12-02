@@ -39,24 +39,24 @@ export const CanvasShapes = React.memo((): React.JSX.Element => {
     stageWidth,
     stageHeight,
     getGuideLines,
-    getSingleTransformer,
     getCropper,
-    getTransformer,
     expandStage,
+    getTransformer,
     setPointerStyle,
+    getSingleTransformer,
   } = useStageContext();
 
   const {
     shapeList,
     croppedId,
-    selectedIds,
-    singleSelectedIds,
     shapeRefs,
+    selectedIds,
+    selectedGroupIds,
+    singleSelectedIds,
+    moveShapes,
+    updateShape,
     updateSelectedIds,
     updateSingleSelectedIds,
-    updateShape,
-    moveShapes,
-    selectedGroupIds,
   } = useShapesContext();
 
   const { freeDrawingMode } = useFreeDrawingContext();
@@ -69,37 +69,29 @@ export const CanvasShapes = React.memo((): React.JSX.Element => {
 
       const shape: KonvaShape = shapeAPI.getShape();
 
-      if (selectedGroupIds) {
+      if (selectedGroupIds?.includes(shape.id)) {
         // Set single selected ids
-        if (selectedGroupIds.includes(shape.id)) {
-          updateSingleSelectedIds(
-            [shape.id],
-            e.evt?.ctrlKey && singleSelectedIds[shape.id]
+        updateSingleSelectedIds(
+          [shape.id],
+          e.evt?.ctrlKey
+            ? singleSelectedIds[shape.id]
               ? undefined
               : e.evt?.ctrlKey
                 ? false
                 : true
-          );
-        } else {
-          // Set selected ids
-          updateSelectedIds(
-            shape.groupIds ? shape.groupIds : [shape.id],
-            e.evt?.ctrlKey && selectedIds[shape.id]
-              ? undefined
-              : e.evt?.ctrlKey
-                ? false
-                : true
-          );
-        }
+            : true
+        );
       } else {
         // Set selected ids
         updateSelectedIds(
           shape.groupIds ? shape.groupIds : [shape.id],
-          e.evt?.ctrlKey && selectedIds[shape.id]
-            ? undefined
-            : e.evt?.ctrlKey
-              ? false
-              : true
+          e.evt?.ctrlKey
+            ? selectedIds[shape.id]
+              ? undefined
+              : e.evt?.ctrlKey
+                ? false
+                : true
+            : true
         );
       }
     },
@@ -138,79 +130,72 @@ export const CanvasShapes = React.memo((): React.JSX.Element => {
 
   const handleShapeDragMove = React.useCallback(
     (shapeAPI: KonvaShapeAPI): void => {
-      const guideLines: KonvaGuideLinesAPI = getGuideLines();
-      if (!guideLines) {
-        return;
-      }
-
-      // Calculate box
-      let box: KonvaShapeBox;
-
-      const _selectedIds: string[] = Object.keys(selectedIds);
-      if (_selectedIds.length) {
-        const shapes: KonvaShape[] = [];
-
-        _selectedIds.forEach((item) => {
-          const shape: KonvaShape = shapeRefs[item]?.getShape();
-          if (shape) {
-            shapes.push(shape);
-          }
-        });
-
-        box = calculateGroupShapeBox(shapes);
-      } else {
-        box = shapeAPI.getShape().box;
-      }
-
-      if (!box) {
-        return;
-      }
-
       // Set guide lines
       const newHorizontals: number[][] = [];
       const newVerticals: number[][] = [];
 
-      const stageBox: KonvaShapeBox = {
-        left: 0,
-        centerX: stageWidth / 2,
-        right: stageWidth,
-        top: 0,
-        centerY: stageHeight / 2,
-        bottom: stageHeight,
-      };
+      const ids: string[] = singleSelectedIds[shapeAPI.getShape().id]
+        ? Object.keys(singleSelectedIds)
+        : Object.keys(selectedIds);
 
-      for (const shape of shapeList) {
-        const shapeBox: KonvaShapeBox = shape.box;
-        if (selectedIds[shape.id] || !shapeBox) {
-          continue;
+      const shapes: KonvaShape[] = [];
+
+      ids.forEach((id) => {
+        const shape: KonvaShape = shapeRefs[id]?.getShape();
+        if (shape) {
+          shapes.push(shape);
+        }
+      });
+
+      const box: KonvaShapeBox = calculateGroupShapeBox(shapes);
+      if (box) {
+        const stageBox: KonvaShapeBox = {
+          left: 0,
+          centerX: stageWidth / 2,
+          right: stageWidth,
+          top: 0,
+          centerY: stageHeight / 2,
+          bottom: stageHeight,
+        };
+
+        for (const shape of shapeList) {
+          const shapeBox: KonvaShapeBox = shape.box;
+          if (selectedIds[shape.id] || !shapeBox) {
+            continue;
+          }
+
+          ["left", "centerX", "right"].forEach((key) => {
+            if (Math.abs(box[key] - shapeBox[key]) < guideLinesThreshold) {
+              newVerticals.push([shapeBox[key], 0, shapeBox[key], stageHeight]);
+            }
+          });
+
+          ["top", "centerY", "bottom"].forEach((key) => {
+            if (Math.abs(box[key] - shapeBox[key]) < guideLinesThreshold) {
+              newHorizontals.push([
+                0,
+                shapeBox[key],
+                stageWidth,
+                shapeBox[key],
+              ]);
+            }
+          });
         }
 
         ["left", "centerX", "right"].forEach((key) => {
-          if (Math.abs(box[key] - shapeBox[key]) < guideLinesThreshold) {
-            newVerticals.push([shapeBox[key], 0, shapeBox[key], stageHeight]);
+          if (Math.abs(box[key] - stageBox[key]) < guideLinesThreshold) {
+            newVerticals.push([stageBox[key], 0, stageBox[key], stageHeight]);
           }
         });
 
         ["top", "centerY", "bottom"].forEach((key) => {
-          if (Math.abs(box[key] - shapeBox[key]) < guideLinesThreshold) {
-            newHorizontals.push([0, shapeBox[key], stageWidth, shapeBox[key]]);
+          if (Math.abs(box[key] - stageBox[key]) < guideLinesThreshold) {
+            newHorizontals.push([0, stageBox[key], stageWidth, stageBox[key]]);
           }
         });
       }
 
-      ["left", "centerX", "right"].forEach((key) => {
-        if (Math.abs(box[key] - stageBox[key]) < guideLinesThreshold) {
-          newVerticals.push([stageBox[key], 0, stageBox[key], stageHeight]);
-        }
-      });
-
-      ["top", "centerY", "bottom"].forEach((key) => {
-        if (Math.abs(box[key] - stageBox[key]) < guideLinesThreshold) {
-          newHorizontals.push([0, stageBox[key], stageWidth, stageBox[key]]);
-        }
-      });
-
-      guideLines.updateProp({
+      getGuideLines().updateProp({
         horizontalLines: newHorizontals,
         verticalLines: newVerticals,
       });
@@ -219,6 +204,7 @@ export const CanvasShapes = React.memo((): React.JSX.Element => {
       shapeRefs,
       shapeList,
       selectedIds,
+      singleSelectedIds,
       stageWidth,
       stageHeight,
       guideLinesThreshold,
@@ -255,33 +241,25 @@ export const CanvasShapes = React.memo((): React.JSX.Element => {
         updateShape(shapeAPI.getShape(), true, true);
       } else if (reason === "drag-end") {
         const guideLines: KonvaGuideLinesAPI = getGuideLines();
-        if (!guideLines) {
-          return;
-        }
 
         // Auto stick
         if (guideLinesStick) {
-          const currentShape: KonvaShape = shapeAPI.getShape();
+          const ids: string[] = singleSelectedIds[shapeAPI.getShape().id]
+            ? Object.keys(singleSelectedIds)
+            : Object.keys(selectedIds);
 
-          // Calculate box
-          let box: KonvaShapeBox = currentShape.box;
+          const shapes: KonvaShape[] = [];
 
-          const _selectedIds: string[] = Object.keys(selectedIds);
-          if (_selectedIds.length) {
-            const shapes: KonvaShape[] = [];
+          ids.forEach((item) => {
+            const shape: KonvaShape = shapeRefs[item]?.getShape();
+            if (shape) {
+              shapes.push(shape);
+            }
+          });
 
-            _selectedIds.forEach((item) => {
-              const shape: KonvaShape = shapeRefs[item]?.getShape();
-              if (shape) {
-                shapes.push(shape);
-              }
-            });
-
-            box = calculateGroupShapeBox(shapes);
-          }
-
-          // Calculate offset
+          const box: KonvaShapeBox = calculateGroupShapeBox(shapes);
           if (box) {
+            // Calculate offset
             let offSetX: number = 0;
             let offSetY: number = 0;
 
@@ -316,11 +294,7 @@ export const CanvasShapes = React.memo((): React.JSX.Element => {
             });
 
             // Move shape
-            moveShapes(
-              _selectedIds.length ? _selectedIds : [currentShape.id],
-              offSetX,
-              offSetY
-            );
+            moveShapes(ids, offSetX, offSetY);
           }
         }
 
@@ -334,6 +308,7 @@ export const CanvasShapes = React.memo((): React.JSX.Element => {
     [
       shapeRefs,
       selectedIds,
+      singleSelectedIds,
       stageWidth,
       stageHeight,
       guideLinesThreshold,
@@ -365,16 +340,16 @@ export const CanvasShapes = React.memo((): React.JSX.Element => {
 
   // Update cropper/transformer
   React.useEffect(() => {
-    const singleTransformer: KonvaTransformerAPI = getSingleTransformer?.();
     const cropper: KonvaTransformerAPI = getCropper?.();
     const transformer: KonvaTransformerAPI = getTransformer?.();
-    if (!singleTransformer || !cropper || !transformer) {
+    const singleTransformer: KonvaTransformerAPI = getSingleTransformer?.();
+    if (!cropper || !transformer || !singleTransformer) {
       return;
     }
 
-    const singleTransformerNodes: Konva.Node[] = [];
     const cropperNodes: Konva.Node[] = [];
     const transformerNodes: Konva.Node[] = [];
+    const singleTransformerNodes: Konva.Node[] = [];
 
     if (!freeDrawingMode && shapeRefs && selectedIds && singleSelectedIds) {
       if (croppedId) {

@@ -47,30 +47,6 @@ export const KonvaImage = React.memo(
       }
     }, []);
 
-    // Start crop image
-    const updateCropImage = React.useCallback((): void => {
-      const node: Konva.Image = nodeRef.current;
-      const cropElementNode: Konva.Shape = cropElementNodeRef.current;
-
-      if (node && cropElementNode) {
-        cropImageNodeRef.current.setAttrs({
-          ...node
-            .getLayer()
-            .getAbsoluteTransform()
-            .copy()
-            .invert()
-            .multiply(node.getAbsoluteTransform())
-            .multiply(cropElementNode.getAbsoluteTransform())
-            .decompose(),
-          draggable: currentPropRef.current.isCropped,
-          visible: currentPropRef.current.isCropped,
-          image: node.image(),
-          width: cropElementNode.width(),
-          height: cropElementNode.height(),
-        });
-      }
-    }, []);
-
     // Apply prop
     const applyProp = React.useCallback((): void => {
       const prop: KonvaShapeProp = currentPropRef.current;
@@ -105,11 +81,27 @@ export const KonvaImage = React.memo(
         if (!cropElementNodeRef.current) {
           cropElementNodeRef.current = new Konva.Shape(shapeOption.clip);
 
-          updateCropImage();
+          cropImageNodeRef.current.setAttrs({
+            ...node
+              .getLayer()
+              .getAbsoluteTransform()
+              .copy()
+              .invert()
+              .multiply(node.getAbsoluteTransform())
+              .multiply(cropElementNodeRef.current.getAbsoluteTransform())
+              .decompose(),
+            draggable: currentPropRef.current.isCropped,
+            visible: currentPropRef.current.isCropped,
+            image: node.image(),
+            width: cropElementNodeRef.current.width(),
+            height: cropElementNodeRef.current.height(),
+          });
         }
 
         // Handle clip
         if (previousClipRef.current && !shapeOption.clip) {
+          cropImageNodeRef.current?.visible(false);
+
           shapeOption.clip = {
             width: shapeOption.width,
             height: shapeOption.height,
@@ -123,12 +115,26 @@ export const KonvaImage = React.memo(
           };
 
           cropElementNodeRef.current.setAttrs(shapeOption.clip);
-
-          updateCropImage();
         } else if (previousIsCroppedRef.current && !prop.isCropped) {
-          updateCropImage();
+          console.log("Cropped end!");
+
+          cropImageNodeRef.current?.visible(false);
         } else if (!previousIsCroppedRef.current && prop.isCropped) {
-          updateCropImage();
+          cropImageNodeRef.current.setAttrs({
+            ...node
+              .getLayer()
+              .getAbsoluteTransform()
+              .copy()
+              .invert()
+              .multiply(node.getAbsoluteTransform())
+              .multiply(cropElementNodeRef.current.getAbsoluteTransform())
+              .decompose(),
+            draggable: currentPropRef.current.isCropped,
+            visible: currentPropRef.current.isCropped,
+            image: node.image(),
+            width: cropElementNodeRef.current.width(),
+            height: cropElementNodeRef.current.height(),
+          });
 
           node.clearCache();
         }
@@ -217,6 +223,11 @@ export const KonvaImage = React.memo(
       },
       []
     );
+
+    const handleDragStart = React.useCallback((): void => {
+      // Call callback function
+      currentPropRef.current.onDragStart?.(shapeAPI);
+    }, []);
 
     const handleDragMove = React.useCallback(
       (e: Konva.KonvaEventObject<DragEvent>): void => {
@@ -327,6 +338,7 @@ export const KonvaImage = React.memo(
           onMouseOver={handleMouseOver}
           onMouseLeave={handleMouseLeave}
           onDragMove={handleDragMove}
+          onDragStart={handleDragStart}
           onDragEnd={handleDragEnd}
           onTransform={updateCropElement}
           onTransformEnd={handleTransformEnd}
