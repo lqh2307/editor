@@ -37,6 +37,9 @@ export const KonvaPath = React.memo(
           ...pathOption
         }: KonvaShape = shapeOption;
 
+        // Ensure easier hit detection for path strokes
+        pathOption.hitStrokeWidth = pathOption.hitStrokeWidth ?? 20;
+
         pathOption.fill = parseHexToRGBAString(
           pathOption.fill as string,
           pathOption.fillOpacity

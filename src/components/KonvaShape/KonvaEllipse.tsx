@@ -25,6 +25,7 @@ export const KonvaEllipse = React.memo(
           draggable: prop.isSelected,
           radiusX: shapeOption.radiusX,
           radiusY: shapeOption.radiusY,
+          hitStrokeWidth: shapeOption.hitStrokeWidth ?? 20,
           fill: parseHexToRGBAString(
             shapeOption.fill as string,
             shapeOption.fillOpacity

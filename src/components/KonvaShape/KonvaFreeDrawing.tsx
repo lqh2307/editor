@@ -33,6 +33,9 @@ export const KonvaFreeDrawing = React.memo(
           ...lineOption
         }: KonvaShape = shapeOption;
 
+        // Ensure easier hit detection for free-drawing strokes
+        lineOption.hitStrokeWidth = lineOption.hitStrokeWidth ?? 20;
+
         lineOption.fill = parseHexToRGBAString(
           lineOption.fill as string,
           lineOption.fillOpacity

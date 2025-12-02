@@ -24,6 +24,7 @@ export const KonvaArrow = React.memo(
           ...shapeOption,
           draggable: prop.isSelected,
           points: shapeOption.points,
+          hitStrokeWidth: shapeOption.hitStrokeWidth ?? 20,
           fill: parseHexToRGBAString(
             shapeOption.fill as string,
             shapeOption.fillOpacity

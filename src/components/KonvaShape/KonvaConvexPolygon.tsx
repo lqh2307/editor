@@ -25,6 +25,7 @@ export const KonvaConvexPolygon = React.memo(
           draggable: prop.isSelected,
           sides: shapeOption.sides,
           radius: shapeOption.radius,
+          hitStrokeWidth: shapeOption.hitStrokeWidth ?? 20,
           fill: parseHexToRGBAString(
             shapeOption.fill as string,
             shapeOption.fillOpacity

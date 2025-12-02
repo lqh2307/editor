@@ -34,6 +34,7 @@ export const KonvaQuadraticCurve = React.memo(
         node.setAttrs({
           ...shapeOption,
           draggable: prop.isSelected,
+          hitStrokeWidth: shapeOption.hitStrokeWidth ?? 20,
           fill: parseHexToRGBAString(
             shapeOption.fill as string,
             shapeOption.fillOpacity

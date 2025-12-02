@@ -25,6 +25,7 @@ export const KonvaWedge = React.memo(
           draggable: prop.isSelected,
           angle: shapeOption.angle,
           radius: shapeOption.radius,
+          hitStrokeWidth: shapeOption.hitStrokeWidth ?? 20,
           fill: parseHexToRGBAString(
             shapeOption.fill as string,
             shapeOption.fillOpacity

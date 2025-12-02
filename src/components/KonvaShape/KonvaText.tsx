@@ -31,6 +31,7 @@ export const KonvaText = React.memo(
         node.setAttrs({
           ...shapeOption,
           draggable: prop.isSelected,
+          hitStrokeWidth: shapeOption.hitStrokeWidth ?? 20,
           visible:
             !textareaRef.current ||
             textareaRef.current.style.visibility === "hidden",

@@ -48,6 +48,8 @@ export function createShape(shape: KonvaShape): KonvaShape {
   // Line style
   newShape.lineCap = newShape.lineCap ?? "butt";
   newShape.lineJoin = newShape.lineJoin ?? "miter";
+  // Easier hit detection on strokes
+  newShape.hitStrokeWidth = newShape.hitStrokeWidth ?? 20;
 
   // Assign attrs
   switch (newShape.type) {
