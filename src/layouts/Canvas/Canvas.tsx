@@ -399,7 +399,6 @@ export const Canvas = React.memo((): React.JSX.Element => {
             updateShape({ id: freeDrawingInfo.shapeId, points: pts.slice(0), type: "polyline" }, true, false);
           }
         } else if (e.target instanceof Konva.Stage) {
-<<<<<<< HEAD
           // Start marquee selection
           const p: Vector2d = getStagePointerPosition();
           if (!p) return;
@@ -409,10 +408,8 @@ export const Canvas = React.memo((): React.JSX.Element => {
           didSelectRef.current = false;
           selectStartRef.current = p;
           setSelectRect({ x: p.x, y: p.y, width: 0, height: 0, visible: true });
-=======
           // Reset selected ids
           updateSelectedIds(undefined, true);
->>>>>>> origin/tmp
         }
       }
     },
@@ -438,6 +435,7 @@ export const Canvas = React.memo((): React.JSX.Element => {
       if (freeDrawingInfo.isPolylineDrawing && freeDrawingInfo.polylinePoints?.length) {
         const pointer: Vector2d = getStagePointerPosition();
         if (!pointer) return;
+        console.log(`mouse xy: ${pointer.x.toFixed(2)}, ${pointer.y.toFixed(2)}`);
         const ox = freeDrawingInfo.polylineOrigin.x;
         const oy = freeDrawingInfo.polylineOrigin.y;
         const relX = pointer.x - ox;
@@ -455,6 +453,7 @@ export const Canvas = React.memo((): React.JSX.Element => {
       if (!pointer) {
         return;
       }
+      console.log(`mouse xy: ${pointer.x.toFixed(2)}, ${pointer.y.toFixed(2)}`);
 
       // Add new point to last line
       freeDrawingInfo.lines[freeDrawingInfo.lines.length - 1].points.push(
@@ -552,11 +551,11 @@ export const Canvas = React.memo((): React.JSX.Element => {
           });
 
           if (selectedIds.length) {
-            updateSelectedIds({ selecteds: selectedIds }, !extendSelectRef.current);
+            updateSelectedIds(selectedIds, !extendSelectRef.current);
             didSelectRef.current = true;
           } else if (!extendSelectRef.current) {
             // Nothing selected: clear selection if not extending
-            updateSelectedIds({}, true);
+            updateSelectedIds(undefined, true);
           }
         }
       } else if (freeDrawingInfo.previousMode === "polyline") {
