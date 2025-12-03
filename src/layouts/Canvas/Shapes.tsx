@@ -1,4 +1,3 @@
-import { KonvaTransformerAPI } from "../../components/KonvaTransformer";
 import { KonvaGuideLinesAPI } from "../../components/KonvaGuideLines";
 import { calculateGroupShapeBox } from "../../utils/Shapes";
 import Konva from "konva";
@@ -338,11 +337,12 @@ export const CanvasShapes = React.memo((): React.JSX.Element => {
 
   // Update cropper/transformer
   React.useEffect(() => {
-    const cropper: KonvaTransformerAPI = transformerRefs?.["cropper"];
-    const transformer: KonvaTransformerAPI = transformerRefs?.["transformer"];
-    const singleTransformer: KonvaTransformerAPI =
-      transformerRefs?.["single-transformer"];
-    if (!cropper || !transformer || !singleTransformer) {
+    if (
+      !transformerRefs ||
+      !transformerRefs["cropper"] ||
+      !transformerRefs["transformer"] ||
+      !transformerRefs["single-transformer"]
+    ) {
       return;
     }
 
@@ -378,17 +378,11 @@ export const CanvasShapes = React.memo((): React.JSX.Element => {
       });
     }
 
-    cropper.updateTransformer({
-      nodes: cropperNodes,
-    });
-
-    transformer.updateTransformer({
-      nodes: transformerNodes,
-    });
-
-    singleTransformer.updateTransformer({
-      nodes: singleTransformerNodes,
-    });
+    transformerRefs["cropper"].getNode().nodes(cropperNodes);
+    transformerRefs["transformer"].getNode().nodes(transformerNodes);
+    transformerRefs["single-transformer"]
+      .getNode()
+      .nodes(singleTransformerNodes);
   }, [
     shapeRefs,
     transformerRefs,
@@ -684,6 +678,7 @@ export const CanvasShapes = React.memo((): React.JSX.Element => {
     });
   }, [
     shapeList,
+    croppedId,
     selectedIds,
     freeDrawingMode,
     handleShapeClick,

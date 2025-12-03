@@ -35,12 +35,9 @@ export const KonvaTransformer = React.memo(
     // Apply prop
     const applyProp = React.useCallback((): void => {
       const node: Konva.Transformer = nodeRef.current;
-      if (!node) {
+      if (node) {
         // Update node attrs
-        node.setAttrs({
-          ...defaultOptionRef.current,
-          ...currentPropRef.current.transformerOption,
-        });
+        node.setAttrs(currentPropRef.current.transformerOption);
       }
     }, []);
 
@@ -62,8 +59,6 @@ export const KonvaTransformer = React.memo(
         if (transformer) {
           Object.assign(currentPropRef.current.transformerOption, transformer);
         }
-
-        console.log(transformer);
 
         applyProp();
       },
@@ -104,8 +99,6 @@ export const KonvaTransformer = React.memo(
     React.useEffect(() => {
       currentPropRef.current = prop;
 
-      console.log("sfkjlwefjk");
-
       applyProp();
 
       // Call callback function
@@ -130,6 +123,7 @@ export const KonvaTransformer = React.memo(
     return (
       <Transformer
         ref={nodeRef}
+        {...defaultOptionRef.current}
         onDragStart={handleDragStart}
         onDragEnd={handleDragEnd}
       />
