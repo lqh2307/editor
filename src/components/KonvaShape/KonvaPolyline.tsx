@@ -1,8 +1,8 @@
 import { KonvaShape, KonvaShapeAPI, KonvaShapeProp } from "./Types";
 import { parseHexToRGBAString } from "../../utils/Color";
-import { createShapeBox } from "../../utils/Shapes";
+import { createShapeBox, transformPoint, invertPoint } from "../../utils/Shapes";
 import { Portal } from "react-konva-utils";
-import { Line } from "react-konva";
+import { Line, Circle } from "react-konva";
 import Konva from "konva";
 import React from "react";
 
@@ -11,6 +11,7 @@ export const KonvaPolyline = React.memo(
     const nodeRef = React.useRef<Konva.Line>(undefined);
     const currentPropRef = React.useRef<KonvaShapeProp>(prop);
     const [isEnabled, setIsEnabled] = React.useState<boolean>(false);
+    const anchorRefs = React.useRef<Record<string, Konva.Circle>>({});
 
     const applyProp = React.useCallback((): void => {
       const node: Konva.Line = nodeRef.current;
@@ -93,6 +94,21 @@ export const KonvaPolyline = React.memo(
             y: node.y(),
             box: createShapeBox(node),
           });
+
+          // Update anchor positions while dragging
+          const shapeOption: KonvaShape = currentPropRef.current.shapeOption;
+          const pts = shapeOption.points ?? [];
+          for (let i = 0; i < pts.length; i += 2) {
+            const id = `${shapeOption.id}-anchor-${i / 2}`;
+            const anchor = anchorRefs.current[id];
+            if (anchor) {
+              const p = transformPoint({ x: pts[i], y: pts[i + 1] }, shapeOption);
+              anchor.position(p);
+              anchor.offsetX(shapeOption.offsetX);
+              anchor.offsetY(shapeOption.offsetY);
+              anchor.visible(Boolean(currentPropRef.current.isSelected));
+            }
+          }
         }
         currentPropRef.current.onDragMove?.(shapeAPI);
       },
@@ -117,6 +133,18 @@ export const KonvaPolyline = React.memo(
             x: node.x(),
             y: node.y(),
           });
+
+          // Reposition anchors after transform
+          const shapeOption: KonvaShape = currentPropRef.current.shapeOption;
+          const pts = shapeOption.points ?? [];
+          for (let i = 0; i < pts.length; i += 2) {
+            const id = `${shapeOption.id}-anchor-${i / 2}`;
+            const anchor = anchorRefs.current[id];
+            if (anchor) {
+              const p = transformPoint({ x: pts[i], y: pts[i + 1] }, shapeOption);
+              anchor.position(p);
+            }
+          }
         }
         currentPropRef.current.onAppliedProp?.(shapeAPI, "transform-end");
       },
@@ -131,6 +159,29 @@ export const KonvaPolyline = React.memo(
       currentPropRef.current.onMouseLeave?.(shapeAPI);
     }, []);
 
+    const handleAnchorDragMove = React.useCallback(
+      (e: Konva.KonvaEventObject<DragEvent>): void => {
+        const node: Konva.Circle = e.target as Konva.Circle;
+        if (node) {
+          const shapeOption: KonvaShape = currentPropRef.current.shapeOption;
+          const id = node.id() || "";
+          const idxStr = id.split("-anchor-")[1];
+          const idx = Number(idxStr);
+          if (!isNaN(idx)) {
+            const local = invertPoint(node.position(), shapeOption);
+            const pts = shapeOption.points ?? [];
+            const i = idx * 2;
+            pts[i] = local.x;
+            pts[i + 1] = local.y;
+            shapeOption.points = pts;
+            // Update main line points immediately
+            nodeRef.current?.points(pts);
+          }
+        }
+      },
+      []
+    );
+
     return (
       <Portal selector="#shapes" enabled={isEnabled}>
         <Line
@@ -144,6 +195,42 @@ export const KonvaPolyline = React.memo(
           onDragEnd={handleDragEnd}
           onTransformEnd={handleTransformEnd}
         />
+
+        {/* Anchors for each vertex */}
+        {(() => {
+          const shapeOption: KonvaShape = prop.shapeOption;
+          const pts = shapeOption.points ?? [];
+          const circles: React.JSX.Element[] = [];
+          for (let i = 0; i < pts.length; i += 2) {
+            const local = { x: pts[i], y: pts[i + 1] };
+            const p = transformPoint(local, shapeOption);
+            const id = `${shapeOption.id}-anchor-${i / 2}`;
+            circles.push(
+              <Circle
+                key={id}
+                id={id}
+                listening={true}
+                ref={(el) => {
+                  if (el) anchorRefs.current[id] = el as unknown as Konva.Circle;
+                }}
+                draggable={prop.isSelected}
+                visible={prop.isSelected}
+                offsetX={shapeOption.offsetX}
+                offsetY={shapeOption.offsetY}
+                x={p.x}
+                y={p.y}
+                radius={8}
+                stroke={"#555555"}
+                strokeWidth={1}
+                fill={"#dddddd"}
+                onMouseOver={handleMouseOver}
+                onMouseLeave={handleMouseLeave}
+                onDragMove={handleAnchorDragMove}
+              />
+            );
+          }
+          return circles;
+        })()}
       </Portal>
     );
   }
