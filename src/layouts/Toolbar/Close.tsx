@@ -46,7 +46,8 @@ export const ToolbarClose = React.memo((): React.JSX.Element => {
       if (prev) {
         return undefined;
       } else {
-        updateSelectedIds({}, true);
+        // Reset selected ids
+        updateSelectedIds(undefined, true);
 
         return prev;
       }

@@ -45,7 +45,7 @@ import {
 export const PanelStyleTab = React.memo((): React.JSX.Element => {
   const { t } = useTranslation();
 
-  const { selectedShape, croppedIds, updateSelectedIds, updateShape } =
+  const { selectedShape, croppedId, updateCroppedId, updateShape } =
     useShapesContext();
 
   const updateShapeHandler = React.useMemo(
@@ -372,15 +372,7 @@ export const PanelStyleTab = React.memo((): React.JSX.Element => {
   const cropHandler = React.useCallback(
     (value: string): void => {
       if (value) {
-        const selectedIds: string[] = [value];
-
-        updateSelectedIds(
-          {
-            croppeds: croppedIds[value] ? undefined : selectedIds,
-            selecteds: selectedIds,
-          },
-          true
-        );
+        updateCroppedId(croppedId ? undefined : value);
       } else {
         updateShape(
           {
@@ -391,7 +383,7 @@ export const PanelStyleTab = React.memo((): React.JSX.Element => {
         );
       }
     },
-    [croppedIds, updateShape, updateSelectedIds]
+    [croppedId, updateShape, updateCroppedId]
   );
 
   const data: Record<string, SelectInputOption[]> = React.useMemo<
@@ -991,7 +983,7 @@ export const PanelStyleTab = React.memo((): React.JSX.Element => {
           <ButtonGroup variant={"outlined"} size={"small"}>
             <TooltipButton
               sx={{
-                background: croppedIds?.[selectedShape.id] ? "grey" : "",
+                background: croppedId ? "grey" : "",
               }}
               icon={<CropRotateTwoTone fontSize={"small"} />}
               title={t("panel.style.children.crop.children.crop.title")}

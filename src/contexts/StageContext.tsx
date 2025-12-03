@@ -703,6 +703,101 @@ export function StageProvider(prop: StageProviderProp): React.JSX.Element {
     []
   );
 
+  // Store single transformer
+  const singleTransformerRef = React.useRef<KonvaTransformerAPI>(undefined);
+
+  /**
+   * Get single transformer
+   */
+  const getSingleTransformer = React.useCallback((): KonvaTransformerAPI => {
+    return singleTransformerRef.current;
+  }, []);
+
+  /**
+   * Set single transformer
+   */
+  const setSingleTransformer = React.useCallback(
+    (singleTransformer: KonvaTransformerAPI): void => {
+      singleTransformerRef.current = singleTransformer;
+
+      singleTransformer?.updateProp({
+        id: "single-transformer",
+        keepRatio: true,
+        rotationSnaps: [
+          -180, -165, -150, -135, -120, -105, -90, -75, -60, -45, -30, -15, 0,
+          15, 30, 45, 60, 75, 90, 105, 120, 135, 150, 165, 180,
+        ],
+        rotationSnapTolerance: 3,
+        ignoreStroke: false,
+        flipEnabled: true,
+        borderStroke: "#0000ff",
+        borderStrokeWidth: 1.5,
+        borderDash: [20, 10],
+        enabledAnchors: [
+          "top-left",
+          "top-center",
+          "top-right",
+          "middle-right",
+          "middle-left",
+          "bottom-left",
+          "bottom-center",
+          "bottom-right",
+        ],
+        anchorStyleFunc: (anchor) => {
+          if (anchor.hasName("top-center") || anchor.hasName("bottom-center")) {
+            anchor.setAttrs({
+              fill: "#00a5ff",
+              stroke: "#0000ff",
+              strokeWidth: 1,
+              cornerRadius: 2,
+              height: 4,
+              offsetY: 2,
+              width: 16,
+              offsetX: 8,
+            });
+          } else if (
+            anchor.hasName("middle-left") ||
+            anchor.hasName("middle-right")
+          ) {
+            anchor.setAttrs({
+              fill: "#00a5ff",
+              stroke: "#0000ff",
+              strokeWidth: 1,
+              cornerRadius: 2,
+              height: 16,
+              offsetY: 8,
+              width: 4,
+              offsetX: 2,
+            });
+          } else if (anchor.hasName("rotater")) {
+            anchor.setAttrs({
+              fill: "#00a5ff",
+              stroke: "#0000ff",
+              strokeWidth: 1.5,
+              cornerRadius: 6,
+              height: 12,
+              offsetY: 6,
+              width: 12,
+              offsetX: 6,
+            });
+          } else {
+            anchor.setAttrs({
+              fill: "#00a5ff",
+              stroke: "#0000ff",
+              strokeWidth: 1,
+              cornerRadius: 4,
+              height: 8,
+              offsetY: 4,
+              width: 8,
+              offsetX: 4,
+            });
+          }
+        },
+      });
+    },
+    []
+  );
+
   // Store guideLines
   const guideLinesRef = React.useRef<KonvaGuideLinesAPI>(undefined);
 
@@ -1120,6 +1215,9 @@ export function StageProvider(prop: StageProviderProp): React.JSX.Element {
 
       getTransformer,
       setTransformer,
+
+      getSingleTransformer,
+      setSingleTransformer,
 
       getGuideLines,
       setGuideLines,

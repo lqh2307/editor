@@ -49,6 +49,8 @@ export const Canvas = React.memo((): React.JSX.Element => {
     setCropper,
     getTransformer,
     setTransformer,
+    getSingleTransformer,
+    setSingleTransformer,
     dragStage,
     zoomStage,
     getIsStageDragable,
@@ -122,6 +124,15 @@ export const Canvas = React.memo((): React.JSX.Element => {
       }
     },
     [setGuideLines, getGuideLines]
+  );
+
+  const assignSingleTransformer = React.useCallback(
+    (singleTransformer: KonvaTransformerAPI): void => {
+      if (!getSingleTransformer()) {
+        setSingleTransformer(singleTransformer);
+      }
+    },
+    [setSingleTransformer, getSingleTransformer]
   );
 
   const assignCropper = React.useCallback(
@@ -388,6 +399,7 @@ export const Canvas = React.memo((): React.JSX.Element => {
             updateShape({ id: freeDrawingInfo.shapeId, points: pts.slice(0), type: "polyline" }, true, false);
           }
         } else if (e.target instanceof Konva.Stage) {
+<<<<<<< HEAD
           // Start marquee selection
           const p: Vector2d = getStagePointerPosition();
           if (!p) return;
@@ -397,6 +409,10 @@ export const Canvas = React.memo((): React.JSX.Element => {
           didSelectRef.current = false;
           selectStartRef.current = p;
           setSelectRect({ x: p.x, y: p.y, width: 0, height: 0, visible: true });
+=======
+          // Reset selected ids
+          updateSelectedIds(undefined, true);
+>>>>>>> origin/tmp
         }
       }
     },
@@ -588,7 +604,7 @@ export const Canvas = React.memo((): React.JSX.Element => {
           return;
         }
         // Reset selected ids
-        updateSelectedIds({}, true);
+        updateSelectedIds(undefined, true);
       }
     },
     [updateSelectedIds]
@@ -627,6 +643,8 @@ export const Canvas = React.memo((): React.JSX.Element => {
           <KonvaTransformer ref={assignCropper} />
 
           <KonvaTransformer ref={assignTransformer} />
+
+          <KonvaTransformer ref={assignSingleTransformer} />
         </Layer>
 
         {/* Guide line/Tooltip */}

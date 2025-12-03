@@ -115,6 +115,11 @@ export const KonvaWedge = React.memo(
       []
     );
 
+    const handleDragStart = React.useCallback((): void => {
+      // Call callback function
+      currentPropRef.current.onDragStart?.(shapeAPI);
+    }, []);
+
     const handleDragMove = React.useCallback(
       (e: Konva.KonvaEventObject<DragEvent>): void => {
         const node: Konva.Wedge = e.target as Konva.Wedge;
@@ -181,6 +186,7 @@ export const KonvaWedge = React.memo(
           onMouseOver={handleMouseOver}
           onMouseLeave={handleMouseLeave}
           onDragMove={handleDragMove}
+          onDragStart={handleDragStart}
           onDragEnd={handleDragEnd}
           onTransformEnd={handleTransformEnd}
         />

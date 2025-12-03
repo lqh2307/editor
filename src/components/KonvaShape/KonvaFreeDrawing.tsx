@@ -154,6 +154,11 @@ export const KonvaFreeDrawing = React.memo(
       []
     );
 
+    const handleDragStart = React.useCallback((): void => {
+      // Call callback function
+      currentPropRef.current.onDragStart?.(shapeAPI);
+    }, []);
+
     const handleDragMove = React.useCallback(
       (e: Konva.KonvaEventObject<DragEvent>): void => {
         const node: Konva.Group = e.target as Konva.Group;
@@ -218,6 +223,7 @@ export const KonvaFreeDrawing = React.memo(
           onMouseOver={handleMouseOver}
           onMouseLeave={handleMouseLeave}
           onDragMove={handleDragMove}
+          onDragStart={handleDragStart}
           onDragEnd={handleDragEnd}
           onTransformEnd={handleTransformEnd}
         />

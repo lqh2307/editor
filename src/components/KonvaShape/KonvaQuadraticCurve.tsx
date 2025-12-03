@@ -178,6 +178,11 @@ export const KonvaQuadraticCurve = React.memo(
       []
     );
 
+    const handleDragStart = React.useCallback((): void => {
+      // Call callback function
+      currentPropRef.current.onDragStart?.(shapeAPI);
+    }, []);
+
     const handleDragMove = React.useCallback(
       (e: Konva.KonvaEventObject<DragEvent>): void => {
         const node: Konva.Line = e.target as Konva.Line;
@@ -376,6 +381,7 @@ export const KonvaQuadraticCurve = React.memo(
           onMouseOver={handleMouseOver}
           onMouseLeave={handleMouseLeave}
           onDragMove={handleDragMove}
+          onDragStart={handleDragStart}
           onDragEnd={handleDragEnd}
           onTransform={handleTransform}
           onTransformEnd={handleTransformEnd}

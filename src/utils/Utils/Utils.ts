@@ -394,3 +394,35 @@ export function fromPixel(pixels: number, unit: Unit, ppi: number): number {
 
   return (pixels * 0.0254) / ((ppi ?? 96) * (factors[unit] ?? factors["m"]));
 }
+
+/**
+ * Differance two arrays
+ * @param {string[]} arr1 Array 1
+ * @param {string[]} arr2 Array 2
+ * @param {boolean} emptyAsUndefined Undefined as empty
+ * @returns {string[]} Result
+ */
+export function differanceArray(
+  arr1: string[],
+  arr2: string[],
+  emptyAsUndefined: boolean
+): string[] {
+  const arr2Set: Set<string> = new Set(arr2);
+  const result: string[] = [];
+
+  for (const item of arr1) {
+    if (!arr2Set.has(item)) {
+      result.push(item);
+    }
+  }
+
+  if (result.length) {
+    return result;
+  } else {
+    if (emptyAsUndefined) {
+      return;
+    } else {
+      return result;
+    }
+  }
+}
