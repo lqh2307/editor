@@ -116,8 +116,6 @@ export const KonvaImage = React.memo(
 
           cropElementNodeRef.current.setAttrs(shapeOption.clip);
         } else if (previousIsCroppedRef.current && !prop.isCropped) {
-          console.log("Cropped end!");
-
           cropImageNodeRef.current?.visible(false);
         } else if (!previousIsCroppedRef.current && prop.isCropped) {
           cropImageNodeRef.current.setAttrs({

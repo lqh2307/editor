@@ -1,4 +1,3 @@
-import { KonvaTransformerAPI } from "../../components/KonvaTransformer";
 import { KonvaGuideLinesAPI } from "../../components/KonvaGuideLines";
 import { calculateGroupShapeBox } from "../../utils/Shapes";
 import Konva from "konva";
@@ -40,17 +39,15 @@ export const CanvasShapes = React.memo((): React.JSX.Element => {
     stageWidth,
     stageHeight,
     getGuideLines,
-    getCropper,
     expandStage,
-    getTransformer,
     setPointerStyle,
-    getSingleTransformer,
   } = useStageContext();
 
   const {
     shapeList,
     croppedId,
     shapeRefs,
+    transformerRefs,
     selectedIds,
     selectedGroupIds,
     singleSelectedIds,
@@ -341,10 +338,12 @@ export const CanvasShapes = React.memo((): React.JSX.Element => {
 
   // Update cropper/transformer
   React.useEffect(() => {
-    const cropper: KonvaTransformerAPI = getCropper?.();
-    const transformer: KonvaTransformerAPI = getTransformer?.();
-    const singleTransformer: KonvaTransformerAPI = getSingleTransformer?.();
-    if (!cropper || !transformer || !singleTransformer) {
+    if (
+      !transformerRefs ||
+      !transformerRefs["cropper"] ||
+      !transformerRefs["transformer"] ||
+      !transformerRefs["single-transformer"]
+    ) {
       return;
     }
 
@@ -380,26 +379,18 @@ export const CanvasShapes = React.memo((): React.JSX.Element => {
       });
     }
 
-    cropper.updateProp({
-      nodes: cropperNodes,
-    });
-
-    transformer.updateProp({
-      nodes: transformerNodes,
-    });
-
-    singleTransformer.updateProp({
-      nodes: singleTransformerNodes,
-    });
+    transformerRefs["cropper"].getNode().nodes(cropperNodes);
+    transformerRefs["transformer"].getNode().nodes(transformerNodes);
+    transformerRefs["single-transformer"]
+      .getNode()
+      .nodes(singleTransformerNodes);
   }, [
     shapeRefs,
+    transformerRefs,
     croppedId,
     selectedIds,
     singleSelectedIds,
     freeDrawingMode,
-    getCropper,
-    getTransformer,
-    getSingleTransformer,
   ]);
 
   const renderedShapeList = React.useMemo(() => {
@@ -705,6 +696,7 @@ export const CanvasShapes = React.memo((): React.JSX.Element => {
     });
   }, [
     shapeList,
+    croppedId,
     selectedIds,
     freeDrawingMode,
     handleShapeClick,

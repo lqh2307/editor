@@ -1,96 +1,132 @@
-import { KonvaTransformerProp, KonvaTransformerAPI } from "./Types";
+import { KonvaTransformerProp, KonvaTransformerAPI, KonvaTFM } from "./Types";
 import { Transformer } from "react-konva";
 import Konva from "konva";
 import React from "react";
 
 export const KonvaTransformer = React.memo(
-  React.forwardRef<KonvaTransformerAPI, KonvaTransformerProp>(
-    (prop, ref): React.JSX.Element => {
-      const nodeRef = React.useRef<Konva.Transformer>(undefined);
-      const currentPropRef = React.useRef<KonvaTransformerProp>(prop);
+  (prop: KonvaTransformerProp): React.JSX.Element => {
+    const nodeRef = React.useRef<Konva.Transformer>(undefined);
+    const currentPropRef = React.useRef<KonvaTransformerProp>(prop);
 
-      // Apply prop
-      const applyProp = React.useCallback((): void => {
-        const node: Konva.Transformer = nodeRef.current;
-        if (!node) {
-          return;
-        }
+    const defaultOptionRef = React.useRef<KonvaTFM>({
+      listening: true,
+      draggable: true,
+      keepRatio: true,
+      rotationSnaps: [
+        -180, -165, -150, -135, -120, -105, -90, -75, -60, -45, -30, -15, 0, 15,
+        30, 45, 60, 75, 90, 105, 120, 135, 150, 165, 180,
+      ],
+      rotationSnapTolerance: 3,
+      ignoreStroke: false,
+      flipEnabled: true,
+      enabledAnchors: [
+        "top-left",
+        "top-center",
+        "top-right",
+        "middle-right",
+        "middle-left",
+        "bottom-left",
+        "bottom-center",
+        "bottom-right",
+      ],
+      nodes: [],
+    });
 
+    // Apply prop
+    const applyProp = React.useCallback((): void => {
+      const node: Konva.Transformer = nodeRef.current;
+      if (node) {
         // Update node attrs
-        node.setAttrs(currentPropRef.current);
-      }, []);
+        node.setAttrs(currentPropRef.current.transformerOption);
+      }
+    }, []);
 
-      // Update prop
-      const updateProp = React.useCallback(
-        (prop?: KonvaTransformerProp): void => {
-          if (prop) {
-            Object.assign(currentPropRef.current, prop);
-          }
-
-          applyProp();
-        },
-        []
-      );
-
-      // Get stage
-      const getStage = React.useCallback((): Konva.Stage => {
-        const node: Konva.Transformer = nodeRef.current;
-        if (node) {
-          return node.getStage();
+    // Update prop
+    const updateProp = React.useCallback(
+      (prop?: KonvaTransformerProp): void => {
+        if (prop) {
+          Object.assign(currentPropRef.current, prop);
         }
-      }, []);
-
-      // Get node
-      const getNode = React.useCallback((): Konva.Transformer => {
-        return nodeRef.current;
-      }, []);
-
-      // Get prop
-      const getShape = React.useCallback((): KonvaTransformerProp => {
-        return currentPropRef.current;
-      }, []);
-
-      // Shape API
-      const shapeAPI: KonvaTransformerAPI = React.useMemo(
-        () => ({
-          updateProp,
-          getStage,
-          getNode,
-          getShape,
-        }),
-        []
-      );
-
-      // Update prop
-      React.useEffect(() => {
-        currentPropRef.current = prop;
 
         applyProp();
-      }, [prop]);
+      },
+      []
+    );
 
-      // Expose API
-      React.useImperativeHandle(ref, (): KonvaTransformerAPI => shapeAPI, []);
+    // Update transformer
+    const updateTransformer = React.useCallback(
+      (transformer?: KonvaTFM): void => {
+        if (transformer) {
+          Object.assign(currentPropRef.current.transformerOption, transformer);
+        }
 
-      const handleDragStart = React.useCallback((): void => {
+        applyProp();
+      },
+      []
+    );
+
+    // Get stage
+    const getStage = React.useCallback((): Konva.Stage => {
+      const node: Konva.Transformer = nodeRef.current;
+      if (node) {
+        return node.getStage();
+      }
+    }, []);
+
+    // Get node
+    const getNode = React.useCallback((): Konva.Transformer => {
+      return nodeRef.current;
+    }, []);
+
+    // Get transformer
+    const getTransformer = React.useCallback((): KonvaTFM => {
+      return currentPropRef.current.transformerOption;
+    }, []);
+
+    // Transformer API
+    const transformerAPI: KonvaTransformerAPI = React.useMemo(
+      () => ({
+        updateProp,
+        updateTransformer,
+        getStage,
+        getNode,
+        getTransformer,
+      }),
+      []
+    );
+
+    // Update shape
+    React.useEffect(() => {
+      currentPropRef.current = prop;
+
+      applyProp();
+
+      // Call callback function
+      prop.onMounted?.(prop.transformerOption.id, transformerAPI);
+
+      return () => {
         // Call callback function
-        currentPropRef.current.onDragStart?.(shapeAPI);
-      }, []);
+        prop.onUnMounted?.(prop.transformerOption.id);
+      };
+    }, [prop]);
 
-      const handleDragEnd = React.useCallback((): void => {
-        // Call callback function
-        currentPropRef.current.onDragEnd?.(shapeAPI);
-      }, []);
+    const handleDragStart = React.useCallback((): void => {
+      // Call callback function
+      currentPropRef.current.onDragStart?.(transformerAPI);
+    }, []);
 
-      return (
-        <Transformer
-          listening={true}
-          draggable={false}
-          ref={nodeRef}
-          id={prop.id}
-          onDragStart={handleDragStart}
-          onDragEnd={handleDragEnd}
-        />
-      );
-    }
-  )
+    const handleDragEnd = React.useCallback((): void => {
+      // Call callback function
+      currentPropRef.current.onDragEnd?.(transformerAPI);
+    }, []);
+
+    return (
+      <Transformer
+        ref={nodeRef}
+        {...defaultOptionRef.current}
+        onDragStart={handleDragStart}
+        onDragEnd={handleDragEnd}
+      />
+    );
+  }
 );
