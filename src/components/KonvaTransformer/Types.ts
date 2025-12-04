@@ -10,8 +10,6 @@ export type KonvaTransformerProp = {
   // Callback handlers
   onMounted?: (id?: string, transformerAPI?: KonvaTransformerAPI) => void;
   onUnMounted?: (id?: string) => void;
-  onDragStart?: (transformerAPI?: KonvaTransformerAPI) => void;
-  onDragEnd?: (transformerAPI?: KonvaTransformerAPI) => void;
 };
 
 export type KonvaTransformerAPI = {

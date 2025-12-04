@@ -117,9 +117,14 @@ export const KonvaRectangle = React.memo(
       []
     );
 
-    const handleDragStart = React.useCallback((): void => {
+    const handleMouseDown = React.useCallback((): void => {
       // Call callback function
-      currentPropRef.current.onDragStart?.(shapeAPI);
+      currentPropRef.current.onMouseDown?.(shapeAPI);
+    }, []);
+
+    const handleMouseUp = React.useCallback((): void => {
+      // Call callback function
+      currentPropRef.current.onMouseUp?.(shapeAPI);
     }, []);
 
     const handleDragMove = React.useCallback(
@@ -186,7 +191,8 @@ export const KonvaRectangle = React.memo(
           onMouseOver={handleMouseOver}
           onMouseLeave={handleMouseLeave}
           onDragMove={handleDragMove}
-          onDragStart={handleDragStart}
+          onMouseDown={handleMouseDown}
+          onMouseUp={handleMouseUp}
           onDragEnd={handleDragEnd}
           onTransformEnd={handleTransformEnd}
         />
