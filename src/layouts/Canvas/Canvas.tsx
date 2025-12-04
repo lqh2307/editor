@@ -58,12 +58,10 @@ export const Canvas = React.memo((): React.JSX.Element => {
 
   const {
     selectedShape,
-    updateShape,
-    addShapes,
-    updateSelectedIds,
     transformerRefs,
-    // singleSelectedIds,
-    // selectedIds,
+    addShapes,
+    updateShape,
+    updateSelectedIds,
   } = useShapesContext();
 
   const { freeDrawingMode, setFreeDrawingMode } = useFreeDrawingContext();
@@ -75,8 +73,6 @@ export const Canvas = React.memo((): React.JSX.Element => {
     isDrawing: false,
     shapeId: undefined,
   });
-
-  // const nodesRef = React.useRef<Konva.Node[]>(undefined);
 
   const assignStage = React.useCallback(
     (stage: Konva.Stage): void => {
@@ -286,10 +282,19 @@ export const Canvas = React.memo((): React.JSX.Element => {
     },
   });
 
-  const assignTransformer = React.useCallback(
+  const handleOnMounted = React.useCallback(
     (id?: string, transformer?: KonvaTransformerAPI): void => {
       if (!transformerRefs[id]) {
         transformerRefs[id] = transformer;
+      }
+    },
+    [transformerRefs]
+  );
+
+  const handleOnUnMounted = React.useCallback(
+    (id?: string): void => {
+      if (transformerRefs[id]) {
+        delete transformerRefs[id];
       }
     },
     [transformerRefs]
@@ -568,54 +573,6 @@ export const Canvas = React.memo((): React.JSX.Element => {
     [updateSelectedIds]
   );
 
-  // const handleShapeDragStart = React.useCallback(
-  //   (shapeAPI: KonvaTransformerAPI): void => {
-  //     const id: string = shapeAPI.getTransformer().id;
-
-  //     if (id === "single-transformer") {
-  //       const transformer: Konva.Transformer =
-  //         transformerRefs["transformer"].getNode();
-
-  //       nodesRef.current = transformer.nodes();
-
-  //       transformer.nodes([]);
-  //     } else if (id === "transformer") {
-  //       const transformer: Konva.Transformer =
-  //         transformerRefs["single-transformer"].getNode();
-
-  //       nodesRef.current = transformer.nodes();
-
-  //       transformer.nodes([]);
-  //     }
-  //   },
-  //   [transformerRefs, selectedIds, singleSelectedIds]
-  // );
-
-  // const handleShapeDragEnd = React.useCallback(
-  //   (shapeAPI: KonvaTransformerAPI): void => {
-  //     const id: string = shapeAPI.getTransformer().id;
-  //     const transformer: Konva.Transformer = shapeAPI.getNode();
-  //     const nodes: Konva.Node[] = transformer.nodes();
-
-  //     if (id === "single-transformer" && nodes.length) {
-  //       const otherTransformer: Konva.Transformer =
-  //         transformerRefs["transformer"].getNode();
-
-  //       otherTransformer.nodes(nodesRef.current);
-
-  //       nodesRef.current = undefined;
-  //     } else if (id === "transformer" && nodes.length) {
-  //       const transformer: Konva.Transformer =
-  //         transformerRefs["single-transformer"].getNode();
-
-  //       transformer.nodes(nodesRef.current);
-
-  //       nodesRef.current = undefined;
-  //     }
-  //   },
-  //   [transformerRefs, selectedIds, singleSelectedIds]
-  // );
-
   return (
     <Box
       sx={{ width: "100%", height: "100%" }}
@@ -647,21 +604,20 @@ export const Canvas = React.memo((): React.JSX.Element => {
 
           <KonvaTransformer
             transformerOption={cropperOptionRef.current}
-            onMounted={assignTransformer}
+            onMounted={handleOnMounted}
+            onUnMounted={handleOnUnMounted}
           />
 
           <KonvaTransformer
             transformerOption={transformerOptionRef.current}
-            onMounted={assignTransformer}
-            // onDragStart={handleShapeDragStart}
-            // onDragEnd={handleShapeDragEnd}
+            onMounted={handleOnMounted}
+            onUnMounted={handleOnUnMounted}
           />
 
           <KonvaTransformer
             transformerOption={singleTransformerOptionRef.current}
-            onMounted={assignTransformer}
-            // onDragStart={handleShapeDragStart}
-            // onDragEnd={handleShapeDragEnd}
+            onMounted={handleOnMounted}
+            onUnMounted={handleOnUnMounted}
           />
         </Layer>
 

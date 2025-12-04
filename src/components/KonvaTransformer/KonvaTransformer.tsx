@@ -110,23 +110,6 @@ export const KonvaTransformer = React.memo(
       };
     }, [prop]);
 
-    const handleDragStart = React.useCallback((): void => {
-      // Call callback function
-      currentPropRef.current.onDragStart?.(transformerAPI);
-    }, []);
-
-    const handleDragEnd = React.useCallback((): void => {
-      // Call callback function
-      currentPropRef.current.onDragEnd?.(transformerAPI);
-    }, []);
-
-    return (
-      <Transformer
-        ref={nodeRef}
-        {...defaultOptionRef.current}
-        onDragStart={handleDragStart}
-        onDragEnd={handleDragEnd}
-      />
-    );
+    return <Transformer ref={nodeRef} {...defaultOptionRef.current} />;
   }
 );

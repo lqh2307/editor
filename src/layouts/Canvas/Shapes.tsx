@@ -58,6 +58,8 @@ export const CanvasShapes = React.memo((): React.JSX.Element => {
 
   const { freeDrawingMode } = useFreeDrawingContext();
 
+  const hiddenNodesRef = React.useRef<Konva.Node[]>(undefined);
+
   const handleShapeClick = React.useCallback(
     (e: Konva.KonvaEventObject<MouseEvent>, shapeAPI: KonvaShapeAPI): void => {
       if (freeDrawingMode) {
@@ -335,6 +337,48 @@ export const CanvasShapes = React.memo((): React.JSX.Element => {
     [shapeRefs]
   );
 
+  const handleShapeMouseDown = React.useCallback(
+    (shapeAPI: KonvaShapeAPI): void => {
+      const id: string = shapeAPI.getShape().id;
+
+      if (singleSelectedIds[id]) {
+        const transformer: Konva.Transformer =
+          transformerRefs["transformer"].getNode();
+
+        hiddenNodesRef.current = transformer.nodes();
+
+        transformer.nodes([]);
+      } else if (selectedIds[id]) {
+        const transformer: Konva.Transformer =
+          transformerRefs["single-transformer"].getNode();
+
+        hiddenNodesRef.current = transformer.nodes();
+
+        transformer.nodes([]);
+      }
+    },
+    [transformerRefs, selectedIds, singleSelectedIds]
+  );
+
+  const handleShapeMouseUp = React.useCallback(
+    (shapeAPI: KonvaShapeAPI): void => {
+      const id: string = shapeAPI.getShape().id;
+
+      if (singleSelectedIds[id]) {
+        transformerRefs["transformer"].getNode().nodes(hiddenNodesRef.current);
+
+        hiddenNodesRef.current = undefined;
+      } else if (selectedIds[id]) {
+        transformerRefs["single-transformer"]
+          .getNode()
+          .nodes(hiddenNodesRef.current);
+
+        hiddenNodesRef.current = undefined;
+      }
+    },
+    [transformerRefs, selectedIds, singleSelectedIds]
+  );
+
   // Update cropper/transformer
   React.useEffect(() => {
     if (
@@ -395,7 +439,6 @@ export const CanvasShapes = React.memo((): React.JSX.Element => {
   const renderedShapeList = React.useMemo(() => {
     return shapeList?.map((item) => {
       const isSelected: boolean = !!selectedIds?.[item.id];
-      const isCropped: boolean = croppedId === item.id;
 
       switch (item.type) {
         default: {
@@ -412,6 +455,8 @@ export const CanvasShapes = React.memo((): React.JSX.Element => {
               onMouseLeave={handleShapeMouseLeave}
               onDragMove={handleShapeDragMove}
               onAppliedProp={handleAppliedProp}
+              onMouseDown={handleShapeMouseDown}
+              onMouseUp={handleShapeMouseUp}
               isSelected={isSelected}
               shapeOption={item}
               key={item.id}
@@ -429,6 +474,8 @@ export const CanvasShapes = React.memo((): React.JSX.Element => {
               onMouseLeave={handleShapeMouseLeave}
               onDragMove={handleShapeDragMove}
               onAppliedProp={handleAppliedProp}
+              onMouseDown={handleShapeMouseDown}
+              onMouseUp={handleShapeMouseUp}
               isSelected={isSelected}
               shapeOption={item}
               key={item.id}
@@ -446,6 +493,8 @@ export const CanvasShapes = React.memo((): React.JSX.Element => {
               onMouseLeave={handleShapeMouseLeave}
               onDragMove={handleShapeDragMove}
               onAppliedProp={handleAppliedProp}
+              onMouseDown={handleShapeMouseDown}
+              onMouseUp={handleShapeMouseUp}
               isSelected={isSelected}
               shapeOption={item}
               key={item.id}
@@ -463,6 +512,8 @@ export const CanvasShapes = React.memo((): React.JSX.Element => {
               onMouseLeave={handleShapeMouseLeave}
               onDragMove={handleShapeDragMove}
               onAppliedProp={handleAppliedProp}
+              onMouseDown={handleShapeMouseDown}
+              onMouseUp={handleShapeMouseUp}
               isSelected={isSelected}
               shapeOption={item}
               key={item.id}
@@ -480,6 +531,8 @@ export const CanvasShapes = React.memo((): React.JSX.Element => {
               onMouseLeave={handleShapeMouseLeave}
               onDragMove={handleShapeDragMove}
               onAppliedProp={handleAppliedProp}
+              onMouseDown={handleShapeMouseDown}
+              onMouseUp={handleShapeMouseUp}
               isSelected={isSelected}
               shapeOption={item}
               key={item.id}
@@ -497,6 +550,8 @@ export const CanvasShapes = React.memo((): React.JSX.Element => {
               onMouseLeave={handleShapeMouseLeave}
               onDragMove={handleShapeDragMove}
               onAppliedProp={handleAppliedProp}
+              onMouseDown={handleShapeMouseDown}
+              onMouseUp={handleShapeMouseUp}
               isSelected={isSelected}
               shapeOption={item}
               key={item.id}
@@ -514,6 +569,8 @@ export const CanvasShapes = React.memo((): React.JSX.Element => {
               onMouseLeave={handleShapeMouseLeave}
               onDragMove={handleShapeDragMove}
               onAppliedProp={handleAppliedProp}
+              onMouseDown={handleShapeMouseDown}
+              onMouseUp={handleShapeMouseUp}
               isSelected={isSelected}
               shapeOption={item}
               key={item.id}
@@ -531,6 +588,8 @@ export const CanvasShapes = React.memo((): React.JSX.Element => {
               onMouseLeave={handleShapeMouseLeave}
               onDragMove={handleShapeDragMove}
               onAppliedProp={handleAppliedProp}
+              onMouseDown={handleShapeMouseDown}
+              onMouseUp={handleShapeMouseUp}
               isSelected={isSelected}
               shapeOption={item}
               key={item.id}
@@ -548,7 +607,9 @@ export const CanvasShapes = React.memo((): React.JSX.Element => {
               onMouseLeave={handleShapeMouseLeave}
               onDragMove={handleShapeDragMove}
               onAppliedProp={handleAppliedProp}
-              isCropped={isCropped}
+              onMouseDown={handleShapeMouseDown}
+              onMouseUp={handleShapeMouseUp}
+              isCropped={croppedId === item.id}
               isSelected={isSelected}
               shapeOption={item}
               key={item.id}
@@ -566,6 +627,8 @@ export const CanvasShapes = React.memo((): React.JSX.Element => {
               onMouseLeave={handleShapeMouseLeave}
               onDragMove={handleShapeDragMove}
               onAppliedProp={handleAppliedProp}
+              onMouseDown={handleShapeMouseDown}
+              onMouseUp={handleShapeMouseUp}
               isSelected={isSelected}
               shapeOption={item}
               key={item.id}
@@ -583,6 +646,8 @@ export const CanvasShapes = React.memo((): React.JSX.Element => {
               onMouseLeave={handleShapeMouseLeave}
               onDragMove={handleShapeDragMove}
               onAppliedProp={handleAppliedProp}
+              onMouseDown={handleShapeMouseDown}
+              onMouseUp={handleShapeMouseUp}
               isSelected={isSelected}
               shapeOption={item}
               key={item.id}
@@ -600,6 +665,8 @@ export const CanvasShapes = React.memo((): React.JSX.Element => {
               onMouseLeave={handleShapeMouseLeave}
               onDragMove={handleShapeDragMove}
               onAppliedProp={handleAppliedProp}
+              onMouseDown={handleShapeMouseDown}
+              onMouseUp={handleShapeMouseUp}
               isSelected={isSelected}
               shapeOption={item}
               key={item.id}
@@ -617,6 +684,8 @@ export const CanvasShapes = React.memo((): React.JSX.Element => {
               onMouseLeave={handleShapeMouseLeave}
               onDragMove={handleShapeDragMove}
               onAppliedProp={handleAppliedProp}
+              onMouseDown={handleShapeMouseDown}
+              onMouseUp={handleShapeMouseUp}
               isSelected={isSelected && !freeDrawingMode}
               shapeOption={item}
               key={item.id}
@@ -634,6 +703,8 @@ export const CanvasShapes = React.memo((): React.JSX.Element => {
               onMouseLeave={handleShapeMouseLeave}
               onDragMove={handleShapeDragMove}
               onAppliedProp={handleAppliedProp}
+              onMouseDown={handleShapeMouseDown}
+              onMouseUp={handleShapeMouseUp}
               isSelected={isSelected}
               shapeOption={item}
               key={item.id}
@@ -651,6 +722,8 @@ export const CanvasShapes = React.memo((): React.JSX.Element => {
               onMouseLeave={handleShapeMouseLeave}
               onDragMove={handleShapeDragMove}
               onAppliedProp={handleAppliedProp}
+              onMouseDown={handleShapeMouseDown}
+              onMouseUp={handleShapeMouseUp}
               isSelected={isSelected}
               shapeOption={item}
               key={item.id}
@@ -668,6 +741,8 @@ export const CanvasShapes = React.memo((): React.JSX.Element => {
               onMouseLeave={handleShapeMouseLeave}
               onDragMove={handleShapeDragMove}
               onAppliedProp={handleAppliedProp}
+              onMouseDown={handleShapeMouseDown}
+              onMouseUp={handleShapeMouseUp}
               isSelected={isSelected}
               shapeOption={item}
               key={item.id}
