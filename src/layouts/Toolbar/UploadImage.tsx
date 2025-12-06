@@ -142,7 +142,7 @@ export const ToolbarUploadImage = React.memo((): React.JSX.Element => {
           />
         </Box>
       );
-    }, [t]);
+    }, []);
 
   const dialogContent: React.JSX.Element =
     React.useMemo((): React.JSX.Element => {

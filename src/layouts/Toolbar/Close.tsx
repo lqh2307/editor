@@ -74,7 +74,7 @@ export const ToolbarClose = React.memo((): React.JSX.Element => {
           />
         </Box>
       );
-    }, [t]);
+    }, []);
 
   const closeDialogContent: React.JSX.Element =
     React.useMemo((): React.JSX.Element => {
@@ -93,7 +93,7 @@ export const ToolbarClose = React.memo((): React.JSX.Element => {
           </Typography>
         </Box>
       );
-    }, [t]);
+    }, []);
 
   const closeDialogAction: React.JSX.Element =
     React.useMemo((): React.JSX.Element => {
@@ -114,7 +114,7 @@ export const ToolbarClose = React.memo((): React.JSX.Element => {
           </TooltipButton>
         </>
       );
-    }, [t]);
+    }, []);
 
   useDebounceHotKey({
     keys: ["esc", "escape"],

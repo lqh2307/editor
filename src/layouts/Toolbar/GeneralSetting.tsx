@@ -133,7 +133,7 @@ export const ToolbarGeneralSetting = React.memo((): React.JSX.Element => {
         ),
         value: item,
       })),
-    [t]
+    []
   );
 
   const changeStageSizeHandler = React.useMemo(() => {
@@ -167,7 +167,7 @@ export const ToolbarGeneralSetting = React.memo((): React.JSX.Element => {
           />
         </Box>
       );
-    }, [t]);
+    }, []);
 
   const dialogContent: React.JSX.Element =
     React.useMemo((): React.JSX.Element => {
@@ -401,7 +401,7 @@ export const ToolbarGeneralSetting = React.memo((): React.JSX.Element => {
           {t("toolBar.setting.common.button.ok")}
         </TooltipButton>
       );
-    }, [t]);
+    }, []);
 
   return (
     <>

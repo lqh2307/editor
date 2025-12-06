@@ -407,7 +407,7 @@ export const PanelStyleTab = React.memo((): React.JSX.Element => {
         value: item,
       })),
     }),
-    [t]
+    []
   );
 
   return (

@@ -83,7 +83,7 @@ export const ToolbarHelp = React.memo((): React.JSX.Element => {
           />
         </Box>
       );
-    }, [t]);
+    }, []);
 
   const guideDialogContent: React.JSX.Element =
     React.useMemo((): React.JSX.Element => {
@@ -259,7 +259,7 @@ export const ToolbarHelp = React.memo((): React.JSX.Element => {
           </Accordion>
         </>
       );
-    }, [t]);
+    }, []);
 
   const guideDialogAction: React.JSX.Element =
     React.useMemo((): React.JSX.Element => {
@@ -271,7 +271,7 @@ export const ToolbarHelp = React.memo((): React.JSX.Element => {
           {t("toolBar.help.common.button.close")}
         </TooltipButton>
       );
-    }, [t]);
+    }, []);
 
   const aboutDialogTitle: React.JSX.Element =
     React.useMemo((): React.JSX.Element => {
@@ -293,7 +293,7 @@ export const ToolbarHelp = React.memo((): React.JSX.Element => {
           />
         </Box>
       );
-    }, [t]);
+    }, []);
 
   const aboutDialogContent: React.JSX.Element =
     React.useMemo((): React.JSX.Element => {
@@ -561,7 +561,7 @@ export const ToolbarHelp = React.memo((): React.JSX.Element => {
           </Accordion>
         </>
       );
-    }, [t]);
+    }, []);
 
   const aboutDialogAction: React.JSX.Element =
     React.useMemo((): React.JSX.Element => {
@@ -573,7 +573,7 @@ export const ToolbarHelp = React.memo((): React.JSX.Element => {
           {t("toolBar.help.common.button.close")}
         </TooltipButton>
       );
-    }, [t]);
+    }, []);
 
   return (
     <>

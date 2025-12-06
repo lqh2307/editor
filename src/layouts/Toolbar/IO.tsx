@@ -449,7 +449,7 @@ export const ToolbarIO = React.memo((): React.JSX.Element => {
         value: item,
       })),
     }),
-    [t]
+    []
   );
 
   // Store setting initial state
@@ -963,7 +963,7 @@ export const ToolbarIO = React.memo((): React.JSX.Element => {
           />
         </Box>
       );
-    }, [t]);
+    }, []);
 
   const exportDialogContent: React.JSX.Element =
     React.useMemo((): React.JSX.Element => {
@@ -1533,7 +1533,7 @@ export const ToolbarIO = React.memo((): React.JSX.Element => {
           />
         </Box>
       );
-    }, [t]);
+    }, []);
 
   const saveToCloudDialogContent: React.JSX.Element =
     React.useMemo((): React.JSX.Element => {
@@ -1614,7 +1614,7 @@ export const ToolbarIO = React.memo((): React.JSX.Element => {
           />
         </Box>
       );
-    }, [t]);
+    }, []);
 
   const importFromCloudDialogContent: React.JSX.Element =
     React.useMemo((): React.JSX.Element => {
