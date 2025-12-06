@@ -426,3 +426,55 @@ export function differanceArray(
     }
   }
 }
+
+/* Remove nested array items */
+export function removeNestedArrayItems(arr1: any[], arr2: string[]): string[] {
+  const removeSet: Set<string> = new Set(arr2);
+
+  function helper(node: any[]): [any[], boolean] {
+    if (Array.isArray(node)) {
+      let changed: boolean;
+      let newArray: any[];
+
+      for (let i = 0; i < node.length; i++) {
+        const [newItem, itemChanged]: [any[], boolean] = helper(node[i]);
+
+        if (itemChanged) {
+          changed = true;
+
+          if (!newArray) {
+            newArray = node.slice(0, i);
+          }
+
+          if (newItem) {
+            newArray.push(newItem);
+          }
+        } else {
+          if (newArray) {
+            newArray.push(node[i]);
+          }
+        }
+      }
+
+      if (!changed) {
+        return [node, false];
+      } else {
+        if (newArray.length === 0) {
+          return [undefined, true];
+        } else if (newArray.length === 1) {
+          return [newArray[0], true];
+        } else {
+          return [newArray, true];
+        }
+      }
+    } else {
+      if (removeSet.has(node)) {
+        return [undefined, true]
+      } else {
+        return [node, false];
+      }
+    }
+  }
+
+  return helper(arr1)[0];
+}

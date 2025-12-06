@@ -21,8 +21,8 @@ import {
 } from "../utils/Shapes";
 import {
   detectContentTypeFromFormat,
+  removeNestedArrayItems,
   saveFileFromBuffer,
-  differanceArray,
 } from "../utils/Utils";
 import {
   KonvaShapeBox,
@@ -360,57 +360,72 @@ function reducer(state: State, action: Action): State {
     case "GROUP_SHAPES": {
       const group: Group = action.payload as Group;
 
+      // Get shape ids
+      if (!group.ids) {
+        group.ids = Object.keys(state.selectedIds);
+        if (!group.ids.length) {
+          return state;
+        }
+      }
+
       // Create new selected ids
       let selectedIds: Record<string, boolean>;
 
+      // Process group ids
+      let previousGroupIds: any[];
+
       if (group.unGroup) {
-        let shapeIdsSet: Set<string>;
+        group.ids.forEach((id) => {
+          const shape: KonvaShape = state.shapeList.find(
+            (item) => item.id === id
+          );
+          if (shape?.groupIds) {
+            if (previousGroupIds !== shape.groupIds) {
+              shape.groupIds.forEach((groupId) => {
+                if (Array.isArray(groupId)) {
+                  groupId.flat(Infinity).forEach((subId) => {
+                    const subShape: KonvaShape = state.shapeList.find(
+                      (item) => item.id === (subId as string)
+                    );
+                    if (subShape) {
+                      subShape.groupIds = groupId;
+                    }
+                  });
+                } else {
+                  const subShape: KonvaShape = state.shapeList.find(
+                    (item) => item.id === (groupId as string)
+                  );
+                  if (subShape) {
+                    delete subShape.groupIds;
+                  }
+                }
+              });
+            }
 
-        // Get shape ids
-        if (group.ids) {
-          shapeIdsSet = new Set(group.ids);
-        } else {
-          const selectedIds: string[] = Object.keys(state.selectedIds);
-          if (selectedIds.length) {
-            shapeIdsSet = new Set(selectedIds);
-          } else {
-            return state;
-          }
-        }
-
-        // Remove group ids
-        state.shapeList.forEach((item) => {
-          if (shapeIdsSet.has(item.id)) {
-            delete item.groupIds;
+            previousGroupIds = shape.groupIds;
           }
         });
 
         selectedIds = {};
       } else {
-        let shapeIds: string[];
+        const groupIds: any[] = [];
 
-        let shapeIdsSet: Set<string>;
+        group.ids.forEach((id) => {
+          const shape: KonvaShape = state.shapeList.find(
+            (item) => item.id === id
+          );
+          if (shape) {
+            if (shape.groupIds) {
+              if (previousGroupIds !== shape.groupIds) {
+                groupIds.push(shape.groupIds);
+              }
 
-        // Get shape ids
-        if (group.ids) {
-          shapeIds = group.ids;
+              previousGroupIds = shape.groupIds;
+            } else {
+              groupIds.push(id);
+            }
 
-          shapeIdsSet = new Set(group.ids);
-        } else {
-          const selectedIds: string[] = Object.keys(state.selectedIds);
-          if (selectedIds.length) {
-            shapeIds = selectedIds;
-
-            shapeIdsSet = new Set(selectedIds);
-          } else {
-            return state;
-          }
-        }
-
-        // Add group ids
-        state.shapeList.forEach((item) => {
-          if (shapeIdsSet.has(item.id)) {
-            item.groupIds = shapeIds;
+            shape.groupIds = groupIds;
           }
         });
 
@@ -608,8 +623,17 @@ function reducer(state: State, action: Action): State {
         const singleIds: string[] = Object.keys(state.singleSelectedIds);
         if (singleIds.length) {
           const singleIdsSet: Set<string> = new Set(singleIds);
-          const ids: string[] = Object.keys(state.selectedIds);
-          const otherIds: string[] = differanceArray(ids, singleIds, true);
+
+          let groupIds: any[];
+
+          const shape: KonvaShape = state.shapeList.find(
+            (item) => item.id === singleIds[0]
+          );
+          if (shape.groupIds) {
+            groupIds = shape.groupIds;
+
+            groupIds = removeNestedArrayItems(groupIds, singleIds);
+          }
 
           // Clone shape list without deleted shapes and Assign selected ids
           newShapeList = state.shapeList.filter((item) => {
@@ -619,8 +643,8 @@ function reducer(state: State, action: Action): State {
               if (state.selectedIds[item.id]) {
                 selectedIds[item.id] = true;
 
-                if (otherIds) {
-                  item.groupIds = otherIds;
+                if (groupIds) {
+                  item.groupIds = groupIds;
                 } else {
                   delete item.groupIds;
                 }
