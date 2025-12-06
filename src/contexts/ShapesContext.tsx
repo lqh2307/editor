@@ -1270,7 +1270,7 @@ export function ShapesProvider(prop: ShapesProviderProp): React.JSX.Element {
     }
 
     return groupIds;
-  }, [state.shapeList, state.selectedIds, state.singleSelectedIds]);
+  }, [state.shapeList, state.selectedIds]);
 
   /**
    * Selected shape
