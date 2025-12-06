@@ -68,7 +68,7 @@ export const CanvasShapes = React.memo((): React.JSX.Element => {
 
       const shape: KonvaShape = shapeAPI.getShape();
 
-      if (selectedGroupIds?.includes(shape.id)) {
+      if (selectedGroupIds && selectedGroupIds === shape.groupIds) {
         // Set single selected ids
         updateSingleSelectedIds(
           [shape.id],
@@ -133,19 +133,23 @@ export const CanvasShapes = React.memo((): React.JSX.Element => {
       const newHorizontals: number[][] = [];
       const newVerticals: number[][] = [];
 
-      const ids: string[] = singleSelectedIds[shapeAPI.getShape().id]
-        ? Object.keys(singleSelectedIds)
-        : Object.keys(selectedIds);
+      // Set ids map
+      const idsMap: Record<string, boolean> = singleSelectedIds[
+        shapeAPI.getShape().id
+      ]
+        ? singleSelectedIds
+        : selectedIds;
 
       const shapes: KonvaShape[] = [];
 
-      ids.forEach((id) => {
+      Object.keys(idsMap).forEach((id) => {
         const shape: KonvaShape = shapeRefs[id]?.getShape();
         if (shape) {
           shapes.push(shape);
         }
       });
 
+      // Calculate guide lines
       const box: KonvaShapeBox = calculateGroupShapeBox(shapes);
       if (box) {
         const stageBox: KonvaShapeBox = {
@@ -159,7 +163,7 @@ export const CanvasShapes = React.memo((): React.JSX.Element => {
 
         for (const shape of shapeList) {
           const shapeBox: KonvaShapeBox = shape.box;
-          if (selectedIds[shape.id] || !shapeBox) {
+          if (idsMap[shape.id] || !shapeBox) {
             continue;
           }
 
@@ -243,11 +247,15 @@ export const CanvasShapes = React.memo((): React.JSX.Element => {
 
         // Auto stick
         if (guideLinesStick) {
-          const ids: string[] = singleSelectedIds[shapeAPI.getShape().id]
-            ? Object.keys(singleSelectedIds)
-            : Object.keys(selectedIds);
+          // Set ids map
+          const idsMap: Record<string, boolean> = singleSelectedIds[
+            shapeAPI.getShape().id
+          ]
+            ? singleSelectedIds
+            : selectedIds;
 
           const shapes: KonvaShape[] = [];
+          const ids: string[] = Object.keys(idsMap);
 
           ids.forEach((item) => {
             const shape: KonvaShape = shapeRefs[item]?.getShape();
@@ -256,6 +264,7 @@ export const CanvasShapes = React.memo((): React.JSX.Element => {
             }
           });
 
+          // Calculate guide lines
           const box: KonvaShapeBox = calculateGroupShapeBox(shapes);
           if (box) {
             // Calculate offset

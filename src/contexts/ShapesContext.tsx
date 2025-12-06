@@ -361,7 +361,7 @@ function reducer(state: State, action: Action): State {
       const group: Group = action.payload as Group;
 
       // Create new selected ids
-      let selectedIds: Record<string, boolean> = state.selectedIds;
+      let selectedIds: Record<string, boolean>;
 
       if (group.unGroup) {
         let shapeIdsSet: Set<string>;
@@ -420,6 +420,8 @@ function reducer(state: State, action: Action): State {
             item.groupIds = shapeIds;
           }
         });
+
+        selectedIds = { ...state.selectedIds };
       }
 
       return {
