@@ -370,18 +370,11 @@ function reducer(state: State, action: Action): State {
         if (group.ids) {
           shapeIdsSet = new Set(group.ids);
         } else {
-          const singleSelectedIds: string[] = Object.keys(
-            state.singleSelectedIds
-          );
-          if (singleSelectedIds.length) {
-            shapeIdsSet = new Set(singleSelectedIds);
+          const selectedIds: string[] = Object.keys(state.selectedIds);
+          if (selectedIds.length) {
+            shapeIdsSet = new Set(selectedIds);
           } else {
-            const selectedIds: string[] = Object.keys(state.selectedIds);
-            if (selectedIds.length) {
-              shapeIdsSet = new Set(selectedIds);
-            } else {
-              return state;
-            }
+            return state;
           }
         }
 

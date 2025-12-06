@@ -83,7 +83,7 @@ export const CanvasShapes = React.memo((): React.JSX.Element => {
       } else {
         // Set selected ids
         updateSelectedIds(
-          shape.groupIds ? shape.groupIds : [shape.id],
+          shape.groupIds ? shape.groupIds.flat(Infinity) : [shape.id],
           e.evt?.ctrlKey
             ? selectedIds[shape.id]
               ? undefined
