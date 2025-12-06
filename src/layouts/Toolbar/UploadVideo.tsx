@@ -85,7 +85,7 @@ export const ToolbarUploadVideo = React.memo((): React.JSX.Element => {
         );
       }
     },
-    [addShapes, getStageCenter, updateSnackbarAlert, t]
+    [addShapes, getStageCenter, updateSnackbarAlert]
   );
 
   const uploadVideoFromLinkHandler =
@@ -120,7 +120,7 @@ export const ToolbarUploadVideo = React.memo((): React.JSX.Element => {
       } finally {
         setVideoFromLinkInfo(linkInitRef.current);
       }
-    }, [addShapes, videoFromLinkInfo, getStageCenter, updateSnackbarAlert, t]);
+    }, [addShapes, videoFromLinkInfo, getStageCenter, updateSnackbarAlert]);
 
   const dialogTitle: React.JSX.Element =
     React.useMemo((): React.JSX.Element => {
@@ -166,7 +166,7 @@ export const ToolbarUploadVideo = React.memo((): React.JSX.Element => {
           />
         </Box>
       );
-    }, [t, videoFromLinkInfo.link]);
+    }, [videoFromLinkInfo.link]);
 
   const dialogAction: React.JSX.Element =
     React.useMemo((): React.JSX.Element => {

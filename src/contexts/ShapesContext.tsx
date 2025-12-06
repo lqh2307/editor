@@ -360,6 +360,9 @@ function reducer(state: State, action: Action): State {
     case "GROUP_SHAPES": {
       const group: Group = action.payload as Group;
 
+      // Create new selected ids
+      let selectedIds: Record<string, boolean> = state.selectedIds;
+
       if (group.unGroup) {
         let shapeIdsSet: Set<string>;
 
@@ -388,6 +391,8 @@ function reducer(state: State, action: Action): State {
             delete item.groupIds;
           }
         });
+
+        selectedIds = {};
       } else {
         let shapeIds: string[];
 
@@ -420,6 +425,7 @@ function reducer(state: State, action: Action): State {
       return {
         ...state,
         croppedId: undefined,
+        selectedIds: selectedIds,
         singleSelectedIds: {},
         ...addHistory(state.shapeList),
       };

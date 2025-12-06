@@ -53,7 +53,7 @@ export const ToolbarZoom = React.memo((): React.JSX.Element => {
       `${t("toolBar.zoom.common.snackBarAlert.current")} ${stageZoom}`,
       "info"
     );
-  }, [stageZoom, updateSnackbarAlert, t]);
+  }, [stageZoom, updateSnackbarAlert]);
 
   useDebounceHotKey({
     keys: ["ctrl+plus", "cmd+plus"],

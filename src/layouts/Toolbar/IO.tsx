@@ -163,7 +163,7 @@ export const ToolbarIO = React.memo((): React.JSX.Element => {
         "error"
       );
     }
-  }, [updateSnackbarAlert, t]);
+  }, [updateSnackbarAlert]);
 
   const reportInfoRef = React.useRef<Report>(undefined);
 
@@ -255,13 +255,7 @@ export const ToolbarIO = React.memo((): React.JSX.Element => {
         toCloudHandler.close();
       }
     }
-  }, [
-    exportShapes,
-    openSaveToCloudHandler,
-    cleanHistory,
-    updateSnackbarAlert,
-    t,
-  ]);
+  }, [exportShapes, openSaveToCloudHandler, cleanHistory, updateSnackbarAlert]);
 
   const saveToCloudHandler = React.useCallback(async (): Promise<void> => {
     try {
@@ -318,7 +312,6 @@ export const ToolbarIO = React.memo((): React.JSX.Element => {
     openSaveToCloudHandler,
     cleanHistory,
     updateSnackbarAlert,
-    t,
   ]);
 
   const [importInfo, setImportInfo] = React.useState<CloudInfo>(
@@ -385,7 +378,7 @@ export const ToolbarIO = React.memo((): React.JSX.Element => {
     } finally {
       fromCloudHandler.close();
     }
-  }, [addShapes, importInfo, updateSnackbarAlert, t]);
+  }, [addShapes, importInfo, updateSnackbarAlert]);
 
   const importFromDeviceHandler = React.useCallback(
     async (file: File): Promise<void> => {
@@ -410,7 +403,7 @@ export const ToolbarIO = React.memo((): React.JSX.Element => {
         );
       }
     },
-    [addShapes, updateSnackbarAlert, t]
+    [addShapes, updateSnackbarAlert]
   );
 
   const data: Record<string, SelectInputOption[]> = React.useMemo<
@@ -920,7 +913,7 @@ export const ToolbarIO = React.memo((): React.JSX.Element => {
         isExportLoading: false,
       }));
     }
-  }, [exportInfo, exportShapes, updateSnackbarAlert, t]);
+  }, [exportInfo, exportShapes, updateSnackbarAlert]);
 
   // Update preview
   React.useEffect(() => {

@@ -373,7 +373,6 @@ export const ToolbarGeneralSetting = React.memo((): React.JSX.Element => {
         </>
       );
     }, [
-      t,
       changeLanguage,
       changeMaxHistory,
       changeGuideLinesThreshold,

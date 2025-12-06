@@ -254,10 +254,20 @@
       }
     },
     "group": {
-      "title": "Group (Ctrl + G)"
+      "title": "Group (Ctrl + G)",
+      "common": {
+        "snackBarAlert": {
+          "group": "Grouped!"
+        }
+      }
     },
     "unGroup": {
-      "title": "Ungroup (Ctrl + Shift + G)"
+      "title": "Ungroup (Ctrl + Shift + G)",
+      "common": {
+        "snackBarAlert": {
+          "unGroup": "Ungrouped!"
+        }
+      }
     },
     "selectAll": {
       "title": "Select All (Ctrl + A)"

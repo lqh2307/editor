@@ -408,7 +408,6 @@ export const Canvas = React.memo((): React.JSX.Element => {
       getStagePointerPosition,
       setStagePointerPosition,
       updateSnackbarAlert,
-      t,
     ]
   );
 

@@ -254,10 +254,20 @@
       }
     },
     "group": {
-      "title": "Gom nhóm (Ctrl + G)"
+      "title": "Gom nhóm (Ctrl + G)",
+      "common": {
+        "snackBarAlert": {
+          "group": "Đã gom nhóm!"
+        }
+      }
     },
     "unGroup": {
-      "title": "Tách nhóm (Ctrl + Shift + G)"
+      "title": "Tách nhóm (Ctrl + Shift + G)",
+      "common": {
+        "snackBarAlert": {
+          "unGroup": "Đã tách nhóm!"
+        }
+      }
     },
     "selectAll": {
       "title": "Chọn tất cả (Ctrl + A)"
