@@ -29,7 +29,7 @@ export const KonvaVideo = React.memo(
         // Update node attrs
         node.setAttrs({
           ...shapeOption,
-          draggable: prop.isSelected,
+          draggable: shapeOption.draggable && prop.isSelected,
           image: shapeOption.image,
           fill: parseHexToRGBAString(
             shapeOption.fill as string,

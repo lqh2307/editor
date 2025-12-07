@@ -22,7 +22,7 @@ export const KonvaRing = React.memo(
         // Update node attrs
         node.setAttrs({
           ...shapeOption,
-          draggable: prop.isSelected,
+          draggable: shapeOption.draggable && prop.isSelected,
           innerRadius: shapeOption.innerRadius,
           outerRadius: shapeOption.outerRadius,
           fill: parseHexToRGBAString(

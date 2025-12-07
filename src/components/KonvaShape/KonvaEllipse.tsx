@@ -22,7 +22,7 @@ export const KonvaEllipse = React.memo(
         // Update node attrs
         node.setAttrs({
           ...shapeOption,
-          draggable: prop.isSelected,
+          draggable: shapeOption.draggable && prop.isSelected,
           radiusX: shapeOption.radiusX,
           radiusY: shapeOption.radiusY,
           fill: parseHexToRGBAString(

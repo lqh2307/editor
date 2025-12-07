@@ -571,6 +571,10 @@
                 "edit": {
                   "title": "Edit",
                   "content": "Click on an object to select it for editing. You can drag, resize with the mouse, or change its properties displayed in the right-hand toolbar."
+                },
+                "group": {
+                  "title": "Group",
+                  "content": "Hold down the Ctrl key and click to select multiple objects you want to group. Then click the group button on the toolbar."
                 }
               }
             },
@@ -649,7 +653,7 @@
                   "children": {
                     "basic": {
                       "title": "Basic Shapes",
-                      "content": "Line, arrow, circle, rectangle, convex polygon, concave polygon, ring, and sector."
+                      "content": "Line, arrow, circle, rectangle, convex polygon, concave polygon, ring, sector, quadratic and bezier curve."
                     },
                     "text": {
                       "title": "Text",
@@ -683,6 +687,10 @@
                     "edit": {
                       "title": "Edit",
                       "content": "Supports editing actions: dragging, resizing one or multiple objects at once, and modifying object details."
+                    },
+                    "group": {
+                      "title": "Group",
+                      "content": "Supports grouping objects."
                     }
                   }
                 },
@@ -711,9 +719,9 @@
             "comingSoonFeature": {
               "title": "Coming Soon Features",
               "children": {
-                "cropImage": {
-                  "title": "Crop image",
-                  "content": "Allows cropping image."
+                "improve": {
+                  "title": "Performance",
+                  "content": "Improving for better performance."
                 }
               }
             },
@@ -802,6 +810,14 @@
             },
             "volume": {
               "title": "Volume"
+            }
+          }
+        },
+        "move": {
+          "title": "Move",
+          "children": {
+            "enabled": {
+              "title": "Enabled"
             }
           }
         }

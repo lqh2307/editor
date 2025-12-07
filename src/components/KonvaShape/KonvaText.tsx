@@ -30,7 +30,7 @@ export const KonvaText = React.memo(
         // Update node attrs
         node.setAttrs({
           ...shapeOption,
-          draggable: prop.isSelected,
+          draggable: shapeOption.draggable && prop.isSelected,
           visible:
             !textareaRef.current ||
             textareaRef.current.style.visibility === "hidden",

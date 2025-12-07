@@ -1,5 +1,6 @@
 import { TooltipCheckbox } from "../../components/TooltipCheckbox";
 import { TooltipButton } from "../../components/TooltipButton";
+import { TooltipSwitch } from "../../components/TooltipSwitch";
 import { percentMarks, speedMarks } from "../../types/Common";
 import { Mark } from "@mui/material/Slider/useSlider.types";
 import { SliderInput } from "../../components/SliderInput";
@@ -83,6 +84,15 @@ export const PanelControlTab = React.memo((): React.JSX.Element => {
           true
         );
       },
+      changeMove: (checked: boolean): void => {
+        updateShape(
+          {
+            draggable: checked,
+          },
+          true,
+          true
+        );
+      },
     }),
     [updateShape]
   );
@@ -141,7 +151,12 @@ export const PanelControlTab = React.memo((): React.JSX.Element => {
   return (
     <TabPanel sx={{ width: "100%", paddingX: 0 }} value={"control"}>
       {/* General */}
-      <Accordion defaultExpanded={true}>
+      <Accordion
+        sx={{
+          display: selectedShape.type === "video" ? "block" : "none",
+        }}
+        defaultExpanded={true}
+      >
         <AccordionSummary expandIcon={<ExpandMoreTwoTone />}>
           <Typography sx={{ fontSize: 12, textTransform: "uppercase" }}>
             {t("panel.control.children.general.title")}
@@ -263,6 +278,35 @@ export const PanelControlTab = React.memo((): React.JSX.Element => {
             max={100}
             marks={percentMarks}
             onChange={updateShapeHandler.changeVolume}
+          />
+        </AccordionDetails>
+      </Accordion>
+
+      {/* Move */}
+      <Accordion defaultExpanded={true}>
+        <AccordionSummary expandIcon={<ExpandMoreTwoTone />}>
+          <Typography sx={{ fontSize: 12, textTransform: "uppercase" }}>
+            {t("panel.control.children.move.title")}
+          </Typography>
+        </AccordionSummary>
+
+        <AccordionDetails
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "center",
+          }}
+        >
+          {/* Enabled */}
+          <TooltipSwitch
+            label={
+              <Typography fontSize={12}>
+                {t("panel.control.children.move.children.enabled.title")}
+              </Typography>
+            }
+            title={t("panel.control.children.move.children.enabled.title")}
+            checked={selectedShape.draggable}
+            onChange={updateShapeHandler.changeMove}
           />
         </AccordionDetails>
       </Accordion>

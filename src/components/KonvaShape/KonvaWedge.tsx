@@ -22,7 +22,7 @@ export const KonvaWedge = React.memo(
         // Update node attrs
         node.setAttrs({
           ...shapeOption,
-          draggable: prop.isSelected,
+          draggable: shapeOption.draggable && prop.isSelected,
           angle: shapeOption.angle,
           radius: shapeOption.radius,
           fill: parseHexToRGBAString(

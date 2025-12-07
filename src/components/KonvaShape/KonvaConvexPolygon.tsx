@@ -22,7 +22,7 @@ export const KonvaConvexPolygon = React.memo(
         // Update node attrs
         node.setAttrs({
           ...shapeOption,
-          draggable: prop.isSelected,
+          draggable: shapeOption.draggable && prop.isSelected,
           sides: shapeOption.sides,
           radius: shapeOption.radius,
           fill: parseHexToRGBAString(

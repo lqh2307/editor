@@ -69,7 +69,7 @@ export const KonvaFreeDrawing = React.memo(
           skewX: skewX,
           skewY: skewY,
           rotation: rotation,
-          draggable: prop.isSelected,
+          draggable: shapeOption.draggable && prop.isSelected,
         });
 
         // Update shape box

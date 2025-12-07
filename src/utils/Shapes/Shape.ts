@@ -26,6 +26,9 @@ export function createShape(shape: KonvaShape): KonvaShape {
   // Asign id
   newShape.id = newShape.id ?? nanoid();
 
+  // Draggable
+  newShape.draggable = newShape.draggable ?? true;
+
   // Color
   newShape.opacity = newShape.opacity ?? 1;
   newShape.strokeScaleEnabled = newShape.strokeScaleEnabled ?? false;
