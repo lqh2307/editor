@@ -317,13 +317,11 @@ function reducer(state: State, action: Action): State {
       // Get shape id
       let shapeId: string = update.shape?.id;
       if (!shapeId) {
-        const singleSelectedIds: string[] = Object.keys(
-          state.singleSelectedIds
-        );
-        if (singleSelectedIds.length) {
-          shapeId = singleSelectedIds[0];
+        let selectedIds: string[] = Object.keys(state.singleSelectedIds);
+        if (selectedIds.length) {
+          shapeId = selectedIds[0];
         } else {
-          const selectedIds: string[] = Object.keys(state.selectedIds);
+          selectedIds = Object.keys(state.selectedIds);
           if (selectedIds.length) {
             shapeId = selectedIds[0];
           } else {
@@ -372,9 +370,9 @@ function reducer(state: State, action: Action): State {
       let selectedIds: Record<string, boolean>;
 
       // Process group ids
-      let previousGroupIds: any[];
-
       if (group.unGroup) {
+        let previousGroupIds: any[];
+
         group.ids.forEach((id) => {
           const shape: KonvaShape = state.shapeList.find(
             (item) => item.id === id
@@ -415,15 +413,7 @@ function reducer(state: State, action: Action): State {
             (item) => item.id === id
           );
           if (shape) {
-            if (shape.groupIds) {
-              if (previousGroupIds !== shape.groupIds) {
-                groupIds.push(shape.groupIds);
-              }
-
-              previousGroupIds = shape.groupIds;
-            } else {
-              groupIds.push(id);
-            }
+            groupIds.push(shape.groupIds ? shape.groupIds : id);
 
             shape.groupIds = groupIds;
           }
@@ -689,19 +679,15 @@ function reducer(state: State, action: Action): State {
     case "COPY_SHAPE": {
       const copy: Copy = action.payload as Copy;
 
-      let shapeIdsSet: Set<string>;
-
       // Get shape ids
-      if (copy.ids) {
-        shapeIdsSet = new Set(copy.ids);
-      } else {
-        const selectedIds: string[] = Object.keys(state.selectedIds);
-        if (selectedIds.length) {
-          shapeIdsSet = new Set(selectedIds);
-        } else {
+      if (!copy.ids) {
+        copy.ids = Object.keys(state.selectedIds);
+        if (!copy.ids.length) {
           return state;
         }
       }
+
+      const shapeIdsSet: Set<string> = new Set(copy.ids);
 
       // Get shapes
       const matchedShapes: KonvaShape[] = state.shapeList.filter((item) => {
@@ -773,21 +759,29 @@ function reducer(state: State, action: Action): State {
       }
 
       // Create new ids
-      const newShapeIds: Record<string, string> = {};
+      const newShapeIds: Record<string, string> = {}; // oldId -> newId
+      const groups: Record<string, any[]> = {}; // newId -> newGroupIds[]
+      const groupCache: Map<any[], any[]> = new Map(); // oldGroupIds -> newGroupIds
 
-      state.copiedShapes.forEach((shape) => {
-        newShapeIds[shape.id] = nanoid();
+      state.copiedShapes.forEach((item) => {
+        newShapeIds[item.id] = nanoid();
+
+        groups[newShapeIds[item.id]] = item.groupIds;
       });
 
-      const groups: Record<string, string[]> = {};
+      function cloneGroupIds(groupIds: any[]): any[] {
+        if (Array.isArray(groupIds)) {
+          const newGroupIds: any[] = [];
 
-      state.copiedShapes.forEach((shape) => {
-        if (shape.groupIds && !groups[newShapeIds[shape.groupIds[0]]]) {
-          groups[newShapeIds[shape.groupIds[0]]] = shape.groupIds.map(
-            (id) => newShapeIds[id]
-          );
+          groupIds.forEach((oldNode) => {
+            newGroupIds.push(cloneGroupIds(oldNode));
+          });
+
+          return newGroupIds;
+        } else {
+          return newShapeIds[groupIds] as any;
         }
-      });
+      }
 
       // Create new selected ids
       const selectedIds: Record<string, boolean> = {};
@@ -805,7 +799,14 @@ function reducer(state: State, action: Action): State {
         newCopiedShape.y += offsetY;
 
         if (groupIds) {
-          newCopiedShape.groupIds = groups[newShapeIds[groupIds[0]]];
+          let cached: any[] = groupCache.get(groupIds);
+          if (!cached) {
+            cached = cloneGroupIds(groupIds);
+
+            groupCache.set(groupIds, cached);
+          }
+
+          newCopiedShape.groupIds = cached;
         }
 
         const newShape: KonvaShape = createShape(newCopiedShape);
@@ -835,13 +836,9 @@ function reducer(state: State, action: Action): State {
       let shapeIdsSet: Set<string>;
 
       // Get shape ids
-      if (duplicate.ids) {
-        shapeIdsSet = new Set(duplicate.ids);
-      } else {
-        const selectedIds: string[] = Object.keys(state.selectedIds);
-        if (selectedIds.length) {
-          shapeIdsSet = new Set(selectedIds);
-        } else {
+      if (!duplicate.ids) {
+        duplicate.ids = Object.keys(state.selectedIds);
+        if (!duplicate.ids.length) {
           return state;
         }
       }
@@ -867,21 +864,29 @@ function reducer(state: State, action: Action): State {
       }
 
       // Create new ids
-      const newShapeIds: Record<string, string> = {};
+      const newShapeIds: Record<string, string> = {}; // oldId -> newId
+      const groups: Record<string, any[]> = {}; // newId -> newGroupIds[]
+      const groupCache: Map<any[], any[]> = new Map(); // oldGroupIds -> newGroupIds
 
-      state.copiedShapes.forEach((shape) => {
-        newShapeIds[shape.id] = nanoid();
+      state.copiedShapes.forEach((item) => {
+        newShapeIds[item.id] = nanoid();
+
+        groups[newShapeIds[item.id]] = item.groupIds;
       });
 
-      const groups: Record<string, string[]> = {};
+      function cloneGroupIds(groupIds: any[]): any[] {
+        if (Array.isArray(groupIds)) {
+          const newGroupIds: any[] = [];
 
-      state.copiedShapes.forEach((shape) => {
-        if (shape.groupIds && !groups[newShapeIds[shape.groupIds[0]]]) {
-          groups[newShapeIds[shape.groupIds[0]]] = shape.groupIds.map(
-            (id) => newShapeIds[id]
-          );
+          groupIds.forEach((oldNode) => {
+            newGroupIds.push(cloneGroupIds(oldNode));
+          });
+
+          return newGroupIds;
+        } else {
+          return newShapeIds[groupIds] as any;
         }
-      });
+      }
 
       // Create new selected ids
       const selectedIds: Record<string, boolean> = {};
@@ -899,7 +904,14 @@ function reducer(state: State, action: Action): State {
         newCopiedShape.y += offsetY;
 
         if (groupIds) {
-          newCopiedShape.groupIds = groups[newShapeIds[groupIds[0]]];
+          let cached: any[] = groupCache.get(groupIds);
+          if (!cached) {
+            cached = cloneGroupIds(groupIds);
+
+            groupCache.set(groupIds, cached);
+          }
+
+          newCopiedShape.groupIds = cached;
         }
 
         const newShape: KonvaShape = createShape(newCopiedShape);
@@ -927,25 +939,18 @@ function reducer(state: State, action: Action): State {
       const move: Move = action.payload as Move;
 
       // Get shape ids
-      let shapeIds: string[] = move.ids;
-      if (!shapeIds) {
-        const singleSelectedIds: string[] = Object.keys(
-          state.singleSelectedIds
-        );
-        if (singleSelectedIds.length) {
-          shapeIds = singleSelectedIds;
-        } else {
-          const selectedIds: string[] = Object.keys(state.selectedIds);
-          if (selectedIds.length) {
-            shapeIds = selectedIds;
-          } else {
+      if (!move.ids) {
+        move.ids = Object.keys(state.singleSelectedIds);
+        if (!move.ids.length) {
+          move.ids = Object.keys(state.selectedIds);
+          if (!move.ids.length) {
             return state;
           }
         }
       }
 
       // Get shape
-      shapeIds.forEach((shapeId) => {
+      move.ids.forEach((shapeId) => {
         // Get shape
         const matchedShapeIndex: number = state.shapeList.findIndex(
           (item) => item.id === shapeId
@@ -981,17 +986,14 @@ function reducer(state: State, action: Action): State {
       const layer: Layer = action.payload as Layer;
 
       // Get shape id
-      let shapeId: string = layer.id;
-      if (!shapeId) {
-        const singleSelectedIds: string[] = Object.keys(
-          state.singleSelectedIds
-        );
-        if (singleSelectedIds.length) {
-          shapeId = singleSelectedIds[0];
+      if (!layer.id) {
+        let selectedIds: string[] = Object.keys(state.singleSelectedIds);
+        if (selectedIds.length) {
+          layer.id = selectedIds[0];
         } else {
-          const selectedIds: string[] = Object.keys(state.selectedIds);
+          selectedIds = Object.keys(state.selectedIds);
           if (selectedIds.length) {
-            shapeId = selectedIds[0];
+            layer.id = selectedIds[0];
           } else {
             return state;
           }
@@ -1000,7 +1002,7 @@ function reducer(state: State, action: Action): State {
 
       // Get shape index
       const matchedShapeIndex: number = state.shapeList.findIndex(
-        (item) => item.id === shapeId
+        (item) => item.id === layer.id
       );
       if (matchedShapeIndex === -1) {
         return state;
@@ -1050,7 +1052,7 @@ function reducer(state: State, action: Action): State {
           newShapeList = [state.shapeList[matchedShapeIndex]];
 
           for (const item of state.shapeList) {
-            if (item.id !== shapeId) {
+            if (item.id !== layer.id) {
               newShapeList.push(item);
             }
           }
@@ -1065,7 +1067,7 @@ function reducer(state: State, action: Action): State {
           }
 
           // Bring selected shape to end of array
-          newShapeList = state.shapeList.filter((item) => item.id !== shapeId);
+          newShapeList = state.shapeList.filter((item) => item.id !== layer.id);
           newShapeList.push(state.shapeList[matchedShapeIndex]);
 
           break;
@@ -1083,17 +1085,14 @@ function reducer(state: State, action: Action): State {
       const flip: Flip = action.payload as Flip;
 
       // Get shape id
-      let shapeId: string = flip.id;
-      if (!shapeId) {
-        const singleSelectedIds: string[] = Object.keys(
-          state.singleSelectedIds
-        );
-        if (singleSelectedIds.length) {
-          shapeId = singleSelectedIds[0];
+      if (!flip.id) {
+        let selectedIds: string[] = Object.keys(state.singleSelectedIds);
+        if (selectedIds.length) {
+          flip.id = selectedIds[0];
         } else {
-          const selectedIds: string[] = Object.keys(state.selectedIds);
+          selectedIds = Object.keys(state.selectedIds);
           if (selectedIds.length) {
-            shapeId = selectedIds[0];
+            flip.id = selectedIds[0];
           } else {
             return state;
           }
@@ -1102,7 +1101,7 @@ function reducer(state: State, action: Action): State {
 
       // Get shape index
       const matchedShapeIndex: number = state.shapeList.findIndex(
-        (item) => item.id === shapeId
+        (item) => item.id === flip.id
       );
       if (matchedShapeIndex === -1) {
         return state;
@@ -1118,7 +1117,7 @@ function reducer(state: State, action: Action): State {
       }
 
       // Render
-      flip.shapeRefs[shapeId]?.updateShape({
+      flip.shapeRefs[flip.id]?.updateShape({
         scaleX: currentShape.scaleX,
         scaleY: currentShape.scaleY,
       });
@@ -1133,17 +1132,14 @@ function reducer(state: State, action: Action): State {
       const align: Align = action.payload as Align;
 
       // Get shape id
-      let shapeId: string = align.id;
-      if (!shapeId) {
-        const singleSelectedIds: string[] = Object.keys(
-          state.singleSelectedIds
-        );
-        if (singleSelectedIds.length) {
-          shapeId = singleSelectedIds[0];
+      if (!align.id) {
+        let selectedIds: string[] = Object.keys(state.singleSelectedIds);
+        if (selectedIds.length) {
+          align.id = selectedIds[0];
         } else {
-          const selectedIds: string[] = Object.keys(state.selectedIds);
+          selectedIds = Object.keys(state.selectedIds);
           if (selectedIds.length) {
-            shapeId = selectedIds[0];
+            align.id = selectedIds[0];
           } else {
             return state;
           }
@@ -1152,14 +1148,14 @@ function reducer(state: State, action: Action): State {
 
       // Get shape index
       const matchedShapeIndex: number = state.shapeList.findIndex(
-        (item) => item.id === shapeId
+        (item) => item.id === align.id
       );
       if (matchedShapeIndex === -1) {
         return state;
       }
 
       // Get shape
-      const shapeAPI: KonvaShapeAPI = align.shapeRefs[shapeId];
+      const shapeAPI: KonvaShapeAPI = align.shapeRefs[align.id];
       if (!shapeAPI) {
         return state;
       }
@@ -1269,24 +1265,14 @@ export function ShapesProvider(prop: ShapesProviderProp): React.JSX.Element {
   const selectedGroupIds: string[] = React.useMemo<string[]>(() => {
     let groupIds: string[];
 
-    const selectedIds: string[] = Object.keys(state.selectedIds);
-    if (selectedIds.length > 1) {
-      const shape: KonvaShape = state.shapeList.find(
-        (item) => item.id === selectedIds[0]
-      );
+    for (const id in state.selectedIds) {
+      const shape: KonvaShape = state.shapeList.find((item) => item.id === id);
       if (shape?.groupIds) {
-        groupIds = shape.groupIds;
+        if (!groupIds) {
+          groupIds = shape.groupIds;
+        }
 
-        if (groupIds.length === selectedIds.length) {
-          for (let idx = 1; idx < selectedIds.length; idx++) {
-            const shape: KonvaShape = state.shapeList.find(
-              (item) => item.id === selectedIds[idx]
-            );
-            if (shape?.groupIds !== groupIds) {
-              return;
-            }
-          }
-        } else {
+        if (groupIds !== shape.groupIds) {
           return;
         }
       } else {

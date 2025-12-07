@@ -142,12 +142,12 @@ export const CanvasShapes = React.memo((): React.JSX.Element => {
 
       const shapes: KonvaShape[] = [];
 
-      Object.keys(idsMap).forEach((id) => {
+      for (const id in idsMap) {
         const shape: KonvaShape = shapeRefs[id]?.getShape();
         if (shape) {
           shapes.push(shape);
         }
-      });
+      }
 
       // Calculate guide lines
       const box: KonvaShapeBox = calculateGroupShapeBox(shapes);
@@ -255,14 +255,13 @@ export const CanvasShapes = React.memo((): React.JSX.Element => {
             : selectedIds;
 
           const shapes: KonvaShape[] = [];
-          const ids: string[] = Object.keys(idsMap);
 
-          ids.forEach((item) => {
-            const shape: KonvaShape = shapeRefs[item]?.getShape();
+          for (const id in idsMap) {
+            const shape: KonvaShape = shapeRefs[id]?.getShape();
             if (shape) {
               shapes.push(shape);
             }
-          });
+          }
 
           // Calculate guide lines
           const box: KonvaShapeBox = calculateGroupShapeBox(shapes);
@@ -302,7 +301,7 @@ export const CanvasShapes = React.memo((): React.JSX.Element => {
             });
 
             // Move shape
-            moveShapes(ids, offSetX, offSetY);
+            moveShapes(Object.keys(idsMap), offSetX, offSetY);
           }
         }
 
@@ -416,19 +415,19 @@ export const CanvasShapes = React.memo((): React.JSX.Element => {
         }
       }
 
-      Object.keys(selectedIds).forEach((id) => {
+      for (const id in selectedIds) {
         const node: Konva.Node = shapeRefs[id]?.getNode();
         if (node) {
           transformerNodes.push(node);
         }
-      });
+      }
 
-      Object.keys(singleSelectedIds).forEach((id) => {
+      for (const id in singleSelectedIds) {
         const node: Konva.Node = shapeRefs[id]?.getNode();
         if (node) {
           singleTransformerNodes.push(node);
         }
-      });
+      }
     }
 
     transformerRefs["cropper"].getNode().nodes(cropperNodes);
