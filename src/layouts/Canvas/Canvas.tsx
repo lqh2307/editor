@@ -186,7 +186,6 @@ export const Canvas = React.memo((): React.JSX.Element => {
 
   const transformerOptionRef = React.useRef<KonvaTFM>({
     id: "transformer",
-    keepRatio: true,
     borderStroke: "#ff0000",
     borderStrokeWidth: 1.5,
     borderDash: [20, 10],
@@ -446,7 +445,6 @@ export const Canvas = React.memo((): React.JSX.Element => {
       getStagePointerPosition,
       setStagePointerPosition,
       updateSnackbarAlert,
-      t,
     ]
   );
 

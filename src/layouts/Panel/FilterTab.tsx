@@ -245,7 +245,7 @@ export const FilterTab = React.memo((): React.JSX.Element => {
       </Accordion>
 
       {/* Color */}
-      <Accordion>
+      <Accordion defaultExpanded={true}>
         <AccordionSummary expandIcon={<ExpandMoreTwoTone />}>
           <Typography sx={{ fontSize: 12, textTransform: "uppercase" }}>
             {t("panel.filter.children.color.title")}

@@ -195,7 +195,7 @@ export const PanelTextTab = React.memo((): React.JSX.Element => {
         "error"
       );
     }
-  }, [fontInfo.fonts, updateSnackbarAlert, t]);
+  }, [fontInfo.fonts, updateSnackbarAlert]);
 
   React.useEffect(() => {
     fetchFontHandler();
@@ -323,7 +323,7 @@ export const PanelTextTab = React.memo((): React.JSX.Element => {
       </Accordion>
 
       {/* Format */}
-      <Accordion>
+      <Accordion defaultExpanded={true}>
         <AccordionSummary expandIcon={<ExpandMoreTwoTone />}>
           <Typography sx={{ fontSize: 12, textTransform: "uppercase" }}>
             {t("panel.text.children.format.title")}
@@ -387,7 +387,7 @@ export const PanelTextTab = React.memo((): React.JSX.Element => {
       </Accordion>
 
       {/* Align */}
-      <Accordion>
+      <Accordion defaultExpanded={true}>
         <AccordionSummary expandIcon={<ExpandMoreTwoTone />}>
           <Typography sx={{ fontSize: 12, textTransform: "uppercase" }}>
             {t("panel.text.children.align.title")}

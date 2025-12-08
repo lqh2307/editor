@@ -254,10 +254,20 @@
       }
     },
     "group": {
-      "title": "Gom nhóm (Ctrl + G)"
+      "title": "Gom nhóm (Ctrl + G)",
+      "common": {
+        "snackBarAlert": {
+          "group": "Đã gom nhóm!"
+        }
+      }
     },
     "unGroup": {
-      "title": "Tách nhóm (Ctrl + Shift + G)"
+      "title": "Tách nhóm (Ctrl + Shift + G)",
+      "common": {
+        "snackBarAlert": {
+          "unGroup": "Đã tách nhóm!"
+        }
+      }
     },
     "selectAll": {
       "title": "Chọn tất cả (Ctrl + A)"
@@ -561,6 +571,10 @@
                 "edit": {
                   "title": "Chỉnh sửa",
                   "content": "Nhấp chuột để chọn một đối tượng chỉnh sửa. Bạn có thể kéo, thay đổi kích thước bằng chuột hoặc thay đổi các thuộc tính bên trong đối tượng được hiển thị thên thanh công cụ bên phải."
+                },
+                "group": {
+                  "title": "Gom nhóm",
+                  "content": "Giữ phím Ctrl và nhấp chuột để chọn nhiều đối tượng cần gom nhóm. Sau đó nhấp chuột chọn gom nhóm trên thanh công cụ."
                 }
               }
             },
@@ -639,7 +653,7 @@
                   "children": {
                     "basic": {
                       "title": "Hình học cơ bản",
-                      "content": "Đường thẳng, mũi tên, hình tròn, hình chữ nhật, đa giác lồi, đa giác lõm, hình vòng, hình rẻ quạt."
+                      "content": "Đường thẳng, mũi tên, hình tròn, hình chữ nhật, đa giác lồi, đa giác lõm, hình vòng, hình rẻ quạt, đường cong bậc hai và bậc ba."
                     },
                     "text": {
                       "title": "Văn bản",
@@ -673,6 +687,10 @@
                     "edit": {
                       "title": "Chỉnh sửa",
                       "content": "Hỗ trợ các thao tác chỉnh sửa: kéo, thay đổi kích thước của một hay nhiều đối tượng cùng lúc, chỉnh sửa chi tiết nội dung của đối tượng."
+                    },
+                    "group": {
+                      "title": "Gom nhóm",
+                      "content": "Hỗ trợ gom nhóm các đối tượng."
                     }
                   }
                 },
@@ -701,9 +719,9 @@
             "comingSoonFeature": {
               "title": "Tính năng sắp phát triển",
               "children": {
-                "cropImage": {
-                  "title": "Cắt ảnh",
-                  "content": "Cho phép cắt ảnh."
+                "improve": {
+                  "title": "Hiệu năng",
+                  "content": "Tối ưu cho hiệu năng tốt hơn."
                 }
               }
             },
@@ -792,6 +810,14 @@
             },
             "volume": {
               "title": "Âm lượng"
+            }
+          }
+        },
+        "move": {
+          "title": "Di chuyển",
+          "children": {
+            "enabled": {
+              "title": "Bật"
             }
           }
         }

@@ -73,7 +73,7 @@ export const ToolbarAddTemplate = React.memo((): React.JSX.Element => {
         "error"
       );
     }
-  }, [updateSnackbarAlert, t]);
+  }, [updateSnackbarAlert]);
 
   const applyTemplateHandler = React.useCallback(
     async (value: string): Promise<void> => {
@@ -103,7 +103,7 @@ export const ToolbarAddTemplate = React.memo((): React.JSX.Element => {
         );
       }
     },
-    [addShapes, updateSnackbarAlert, t]
+    [addShapes, updateSnackbarAlert]
   );
 
   const TemplateCell = React.useCallback(

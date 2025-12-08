@@ -83,7 +83,7 @@ export const ToolbarHelp = React.memo((): React.JSX.Element => {
           />
         </Box>
       );
-    }, [t]);
+    }, []);
 
   const guideDialogContent: React.JSX.Element =
     React.useMemo((): React.JSX.Element => {
@@ -130,6 +130,20 @@ export const ToolbarHelp = React.memo((): React.JSX.Element => {
               >
                 {t(
                   "toolBar.help.children.guide.children.manipulation.children.edit.content"
+                )}
+              </Typography>
+
+              <Typography sx={{ fontSize: 12 }}>
+                {t(
+                  "toolBar.help.children.guide.children.manipulation.children.group.title"
+                )}
+              </Typography>
+
+              <Typography
+                sx={{ marginLeft: "1rem", fontSize: 12, fontWeight: 350 }}
+              >
+                {t(
+                  "toolBar.help.children.guide.children.manipulation.children.group.content"
                 )}
               </Typography>
             </AccordionDetails>
@@ -259,7 +273,7 @@ export const ToolbarHelp = React.memo((): React.JSX.Element => {
           </Accordion>
         </>
       );
-    }, [t]);
+    }, []);
 
   const guideDialogAction: React.JSX.Element =
     React.useMemo((): React.JSX.Element => {
@@ -271,7 +285,7 @@ export const ToolbarHelp = React.memo((): React.JSX.Element => {
           {t("toolBar.help.common.button.close")}
         </TooltipButton>
       );
-    }, [t]);
+    }, []);
 
   const aboutDialogTitle: React.JSX.Element =
     React.useMemo((): React.JSX.Element => {
@@ -293,7 +307,7 @@ export const ToolbarHelp = React.memo((): React.JSX.Element => {
           />
         </Box>
       );
-    }, [t]);
+    }, []);
 
   const aboutDialogContent: React.JSX.Element =
     React.useMemo((): React.JSX.Element => {
@@ -433,6 +447,14 @@ export const ToolbarHelp = React.memo((): React.JSX.Element => {
                 )}: ${t("toolBar.help.children.about.children.feature.children.manipulation.children.edit.content")}`}
               </Typography>
 
+              <Typography
+                sx={{ marginLeft: "1rem", fontSize: 12, fontWeight: 350 }}
+              >
+                {`${t(
+                  "toolBar.help.children.about.children.feature.children.manipulation.children.group.title"
+                )}: ${t("toolBar.help.children.about.children.feature.children.manipulation.children.group.content")}`}
+              </Typography>
+
               <Typography sx={{ fontSize: 12 }}>
                 {t(
                   "toolBar.help.children.about.children.feature.children.template.title"
@@ -525,7 +547,7 @@ export const ToolbarHelp = React.memo((): React.JSX.Element => {
             >
               <Typography sx={{ fontSize: 12 }}>
                 {t(
-                  "toolBar.help.children.about.children.comingSoonFeature.children.cropImage.title"
+                  "toolBar.help.children.about.children.comingSoonFeature.children.improve.title"
                 )}
               </Typography>
 
@@ -533,8 +555,8 @@ export const ToolbarHelp = React.memo((): React.JSX.Element => {
                 sx={{ marginLeft: "1rem", fontSize: 12, fontWeight: 350 }}
               >
                 {`${t(
-                  "toolBar.help.children.about.children.comingSoonFeature.children.cropImage.title"
-                )}: ${t("toolBar.help.children.about.children.comingSoonFeature.children.cropImage.content")}`}
+                  "toolBar.help.children.about.children.comingSoonFeature.children.improve.title"
+                )}: ${t("toolBar.help.children.about.children.comingSoonFeature.children.improve.content")}`}
               </Typography>
             </AccordionDetails>
           </Accordion>
@@ -561,7 +583,7 @@ export const ToolbarHelp = React.memo((): React.JSX.Element => {
           </Accordion>
         </>
       );
-    }, [t]);
+    }, []);
 
   const aboutDialogAction: React.JSX.Element =
     React.useMemo((): React.JSX.Element => {
@@ -573,7 +595,7 @@ export const ToolbarHelp = React.memo((): React.JSX.Element => {
           {t("toolBar.help.common.button.close")}
         </TooltipButton>
       );
-    }, [t]);
+    }, []);
 
   return (
     <>

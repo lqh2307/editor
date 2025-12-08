@@ -76,7 +76,7 @@ export const KonvaPath = React.memo(
           offsetX: offsetX,
           offsetY: offsetY,
           rotation: rotation,
-          draggable: prop.isSelected,
+          draggable: shapeOption.draggable && prop.isSelected,
         });
 
         // Update shape box

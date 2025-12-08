@@ -80,12 +80,12 @@ export const ToolbarProfile = React.memo((): React.JSX.Element => {
           />
         </Box>
       );
-    }, [t]);
+    }, []);
 
   const profileDialogContent: React.JSX.Element =
     React.useMemo((): React.JSX.Element => {
       return <></>;
-    }, [t]);
+    }, []);
 
   const profileDialogAction: React.JSX.Element =
     React.useMemo((): React.JSX.Element => {
@@ -97,7 +97,7 @@ export const ToolbarProfile = React.memo((): React.JSX.Element => {
           {t("toolBar.profile.common.button.close")}
         </TooltipButton>
       );
-    }, [t]);
+    }, []);
 
   const logoutDialogTitle: React.JSX.Element =
     React.useMemo((): React.JSX.Element => {
@@ -119,7 +119,7 @@ export const ToolbarProfile = React.memo((): React.JSX.Element => {
           />
         </Box>
       );
-    }, [t]);
+    }, []);
 
   const logoutDialogContent: React.JSX.Element =
     React.useMemo((): React.JSX.Element => {
@@ -138,7 +138,7 @@ export const ToolbarProfile = React.memo((): React.JSX.Element => {
           </Typography>
         </Box>
       );
-    }, [t]);
+    }, []);
 
   const logoutDialogAction: React.JSX.Element =
     React.useMemo((): React.JSX.Element => {
@@ -159,7 +159,7 @@ export const ToolbarProfile = React.memo((): React.JSX.Element => {
           </TooltipButton>
         </>
       );
-    }, [t]);
+    }, []);
 
   {
     /* Profile/Logout */

@@ -33,7 +33,7 @@ export const KonvaQuadraticCurve = React.memo(
         // Update node attrs
         node.setAttrs({
           ...shapeOption,
-          draggable: prop.isSelected,
+          draggable: shapeOption.draggable && prop.isSelected,
           hitStrokeWidth: shapeOption.hitStrokeWidth ?? 20,
           fill: parseHexToRGBAString(
             shapeOption.fill as string,
@@ -248,6 +248,10 @@ export const KonvaQuadraticCurve = React.memo(
           const newPoint: Vector2d = invertPoint(node.position(), shapeOption);
 
           switch (node.id()) {
+            default: {
+              break;
+            }
+
             case `${shapeOption.id}-start`: {
               shapeOption.points = [
                 newPoint.x,

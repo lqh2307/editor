@@ -22,7 +22,7 @@ export const KonvaLine = React.memo(
         // Update node attrs
         node.setAttrs({
           ...shapeOption,
-          draggable: prop.isSelected,
+          draggable: shapeOption.draggable && prop.isSelected,
           hitStrokeWidth: shapeOption.hitStrokeWidth ?? 20,
           fill: parseHexToRGBAString(
             shapeOption.fill as string,

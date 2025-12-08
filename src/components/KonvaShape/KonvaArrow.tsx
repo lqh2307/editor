@@ -22,7 +22,7 @@ export const KonvaArrow = React.memo(
         // Update node attrs
         node.setAttrs({
           ...shapeOption,
-          draggable: prop.isSelected,
+          draggable: shapeOption.draggable && prop.isSelected,
           points: shapeOption.points,
           hitStrokeWidth: shapeOption.hitStrokeWidth ?? 20,
           fill: parseHexToRGBAString(

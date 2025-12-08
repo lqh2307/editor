@@ -407,7 +407,7 @@ export const PanelStyleTab = React.memo((): React.JSX.Element => {
         value: item,
       })),
     }),
-    [t]
+    []
   );
 
   return (
@@ -667,66 +667,8 @@ export const PanelStyleTab = React.memo((): React.JSX.Element => {
         </AccordionDetails>
       </Accordion>
 
-      {/* Fill */}
-      <Accordion>
-        <AccordionSummary expandIcon={<ExpandMoreTwoTone />}>
-          <Typography sx={{ fontSize: 12, textTransform: "uppercase" }}>
-            {t("panel.style.children.fill.title")}
-          </Typography>
-        </AccordionSummary>
-
-        <AccordionDetails
-          sx={{
-            display: "flex",
-            flexDirection: "column",
-            justifyContent: "center",
-            gap: "1rem",
-          }}
-        >
-          {/* Enabled */}
-          <TooltipSwitch
-            label={
-              <Typography fontSize={12}>
-                {t("panel.style.children.fill.children.enabled.title")}
-              </Typography>
-            }
-            title={t("panel.style.children.fill.children.enabled.title")}
-            checked={selectedShape.fillEnabled}
-            onChange={updateShapeHandler.changeFillEnabled}
-          />
-
-          {/* Color/Opacity */}
-          <Stack
-            sx={{
-              display: "flex",
-              flexDirection: "row",
-              gap: "0.5rem",
-              alignItems: "center",
-            }}
-          >
-            <ColorInput
-              icon={<FormatColorFillTwoTone fontSize={"small"} />}
-              title={t("panel.style.children.fill.children.color.title")}
-              value={selectedShape.fill}
-              onChange={updateShapeHandler.changeFillColor}
-            />
-
-            <SliderInput
-              icon={<OpacityTwoTone fontSize={"small"} />}
-              title={t("panel.style.children.fill.children.opacity.title")}
-              value={selectedShape.fillOpacity}
-              disabled={!selectedShape.fillEnabled}
-              max={1}
-              step={0.05}
-              marks={normalizedMarks}
-              onChange={updateShapeHandler.changeFillOpacity}
-            />
-          </Stack>
-        </AccordionDetails>
-      </Accordion>
-
       {/* Stroke */}
-      <Accordion>
+      <Accordion defaultExpanded={true}>
         <AccordionSummary expandIcon={<ExpandMoreTwoTone />}>
           <Typography sx={{ fontSize: 12, textTransform: "uppercase" }}>
             {t("panel.style.children.stroke.title")}
@@ -816,6 +758,64 @@ export const PanelStyleTab = React.memo((): React.JSX.Element => {
               onChange={updateShapeHandler.changeLineJoin}
               disabled={!selectedShape.strokeEnabled}
               options={data.lineJoins}
+            />
+          </Stack>
+        </AccordionDetails>
+      </Accordion>
+
+      {/* Fill */}
+      <Accordion>
+        <AccordionSummary expandIcon={<ExpandMoreTwoTone />}>
+          <Typography sx={{ fontSize: 12, textTransform: "uppercase" }}>
+            {t("panel.style.children.fill.title")}
+          </Typography>
+        </AccordionSummary>
+
+        <AccordionDetails
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "center",
+            gap: "1rem",
+          }}
+        >
+          {/* Enabled */}
+          <TooltipSwitch
+            label={
+              <Typography fontSize={12}>
+                {t("panel.style.children.fill.children.enabled.title")}
+              </Typography>
+            }
+            title={t("panel.style.children.fill.children.enabled.title")}
+            checked={selectedShape.fillEnabled}
+            onChange={updateShapeHandler.changeFillEnabled}
+          />
+
+          {/* Color/Opacity */}
+          <Stack
+            sx={{
+              display: "flex",
+              flexDirection: "row",
+              gap: "0.5rem",
+              alignItems: "center",
+            }}
+          >
+            <ColorInput
+              icon={<FormatColorFillTwoTone fontSize={"small"} />}
+              title={t("panel.style.children.fill.children.color.title")}
+              value={selectedShape.fill}
+              onChange={updateShapeHandler.changeFillColor}
+            />
+
+            <SliderInput
+              icon={<OpacityTwoTone fontSize={"small"} />}
+              title={t("panel.style.children.fill.children.opacity.title")}
+              value={selectedShape.fillOpacity}
+              disabled={!selectedShape.fillEnabled}
+              max={1}
+              step={0.05}
+              marks={normalizedMarks}
+              onChange={updateShapeHandler.changeFillOpacity}
             />
           </Stack>
         </AccordionDetails>

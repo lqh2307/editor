@@ -73,7 +73,7 @@ export const PanelTabContent = React.memo((): React.JSX.Element => {
           sx={{
             fontSize: 13,
             fontWeight: 700,
-            display: selectedShape.type === "video" ? "flex" : "none",
+            display: "flex",
             minWidth: 0,
             flex: 1,
             paddingX: 0,

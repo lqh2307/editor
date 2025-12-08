@@ -114,7 +114,7 @@ export const PanelArrangeTab = React.memo((): React.JSX.Element => {
       </Accordion>
 
       {/* Align */}
-      <Accordion>
+      <Accordion defaultExpanded={true}>
         <AccordionSummary expandIcon={<ExpandMoreTwoTone />}>
           <Typography sx={{ fontSize: 12, textTransform: "uppercase" }}>
             {t("panel.arrange.children.align.title")}
@@ -235,7 +235,7 @@ export const PanelArrangeTab = React.memo((): React.JSX.Element => {
       </Accordion>
 
       {/* Flip */}
-      <Accordion>
+      <Accordion defaultExpanded={true}>
         <AccordionSummary expandIcon={<ExpandMoreTwoTone />}>
           <Typography sx={{ fontSize: 12, textTransform: "uppercase" }}>
             {t("panel.arrange.children.flip.title")}
