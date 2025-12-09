@@ -7,6 +7,7 @@ import { ToolbarAddImage } from "./AddImage";
 import { ButtonGroup } from "@mui/material";
 import { ToolbarAddText } from "./AddText";
 import { ToolbarAddIcon } from "./AddIcon";
+import { ToolbarFakeAPI } from "./FakeAPI";
 import React from "react";
 
 export const ToolbarAddShape = React.memo((): React.JSX.Element => {
@@ -17,6 +18,9 @@ export const ToolbarAddShape = React.memo((): React.JSX.Element => {
 
       {/* Add Icon */}
       <ToolbarAddIcon />
+
+      {/* Fake API (insert icon by key at coordinates) */}
+      <ToolbarFakeAPI />
 
       {/* Add Text */}
       <ToolbarAddText />

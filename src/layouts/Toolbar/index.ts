@@ -8,6 +8,7 @@ export * from "./AddTemplate";
 export * from "./AddImage";
 export * from "./AddShape";
 export * from "./AddIcon";
+export * from "./FakeAPI";
 export * from "./AddText";
 export * from "./Toolbar";
 export * from "./Drawing";
