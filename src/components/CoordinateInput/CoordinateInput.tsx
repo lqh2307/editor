@@ -25,9 +25,11 @@ export const CoordinateInput = React.memo(
     onChange,
     slotProps,
     sx,
+    forceDecimal,
+    hideToggle,
     ...props
   }: CoordinateInputProp): React.JSX.Element => {
-    const [isDec, setIsDec] = React.useState<boolean>(false);
+    const [isDec, setIsDec] = React.useState<boolean>(!!forceDecimal);
     const [dec, setDec] = React.useState<number>(Number(value ?? defaultValue));
     const [dms, setDms] = React.useState<DDMMSS>(
       convertDEGToDMS(Number(value ?? defaultValue))
@@ -131,8 +133,9 @@ export const CoordinateInput = React.memo(
     }, [dms, debouncedEmit]);
 
     const toggleMode = React.useCallback((): void => {
+      if (forceDecimal) return;
       setIsDec((prev) => !prev);
-    }, []);
+    }, [forceDecimal]);
 
     return (
       <Stack
@@ -290,25 +293,27 @@ export const CoordinateInput = React.memo(
           </Stack>
         )}
 
-        <Tooltip title={toggleModeTitle}>
-          <Box>
-            <Button
-              disabled={disabled}
-              fullWidth={true}
-              variant={"outlined"}
-              type={"button"}
-              size={"small"}
-              onClick={toggleMode}
-              sx={{
-                minWidth: 0,
-                alignItems: "center",
-                justifyContent: "center",
-              }}
-            >
-              <AllInclusiveTwoTone fontSize="small" />
-            </Button>
-          </Box>
-        </Tooltip>
+        {hideToggle ? null : (
+          <Tooltip title={toggleModeTitle}>
+            <Box>
+              <Button
+                disabled={disabled || !!forceDecimal}
+                fullWidth={true}
+                variant={"outlined"}
+                type={"button"}
+                size={"small"}
+                onClick={toggleMode}
+                sx={{
+                  minWidth: 0,
+                  alignItems: "center",
+                  justifyContent: "center",
+                }}
+              >
+                <AllInclusiveTwoTone fontSize="small" />
+              </Button>
+            </Box>
+          </Tooltip>
+        )}
       </Stack>
     );
   }

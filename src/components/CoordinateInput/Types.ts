@@ -16,4 +16,6 @@ export type CoordinateInputProp = Omit<TextFieldProps, "onChange" | "label"> & {
 
   delay?: number;
   onChange?: (value: number) => void;
+  forceDecimal?: boolean;
+  hideToggle?: boolean;
 };

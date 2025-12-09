@@ -10,6 +10,7 @@ import {
   ShapesProvider,
   StageProvider,
   AppProvider,
+  MapProvider,
 } from "../contexts";
 
 export const Editor = React.memo((prop: EditorProp): React.JSX.Element => {
@@ -79,8 +80,9 @@ export const Editor = React.memo((prop: EditorProp): React.JSX.Element => {
         stageWidth={stageWidth}
         stageHeight={stageHeight}
       >
-        <FreeDrawingProvider>
-          <ShapesProvider maxHistory={maxHistory}>
+        <MapProvider>
+          <FreeDrawingProvider>
+            <ShapesProvider maxHistory={maxHistory}>
             <Box
               sx={{
                 position: "relative",
@@ -158,8 +160,9 @@ export const Editor = React.memo((prop: EditorProp): React.JSX.Element => {
                 <Panel />
               </Box>
             </Box>
-          </ShapesProvider>
-        </FreeDrawingProvider>
+            </ShapesProvider>
+          </FreeDrawingProvider>
+        </MapProvider>
       </StageProvider>
     </AppProvider>
   );

@@ -22,6 +22,8 @@ import {
   KonvaGuideLinesAPI,
   KonvaGuideLines,
 } from "../../components/KonvaGuideLines";
+import { KonvaTooltipAPI, KonvaTooltip } from "../../components/KonvaTooltip";
+import { useMapContext } from "../../contexts/MapContext";
 import {
   useFreeDrawingContext,
   useShapesContext,
@@ -66,6 +68,8 @@ export const Canvas = React.memo((): React.JSX.Element => {
   } = useShapesContext();
 
   const { freeDrawingMode, setFreeDrawingMode } = useFreeDrawingContext();
+  const { calibration } = useMapContext();
+  const tooltipRef = React.useRef<KonvaTooltipAPI>(undefined);
 
   // Store is free drawing
   const freeDrawingInfoRef = React.useRef<FreeDrawingInfo>({
@@ -642,7 +646,32 @@ export const Canvas = React.memo((): React.JSX.Element => {
       const height = Math.abs(y2 - y1);
       setSelectRect({ x, y, width, height, visible: true });
     }
-  }, [updateShape, dragStage, getIsStageDragable, getStagePointerPosition]);
+    // Update map tooltip
+    const p: Vector2d = getStagePointerPosition();
+    if (p && calibration.topRight && calibration.bottomLeft && tooltipRef.current) {
+      const bgApi = getBackground();
+      const bgNode = bgApi?.getNode();
+      if (bgNode) {
+        const bx = bgNode.x();
+        const by = bgNode.y();
+        const bw = bgNode.width();
+        const bh = bgNode.height();
+        const relX = p.x - bx;
+        const relY = p.y - by;
+        if (relX >= 0 && relY >= 0 && relX <= bw && relY <= bh) {
+          const lon = calibration.bottomLeft.lon + (relX / bw) * (calibration.topRight.lon - calibration.bottomLeft.lon);
+          const lat = calibration.topRight.lat + (relY / bh) * (calibration.bottomLeft.lat - calibration.topRight.lat);
+          tooltipRef.current.updateProp({
+            text: `Lat: ${lat.toFixed(6)}\nLon: ${lon.toFixed(6)}`,
+            x: p.x + 8,
+            y: p.y + 8,
+          });
+        } else {
+          tooltipRef.current.updateProp({ text: "" });
+        }
+      }
+    }
+  }, [updateShape, dragStage, getIsStageDragable, getStagePointerPosition, calibration, getBackground]);
 
   const handleStageMouseUp = React.useCallback(
     (e: Konva.KonvaEventObject<MouseEvent>): void => {
@@ -817,6 +846,21 @@ export const Canvas = React.memo((): React.JSX.Element => {
             transformerOption={singleTransformerOptionRef.current}
             onMounted={handleOnMounted}
             onUnMounted={handleOnUnMounted}
+          />
+
+          {/* Map tooltip */}
+          <KonvaTooltip
+            ref={tooltipRef}
+            id={"map-tooltip"}
+            text={""}
+            x={0}
+            y={0}
+            fontSize={12}
+            textColor={"#fff"}
+            textOpacity={1}
+            backgroundColor={"#000"}
+            backgroundOpacity={0.6}
+            padding={4}
           />
         </Layer>
 
