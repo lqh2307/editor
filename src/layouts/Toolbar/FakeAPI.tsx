@@ -113,7 +113,7 @@ export const ToolbarFakeAPI = React.memo((): React.JSX.Element => {
         ],
         false,
         false,
-        { x: 102, y: 20 }
+        { x: 200, y: 200 }
       );
     } catch (err) {
       updateSnackbarAlert?.(`Fake API lỗi: ${err}`, "error");
@@ -122,12 +122,12 @@ export const ToolbarFakeAPI = React.memo((): React.JSX.Element => {
 
   return (
     <>
-      <TooltipButton
+      {/* <TooltipButton
         icon={<ApiTwoTone />}
         title={"Fake API"}
         onClick={onClick}
         disabled={loading}
-      />
+      /> */}
       <TooltipButton
         icon={<CasinoTwoTone />}
         title={"Random Icon"}

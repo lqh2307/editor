@@ -127,7 +127,7 @@ export const ToolbarAddIcon = React.memo((): React.JSX.Element => {
             icon={
               <Box
                 component={"img"}
-                src={`data:image/svg+xml;utf8,${icon.content}`}
+                src={`data:image/svg+xml;utf8,${encodeURIComponent(icon.content)}`}
                 alt={icon.name}
                 width={iconConfigRef.current.itemSize}
                 height={iconConfigRef.current.itemSize}
