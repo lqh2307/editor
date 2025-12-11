@@ -10,5 +10,29 @@
         "path": "icons/1. Sở chỉ huy/airplane-svgrepo-com.svg",
         "vertical": "1",
         "description": "Máy bay"
-    }
+    },
+    {
+        "category": "Tàu vận tải",
+        "path": "icons/1. Sở chỉ huy/cruiser-military-svgrepo-com.svg",
+        "vertical": "1",
+        "description": "Tàu vận tải"
+    },
+    {
+        "category": "Trực thăng",
+        "path": "icons/1. Sở chỉ huy/helicopter-svgrepo-com.svg",
+        "vertical": "1",
+        "description": "Trực thăng"
+    },
+    {
+        "category": "Thuyền buồm",
+        "path": "icons/1. Sở chỉ huy/paper-sailboat-svgrepo-com.svg",
+        "vertical": "1",
+        "description": "Thuyền buồm"
+    },
+    {
+        "category": "Tank",
+        "path": "icons/1. Sở chỉ huy/war-tank-svgrepo-com.svg",
+        "vertical": "1",
+        "description": "Tank"
+    }   
 ]

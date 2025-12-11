@@ -25,7 +25,7 @@ export const Toolbar = React.memo((): React.JSX.Element => {
         sx={{
           display: "flex",
           flexDirection: "row",
-          justifyContent: "center",
+          justifyContent: "flex-start",
           alignItems: "center",
           width: "85%",
           height: "100%",
@@ -33,7 +33,7 @@ export const Toolbar = React.memo((): React.JSX.Element => {
         }}
         direction={"row"}
         divider={<Divider orientation={"vertical"} flexItem={true} />}
-        spacing={1}
+        spacing={0.5}
       >
         {/* Save/Export/Import */}
         <ToolbarIO />

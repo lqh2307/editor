@@ -181,12 +181,12 @@ export const ToolbarFakeAPI = React.memo((): React.JSX.Element => {
         onClick={onClick}
         disabled={loading}
       /> */}
-      <TooltipButton
+      {/* <TooltipButton
         icon={<CasinoTwoTone />}
         title={"Random Icon"}
         onClick={onClickRandom}
         disabled={loading}
-      />
+      /> */}
       <TooltipButton
         icon={<ImageTwoTone />}
         title={"Fake Import test.png"}
