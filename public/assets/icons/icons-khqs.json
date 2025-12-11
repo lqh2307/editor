@@ -4,5 +4,11 @@
         "path": "icons/1. Sở chỉ huy/svg3.svg",
         "vertical": "1",
         "description": "Sở chỉ huy cấp bộ"
+    },
+    {
+        "category": "Máy bay",
+        "path": "icons/1. Sở chỉ huy/airplane-svgrepo-com.svg",
+        "vertical": "1",
+        "description": "Máy bay"
     }
 ]
