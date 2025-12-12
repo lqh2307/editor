@@ -78,10 +78,7 @@ export const KonvaText = React.memo(
 
     // Get stage
     const getStage = React.useCallback((): Konva.Stage => {
-      const node: Konva.Text = nodeRef.current;
-      if (node) {
-        return node.getStage();
-      }
+      return nodeRef.current?.getStage();
     }, []);
 
     // Get node
@@ -125,6 +122,43 @@ export const KonvaText = React.memo(
       (e: Konva.KonvaEventObject<MouseEvent>): void => {
         // Call callback function
         currentPropRef.current.onClick?.(e, shapeAPI);
+      },
+      []
+    );
+
+    const handleDblClick = React.useCallback(
+      (e: Konva.KonvaEventObject<MouseEvent>): void => {
+        const textArea = textareaRef.current;
+        if (!textArea) {
+          return;
+        }
+
+        const shapeOption: KonvaShape = currentPropRef.current.shapeOption;
+
+        e.target?.visible(false);
+
+        Object.assign(textArea.style, {
+          visibility: "visible",
+          fontSize: `${shapeOption.fontSize}px`,
+          lineHeight: shapeOption.lineHeight.toString(),
+          fontFamily: shapeOption.fontFamily,
+          fontStyle: shapeOption.fontStyle,
+          fontWeight: shapeOption.fontWeight,
+          textAlign: shapeOption.align as HorizontalAlign,
+          verticalAlign: shapeOption.verticalAlign as VerticalAlign,
+          color: shapeOption.fill as string,
+          transform: `rotateZ(${shapeOption.rotation}deg)`,
+          width: `${shapeOption.width}px`,
+          height: `${shapeOption.height}px`,
+          left: `${shapeOption.x - shapeOption.offsetX}px`,
+          top: `${shapeOption.y - shapeOption.offsetY}px`,
+          padding: `${shapeOption.padding}px`,
+          filter: `brightness(${(shapeOption.brightness || 0) + 1})`,
+        });
+
+        textArea.value = shapeOption.text;
+
+        textArea.focus();
       },
       []
     );
@@ -237,43 +271,6 @@ export const KonvaText = React.memo(
       currentPropRef.current.onMouseLeave?.(shapeAPI);
     }, []);
 
-    const handleDblClick = React.useCallback(
-      (e: Konva.KonvaEventObject<MouseEvent>): void => {
-        const textArea = textareaRef.current;
-        if (!textArea) {
-          return;
-        }
-
-        const shapeOption: KonvaShape = currentPropRef.current.shapeOption;
-
-        e.target?.visible(false);
-
-        Object.assign(textArea.style, {
-          visibility: "visible",
-          fontSize: `${shapeOption.fontSize}px`,
-          lineHeight: shapeOption.lineHeight.toString(),
-          fontFamily: shapeOption.fontFamily,
-          fontStyle: shapeOption.fontStyle,
-          fontWeight: shapeOption.fontWeight,
-          textAlign: shapeOption.align as HorizontalAlign,
-          verticalAlign: shapeOption.verticalAlign as VerticalAlign,
-          color: shapeOption.fill as string,
-          transform: `rotateZ(${shapeOption.rotation}deg)`,
-          width: `${shapeOption.width}px`,
-          height: `${shapeOption.height}px`,
-          left: `${shapeOption.x - shapeOption.offsetX}px`,
-          top: `${shapeOption.y - shapeOption.offsetY}px`,
-          padding: `${shapeOption.padding}px`,
-          filter: `brightness(${(shapeOption.brightness || 0) + 1})`,
-        });
-
-        textArea.value = shapeOption.text;
-
-        textArea.focus();
-      },
-      []
-    );
-
     const onBlurHandler = React.useCallback((): void => {
       if (textareaRef.current) {
         textareaRef.current.style.visibility = "hidden";
@@ -322,7 +319,7 @@ export const KonvaText = React.memo(
               visibility: "hidden",
               display: "block",
               position: "absolute",
-              transformOrigin: "left top",
+              transformOrigin: "center",
               border: "none",
               overflow: "hidden",
               outline: "none",
@@ -348,6 +345,7 @@ export const KonvaText = React.memo(
           listening={true}
           ref={nodeRef}
           onClick={handleClick}
+          onDblClick={handleDblClick}
           onMouseOver={handleMouseOver}
           onMouseLeave={handleMouseLeave}
           onDragMove={handleDragMove}
@@ -355,7 +353,6 @@ export const KonvaText = React.memo(
           onMouseUp={handleMouseUp}
           onDragEnd={handleDragEnd}
           onTransformEnd={handleTransformEnd}
-          onDblClick={handleDblClick}
         />
       </Portal>
     );

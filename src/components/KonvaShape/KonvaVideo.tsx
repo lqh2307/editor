@@ -91,10 +91,7 @@ export const KonvaVideo = React.memo(
 
     // Get stage
     const getStage = React.useCallback((): Konva.Stage => {
-      const node: Konva.Image = nodeRef.current;
-      if (node) {
-        return node.getStage();
-      }
+      return nodeRef.current?.getStage();
     }, []);
 
     // Get node
@@ -159,6 +156,11 @@ export const KonvaVideo = React.memo(
       },
       []
     );
+
+    const handleDblClick = React.useCallback((): void => {
+      // Call callback function
+      currentPropRef.current.onDblClick?.(shapeAPI);
+    }, []);
 
     const handleMouseDown = React.useCallback((): void => {
       // Call callback function
@@ -232,6 +234,7 @@ export const KonvaVideo = React.memo(
           ref={nodeRef}
           image={undefined}
           onClick={handleClick}
+          onDblClick={handleDblClick}
           onMouseOver={handleMouseOver}
           onMouseLeave={handleMouseLeave}
           onDragMove={handleDragMove}

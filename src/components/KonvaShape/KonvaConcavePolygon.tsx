@@ -64,10 +64,7 @@ export const KonvaConcavePolygon = React.memo(
 
     // Get stage
     const getStage = React.useCallback((): Konva.Stage => {
-      const node: Konva.Star = nodeRef.current;
-      if (node) {
-        return node.getStage();
-      }
+      return nodeRef.current?.getStage();
     }, []);
 
     // Get node
@@ -114,6 +111,11 @@ export const KonvaConcavePolygon = React.memo(
       },
       []
     );
+
+    const handleDblClick = React.useCallback((): void => {
+      // Call callback function
+      currentPropRef.current.onDblClick?.(shapeAPI);
+    }, []);
 
     const handleMouseDown = React.useCallback((): void => {
       // Call callback function
@@ -189,6 +191,7 @@ export const KonvaConcavePolygon = React.memo(
           innerRadius={undefined}
           outerRadius={undefined}
           onClick={handleClick}
+          onDblClick={handleDblClick}
           onMouseOver={handleMouseOver}
           onMouseLeave={handleMouseLeave}
           onDragMove={handleDragMove}

@@ -61,10 +61,7 @@ export const KonvaCircle = React.memo(
 
     // Get stage
     const getStage = React.useCallback((): Konva.Stage => {
-      const node: Konva.Circle = nodeRef.current;
-      if (node) {
-        return node.getStage();
-      }
+      return nodeRef.current?.getStage();
     }, []);
 
     // Get node
@@ -111,6 +108,11 @@ export const KonvaCircle = React.memo(
       },
       []
     );
+
+    const handleDblClick = React.useCallback((): void => {
+      // Call callback function
+      currentPropRef.current.onDblClick?.(shapeAPI);
+    }, []);
 
     const handleMouseDown = React.useCallback((): void => {
       // Call callback function
@@ -184,6 +186,7 @@ export const KonvaCircle = React.memo(
           ref={nodeRef}
           radius={undefined}
           onClick={handleClick}
+          onDblClick={handleDblClick}
           onMouseOver={handleMouseOver}
           onMouseLeave={handleMouseLeave}
           onDragMove={handleDragMove}

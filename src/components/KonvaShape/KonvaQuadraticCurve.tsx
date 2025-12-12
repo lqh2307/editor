@@ -50,7 +50,7 @@ export const KonvaQuadraticCurve = React.memo(
 
       // Update controll attrs
       lineNodeRef.current?.setAttrs({
-        visible: prop.isSelected,
+        visible: prop.isEditted,
         rotation: shapeOption.rotation,
         scaleX: shapeOption.scaleX,
         scaleY: shapeOption.scaleY,
@@ -64,7 +64,7 @@ export const KonvaQuadraticCurve = React.memo(
       });
 
       startNodeRef.current?.setAttrs({
-        visible: prop.isSelected,
+        visible: prop.isEditted,
         offsetX: shapeOption.offsetX,
         offsetY: shapeOption.offsetY,
         ...transformPoint(
@@ -77,7 +77,7 @@ export const KonvaQuadraticCurve = React.memo(
       });
 
       controlNodeRef.current?.setAttrs({
-        visible: prop.isSelected,
+        visible: prop.isEditted,
         offsetX: shapeOption.offsetX,
         offsetY: shapeOption.offsetY,
         ...transformPoint(
@@ -90,7 +90,7 @@ export const KonvaQuadraticCurve = React.memo(
       });
 
       endNodeRef.current?.setAttrs({
-        visible: prop.isSelected,
+        visible: prop.isEditted,
         offsetX: shapeOption.offsetX,
         offsetY: shapeOption.offsetY,
         ...transformPoint(
@@ -126,10 +126,7 @@ export const KonvaQuadraticCurve = React.memo(
 
     // Get stage
     const getStage = React.useCallback((): Konva.Stage => {
-      const node: Konva.Line = nodeRef.current;
-      if (node) {
-        return node.getStage();
-      }
+      return nodeRef.current?.getStage();
     }, []);
 
     // Get node
@@ -176,6 +173,11 @@ export const KonvaQuadraticCurve = React.memo(
       },
       []
     );
+
+    const handleDblClick = React.useCallback((): void => {
+      // Call callback function
+      currentPropRef.current.onDblClick?.(shapeAPI);
+    }, []);
 
     const handleMouseDown = React.useCallback((): void => {
       // Call callback function
@@ -386,6 +388,7 @@ export const KonvaQuadraticCurve = React.memo(
           listening={true}
           ref={nodeRef}
           onClick={handleClick}
+          onDblClick={handleDblClick}
           onMouseOver={handleMouseOver}
           onMouseLeave={handleMouseLeave}
           onDragMove={handleDragMove}

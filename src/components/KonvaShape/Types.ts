@@ -100,7 +100,7 @@ export type KonvaFreeDrawingLine = Omit<Konva.LineConfig, "points"> & {
 
 export type KonvaShapeProp = {
   isSelected?: boolean;
-  isCropped?: boolean;
+  isEditted?: boolean;
 
   // Shape options
   shapeOption?: KonvaShape;
@@ -113,6 +113,7 @@ export type KonvaShapeProp = {
     e?: Konva.KonvaEventObject<MouseEvent>,
     shapeAPI?: KonvaShapeAPI
   ) => void;
+  onDblClick?: (shapeAPI?: KonvaShapeAPI) => void;
   onMouseDown?: (shapeAPI?: KonvaShapeAPI) => void;
   onMouseUp?: (shapeAPI?: KonvaShapeAPI) => void;
   onDragMove?: (shapeAPI?: KonvaShapeAPI) => void;

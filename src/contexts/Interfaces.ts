@@ -20,8 +20,8 @@ export interface IShapesContext {
   canUndo?: boolean;
   canRedo?: boolean;
 
-  croppedId?: string;
-  updateCroppedId?: (id?: string) => void;
+  edittedId?: string;
+  updateEdittedId?: (id?: string) => void;
   selectedIds?: Record<string, boolean>;
   updateSelectedIds?: (ids?: string[], overwrite?: boolean) => void;
   singleSelectedIds?: Record<string, boolean>;

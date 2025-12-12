@@ -469,7 +469,7 @@ export function removeNestedArrayItems(arr1: any[], arr2: string[]): string[] {
       }
     } else {
       if (removeSet.has(node)) {
-        return [undefined, true]
+        return [undefined, true];
       } else {
         return [node, false];
       }
