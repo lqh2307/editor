@@ -6,6 +6,7 @@ import { NumberInput } from "../../components/NumberInput";
 import { SliderInput } from "../../components/SliderInput";
 import { ColorInput } from "../../components/ColorInput";
 import { LineCap, LineJoin } from "konva/lib/Shape";
+import { KonvaLineStyle } from "../../types/Konva";
 import { useShapesContext } from "../../contexts";
 import { useTranslation } from "react-i18next";
 import { fixNumber } from "../../utils/Number";
@@ -302,6 +303,15 @@ export const PanelStyleTab = React.memo((): React.JSX.Element => {
           true
         );
       },
+      changeLineStyle: (value: string): void => {
+        updateShape(
+          {
+            lineStyle: value as KonvaLineStyle,
+          },
+          true,
+          true
+        );
+      },
       changeLineCap: (value: string): void => {
         updateShape(
           {
@@ -390,6 +400,14 @@ export const PanelStyleTab = React.memo((): React.JSX.Element => {
     Record<string, SelectInputOption[]>
   >(
     () => ({
+      lineStyles: Object.keys(
+        translation.panel.style.children.stroke.children.lineStyle.content
+      ).map((item) => ({
+        title: t(
+          `panel.style.children.stroke.children.lineStyle.content.${item}`
+        ),
+        value: item,
+      })),
       lineCaps: Object.keys(
         translation.panel.style.children.stroke.children.lineCap.content
       ).map((item) => ({
@@ -407,7 +425,7 @@ export const PanelStyleTab = React.memo((): React.JSX.Element => {
         value: item,
       })),
     }),
-    []
+    [t]
   );
 
   return (
@@ -744,6 +762,14 @@ export const PanelStyleTab = React.memo((): React.JSX.Element => {
               alignItems: "center",
             }}
           >
+            <SelectInput
+              label={t("panel.style.children.stroke.children.lineStyle.title")}
+              value={selectedShape.lineStyle}
+              onChange={updateShapeHandler.changeLineStyle}
+              disabled={!selectedShape.strokeEnabled}
+              options={data.lineStyles}
+            />
+
             <SelectInput
               label={t("panel.style.children.stroke.children.lineCap.title")}
               value={selectedShape.lineCap}

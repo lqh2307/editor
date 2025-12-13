@@ -1,5 +1,5 @@
+import { createLineDash, createShapeBox } from "../../utils/Shapes";
 import { parseHexToRGBAString } from "../../utils/Color";
-import { createShapeBox } from "../../utils/Shapes";
 import { RegularPolygon } from "react-konva";
 import { Portal } from "react-konva-utils";
 import Konva from "konva";
@@ -38,6 +38,7 @@ export const KonvaConvexPolygon = React.memo(
             shapeOption.stroke as string,
             shapeOption.strokeOpacity
           ),
+          dash: createLineDash(shapeOption.lineStyle),
         });
 
         // Update shape box

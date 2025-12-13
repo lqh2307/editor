@@ -85,7 +85,7 @@ export const ToolbarUploadImage = React.memo((): React.JSX.Element => {
         );
       }
     },
-    [addShapes, getStageCenter, updateSnackbarAlert]
+    [t, addShapes, getStageCenter, updateSnackbarAlert]
   );
 
   const uploadImageFromLinkHandler =
@@ -120,7 +120,7 @@ export const ToolbarUploadImage = React.memo((): React.JSX.Element => {
       } finally {
         setImageFromLinkInfo(linkInitRef.current);
       }
-    }, [addShapes, imageFromLinkInfo, getStageCenter, updateSnackbarAlert]);
+    }, [t, addShapes, imageFromLinkInfo, getStageCenter, updateSnackbarAlert]);
 
   const dialogTitle: React.JSX.Element =
     React.useMemo((): React.JSX.Element => {
@@ -142,7 +142,7 @@ export const ToolbarUploadImage = React.memo((): React.JSX.Element => {
           />
         </Box>
       );
-    }, []);
+    }, [t]);
 
   const dialogContent: React.JSX.Element =
     React.useMemo((): React.JSX.Element => {
@@ -166,7 +166,7 @@ export const ToolbarUploadImage = React.memo((): React.JSX.Element => {
           />
         </Box>
       );
-    }, [imageFromLinkInfo.link]);
+    }, [t, imageFromLinkInfo.link]);
 
   const dialogAction: React.JSX.Element =
     React.useMemo((): React.JSX.Element => {
@@ -179,7 +179,7 @@ export const ToolbarUploadImage = React.memo((): React.JSX.Element => {
           {t("toolBar.uploadImage.common.button.upload")}
         </TooltipButton>
       );
-    }, [uploadImageFromLinkHandler]);
+    }, [t, uploadImageFromLinkHandler]);
 
   return (
     <>

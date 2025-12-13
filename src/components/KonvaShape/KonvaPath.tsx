@@ -1,5 +1,5 @@
+import { createLineDash, createShapeBox } from "../../utils/Shapes";
 import { parseHexToRGBAString } from "../../utils/Color";
-import { createShapeBox } from "../../utils/Shapes";
 import { Portal } from "react-konva-utils";
 import { Group } from "react-konva";
 import React from "react";
@@ -51,6 +51,8 @@ export const KonvaPath = React.memo(
           pathOption.stroke as string,
           pathOption.strokeOpacity
         );
+
+        pathOption.dash = createLineDash(shapeOption.lineStyle);
 
         node.destroyChildren();
 

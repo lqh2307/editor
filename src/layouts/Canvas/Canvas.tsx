@@ -403,6 +403,7 @@ export const Canvas = React.memo((): React.JSX.Element => {
       }
     },
     [
+      t,
       addShapes,
       getStagePointerPosition,
       setStagePointerPosition,

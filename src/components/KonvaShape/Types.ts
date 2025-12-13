@@ -1,3 +1,4 @@
+import { KonvaLineStyle } from "../../types/Konva";
 import { Size } from "../../types/Common";
 import Konva from "konva";
 
@@ -14,6 +15,7 @@ export type KonvaShape = Partial<Konva.ShapeConfig> &
   Partial<Konva.RingConfig> &
   Partial<Konva.WedgeConfig> & {
     // Extend
+    index?: number;
     groupIds?: any[];
     type?: KonvaShapeType;
     box?: KonvaShapeBox;
@@ -33,6 +35,9 @@ export type KonvaShape = Partial<Konva.ShapeConfig> &
 
     // Free drawing
     lines?: KonvaFreeDrawingLine[];
+
+    // Line
+    lineStyle?: KonvaLineStyle;
 
     // Path
     paths?: Konva.PathConfig[];

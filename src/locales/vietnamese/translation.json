@@ -914,8 +914,17 @@
             "opacity": {
               "title": "Độ mờ"
             },
+            "lineStyle": {
+              "title": "Kiểu",
+              "content": {
+                "solid": "Liền",
+                "dashed": "Đứt",
+                "dotted": "Chấm",
+                "dotted-dashed": "Chấm đứt"
+              }
+            },
             "lineCap": {
-              "title": "Điểm mút",
+              "title": "Mút",
               "content": {
                 "butt": "Cụt",
                 "round": "Tròn",
@@ -923,7 +932,7 @@
               }
             },
             "lineJoin": {
-              "title": "Điểm giao",
+              "title": "Giao",
               "content": {
                 "round": "Tròn",
                 "bevel": "Vát",

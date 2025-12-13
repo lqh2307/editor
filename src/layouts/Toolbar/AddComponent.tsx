@@ -82,7 +82,7 @@ export const ToolbarAddComponent = React.memo((): React.JSX.Element => {
         "error"
       );
     }
-  }, [updateSnackbarAlert]);
+  }, [t, updateSnackbarAlert]);
 
   const addComponentHandler = React.useCallback(
     async (value: string): Promise<void> => {
@@ -135,7 +135,7 @@ export const ToolbarAddComponent = React.memo((): React.JSX.Element => {
         );
       }
     },
-    [addShapes, getStageCenter, updateSnackbarAlert]
+    [t, addShapes, getStageCenter, updateSnackbarAlert]
   );
 
   const ComponentCell = React.useCallback(

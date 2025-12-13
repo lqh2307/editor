@@ -1,4 +1,5 @@
 import { WindowRect, WindowSize } from "../../types/Window";
+import { KonvaLineStyle } from "../../types/Konva";
 import { IRect, Vector2d } from "konva/lib/types";
 import { createRandomHexColor } from "../Color";
 import { Filter } from "konva/lib/Node";
@@ -49,6 +50,7 @@ export function createShape(shape: KonvaShape): KonvaShape {
   newShape.scaleY = newShape.scaleY ?? 1;
 
   // Line style
+  newShape.lineStyle = newShape.lineStyle ?? "solid";
   newShape.lineCap = newShape.lineCap ?? "butt";
   newShape.lineJoin = newShape.lineJoin ?? "miter";
 
@@ -338,7 +340,7 @@ export function createShape(shape: KonvaShape): KonvaShape {
       newShape.stroke = newShape.stroke ?? randomColor;
       newShape.strokeOpacity = newShape.strokeOpacity ?? 1;
       newShape.strokeScaleEnabled = newShape.strokeScaleEnabled ?? false;
-      newShape.strokeWidth = newShape.strokeWidth ?? 10;
+      newShape.strokeWidth = newShape.strokeWidth ?? 5;
       newShape.bezier = newShape.bezier ?? true;
 
       // Points
@@ -691,6 +693,22 @@ export function createFilter(option: KonvaShape): Filter[] {
   return filters;
 }
 
+const lineDashes: { [K in KonvaLineStyle]: number[] } = {
+  "solid": undefined,
+  "dashed": [10, 5],
+  "dotted": [2, 5],
+  "dotted-dashed": [10, 5, 2, 5],
+};
+
+/**
+ * Create line dash
+ * @param style
+ * @returns
+ */
+export function createLineDash(style: KonvaLineStyle): number[] {
+  return lineDashes[style];
+}
+
 /* Transform point */
 export function transformPoint(point: Vector2d, option: KonvaShape): Vector2d {
   // // offset translate
@@ -772,4 +790,19 @@ export function invertPoint(point: Vector2d, option: KonvaShape): Vector2d {
     .translate(-option.offsetX, -option.offsetY)
     .invert()
     .point(point);
+}
+
+/* Build control points */
+export function buildControlPoints(points: number[]): KonvaShape[] {
+  const result: KonvaShape[] = [];
+
+  for (let i = 0; i < points.length; i += 2) {
+    result.push({
+      index: i,
+      x: points[i],
+      y: points[i + 1],
+    });
+  }
+
+  return result;
 }

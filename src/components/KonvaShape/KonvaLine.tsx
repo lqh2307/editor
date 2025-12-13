@@ -1,5 +1,5 @@
+import { createLineDash, createShapeBox } from "../../utils/Shapes";
 import { parseHexToRGBAString } from "../../utils/Color";
-import { createShapeBox } from "../../utils/Shapes";
 import { Portal } from "react-konva-utils";
 import { Line } from "react-konva";
 import Konva from "konva";
@@ -36,6 +36,7 @@ export const KonvaLine = React.memo(
             shapeOption.stroke as string,
             shapeOption.strokeOpacity
           ),
+          dash: createLineDash(shapeOption.lineStyle),
         });
 
         // Update shape box

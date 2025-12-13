@@ -1,9 +1,13 @@
-import { createShapeBox, createFilter } from "../../utils/Shapes";
 import { parseHexToRGBAString } from "../../utils/Color";
 import { Portal } from "react-konva-utils";
 import { Image } from "react-konva";
 import Konva from "konva";
 import React from "react";
+import {
+  createShapeBox,
+  createLineDash,
+  createFilter,
+} from "../../utils/Shapes";
 import {
   KonvaShapeClip,
   KonvaShapeProp,
@@ -72,6 +76,7 @@ export const KonvaImage = React.memo(
             shapeOption.stroke as string,
             shapeOption.strokeOpacity
           ),
+          dash: createLineDash(shapeOption.lineStyle),
           filters: createFilter(shapeOption),
         });
 

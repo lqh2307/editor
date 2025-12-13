@@ -1,13 +1,13 @@
 import { HorizontalAlign, VerticalAlign } from "../../types/Window";
+import { createLineDash, createShapeBox } from "../../utils/Shapes";
 import { parseHexToRGBAString } from "../../utils/Color";
-import { createShapeBox } from "../../utils/Shapes";
 import { Html, Portal } from "react-konva-utils";
 import { Text } from "react-konva";
 import React from "react";
 import Konva from "konva";
 import {
-  KonvaShapeAPI,
   KonvaShapeProp,
+  KonvaShapeAPI,
   RenderReason,
   KonvaShape,
 } from "./Types";
@@ -59,6 +59,7 @@ export const KonvaText = React.memo(
             shapeOption.stroke as string,
             shapeOption.strokeOpacity
           ),
+          dash: createLineDash(shapeOption.lineStyle),
           fontStyle:
             shapeOption.fontWeight === "bold"
               ? shapeOption.fontStyle === "italic"

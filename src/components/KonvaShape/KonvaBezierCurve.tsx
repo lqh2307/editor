@@ -13,6 +13,7 @@ import {
 import {
   createShapeBox,
   transformPoint,
+  createLineDash,
   invertPoint,
 } from "../../utils/Shapes";
 
@@ -48,6 +49,7 @@ export const KonvaBezierCurve = React.memo(
             shapeOption.stroke as string,
             shapeOption.strokeOpacity
           ),
+          dash: createLineDash(shapeOption.lineStyle),
         });
 
         // Update shape box

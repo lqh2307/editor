@@ -914,8 +914,17 @@
             "opacity": {
               "title": "Opacity"
             },
+            "lineStyle": {
+              "title": "Style",
+              "content": {
+                "solid": "Solid",
+                "dashed": "Dashed",
+                "dotted": "Dotted",
+                "dotted-dashed": "Dotted Dashed"
+              }
+            },
             "lineCap": {
-              "title": "Line Cap",
+              "title": "Cap",
               "content": {
                 "butt": "Butt",
                 "round": "Round",
@@ -923,7 +932,7 @@
               }
             },
             "lineJoin": {
-              "title": "Line Join",
+              "title": "Join",
               "content": {
                 "round": "Round",
                 "bevel": "Bevel",

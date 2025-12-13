@@ -195,7 +195,7 @@ export const PanelTextTab = React.memo((): React.JSX.Element => {
         "error"
       );
     }
-  }, [fontInfo.fonts, updateSnackbarAlert]);
+  }, [t, fontInfo.fonts, updateSnackbarAlert]);
 
   React.useEffect(() => {
     fetchFontHandler();
