@@ -1,10 +1,15 @@
-import { KonvaShapeProp, KonvaShapeAPI, KonvaShape } from "./Types";
 import { parseHexToRGBAString } from "../../utils/Color";
 import { Vector2d } from "konva/lib/types";
 import { Portal } from "react-konva-utils";
 import { Circle, Line } from "react-konva";
 import Konva from "konva";
 import React from "react";
+import {
+  KonvaShapeProp,
+  KonvaShapeAPI,
+  RenderReason,
+  KonvaShape,
+} from "./Types";
 import {
   createShapeBox,
   transformPoint,
@@ -25,7 +30,7 @@ export const KonvaBezierCurve = React.memo(
     const endNodeRef = React.useRef<Konva.Circle>(undefined);
 
     // Apply prop
-    const applyProp = React.useCallback((): void => {
+    const applyProp = React.useCallback((reason?: RenderReason): void => {
       const prop: KonvaShapeProp = currentPropRef.current;
       const shapeOption: KonvaShape = currentPropRef.current.shapeOption;
 
@@ -117,7 +122,7 @@ export const KonvaBezierCurve = React.memo(
       });
 
       // Call callback function
-      prop.onAppliedProp?.(shapeAPI, "apply-prop");
+      prop.onAppliedProp?.(shapeAPI, reason);
     }, []);
 
     // Update prop
@@ -126,7 +131,7 @@ export const KonvaBezierCurve = React.memo(
         Object.assign(currentPropRef.current, prop);
       }
 
-      applyProp();
+      applyProp("apply-prop");
     }, []);
 
     // Update shape
@@ -135,7 +140,7 @@ export const KonvaBezierCurve = React.memo(
         Object.assign(currentPropRef.current.shapeOption, shape);
       }
 
-      applyProp();
+      applyProp("apply-prop");
     }, []);
 
     // Get stage
@@ -169,7 +174,7 @@ export const KonvaBezierCurve = React.memo(
     React.useEffect(() => {
       currentPropRef.current = prop;
 
-      applyProp();
+      applyProp("apply-prop");
 
       // Call callback function
       prop.onMounted?.(prop.shapeOption.id, shapeAPI);

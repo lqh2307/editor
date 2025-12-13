@@ -1,10 +1,15 @@
-import { KonvaShapeProp, KonvaShape, KonvaShapeAPI } from "./Types";
 import { parseHexToRGBAString } from "../../utils/Color";
 import { createShapeBox } from "../../utils/Shapes";
 import { Portal } from "react-konva-utils";
 import { Group } from "react-konva";
 import React from "react";
 import Konva from "konva";
+import {
+  KonvaShapeProp,
+  KonvaShapeAPI,
+  RenderReason,
+  KonvaShape,
+} from "./Types";
 
 export const KonvaFreeDrawing = React.memo(
   (prop: KonvaShapeProp): React.JSX.Element => {
@@ -13,7 +18,7 @@ export const KonvaFreeDrawing = React.memo(
     const [isEnabled, setIsEnabled] = React.useState<boolean>(false);
 
     // Apply prop
-    const applyProp = React.useCallback((): void => {
+    const applyProp = React.useCallback((reason?: RenderReason): void => {
       const node: Konva.Group = nodeRef.current;
       if (node) {
         const prop: KonvaShapeProp = currentPropRef.current;
@@ -77,7 +82,7 @@ export const KonvaFreeDrawing = React.memo(
       }
 
       // Call callback function
-      prop.onAppliedProp?.(shapeAPI, "apply-prop");
+      prop.onAppliedProp?.(shapeAPI, reason);
     }, []);
 
     // Update prop
@@ -86,7 +91,7 @@ export const KonvaFreeDrawing = React.memo(
         Object.assign(currentPropRef.current, prop);
       }
 
-      applyProp();
+      applyProp("apply-prop");
     }, []);
 
     // Update shape
@@ -95,7 +100,7 @@ export const KonvaFreeDrawing = React.memo(
         Object.assign(currentPropRef.current.shapeOption, shape);
       }
 
-      applyProp();
+      applyProp("apply-prop");
     }, []);
 
     // Get stage
@@ -129,7 +134,7 @@ export const KonvaFreeDrawing = React.memo(
     React.useEffect(() => {
       currentPropRef.current = prop;
 
-      applyProp();
+      applyProp("apply-prop");
 
       // Call callback function
       prop.onMounted?.(prop.shapeOption.id, shapeAPI);

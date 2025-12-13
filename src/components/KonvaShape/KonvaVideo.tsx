@@ -1,10 +1,15 @@
-import { KonvaShape, KonvaShapeAPI, KonvaShapeProp } from "./Types";
 import { parseHexToRGBAString } from "../../utils/Color";
 import { createShapeBox } from "../../utils/Shapes";
 import { Portal } from "react-konva-utils";
 import { Image } from "react-konva";
 import Konva from "konva";
 import React from "react";
+import {
+  KonvaShapeProp,
+  KonvaShapeAPI,
+  RenderReason,
+  KonvaShape,
+} from "./Types";
 
 export const KonvaVideo = React.memo(
   (prop: KonvaShapeProp): React.JSX.Element => {
@@ -16,7 +21,7 @@ export const KonvaVideo = React.memo(
     const animRef = React.useRef<Konva.Animation>(undefined);
 
     // Apply prop
-    const applyProp = React.useCallback((): void => {
+    const applyProp = React.useCallback((reason?: RenderReason): void => {
       const node: Konva.Image = nodeRef.current;
       if (node) {
         const prop: KonvaShapeProp = currentPropRef.current;
@@ -68,7 +73,7 @@ export const KonvaVideo = React.memo(
       }
 
       // Call callback function
-      prop.onAppliedProp?.(shapeAPI, "apply-prop");
+      prop.onAppliedProp?.(shapeAPI, reason);
     }, []);
 
     // Update prop
@@ -77,7 +82,7 @@ export const KonvaVideo = React.memo(
         Object.assign(currentPropRef.current, prop);
       }
 
-      applyProp();
+      applyProp("apply-prop");
     }, []);
 
     // Update shape
@@ -86,7 +91,7 @@ export const KonvaVideo = React.memo(
         Object.assign(currentPropRef.current.shapeOption, shape);
       }
 
-      applyProp();
+      applyProp("apply-prop");
     }, []);
 
     // Get stage
@@ -120,7 +125,7 @@ export const KonvaVideo = React.memo(
     React.useEffect(() => {
       currentPropRef.current = prop;
 
-      applyProp();
+      applyProp("apply-prop");
 
       // Call callback function
       prop.onMounted?.(prop.shapeOption.id, shapeAPI);

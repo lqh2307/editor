@@ -251,9 +251,15 @@ export const CanvasShapes = React.memo((): React.JSX.Element => {
         } else if (newScaleY > 1) {
           expandStage(box.bottom * expandRatio, true);
         }
-      } else if (reason === "transform-end" || reason === "commit") {
+      } else if (reason === "transform-end") {
         // Update shape
         updateShape(shapeAPI.getShape(), true, true);
+      } else if (reason === "commit") {
+        // Update shape
+        updateShape(shapeAPI.getShape(), true, true);
+
+        // Reset editted id
+        updateEdittedId(undefined);
       } else if (reason === "drag-end") {
         const guideLines: KonvaGuideLinesAPI = getGuideLines();
 
@@ -326,16 +332,17 @@ export const CanvasShapes = React.memo((): React.JSX.Element => {
     },
     [
       shapeRefs,
-      selectedIds,
-      singleSelectedIds,
       stageWidth,
+      selectedIds,
       stageHeight,
+      singleSelectedIds,
       guideLinesThreshold,
       guideLinesStick,
+      updateEdittedId,
       getGuideLines,
-      moveShapes,
       expandStage,
       updateShape,
+      moveShapes,
     ]
   );
 
@@ -689,6 +696,7 @@ export const CanvasShapes = React.memo((): React.JSX.Element => {
               onAppliedProp={handleAppliedProp}
               onMouseDown={handleShapeMouseDown}
               onMouseUp={handleShapeMouseUp}
+              isEditted={isEditted}
               isSelected={isSelected}
               shapeOption={item}
               key={item.id}

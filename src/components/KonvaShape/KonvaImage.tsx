@@ -8,6 +8,7 @@ import {
   KonvaShapeClip,
   KonvaShapeProp,
   KonvaShapeAPI,
+  RenderReason,
   KonvaShape,
 } from "./Types";
 
@@ -48,16 +49,16 @@ export const KonvaImage = React.memo(
     }, []);
 
     // Apply prop
-    const applyProp = React.useCallback((): void => {
+    const applyProp = React.useCallback((reason?: RenderReason): void => {
       const prop: KonvaShapeProp = currentPropRef.current;
       const shapeOption: KonvaShape = prop.shapeOption;
 
+      // Update offset
+      shapeOption.offsetX = shapeOption.width / 2;
+      shapeOption.offsetY = shapeOption.height / 2;
+
       const node: Konva.Image = nodeRef.current;
       if (node) {
-        // Update offset
-        shapeOption.offsetX = shapeOption.width / 2;
-        shapeOption.offsetY = shapeOption.height / 2;
-
         // Update node attrs
         node.setAttrs({
           ...shapeOption,
@@ -148,7 +149,7 @@ export const KonvaImage = React.memo(
       previousIsCroppedRef.current = prop.isEditted;
 
       // Call callback function
-      prop.onAppliedProp?.(shapeAPI, "apply-prop");
+      prop.onAppliedProp?.(shapeAPI, reason);
     }, []);
 
     // Update prop
@@ -157,7 +158,7 @@ export const KonvaImage = React.memo(
         Object.assign(currentPropRef.current, prop);
       }
 
-      applyProp();
+      applyProp("apply-prop");
     }, []);
 
     // Update shape
@@ -166,7 +167,7 @@ export const KonvaImage = React.memo(
         Object.assign(currentPropRef.current.shapeOption, shape);
       }
 
-      applyProp();
+      applyProp("apply-prop");
     }, []);
 
     // Get stage
@@ -200,7 +201,7 @@ export const KonvaImage = React.memo(
     React.useEffect(() => {
       currentPropRef.current = prop;
 
-      applyProp();
+      applyProp("apply-prop");
 
       // Call callback function
       prop.onMounted?.(prop.shapeOption.id, shapeAPI);

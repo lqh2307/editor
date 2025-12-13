@@ -1,10 +1,15 @@
-import { KonvaShape, KonvaShapeAPI, KonvaShapeProp } from "./Types";
 import { parseHexToRGBAString } from "../../utils/Color";
 import { createShapeBox } from "../../utils/Shapes";
 import { RegularPolygon } from "react-konva";
 import { Portal } from "react-konva-utils";
 import Konva from "konva";
 import React from "react";
+import {
+  KonvaShapeProp,
+  KonvaShapeAPI,
+  RenderReason,
+  KonvaShape,
+} from "./Types";
 
 export const KonvaConvexPolygon = React.memo(
   (prop: KonvaShapeProp): React.JSX.Element => {
@@ -13,7 +18,7 @@ export const KonvaConvexPolygon = React.memo(
     const [isEnabled, setIsEnabled] = React.useState<boolean>(false);
 
     // Apply prop
-    const applyProp = React.useCallback((): void => {
+    const applyProp = React.useCallback((reason?: RenderReason): void => {
       const node: Konva.RegularPolygon = nodeRef.current;
       if (node) {
         const prop: KonvaShapeProp = currentPropRef.current;
@@ -40,7 +45,7 @@ export const KonvaConvexPolygon = React.memo(
       }
 
       // Call callback function
-      prop.onAppliedProp?.(shapeAPI, "apply-prop");
+      prop.onAppliedProp?.(shapeAPI, reason);
     }, []);
 
     // Update prop
@@ -49,7 +54,7 @@ export const KonvaConvexPolygon = React.memo(
         Object.assign(currentPropRef.current, prop);
       }
 
-      applyProp();
+      applyProp("apply-prop");
     }, []);
 
     // Update shape
@@ -58,7 +63,7 @@ export const KonvaConvexPolygon = React.memo(
         Object.assign(currentPropRef.current.shapeOption, shape);
       }
 
-      applyProp();
+      applyProp("apply-prop");
     }, []);
 
     // Get stage
@@ -92,7 +97,7 @@ export const KonvaConvexPolygon = React.memo(
     React.useEffect(() => {
       currentPropRef.current = prop;
 
-      applyProp();
+      applyProp("apply-prop");
 
       // Call callback function
       prop.onMounted?.(prop.shapeOption.id, shapeAPI);

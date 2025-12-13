@@ -29,7 +29,6 @@ export const KonvaTransformer = React.memo(
         "bottom-center",
         "bottom-right",
       ],
-      nodes: [],
     });
 
     // Apply prop
