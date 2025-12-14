@@ -6,6 +6,7 @@ import {
   KonvaQuadraticCurve,
   KonvaConcavePolygon,
   KonvaConvexPolygon,
+  KonvaMultiPolygon,
   KonvaBezierCurve,
   KonvaFreeDrawing,
   KonvaRectangle,
@@ -725,6 +726,27 @@ export const CanvasShapes = React.memo((): React.JSX.Element => {
         case "multi-line": {
           return (
             <KonvaMultiLine
+              onClick={handleShapeClick}
+              onDblClick={handleShapeDblClick}
+              onMounted={handleOnMounted}
+              onUnMounted={handleOnUnMounted}
+              onMouseOver={handleShapeMouseOver}
+              onMouseLeave={handleShapeMouseLeave}
+              onDragMove={handleShapeDragMove}
+              onAppliedProp={handleAppliedProp}
+              onMouseDown={handleShapeMouseDown}
+              onMouseUp={handleShapeMouseUp}
+              isEditted={edittedId === item.id}
+              isSelected={!drawingMode && !!selectedIds?.[item.id]}
+              shapeOption={item}
+              key={item.id}
+            />
+          );
+        }
+
+        case "multi-polygon": {
+          return (
+            <KonvaMultiPolygon
               onClick={handleShapeClick}
               onDblClick={handleShapeDblClick}
               onMounted={handleOnMounted}

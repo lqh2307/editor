@@ -247,6 +247,30 @@ export function createShape(shape: KonvaShape): KonvaShape {
       break;
     }
 
+    case "multi-polygon": {
+      // Common
+      newShape.x = newShape.x ?? 0;
+      newShape.y = newShape.y ?? 0;
+      newShape.fillEnabled = newShape.fillEnabled ?? true;
+      newShape.fill = newShape.fill ?? "#000000";
+      newShape.fillOpacity = newShape.fillOpacity ?? 1;
+      newShape.lineCap = newShape.lineCap ?? "butt";
+      newShape.lineJoin = newShape.lineJoin ?? "miter";
+      newShape.strokeEnabled = newShape.strokeEnabled ?? true;
+      newShape.stroke = newShape.stroke ?? "#000000";
+      newShape.strokeOpacity = newShape.strokeOpacity ?? 1;
+      newShape.strokeScaleEnabled = newShape.strokeScaleEnabled ?? false;
+      newShape.strokeWidth = newShape.strokeWidth ?? 5;
+      newShape.closed = newShape.closed ?? true;
+      newShape.points = newShape.points ?? [];
+
+      // Offset
+      newShape.offsetX = newShape.offsetX ?? 0;
+      newShape.offsetY = newShape.offsetY ?? 0;
+
+      break;
+    }
+
     case "path": {
       // Common
       newShape.width = newShape.width ?? 200;
