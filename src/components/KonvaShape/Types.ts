@@ -70,6 +70,7 @@ export type KonvaShapeType =
   | "text"
   | "line"
   | "free-drawing"
+  | "multi-line"
   | "path"
   | "arrow"
   | "ring"
@@ -137,5 +138,6 @@ export type LayerAction = "back" | "front" | "backward" | "forward";
 export type RenderReason =
   | "apply-prop"
   | "drag-end"
+  | "control-drag-end"
   | "transform-end"
   | "commit";

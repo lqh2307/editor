@@ -36,7 +36,7 @@ export type AppProviderProp = {
   toolbarColor: string;
 };
 
-export type FreeDrawingProviderProp = {
+export type DrawingProviderProp = {
   children?: React.ReactNode;
 };
 

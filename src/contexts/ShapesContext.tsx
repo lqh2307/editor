@@ -179,10 +179,12 @@ function reducer(state: State, action: Action): State {
 
     // Create new history by clone
     const newHistory: KonvaShape[] = shapes.map((item) => {
-      const { lines, ...newShape }: KonvaShape = item;
+      const { lines, points, ...newShape }: KonvaShape = item;
 
       if (lines) {
         newShape.lines = cloneLines(lines);
+      } else if (points) {
+        newShape.points = points.slice(0);
       }
 
       return newShape;
@@ -565,10 +567,12 @@ function reducer(state: State, action: Action): State {
       // Clone shape list and Assign selected ids
       const newShapeList: KonvaShape[] = state.history[newHistoryIndex].map(
         (item) => {
-          const { lines, ...newShape }: KonvaShape = item;
+          const { lines, points, ...newShape }: KonvaShape = item;
 
           if (lines) {
             newShape.lines = cloneLines(lines);
+          } else if (points) {
+            newShape.points = points.slice(0);
           }
 
           return newShape;
@@ -699,10 +703,12 @@ function reducer(state: State, action: Action): State {
 
       // Clone shapes
       const newCopiedShapes: KonvaShape[] = matchedShapes.map((item) => {
-        const { lines, ...newCopiedShape }: KonvaShape = item;
+        const { lines, points, ...newCopiedShape }: KonvaShape = item;
 
         if (lines) {
           newCopiedShape.lines = cloneLines(lines);
+        } else if (points) {
+          newCopiedShape.points = points.slice(0);
         }
 
         return newCopiedShape;
@@ -787,12 +793,15 @@ function reducer(state: State, action: Action): State {
       const selectedIds: Record<string, boolean> = {};
 
       const newShapes: KonvaShape[] = state.copiedShapes.map((item) => {
-        const { id, lines, groupIds, ...newCopiedShape }: KonvaShape = item;
+        const { id, lines, points, groupIds, ...newCopiedShape }: KonvaShape =
+          item;
 
         newCopiedShape.id = newShapeIds[item.id];
 
         if (lines) {
           newCopiedShape.lines = cloneLines(lines);
+        } else if (points) {
+          newCopiedShape.points = points.slice(0);
         }
 
         newCopiedShape.x += offsetX;
@@ -892,12 +901,15 @@ function reducer(state: State, action: Action): State {
       const selectedIds: Record<string, boolean> = {};
 
       const newShapes: KonvaShape[] = state.copiedShapes.map((item) => {
-        const { id, lines, groupIds, ...newCopiedShape }: KonvaShape = item;
+        const { id, lines, points, groupIds, ...newCopiedShape }: KonvaShape =
+          item;
 
         newCopiedShape.id = newShapeIds[item.id];
 
         if (lines) {
           newCopiedShape.lines = cloneLines(lines);
+        } else if (points) {
+          newCopiedShape.points = points.slice(0);
         }
 
         newCopiedShape.x += offsetX;

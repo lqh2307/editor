@@ -1,4 +1,4 @@
-export * from "./FreeDrawingContext";
+export * from "./DrawingContext";
 export * from "./ShapesContext";
 export * from "./StageContext";
 export * from "./AppContext";

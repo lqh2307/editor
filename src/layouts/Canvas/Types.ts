@@ -1,9 +1,10 @@
 import { KonvaFreeDrawingLine } from "../../components/KonvaShape";
-import { FreeDrawingMode } from "../../types/FreeDrawing";
+import { DrawingMode } from "../../types/FreeDrawing";
 
-export type FreeDrawingInfo = {
-  previousMode?: FreeDrawingMode;
+export type DrawingInfo = {
+  previousMode?: DrawingMode;
   lines?: KonvaFreeDrawingLine[];
+  points?: number[];
   isDrawing?: boolean;
   shapeId?: string;
 };

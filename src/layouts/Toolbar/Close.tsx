@@ -1,5 +1,5 @@
-import { useFreeDrawingContext, useShapesContext } from "../../contexts";
 import { ButtonGroup, Typography, Divider, Box } from "@mui/material";
+import { useDrawingContext, useShapesContext } from "../../contexts";
 import { useDebounceHotKey } from "../../hooks/useDebounceHotKey";
 import { TooltipButton } from "../../components/TooltipButton";
 import { BasicDialog } from "../../components/BasicDialog";
@@ -10,7 +10,7 @@ import React from "react";
 export const ToolbarClose = React.memo((): React.JSX.Element => {
   const { t } = useTranslation();
 
-  const { setFreeDrawingMode } = useFreeDrawingContext();
+  const { setDrawingMode } = useDrawingContext();
 
   const { updateSelectedIds } = useShapesContext();
 
@@ -42,7 +42,7 @@ export const ToolbarClose = React.memo((): React.JSX.Element => {
   }, []);
 
   const pressESCButtonHandler = React.useCallback((): void => {
-    setFreeDrawingMode((prev) => {
+    setDrawingMode((prev) => {
       if (prev) {
         return undefined;
       } else {
@@ -52,7 +52,7 @@ export const ToolbarClose = React.memo((): React.JSX.Element => {
         return prev;
       }
     });
-  }, [updateSelectedIds, setFreeDrawingMode]);
+  }, [updateSelectedIds, setDrawingMode]);
 
   const closeDialogTitle: React.JSX.Element =
     React.useMemo((): React.JSX.Element => {

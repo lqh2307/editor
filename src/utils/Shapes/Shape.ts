@@ -51,8 +51,6 @@ export function createShape(shape: KonvaShape): KonvaShape {
 
   // Line style
   newShape.lineStyle = newShape.lineStyle ?? "solid";
-  newShape.lineCap = newShape.lineCap ?? "butt";
-  newShape.lineJoin = newShape.lineJoin ?? "miter";
 
   // Assign attrs
   switch (newShape.type) {
@@ -76,6 +74,8 @@ export function createShape(shape: KonvaShape): KonvaShape {
       newShape.fillEnabled = newShape.fillEnabled ?? true;
       newShape.fill = newShape.fill ?? randomColor;
       newShape.fillOpacity = newShape.fillOpacity ?? 1;
+      newShape.lineCap = newShape.lineCap ?? "butt";
+      newShape.lineJoin = newShape.lineJoin ?? "miter";
       newShape.strokeEnabled = newShape.strokeEnabled ?? true;
       newShape.stroke = newShape.stroke ?? randomColor;
       newShape.strokeOpacity = newShape.strokeOpacity ?? 1;
@@ -99,6 +99,8 @@ export function createShape(shape: KonvaShape): KonvaShape {
       newShape.fillEnabled = newShape.fillEnabled ?? true;
       newShape.fill = newShape.fill ?? randomColor;
       newShape.fillOpacity = newShape.fillOpacity ?? 1;
+      newShape.lineCap = newShape.lineCap ?? "butt";
+      newShape.lineJoin = newShape.lineJoin ?? "miter";
       newShape.strokeEnabled = newShape.strokeEnabled ?? true;
       newShape.stroke = newShape.stroke ?? "#000000";
       newShape.strokeOpacity = newShape.strokeOpacity ?? 1;
@@ -146,6 +148,8 @@ export function createShape(shape: KonvaShape): KonvaShape {
       newShape.fillEnabled = newShape.fillEnabled ?? true;
       newShape.fill = newShape.fill ?? randomColor;
       newShape.fillOpacity = newShape.fillOpacity ?? 1;
+      newShape.lineCap = newShape.lineCap ?? "butt";
+      newShape.lineJoin = newShape.lineJoin ?? "miter";
       newShape.strokeEnabled = newShape.strokeEnabled ?? true;
       newShape.stroke = newShape.stroke ?? "#000000";
       newShape.strokeOpacity = newShape.strokeOpacity ?? 1;
@@ -179,6 +183,8 @@ export function createShape(shape: KonvaShape): KonvaShape {
       newShape.fillEnabled = newShape.fillEnabled ?? true;
       newShape.fill = newShape.fill ?? "#000000";
       newShape.fillOpacity = newShape.fillOpacity ?? 1;
+      newShape.lineCap = newShape.lineCap ?? "butt";
+      newShape.lineJoin = newShape.lineJoin ?? "miter";
       newShape.strokeEnabled = newShape.strokeEnabled ?? false;
       newShape.stroke = newShape.stroke ?? "#000000";
       newShape.strokeOpacity = newShape.strokeOpacity ?? 1;
@@ -206,9 +212,33 @@ export function createShape(shape: KonvaShape): KonvaShape {
       newShape.strokeEnabled = newShape.strokeEnabled ?? true;
       newShape.stroke = newShape.stroke ?? "#000000";
       newShape.strokeOpacity = newShape.strokeOpacity ?? 1;
+      newShape.strokeScaleEnabled = newShape.strokeScaleEnabled ?? false;
       newShape.strokeWidth = newShape.strokeWidth ?? 5;
-      newShape.tension = newShape.tension ?? 0.5;
+      newShape.tension = newShape.tension ?? 1;
       newShape.lines = newShape.lines ?? [];
+
+      // Offset
+      newShape.offsetX = newShape.offsetX ?? 0;
+      newShape.offsetY = newShape.offsetY ?? 0;
+
+      break;
+    }
+
+    case "multi-line": {
+      // Common
+      newShape.x = newShape.x ?? 0;
+      newShape.y = newShape.y ?? 0;
+      newShape.fillEnabled = newShape.fillEnabled ?? true;
+      newShape.fill = newShape.fill ?? "#000000";
+      newShape.fillOpacity = newShape.fillOpacity ?? 1;
+      newShape.lineCap = newShape.lineCap ?? "butt";
+      newShape.lineJoin = newShape.lineJoin ?? "miter";
+      newShape.strokeEnabled = newShape.strokeEnabled ?? true;
+      newShape.stroke = newShape.stroke ?? "#000000";
+      newShape.strokeOpacity = newShape.strokeOpacity ?? 1;
+      newShape.strokeScaleEnabled = newShape.strokeScaleEnabled ?? false;
+      newShape.strokeWidth = newShape.strokeWidth ?? 5;
+      newShape.points = newShape.points ?? [];
 
       // Offset
       newShape.offsetX = newShape.offsetX ?? 0;
@@ -226,6 +256,8 @@ export function createShape(shape: KonvaShape): KonvaShape {
       newShape.fillEnabled = newShape.fillEnabled ?? true;
       newShape.fill = newShape.fill ?? "#000000";
       newShape.fillOpacity = newShape.fillOpacity ?? 1;
+      newShape.lineCap = newShape.lineCap ?? "butt";
+      newShape.lineJoin = newShape.lineJoin ?? "miter";
       newShape.strokeEnabled = newShape.strokeEnabled ?? true;
       newShape.stroke = newShape.stroke ?? "#000000";
       newShape.strokeOpacity = newShape.strokeOpacity ?? 1;
@@ -261,6 +293,8 @@ export function createShape(shape: KonvaShape): KonvaShape {
       newShape.fillEnabled = newShape.fillEnabled ?? true;
       newShape.fill = newShape.fill ?? "#ffffff";
       newShape.fillOpacity = newShape.fillOpacity ?? 0;
+      newShape.lineCap = newShape.lineCap ?? "butt";
+      newShape.lineJoin = newShape.lineJoin ?? "miter";
       newShape.strokeEnabled = newShape.strokeEnabled ?? false;
       newShape.stroke = newShape.stroke ?? "#000000";
       newShape.strokeOpacity = newShape.strokeOpacity ?? 1;
@@ -303,6 +337,8 @@ export function createShape(shape: KonvaShape): KonvaShape {
       newShape.fillEnabled = newShape.fillEnabled ?? true;
       newShape.fill = newShape.fill ?? "#000000";
       newShape.fillOpacity = newShape.fillOpacity ?? 1;
+      newShape.lineCap = newShape.lineCap ?? "butt";
+      newShape.lineJoin = newShape.lineJoin ?? "miter";
       newShape.strokeEnabled = newShape.strokeEnabled ?? false;
       newShape.stroke = newShape.stroke ?? "#000000";
       newShape.strokeOpacity = newShape.strokeOpacity ?? 1;
@@ -336,6 +372,8 @@ export function createShape(shape: KonvaShape): KonvaShape {
       newShape.fillEnabled = newShape.fillEnabled ?? true;
       newShape.fill = newShape.fill ?? randomColor;
       newShape.fillOpacity = newShape.fillOpacity ?? 1;
+      newShape.lineCap = newShape.lineCap ?? "butt";
+      newShape.lineJoin = newShape.lineJoin ?? "round";
       newShape.strokeEnabled = newShape.strokeEnabled ?? true;
       newShape.stroke = newShape.stroke ?? randomColor;
       newShape.strokeOpacity = newShape.strokeOpacity ?? 1;
@@ -456,6 +494,17 @@ export function cloneLines(
     ...line,
     points: line.points.slice(0),
   }));
+}
+
+/**
+ * Clone points
+ * @param points
+ * @returns
+ */
+export function clonePoints(
+  points: number[]
+): number[] {
+  return points.slice(0);
 }
 
 /**

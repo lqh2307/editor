@@ -6,7 +6,7 @@
     "noSelectedId": {
       "title": "Guide: Click a shape to start edit"
     },
-    "freeDrawing": {
+    "drawing": {
       "title": "Guide: Press Esc to exit"
     },
     "shapeMouseOver": {
@@ -440,6 +440,9 @@
     "addText": {
       "title": "Add Text"
     },
+    "multiLine": {
+      "title": "Multi Line"
+    },
     "drawing": {
       "title": "Drawing"
     },
@@ -670,6 +673,10 @@
                     "video": {
                       "title": "Video",
                       "content": "Insert videos from your device or via links to enhance visualization and interactivity."
+                    },
+                    "multiLine": {
+                      "title": "Multi Line",
+                      "content": "Allows drawing multi lines on the screen."
                     },
                     "freeDrawing": {
                       "title": "Free Drawing",

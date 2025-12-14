@@ -48,7 +48,7 @@
     "@types/nanoid": "3.0.0",
     "react-scripts": "5.0.1",
     "@types/axios": "0.14.4",
-    "@types/node": "25.0.1",
+    "@types/node": "25.0.2",
     "typescript": "5.9.3",
     "@types/ajv": "1.0.4",
     "prettier": "3.7.4"

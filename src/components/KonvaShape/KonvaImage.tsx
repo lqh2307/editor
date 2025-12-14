@@ -240,6 +240,10 @@ export const KonvaImage = React.memo(
       currentPropRef.current.onMouseUp?.(shapeAPI);
     }, []);
 
+    const handleDragStart = React.useCallback((): void => {
+      setIsEnabled(true);
+    }, []);
+
     const handleDragMove = React.useCallback(
       (e: Konva.KonvaEventObject<DragEvent>): void => {
         const node: Konva.Image = e.target as Konva.Image;
@@ -349,9 +353,10 @@ export const KonvaImage = React.memo(
           onDblClick={handleDblClick}
           onMouseOver={handleMouseOver}
           onMouseLeave={handleMouseLeave}
-          onDragMove={handleDragMove}
           onMouseDown={handleMouseDown}
           onMouseUp={handleMouseUp}
+          onDragStart={handleDragStart}
+          onDragMove={handleDragMove}
           onDragEnd={handleDragEnd}
           onTransform={updateCropElement}
           onTransformEnd={handleTransformEnd}

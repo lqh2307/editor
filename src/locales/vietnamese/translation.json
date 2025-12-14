@@ -6,7 +6,7 @@
     "noSelectedId": {
       "title": "Hướng dẫn: Nhấn vào một đối tượng để bắt đầu chỉnh sửa"
     },
-    "freeDrawing": {
+    "drawing": {
       "title": "Hướng dẫn: Nhấn Esc để thoát"
     },
     "shapeMouseOver": {
@@ -440,6 +440,9 @@
     "addText": {
       "title": "Thêm văn bản"
     },
+    "multiLine": {
+      "title": "Nhiều đường"
+    },
     "drawing": {
       "title": "Vẽ tay"
     },
@@ -670,6 +673,10 @@
                     "video": {
                       "title": "Băng hình",
                       "content": "Chèn băng hình từ thiết bị hoặc liên kết để nâng cao tính trực quan và sinh động."
+                    },
+                    "multiLine": {
+                      "title": "Nhiều đường",
+                      "content": "Cho phép người dùng vẽ nhiều đường trên màn hình."
                     },
                     "freeDrawing": {
                       "title": "Vẽ tự do",

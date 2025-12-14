@@ -191,6 +191,10 @@ export const KonvaText = React.memo(
       currentPropRef.current.onMouseUp?.(shapeAPI);
     }, []);
 
+    const handleDragStart = React.useCallback((): void => {
+      setIsEnabled(true);
+    }, []);
+
     const handleDragMove = React.useCallback(
       (e: Konva.KonvaEventObject<DragEvent>): void => {
         const node: Konva.Text = e.target as Konva.Text;
@@ -333,9 +337,10 @@ export const KonvaText = React.memo(
           onDblClick={handleDblClick}
           onMouseOver={handleMouseOver}
           onMouseLeave={handleMouseLeave}
-          onDragMove={handleDragMove}
           onMouseDown={handleMouseDown}
           onMouseUp={handleMouseUp}
+          onDragStart={handleDragStart}
+          onDragMove={handleDragMove}
           onDragEnd={handleDragEnd}
           onTransformEnd={handleTransformEnd}
         />
