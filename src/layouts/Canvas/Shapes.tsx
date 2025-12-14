@@ -470,7 +470,7 @@ export const CanvasShapes = React.memo((): React.JSX.Element => {
 
       switch (item.type) {
         default: {
-          return <></>;
+          return;
         }
 
         case "rectangle": {

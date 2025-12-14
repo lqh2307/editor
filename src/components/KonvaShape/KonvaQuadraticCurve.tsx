@@ -24,15 +24,37 @@ export const KonvaQuadraticCurve = React.memo(
     const [isEnabled, setIsEnabled] = React.useState<boolean>(false);
 
     // Store control
+    const defaultLineDashRef = React.useRef<number[]>([10, 10, 0, 10]);
     const lineNodeRef = React.useRef<Konva.Line>(undefined);
-    const startNodeRef = React.useRef<Konva.Circle>(undefined);
-    const controlNodeRef = React.useRef<Konva.Circle>(undefined);
-    const endNodeRef = React.useRef<Konva.Circle>(undefined);
+    const controlNodeRef = React.useRef<Record<string, Konva.Circle>>({});
+
+    /* Build control points */
+    function buildControlPoints(): KonvaShape[] {
+      const result: KonvaShape[] = [];
+
+      const shapeOption: KonvaShape = currentPropRef.current.shapeOption;
+
+      for (let i = 0; i < shapeOption.points.length; i += 2) {
+        result.push({
+          id: `${shapeOption.id}-${i}`,
+          x: shapeOption.points[i],
+          y: shapeOption.points[i + 1],
+        });
+      }
+
+      return result;
+    }
+
+    const assignRef = React.useCallback((node: Konva.Circle): void => {
+      if (node) {
+        controlNodeRef.current[node.id()] = node;
+      }
+    }, []);
 
     // Apply prop
     const applyProp = React.useCallback((reason?: RenderReason): void => {
       const prop: KonvaShapeProp = currentPropRef.current;
-      const shapeOption: KonvaShape = currentPropRef.current.shapeOption;
+      const shapeOption: KonvaShape = prop.shapeOption;
 
       const node: Konva.Line = nodeRef.current;
       if (node) {
@@ -70,43 +92,13 @@ export const KonvaQuadraticCurve = React.memo(
         points: shapeOption.points,
       });
 
-      startNodeRef.current?.setAttrs({
-        visible: prop.isEditted,
-        offsetX: shapeOption.offsetX,
-        offsetY: shapeOption.offsetY,
-        ...transformPoint(
-          {
-            x: shapeOption.points[0],
-            y: shapeOption.points[1],
-          },
-          shapeOption
-        ),
-      });
-
-      controlNodeRef.current?.setAttrs({
-        visible: prop.isEditted,
-        offsetX: shapeOption.offsetX,
-        offsetY: shapeOption.offsetY,
-        ...transformPoint(
-          {
-            x: shapeOption.points[2],
-            y: shapeOption.points[3],
-          },
-          shapeOption
-        ),
-      });
-
-      endNodeRef.current?.setAttrs({
-        visible: prop.isEditted,
-        offsetX: shapeOption.offsetX,
-        offsetY: shapeOption.offsetY,
-        ...transformPoint(
-          {
-            x: shapeOption.points[6],
-            y: shapeOption.points[7],
-          },
-          shapeOption
-        ),
+      buildControlPoints().forEach((item) => {
+        controlNodeRef.current[item.id]?.setAttrs({
+          visible: prop.isEditted,
+          offsetX: shapeOption.offsetX,
+          offsetY: shapeOption.offsetY,
+          ...transformPoint(item as Vector2d, shapeOption),
+        });
       });
 
       // Call callback function
@@ -211,35 +203,11 @@ export const KonvaQuadraticCurve = React.memo(
 
           lineNodeRef.current?.position(newPosition);
 
-          startNodeRef.current?.position(
-            invertPoint(
-              {
-                x: shapeOption.points[0],
-                y: shapeOption.points[1],
-              },
-              shapeOption
-            )
-          );
-
-          controlNodeRef.current?.position(
-            invertPoint(
-              {
-                x: shapeOption.points[2],
-                y: shapeOption.points[3],
-              },
-              shapeOption
-            )
-          );
-
-          endNodeRef.current?.position(
-            invertPoint(
-              {
-                x: shapeOption.points[6],
-                y: shapeOption.points[7],
-              },
-              shapeOption
-            )
-          );
+          buildControlPoints().forEach((item) => {
+            controlNodeRef.current[item.id]?.position(
+              invertPoint(item as Vector2d, shapeOption)
+            );
+          });
         }
 
         // Call callback function
@@ -252,62 +220,30 @@ export const KonvaQuadraticCurve = React.memo(
       (e: Konva.KonvaEventObject<DragEvent>): void => {
         const node: Konva.Circle = e.target as Konva.Circle;
         if (node) {
-          const shapeOption: KonvaShape = currentPropRef.current.shapeOption;
-          const newPoint: Vector2d = invertPoint(node.position(), shapeOption);
+          const id: string = node.id();
 
-          switch (node.id()) {
-            default: {
-              break;
+          if (controlNodeRef.current[id]) {
+            const shapeOption: KonvaShape = currentPropRef.current.shapeOption;
+            const newPoint: Vector2d = invertPoint(
+              node.position(),
+              shapeOption
+            );
+
+            const index: number = Number(id.slice(id.lastIndexOf("-") + 1));
+
+            if (index === 4) {
+              shapeOption.points[2] = newPoint.x;
+              shapeOption.points[3] = newPoint.y;
+              shapeOption.points[4] = newPoint.x;
+              shapeOption.points[5] = newPoint.y;
+            } else {
+              shapeOption.points[index] = newPoint.x;
+              shapeOption.points[index + 1] = newPoint.y;
             }
 
-            case `${shapeOption.id}-start`: {
-              shapeOption.points = [
-                newPoint.x,
-                newPoint.y,
-                shapeOption.points[2],
-                shapeOption.points[3],
-                shapeOption.points[4],
-                shapeOption.points[5],
-                shapeOption.points[6],
-                shapeOption.points[7],
-              ];
-
-              break;
-            }
-
-            case `${shapeOption.id}-control`: {
-              shapeOption.points = [
-                shapeOption.points[0],
-                shapeOption.points[1],
-                newPoint.x,
-                newPoint.y,
-                newPoint.x,
-                newPoint.y,
-                shapeOption.points[6],
-                shapeOption.points[7],
-              ];
-
-              break;
-            }
-
-            case `${shapeOption.id}-end`: {
-              shapeOption.points = [
-                shapeOption.points[0],
-                shapeOption.points[1],
-                shapeOption.points[2],
-                shapeOption.points[3],
-                shapeOption.points[4],
-                shapeOption.points[5],
-                newPoint.x,
-                newPoint.y,
-              ];
-
-              break;
-            }
+            nodeRef.current?.points(shapeOption.points);
+            lineNodeRef.current?.points(shapeOption.points);
           }
-
-          nodeRef.current?.points(shapeOption.points);
-          lineNodeRef.current?.points(shapeOption.points);
         }
       },
       []
@@ -324,8 +260,6 @@ export const KonvaQuadraticCurve = React.memo(
       (e: Konva.KonvaEventObject<DragEvent>): void => {
         const node: Konva.Line = e.target as Konva.Line;
         if (node) {
-          const shapeOption: KonvaShape = currentPropRef.current.shapeOption;
-
           const newAttrs: KonvaShape = {
             rotation: node.rotation(),
             scaleX: node.scaleX(),
@@ -336,39 +270,18 @@ export const KonvaQuadraticCurve = React.memo(
             y: node.y(),
           };
 
-          Object.assign(shapeOption, newAttrs);
+          Object.assign(currentPropRef.current.shapeOption, newAttrs);
 
           lineNodeRef.current?.setAttrs(newAttrs);
 
-          startNodeRef.current?.position(
-            transformPoint(
-              {
-                x: shapeOption.points[0],
-                y: shapeOption.points[1],
-              },
-              shapeOption
-            )
-          );
-
-          controlNodeRef.current?.position(
-            transformPoint(
-              {
-                x: shapeOption.points[2],
-                y: shapeOption.points[3],
-              },
-              shapeOption
-            )
-          );
-
-          endNodeRef.current?.position(
-            transformPoint(
-              {
-                x: shapeOption.points[6],
-                y: shapeOption.points[7],
-              },
-              shapeOption
-            )
-          );
+          buildControlPoints().forEach((item) => {
+            controlNodeRef.current[item.id]?.position(
+              transformPoint(
+                item as Vector2d,
+                currentPropRef.current.shapeOption
+              )
+            );
+          });
         }
       },
       []
@@ -415,50 +328,31 @@ export const KonvaQuadraticCurve = React.memo(
           strokeWidth={1}
           fill={"#555555"}
           opacity={0.75}
-          dash={[10, 10, 0, 10]}
+          dash={defaultLineDashRef.current}
         />
 
-        <Circle
-          id={`${prop.shapeOption.id}-start`}
-          listening={true}
-          ref={startNodeRef}
-          draggable={true}
-          radius={10}
-          stroke={"#555555"}
-          strokeWidth={1}
-          fill={"#dddddd"}
-          onMouseOver={handleMouseOver}
-          onMouseLeave={handleMouseLeave}
-          onDragMove={handleControlDragMove}
-        />
-
-        <Circle
-          id={`${prop.shapeOption.id}-control`}
-          listening={true}
-          ref={controlNodeRef}
-          draggable={true}
-          radius={10}
-          stroke={"#555555"}
-          strokeWidth={1}
-          fill={"#dddddd"}
-          onMouseOver={handleMouseOver}
-          onMouseLeave={handleMouseLeave}
-          onDragMove={handleControlDragMove}
-        />
-
-        <Circle
-          id={`${prop.shapeOption.id}-end`}
-          listening={true}
-          ref={endNodeRef}
-          draggable={true}
-          radius={10}
-          stroke={"#555555"}
-          strokeWidth={1}
-          fill={"#dddddd"}
-          onMouseOver={handleMouseOver}
-          onMouseLeave={handleMouseLeave}
-          onDragMove={handleControlDragMove}
-        />
+        {buildControlPoints().map((item, index) => {
+          if (index === 1) {
+            return;
+          } else {
+            return (
+              <Circle
+                id={item.id}
+                key={item.id}
+                listening={true}
+                ref={assignRef}
+                draggable={true}
+                radius={10}
+                stroke={"#555555"}
+                strokeWidth={1}
+                fill={"#dddddd"}
+                onMouseOver={handleMouseOver}
+                onMouseLeave={handleMouseLeave}
+                onDragMove={handleControlDragMove}
+              />
+            );
+          }
+        })}
       </Portal>
     );
   }

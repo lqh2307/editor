@@ -693,10 +693,10 @@ export function createFilter(option: KonvaShape): Filter[] {
   return filters;
 }
 
-const lineDashes: { [K in KonvaLineStyle]: number[] } = {
-  "solid": undefined,
-  "dashed": [10, 5],
-  "dotted": [2, 5],
+const lineDashes: Record<KonvaLineStyle, number[]> = {
+  solid: undefined,
+  dashed: [10, 5],
+  dotted: [2, 5],
   "dotted-dashed": [10, 5, 2, 5],
 };
 
@@ -790,19 +790,4 @@ export function invertPoint(point: Vector2d, option: KonvaShape): Vector2d {
     .translate(-option.offsetX, -option.offsetY)
     .invert()
     .point(point);
-}
-
-/* Build control points */
-export function buildControlPoints(points: number[]): KonvaShape[] {
-  const result: KonvaShape[] = [];
-
-  for (let i = 0; i < points.length; i += 2) {
-    result.push({
-      index: i,
-      x: points[i],
-      y: points[i + 1],
-    });
-  }
-
-  return result;
 }

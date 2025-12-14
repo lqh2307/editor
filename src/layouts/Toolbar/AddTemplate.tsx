@@ -112,7 +112,7 @@ export const ToolbarAddTemplate = React.memo((): React.JSX.Element => {
         prop.rowIndex * templateConfigRef.current.renderColumn +
         prop.columnIndex;
       if (index >= templateInfo.reports.length) {
-        return <></>;
+        return;
       }
 
       const template: Report = templateInfo.reports[index];

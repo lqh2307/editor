@@ -101,7 +101,7 @@ export const ToolbarAddImage = React.memo((): React.JSX.Element => {
       const index: number =
         prop.rowIndex * imageConfigRef.current.renderColumn + prop.columnIndex;
       if (index >= imageInfo.images.length) {
-        return <></>;
+        return;
       }
 
       const image: Image = imageInfo.images[index];

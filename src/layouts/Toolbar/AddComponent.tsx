@@ -144,7 +144,7 @@ export const ToolbarAddComponent = React.memo((): React.JSX.Element => {
         prop.rowIndex * componentConfigRef.current.renderColumn +
         prop.columnIndex;
       if (index >= componentInfo.reports.length) {
-        return <></>;
+        return;
       }
 
       const component: Report = componentInfo.reports[index];

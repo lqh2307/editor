@@ -109,7 +109,7 @@ export const ToolbarAddIcon = React.memo((): React.JSX.Element => {
       const index =
         prop.rowIndex * iconConfigRef.current.renderColumn + prop.columnIndex;
       if (index >= iconInfo.icons.length) {
-        return <></>;
+        return;
       }
 
       const icon: KonvaIcon = iconInfo.icons[index];
