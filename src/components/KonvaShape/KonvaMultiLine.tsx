@@ -56,8 +56,6 @@ export const KonvaMultiLine = React.memo(
       for (let idx = 0; idx < shapeOption.points.length; idx += 2) {
         controlNodeRef.current[`${shapeOption.id}-${idx}`]?.setAttrs({
           visible: prop.isEditted,
-          offsetX: shapeOption.offsetX,
-          offsetY: shapeOption.offsetY,
           ...transformPoint(
             {
               x: shapeOption.points[idx],

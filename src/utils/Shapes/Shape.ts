@@ -392,8 +392,8 @@ export function createShape(shape: KonvaShape): KonvaShape {
       }
 
       // Offset
-      newShape.offsetX = newShape.offsetX ?? 0;
-      newShape.offsetY = newShape.offsetY ?? 0;
+      newShape.offsetX = newShape.offsetX ?? 100;
+      newShape.offsetY = newShape.offsetY ?? 100;
 
       break;
     }

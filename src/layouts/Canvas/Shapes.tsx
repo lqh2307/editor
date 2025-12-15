@@ -609,6 +609,7 @@ export const CanvasShapes = React.memo((): React.JSX.Element => {
           return (
             <KonvaArrow
               onClick={handleShapeClick}
+              onDblClick={handleShapeDblClick}
               onMounted={handleOnMounted}
               onUnMounted={handleOnUnMounted}
               onMouseOver={handleShapeMouseOver}
@@ -617,6 +618,7 @@ export const CanvasShapes = React.memo((): React.JSX.Element => {
               onAppliedProp={handleAppliedProp}
               onMouseDown={handleShapeMouseDown}
               onMouseUp={handleShapeMouseUp}
+              isEditted={edittedId === item.id}
               isSelected={!!selectedIds?.[item.id]}
               shapeOption={item}
               key={item.id}
@@ -667,6 +669,7 @@ export const CanvasShapes = React.memo((): React.JSX.Element => {
           return (
             <KonvaLine
               onClick={handleShapeClick}
+              onDblClick={handleShapeDblClick}
               onMounted={handleOnMounted}
               onUnMounted={handleOnUnMounted}
               onMouseOver={handleShapeMouseOver}
@@ -675,6 +678,7 @@ export const CanvasShapes = React.memo((): React.JSX.Element => {
               onAppliedProp={handleAppliedProp}
               onMouseDown={handleShapeMouseDown}
               onMouseUp={handleShapeMouseUp}
+              isEditted={edittedId === item.id}
               isSelected={!!selectedIds?.[item.id]}
               shapeOption={item}
               key={item.id}
