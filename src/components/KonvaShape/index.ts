@@ -1,7 +1,6 @@
 export * from "./KonvaConcavePolygon";
 export * from "./KonvaQuadraticCurve";
 export * from "./KonvaConvexPolygon";
-export * from "./KonvaMultiPolygon";
 export * from "./KonvaBezierCurve";
 export * from "./KonvaFreeDrawing";
 export * from "./KonvaMultiLine";

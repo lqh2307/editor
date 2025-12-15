@@ -71,7 +71,6 @@ export type KonvaShapeType =
   | "line"
   | "free-drawing"
   | "multi-line"
-  | "multi-polygon"
   | "path"
   | "arrow"
   | "ring"

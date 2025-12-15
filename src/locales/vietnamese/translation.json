@@ -869,6 +869,9 @@
             "height": {
               "title": "Dọc"
             },
+            "closed": {
+              "title": "Khép kín"
+            },
             "scaleX": {
               "title": "Tỉ lệ ngang"
             },

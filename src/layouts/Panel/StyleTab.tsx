@@ -375,6 +375,15 @@ export const PanelStyleTab = React.memo((): React.JSX.Element => {
           true
         );
       },
+      changeClosed: (checked: boolean): void => {
+        updateShape(
+          {
+            closed: checked,
+          },
+          true,
+          true
+        );
+      },
     }),
     [updateShape]
   );
@@ -579,6 +588,19 @@ export const PanelStyleTab = React.memo((): React.JSX.Element => {
               onChange={updateShapeHandler.changeHeight}
             />
           </Stack>
+
+          {/* Closed */}
+          <TooltipSwitch
+            display={selectedShape.type === "multi-line" ? "flex" : "none"}
+            label={
+              <Typography fontSize={12}>
+                {t("panel.style.children.general.children.closed.title")}
+              </Typography>
+            }
+            title={t("panel.style.children.general.children.closed.title")}
+            checked={selectedShape.closed}
+            onChange={updateShapeHandler.changeClosed}
+          />
 
           {/* ScaleX/ScaleY */}
           <Stack
