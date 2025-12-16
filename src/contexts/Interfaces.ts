@@ -4,7 +4,7 @@ import { KonvaBackgroundAPI } from "../components/KonvaBackground";
 import { KonvaGuideLinesAPI } from "../components/KonvaGuideLines";
 import { HorizontalAlign, VerticalAlign } from "../types/Window";
 import { SnackbarAlertProp } from "../components/SnackbarAlert";
-import { FreeDrawingMode } from "../types/FreeDrawing";
+import { DrawingMode } from "../types/FreeDrawing";
 import { ImageFormat } from "../types/Common";
 import { AlertColor } from "@mui/material";
 import { Vector2d } from "konva/lib/types";
@@ -20,8 +20,8 @@ export interface IShapesContext {
   canUndo?: boolean;
   canRedo?: boolean;
 
-  croppedId?: string;
-  updateCroppedId?: (id?: string) => void;
+  edittedId?: string;
+  updateEdittedId?: (id?: string) => void;
   selectedIds?: Record<string, boolean>;
   updateSelectedIds?: (ids?: string[], overwrite?: boolean) => void;
   singleSelectedIds?: Record<string, boolean>;
@@ -65,9 +65,9 @@ export interface IShapesContext {
   doShapes?: (redo?: boolean) => void;
 }
 
-export interface IFreeDrawingContext {
-  freeDrawingMode?: FreeDrawingMode;
-  setFreeDrawingMode?: React.Dispatch<React.SetStateAction<FreeDrawingMode>>;
+export interface IDrawingContext {
+  drawingMode?: DrawingMode;
+  setDrawingMode?: React.Dispatch<React.SetStateAction<DrawingMode>>;
 }
 
 export interface IStageContext {

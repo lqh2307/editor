@@ -34,7 +34,7 @@ import {
 export const ShapesContext = React.createContext<IShapesContext>({});
 
 type State = {
-  croppedId: string;
+  edittedId: string;
   selectedIds: Record<string, boolean>;
   singleSelectedIds: Record<string, boolean>;
 
@@ -49,7 +49,7 @@ type State = {
 
 type Action = {
   type:
-    | "UPDATE_CROPPED_ID"
+    | "UPDATE_EDITTED_ID"
     | "UPDATE_SELECTED_IDS"
     | "UPDATE_SINGLE_SELECTED_IDS"
     | "UPDATE_SHAPE"
@@ -67,7 +67,7 @@ type Action = {
     | "SET_MAX_HISTORY"
     | "CLEAN_HISTORY";
   payload?:
-    | UpdateCroppedId
+    | UpdateEdittedId
     | UpdateSelectedIds
     | UpdateSingleSelectedIds
     | Update
@@ -127,7 +127,7 @@ type Delete = {
   ids: string[];
 };
 
-type UpdateCroppedId = {
+type UpdateEdittedId = {
   id: string;
 };
 
@@ -179,10 +179,12 @@ function reducer(state: State, action: Action): State {
 
     // Create new history by clone
     const newHistory: KonvaShape[] = shapes.map((item) => {
-      const { lines, ...newShape }: KonvaShape = item;
+      const { lines, points, ...newShape }: KonvaShape = item;
 
       if (lines) {
         newShape.lines = cloneLines(lines);
+      } else if (points) {
+        newShape.points = points.slice(0);
       }
 
       return newShape;
@@ -202,13 +204,13 @@ function reducer(state: State, action: Action): State {
   }
 
   switch (action.type) {
-    case "UPDATE_CROPPED_ID": {
-      const updateCroppedId: UpdateCroppedId =
-        action.payload as UpdateCroppedId;
+    case "UPDATE_EDITTED_ID": {
+      const updateEdittedId: UpdateEdittedId =
+        action.payload as UpdateEdittedId;
 
       return {
         ...state,
-        croppedId: updateCroppedId.id,
+        edittedId: updateEdittedId.id,
       };
     }
 
@@ -256,7 +258,7 @@ function reducer(state: State, action: Action): State {
 
       return {
         ...state,
-        croppedId: undefined,
+        edittedId: undefined,
         selectedIds: selectedIds,
         singleSelectedIds: {},
       };
@@ -306,7 +308,7 @@ function reducer(state: State, action: Action): State {
 
       return {
         ...state,
-        croppedId: undefined,
+        edittedId: undefined,
         singleSelectedIds: singleSelectedIds,
       };
     }
@@ -424,7 +426,7 @@ function reducer(state: State, action: Action): State {
 
       return {
         ...state,
-        croppedId: undefined,
+        edittedId: undefined,
         selectedIds: selectedIds,
         singleSelectedIds: {},
         ...addHistory(state.shapeList),
@@ -535,7 +537,7 @@ function reducer(state: State, action: Action): State {
       // Create new state
       return {
         ...state,
-        croppedId: undefined,
+        edittedId: undefined,
         selectedIds: selectedIds,
         singleSelectedIds: {},
         shapeList: newShapeList,
@@ -565,10 +567,12 @@ function reducer(state: State, action: Action): State {
       // Clone shape list and Assign selected ids
       const newShapeList: KonvaShape[] = state.history[newHistoryIndex].map(
         (item) => {
-          const { lines, ...newShape }: KonvaShape = item;
+          const { lines, points, ...newShape }: KonvaShape = item;
 
           if (lines) {
             newShape.lines = cloneLines(lines);
+          } else if (points) {
+            newShape.points = points.slice(0);
           }
 
           return newShape;
@@ -577,7 +581,7 @@ function reducer(state: State, action: Action): State {
 
       return {
         ...state,
-        croppedId: undefined,
+        edittedId: undefined,
         selectedIds: {},
         singleSelectedIds: {},
         shapeList: newShapeList,
@@ -668,7 +672,7 @@ function reducer(state: State, action: Action): State {
 
       return {
         ...state,
-        croppedId: undefined,
+        edittedId: undefined,
         selectedIds: selectedIds,
         singleSelectedIds: {},
         shapeList: newShapeList,
@@ -699,10 +703,12 @@ function reducer(state: State, action: Action): State {
 
       // Clone shapes
       const newCopiedShapes: KonvaShape[] = matchedShapes.map((item) => {
-        const { lines, ...newCopiedShape }: KonvaShape = item;
+        const { lines, points, ...newCopiedShape }: KonvaShape = item;
 
         if (lines) {
           newCopiedShape.lines = cloneLines(lines);
+        } else if (points) {
+          newCopiedShape.points = points.slice(0);
         }
 
         return newCopiedShape;
@@ -787,12 +793,15 @@ function reducer(state: State, action: Action): State {
       const selectedIds: Record<string, boolean> = {};
 
       const newShapes: KonvaShape[] = state.copiedShapes.map((item) => {
-        const { id, lines, groupIds, ...newCopiedShape }: KonvaShape = item;
+        const { id, lines, points, groupIds, ...newCopiedShape }: KonvaShape =
+          item;
 
         newCopiedShape.id = newShapeIds[item.id];
 
         if (lines) {
           newCopiedShape.lines = cloneLines(lines);
+        } else if (points) {
+          newCopiedShape.points = points.slice(0);
         }
 
         newCopiedShape.x += offsetX;
@@ -822,7 +831,7 @@ function reducer(state: State, action: Action): State {
       // Create new state
       return {
         ...state,
-        croppedId: undefined,
+        edittedId: undefined,
         selectedIds: selectedIds,
         singleSelectedIds: {},
         shapeList: newShapeList,
@@ -892,12 +901,15 @@ function reducer(state: State, action: Action): State {
       const selectedIds: Record<string, boolean> = {};
 
       const newShapes: KonvaShape[] = state.copiedShapes.map((item) => {
-        const { id, lines, groupIds, ...newCopiedShape }: KonvaShape = item;
+        const { id, lines, points, groupIds, ...newCopiedShape }: KonvaShape =
+          item;
 
         newCopiedShape.id = newShapeIds[item.id];
 
         if (lines) {
           newCopiedShape.lines = cloneLines(lines);
+        } else if (points) {
+          newCopiedShape.points = points.slice(0);
         }
 
         newCopiedShape.x += offsetX;
@@ -927,7 +939,7 @@ function reducer(state: State, action: Action): State {
       // Create new state
       return {
         ...state,
-        croppedId: undefined,
+        edittedId: undefined,
         selectedIds: selectedIds,
         singleSelectedIds: {},
         shapeList: newShapeList,
@@ -1238,7 +1250,7 @@ function reducer(state: State, action: Action): State {
 export function ShapesProvider(prop: ShapesProviderProp): React.JSX.Element {
   // Store shape info
   const [state, dispatch] = React.useReducer(reducer, {
-    croppedId: undefined,
+    edittedId: undefined,
     selectedIds: {},
     singleSelectedIds: {},
 
@@ -1315,11 +1327,11 @@ export function ShapesProvider(prop: ShapesProviderProp): React.JSX.Element {
   }, [state.historyIndex, state.history]);
 
   /**
-   * Update cropped id
+   * Update editted id
    */
-  const updateCroppedId = React.useCallback((id?: string): void => {
+  const updateEdittedId = React.useCallback((id?: string): void => {
     dispatch({
-      type: "UPDATE_CROPPED_ID",
+      type: "UPDATE_EDITTED_ID",
       payload: {
         id: id,
       },
@@ -1655,8 +1667,8 @@ export function ShapesProvider(prop: ShapesProviderProp): React.JSX.Element {
       canUndo,
       canRedo,
 
-      croppedId: state.croppedId,
-      updateCroppedId,
+      edittedId: state.edittedId,
+      updateEdittedId,
 
       selectedIds: state.selectedIds,
       updateSelectedIds,

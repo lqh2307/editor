@@ -6,7 +6,7 @@
     "noSelectedId": {
       "title": "Guide: Click a shape to start edit"
     },
-    "freeDrawing": {
+    "drawing": {
       "title": "Guide: Press Esc to exit"
     },
     "shapeMouseOver": {
@@ -440,6 +440,9 @@
     "addText": {
       "title": "Add Text"
     },
+    "multiLine": {
+      "title": "Multi Line"
+    },
     "drawing": {
       "title": "Drawing"
     },
@@ -671,6 +674,10 @@
                       "title": "Video",
                       "content": "Insert videos from your device or via links to enhance visualization and interactivity."
                     },
+                    "multiLine": {
+                      "title": "Multi Line",
+                      "content": "Allows drawing multi lines on the screen."
+                    },
                     "freeDrawing": {
                       "title": "Free Drawing",
                       "content": "Allows drawing freely on the screen, suitable for sketching or quick creative work."
@@ -862,6 +869,9 @@
             "height": {
               "title": "Height"
             },
+            "closed": {
+              "title": "Closed"
+            },
             "scaleX": {
               "title": "Horizontal Scale"
             },
@@ -914,8 +924,17 @@
             "opacity": {
               "title": "Opacity"
             },
+            "lineStyle": {
+              "title": "Style",
+              "content": {
+                "solid": "Solid",
+                "dashed": "Dashed",
+                "dotted": "Dotted",
+                "dotted-dashed": "Dotted Dashed"
+              }
+            },
             "lineCap": {
-              "title": "Line Cap",
+              "title": "Cap",
               "content": {
                 "butt": "Butt",
                 "round": "Round",
@@ -923,7 +942,7 @@
               }
             },
             "lineJoin": {
-              "title": "Line Join",
+              "title": "Join",
               "content": {
                 "round": "Round",
                 "bevel": "Bevel",

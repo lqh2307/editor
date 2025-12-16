@@ -5,10 +5,10 @@ import { createPathsFromSVG } from "../../utils/Shapes";
 import { KonvaDragDrop } from "../../types/Konva";
 import { useTranslation } from "react-i18next";
 import { downloadFile } from "../../apis/file";
-import { Stage, Layer, Rect } from "react-konva";
+import { Stage, Layer } from "react-konva";
 import { Vector2d } from "konva/lib/types";
-import { FreeDrawingInfo } from "./Types";
 import { CanvasShapes } from "./Shapes";
+import { DrawingInfo } from "./Types";
 import { AxiosResponse } from "axios";
 import { Box } from "@mui/material";
 import { nanoid } from "nanoid";
@@ -22,10 +22,8 @@ import {
   KonvaGuideLinesAPI,
   KonvaGuideLines,
 } from "../../components/KonvaGuideLines";
-import { KonvaTooltipAPI, KonvaTooltip } from "../../components/KonvaTooltip";
-import { useMapContext } from "../../contexts/MapContext";
 import {
-  useFreeDrawingContext,
+  useDrawingContext,
   useShapesContext,
   useStageContext,
 } from "../../contexts";
@@ -61,39 +59,21 @@ export const Canvas = React.memo((): React.JSX.Element => {
   const {
     selectedShape,
     transformerRefs,
-    shapeList,
     addShapes,
     updateShape,
     updateSelectedIds,
   } = useShapesContext();
 
-  const { freeDrawingMode, setFreeDrawingMode } = useFreeDrawingContext();
-  const { calibration } = useMapContext();
-  const tooltipRef = React.useRef<KonvaTooltipAPI>(undefined);
+  const { drawingMode, setDrawingMode } = useDrawingContext();
 
-  // Store is free drawing
-  const freeDrawingInfoRef = React.useRef<FreeDrawingInfo>({
+  // Store drawing
+  const drawingInfoRef = React.useRef<DrawingInfo>({
     previousMode: undefined,
     lines: undefined,
+    points: undefined,
     isDrawing: false,
     shapeId: undefined,
-    polylinePoints: undefined,
-    polylineOrigin: undefined,
-    isPolylineDrawing: false,
   });
-
-  // Marquee selection state/refs
-  const selectingRef = React.useRef<boolean>(false);
-  const selectStartRef = React.useRef<Vector2d>(undefined);
-  const extendSelectRef = React.useRef<boolean>(false);
-  const didSelectRef = React.useRef<boolean>(false);
-  const [selectRect, setSelectRect] = React.useState<{
-    x: number;
-    y: number;
-    width: number;
-    height: number;
-    visible: boolean;
-  }>({ x: 0, y: 0, width: 0, height: 0, visible: false });
 
   const assignStage = React.useCallback(
     (stage: Konva.Stage): void => {
@@ -313,9 +293,7 @@ export const Canvas = React.memo((): React.JSX.Element => {
 
   const handleOnUnMounted = React.useCallback(
     (id?: string): void => {
-      if (transformerRefs[id]) {
-        delete transformerRefs[id];
-      }
+      delete transformerRefs[id];
     },
     [transformerRefs]
   );
@@ -324,75 +302,82 @@ export const Canvas = React.memo((): React.JSX.Element => {
   React.useEffect(() => {
     if (
       !selectedShape.id ||
-      selectedShape.id !== freeDrawingInfoRef.current.shapeId
+      selectedShape.id !== drawingInfoRef.current.shapeId
     ) {
       // Reset cursor style
       setPointerStyle();
 
-      // Reset free drawing mode
-      setFreeDrawingMode(undefined);
+      // Reset drawing mode
+      setDrawingMode(undefined);
 
-      // Reset free drawing info
-      freeDrawingInfoRef.current = {
+      // Reset drawing info
+      drawingInfoRef.current = {
         previousMode: undefined,
         lines: undefined,
+        points: undefined,
         isDrawing: false,
         shapeId: undefined,
-        polylinePoints: undefined,
-        polylineOrigin: undefined,
-        isPolylineDrawing: false,
       };
     }
-  }, [selectedShape.id, setPointerStyle, setFreeDrawingMode]);
+  }, [selectedShape.id, setPointerStyle, setDrawingMode]);
 
-  // Update if free drawing mode is changed
+  // Update if drawing mode is changed
   React.useEffect(() => {
-    if (freeDrawingMode) {
-      if (freeDrawingMode === freeDrawingInfoRef.current.previousMode) {
+    if (drawingMode) {
+      if (drawingMode === drawingInfoRef.current.previousMode) {
         return;
       }
 
       // Set cursor style
       setPointerStyle("crosshair");
 
-      // Store free drawing info
-      if (freeDrawingMode === "polyline") {
-        freeDrawingInfoRef.current = {
-          previousMode: freeDrawingMode,
-          isDrawing: false,
-          lines: undefined,
-          shapeId: nanoid(),
-          polylinePoints: [],
-          polylineOrigin: undefined,
-          isPolylineDrawing: false,
-        };
-      } else {
-        freeDrawingInfoRef.current = {
-          previousMode: freeDrawingMode,
-          isDrawing: false,
-          lines: selectedShape.lines,
-          shapeId: selectedShape.lines ? selectedShape.id : nanoid(),
-          polylinePoints: undefined,
-          polylineOrigin: undefined,
-          isPolylineDrawing: false,
-        };
+      // Store drawing info
+      drawingInfoRef.current = {
+        previousMode: drawingMode,
+        isDrawing: false,
+      };
+
+      if (drawingMode === "multi-line") {
+        if (selectedShape.type === "multi-line" && selectedShape.points) {
+          drawingInfoRef.current.points = selectedShape.points;
+
+          drawingInfoRef.current.shapeId = selectedShape.id;
+        } else {
+          drawingInfoRef.current.shapeId = nanoid();
+        }
+      } else if (
+        drawingMode === "source-over" ||
+        drawingMode === "destination-out"
+      ) {
+        if (selectedShape.type === "free-drawing" && selectedShape.lines) {
+          drawingInfoRef.current.lines = selectedShape.lines;
+
+          drawingInfoRef.current.shapeId = selectedShape.id;
+        } else {
+          drawingInfoRef.current.shapeId = nanoid();
+        }
       }
-    } else if (freeDrawingInfoRef.current.previousMode) {
+    } else if (drawingInfoRef.current.previousMode) {
       // Reset cursor style
       setPointerStyle();
 
-      // Reset free drawing info
-      freeDrawingInfoRef.current = {
+      // Reset drawing info
+      drawingInfoRef.current = {
         previousMode: undefined,
         lines: undefined,
+        points: undefined,
         isDrawing: false,
         shapeId: undefined,
-        polylinePoints: undefined,
-        polylineOrigin: undefined,
-        isPolylineDrawing: false,
       };
     }
-  }, [freeDrawingMode, selectedShape.id, selectedShape.lines, setPointerStyle]);
+  }, [
+    drawingMode,
+    selectedShape.type,
+    selectedShape.id,
+    selectedShape.points,
+    selectedShape.lines,
+    setPointerStyle,
+  ]);
 
   const handleStageMouseWheel = React.useCallback(
     (e: Konva.KonvaEventObject<WheelEvent>): void => {
@@ -445,6 +430,7 @@ export const Canvas = React.memo((): React.JSX.Element => {
       }
     },
     [
+      t,
       addShapes,
       getStagePointerPosition,
       setStagePointerPosition,
@@ -468,11 +454,46 @@ export const Canvas = React.memo((): React.JSX.Element => {
         // Enable draggable stage
         setStageDragable(true);
       } else if (e.evt?.button === 0) {
-        const freeDrawingInfo: FreeDrawingInfo = freeDrawingInfoRef.current;
+        const freeDrawingInfo: DrawingInfo = drawingInfoRef.current;
 
-        if (freeDrawingInfo.previousMode && freeDrawingInfo.previousMode !== "polyline") {
+        if (freeDrawingInfo.previousMode === "multi-line") {
+          if (!freeDrawingInfo.points) {
+            // Store drawing points
+            freeDrawingInfo.points = [];
+
+            // Add new shape
+            await addShapes(
+              [
+                {
+                  id: freeDrawingInfo.shapeId,
+                  type: "multi-line",
+                  points: freeDrawingInfo.points,
+                },
+              ],
+              undefined,
+              false,
+              undefined
+            );
+          }
+
+          const pointer: Vector2d = getStagePointerPosition(
+            freeDrawingInfo.shapeId
+          );
+          if (!pointer) {
+            return;
+          }
+
+          // Add new point
+          freeDrawingInfo.points.push(pointer.x, pointer.y);
+
+          // Update shape
+          updateShape(undefined, true, false);
+        } else if (
+          freeDrawingInfo.previousMode === "source-over" ||
+          freeDrawingInfo.previousMode === "destination-out"
+        ) {
           if (!freeDrawingInfo.lines) {
-            // Store free drawing lines
+            // Store drawing lines
             freeDrawingInfo.lines = [];
 
             // Add new shape
@@ -488,13 +509,6 @@ export const Canvas = React.memo((): React.JSX.Element => {
               false,
               undefined
             );
-
-            const pointer: Vector2d = getStagePointerPosition(
-              freeDrawingInfo.shapeId
-            );
-            if (!pointer) {
-              return;
-            }
           }
 
           const pointer: Vector2d = getStagePointerPosition(
@@ -508,10 +522,7 @@ export const Canvas = React.memo((): React.JSX.Element => {
           freeDrawingInfo.lines.push({
             id: nanoid(),
             points: [pointer.x, pointer.y],
-            globalCompositeOperation:
-              freeDrawingInfo.previousMode === "pen"
-                ? "source-over"
-                : "destination-out",
+            globalCompositeOperation: freeDrawingInfo.previousMode,
           });
 
           // Update shape
@@ -519,67 +530,14 @@ export const Canvas = React.memo((): React.JSX.Element => {
 
           // Mark drawing on
           freeDrawingInfo.isDrawing = true;
-        } else if (freeDrawingInfo.previousMode === "polyline") {
-          const pointer: Vector2d = getStagePointerPosition();
-          if (!pointer) return;
-
-          // First click: create shape
-          if (!freeDrawingInfo.polylinePoints || !freeDrawingInfo.polylinePoints.length) {
-            freeDrawingInfo.polylineOrigin = { x: pointer.x, y: pointer.y };
-            freeDrawingInfo.polylinePoints = [0, 0, 0, 0]; // first anchor + dynamic endpoint
-            // Add new line shape
-            await addShapes(
-              [
-                {
-                  id: freeDrawingInfo.shapeId,
-                  type: "polyline",
-                  x: pointer.x,
-                  y: pointer.y,
-                  offsetX: 0,
-                  offsetY: 0,
-                  points: freeDrawingInfo.polylinePoints.slice(0),
-                  strokeEnabled: true,
-                  strokeWidth: 2,
-                  fillEnabled: false,
-                },
-              ],
-              undefined,
-              false,
-              undefined
-            );
-            freeDrawingInfo.isPolylineDrawing = true;
-          } else {
-            // Subsequent click: fix last dynamic point and append new dynamic endpoint
-            const ox = freeDrawingInfo.polylineOrigin.x;
-            const oy = freeDrawingInfo.polylineOrigin.y;
-            const relX = pointer.x - ox;
-            const relY = pointer.y - oy;
-            const pts = freeDrawingInfo.polylinePoints;
-            // Replace dynamic endpoint with fixed anchor
-            pts[pts.length - 2] = relX;
-            pts[pts.length - 1] = relY;
-            // Add new dynamic endpoint duplicated
-            pts.push(relX, relY);
-            freeDrawingInfo.isPolylineDrawing = true;
-            // Update shape
-            updateShape({ id: freeDrawingInfo.shapeId, points: pts.slice(0), type: "polyline" }, true, false);
-          }
         } else if (e.target instanceof Konva.Stage) {
-          // Start marquee selection
-          const p: Vector2d = getStagePointerPosition();
-          if (!p) return;
-
-          selectingRef.current = true;
-          extendSelectRef.current = !!(e.evt?.ctrlKey || e.evt?.shiftKey);
-          didSelectRef.current = false;
-          selectStartRef.current = p;
-          setSelectRect({ x: p.x, y: p.y, width: 0, height: 0, visible: true });
           // Reset selected ids
           updateSelectedIds(undefined, true);
         }
       }
     },
     [
+      updateSelectedIds,
       updateShape,
       addShapes,
       setPointerStyle,
@@ -595,31 +553,15 @@ export const Canvas = React.memo((): React.JSX.Element => {
       return;
     }
 
-    const freeDrawingInfo: FreeDrawingInfo = freeDrawingInfoRef.current;
+    const freeDrawingInfo: DrawingInfo = drawingInfoRef.current;
 
-    if (freeDrawingInfo.previousMode === "polyline") {
-      if (freeDrawingInfo.isPolylineDrawing && freeDrawingInfo.polylinePoints?.length) {
-        const pointer: Vector2d = getStagePointerPosition();
-        if (!pointer) return;
-        console.log(`mouse xy: ${pointer.x.toFixed(2)}, ${pointer.y.toFixed(2)}`);
-        const ox = freeDrawingInfo.polylineOrigin.x;
-        const oy = freeDrawingInfo.polylineOrigin.y;
-        const relX = pointer.x - ox;
-        const relY = pointer.y - oy;
-        const pts = freeDrawingInfo.polylinePoints;
-        // Update dynamic endpoint
-        pts[pts.length - 2] = relX;
-        pts[pts.length - 1] = relY;
-        updateShape({ id: freeDrawingInfo.shapeId, points: pts.slice(0), type: "polyline" }, true, false);
-      }
-    } else if (freeDrawingInfo.isDrawing) {
+    if (freeDrawingInfo.isDrawing) {
       const pointer: Vector2d = getStagePointerPosition(
         freeDrawingInfo.shapeId
       );
       if (!pointer) {
         return;
       }
-      console.log(`mouse xy: ${pointer.x.toFixed(2)}, ${pointer.y.toFixed(2)}`);
 
       // Add new point to last line
       freeDrawingInfo.lines[freeDrawingInfo.lines.length - 1].points.push(
@@ -629,53 +571,12 @@ export const Canvas = React.memo((): React.JSX.Element => {
 
       // Update shape
       updateShape(undefined, true, false);
-      return;
     }
-
-    // Update marquee selection rect
-    if (selectingRef.current) {
-      const p: Vector2d = getStagePointerPosition();
-      if (!p || !selectStartRef.current) return;
-      const x1 = selectStartRef.current.x;
-      const y1 = selectStartRef.current.y;
-      const x2 = p.x;
-      const y2 = p.y;
-      const x = Math.min(x1, x2);
-      const y = Math.min(y1, y2);
-      const width = Math.abs(x2 - x1);
-      const height = Math.abs(y2 - y1);
-      setSelectRect({ x, y, width, height, visible: true });
-    }
-    // Update map tooltip
-    const p: Vector2d = getStagePointerPosition();
-    if (p && calibration.topRight && calibration.bottomLeft && tooltipRef.current) {
-      const bgApi = getBackground();
-      const bgNode = bgApi?.getNode();
-      if (bgNode) {
-        const bx = bgNode.x();
-        const by = bgNode.y();
-        const bw = bgNode.width();
-        const bh = bgNode.height();
-        const relX = p.x - bx;
-        const relY = p.y - by;
-        if (relX >= 0 && relY >= 0 && relX <= bw && relY <= bh) {
-          const lon = calibration.bottomLeft.lon + (relX / bw) * (calibration.topRight.lon - calibration.bottomLeft.lon);
-          const lat = calibration.topRight.lat + (relY / bh) * (calibration.bottomLeft.lat - calibration.topRight.lat);
-          tooltipRef.current.updateProp({
-            text: `Lat: ${lat.toFixed(6)}\nLon: ${lon.toFixed(6)}`,
-            x: p.x + 8,
-            y: p.y + 8,
-          });
-        } else {
-          tooltipRef.current.updateProp({ text: "" });
-        }
-      }
-    }
-  }, [updateShape, dragStage, getIsStageDragable, getStagePointerPosition, calibration, getBackground]);
+  }, [updateShape, dragStage, getIsStageDragable, getStagePointerPosition]);
 
   const handleStageMouseUp = React.useCallback(
     (e: Konva.KonvaEventObject<MouseEvent>): void => {
-      const freeDrawingInfo: FreeDrawingInfo = freeDrawingInfoRef.current;
+      const freeDrawingInfo: DrawingInfo = drawingInfoRef.current;
 
       if (e.evt?.button === 2) {
         // Set/Reset cursor style
@@ -684,19 +585,27 @@ export const Canvas = React.memo((): React.JSX.Element => {
         // Disable draggable stage
         setStageDragable(false);
       } else if (e.evt?.button === 0) {
-        if (freeDrawingInfo.previousMode && freeDrawingInfo.previousMode !== "polyline") {
-          const pointer: Vector2d = getStagePointerPosition(
-            freeDrawingInfo.shapeId
-          );
-          if (!pointer) {
-            return;
-          }
+        if (freeDrawingInfo.previousMode === "multi-line") {
+          // Update shape
+          updateShape(undefined, true, true);
+        } else if (
+          freeDrawingInfo.previousMode === "source-over" ||
+          freeDrawingInfo.previousMode === "destination-out"
+        ) {
+          const lastPoints: number[] =
+            freeDrawingInfo.lines[freeDrawingInfo.lines.length - 1].points;
 
-          // Add new point to last line
-          freeDrawingInfo.lines[freeDrawingInfo.lines.length - 1].points.push(
-            pointer.x,
-            pointer.y
-          );
+          if (lastPoints.length) {
+            const pointer: Vector2d = getStagePointerPosition(
+              freeDrawingInfo.shapeId
+            );
+            if (!pointer) {
+              return;
+            }
+
+            // Add new point to last line
+            lastPoints.push(pointer.x, pointer.y);
+          }
 
           // Update shape
           updateShape(undefined, true, true);
@@ -704,95 +613,18 @@ export const Canvas = React.memo((): React.JSX.Element => {
 
         // Mark drawing off
         freeDrawingInfo.isDrawing = false;
-
-        // Finish marquee selection
-        if (selectingRef.current) {
-          selectingRef.current = false;
-          const { x, y, width, height } = selectRect;
-          setSelectRect((r) => ({ ...r, visible: false }));
-
-          // Ignore tiny clicks (let stage click handler manage clear)
-          if (width < 3 && height < 3) {
-            return;
-          }
-
-          const x1 = x;
-          const y1 = y;
-          const x2 = x + width;
-          const y2 = y + height;
-
-          // Compute intersections with shapes' boxes
-          const selectedIds: string[] = [];
-          const addId = (id: string) => {
-            if (!selectedIds.includes(id)) selectedIds.push(id);
-          };
-
-          shapeList?.forEach((shape) => {
-            const box = shape.box;
-            if (!box) return;
-            const intersects =
-              !(box.right < x1 || box.left > x2 || box.bottom < y1 || box.top > y2);
-            if (intersects) {
-              if (shape.groupIds && shape.groupIds.length) {
-                shape.groupIds.forEach(addId);
-              } else {
-                addId(shape.id);
-              }
-            }
-          });
-
-          if (selectedIds.length) {
-            updateSelectedIds(selectedIds, !extendSelectRef.current);
-            didSelectRef.current = true;
-          } else if (!extendSelectRef.current) {
-            // Nothing selected: clear selection if not extending
-            updateSelectedIds(undefined, true);
-          }
-        }
-      } else if (freeDrawingInfo.previousMode === "polyline") {
-        // Nothing on mouse up for polyline (points added on mousedown)
       }
     },
-    [
-      selectRect,
-      shapeList,
-      updateSelectedIds,
-      updateShape,
-      setStageDragable,
-      setPointerStyle,
-      getStagePointerPosition,
-    ]
-  );
-
-  const handleStageDblClick = React.useCallback(
-    (): void => {
-      const info: FreeDrawingInfo = freeDrawingInfoRef.current;
-      if (info.previousMode === "polyline" && info.polylinePoints?.length) {
-        // Remove trailing dynamic duplicate point
-        if (info.polylinePoints.length >= 4) {
-          info.polylinePoints.splice(info.polylinePoints.length - 2, 2);
-        }
-        // Final update commit history
-        updateShape({ id: info.shapeId, points: info.polylinePoints.slice(0), type: "polyline" }, true, true);
-        // Exit polyline mode
-        setFreeDrawingMode(undefined);
-      }
-    },
-    [setFreeDrawingMode, updateShape]
+    [updateShape, setStageDragable, setPointerStyle, getStagePointerPosition]
   );
 
   const handleStageClick = React.useCallback(
     (e: Konva.KonvaEventObject<MouseEvent>): void => {
       if (
         e.evt?.button === 0 &&
-        !freeDrawingInfoRef.current.previousMode &&
+        !drawingInfoRef.current.previousMode &&
         e.target instanceof Konva.Stage
       ) {
-        if (didSelectRef.current) {
-          // Skip clearing if we just did marquee selection
-          didSelectRef.current = false;
-          return;
-        }
         // Reset selected ids
         updateSelectedIds(undefined, true);
       }
@@ -816,7 +648,6 @@ export const Canvas = React.memo((): React.JSX.Element => {
         onMouseDown={handleStageMouseDown}
         onMouseMove={handleStageMouseMove}
         onMouseUp={handleStageMouseUp}
-        onDblClick={handleStageDblClick}
         onContextMenu={handleStageContextMenu}
       >
         {/* Backgroud/Grid */}
@@ -847,38 +678,10 @@ export const Canvas = React.memo((): React.JSX.Element => {
             onMounted={handleOnMounted}
             onUnMounted={handleOnUnMounted}
           />
-
-          {/* Map tooltip */}
-          <KonvaTooltip
-            ref={tooltipRef}
-            id={"map-tooltip"}
-            text={""}
-            x={0}
-            y={0}
-            fontSize={12}
-            textColor={"#fff"}
-            textOpacity={1}
-            backgroundColor={"#000"}
-            backgroundOpacity={0.6}
-            padding={4}
-          />
         </Layer>
 
         {/* Guide line/Tooltip */}
         <Layer id={"guide"} listening={false} draggable={false}>
-          {/* Marquee selection rectangle */}
-          {selectRect.visible && (
-            <Rect
-              x={selectRect.x}
-              y={selectRect.y}
-              width={selectRect.width}
-              height={selectRect.height}
-              fill={"rgba(51,153,255,0.15)"}
-              stroke={"#3399ff"}
-              strokeWidth={1}
-              dash={[4, 4]}
-            />
-          )}
           <KonvaGuideLines ref={assignGuideLines} />
         </Layer>
       </Stage>

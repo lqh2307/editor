@@ -44,7 +44,7 @@ export const ToolbarAddImage = React.memo((): React.JSX.Element => {
         );
       }
     },
-    [addShapes, getStageCenter, updateSnackbarAlert]
+    [t, addShapes, getStageCenter, updateSnackbarAlert]
   );
 
   const dragImageHandler = React.useCallback(
@@ -94,14 +94,14 @@ export const ToolbarAddImage = React.memo((): React.JSX.Element => {
         "error"
       );
     }
-  }, [updateSnackbarAlert]);
+  }, [t, updateSnackbarAlert]);
 
   const ImageCell = React.useCallback(
     (prop: CellComponentProps): React.JSX.Element => {
       const index: number =
         prop.rowIndex * imageConfigRef.current.renderColumn + prop.columnIndex;
       if (index >= imageInfo.images.length) {
-        return <></>;
+        return;
       }
 
       const image: Image = imageInfo.images[index];

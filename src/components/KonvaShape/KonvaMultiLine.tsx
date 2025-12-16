@@ -1,7 +1,7 @@
-import { createLineDash, createShapeBox } from "../../utils/Shapes";
 import { parseHexToRGBAString } from "../../utils/Color";
+import { Vector2d } from "konva/lib/types";
 import { Portal } from "react-konva-utils";
-import { Ring } from "react-konva";
+import { Circle, Line } from "react-konva";
 import Konva from "konva";
 import React from "react";
 import {
@@ -10,27 +10,33 @@ import {
   RenderReason,
   KonvaShape,
 } from "./Types";
+import {
+  createShapeBox,
+  transformPoint,
+  createLineDash,
+  invertPoint,
+} from "../../utils/Shapes";
 
-export const KonvaRing = React.memo(
+export const KonvaMultiLine = React.memo(
   (prop: KonvaShapeProp): React.JSX.Element => {
-    const nodeRef = React.useRef<Konva.Ring>(undefined);
+    const nodeRef = React.useRef<Konva.Line>(undefined);
     const currentPropRef = React.useRef<KonvaShapeProp>(prop);
     const [isEnabled, setIsEnabled] = React.useState<boolean>(false);
 
+    // Store control
+    const controlNodeRef = React.useRef<Record<string, Konva.Circle>>({});
+
     // Apply prop
     const applyProp = React.useCallback((reason?: RenderReason): void => {
-      const node: Konva.Ring = nodeRef.current;
-      if (node) {
-        const prop: KonvaShapeProp = currentPropRef.current;
-        const shapeOption: KonvaShape = prop.shapeOption;
+      const prop: KonvaShapeProp = currentPropRef.current;
+      const shapeOption: KonvaShape = prop.shapeOption;
 
+      const node: Konva.Line = nodeRef.current;
+      if (node) {
         // Update node attrs
         node.setAttrs({
           ...shapeOption,
           draggable: shapeOption.draggable && prop.isSelected,
-          innerRadius: shapeOption.innerRadius,
-          outerRadius: shapeOption.outerRadius,
-          hitStrokeWidth: shapeOption.hitStrokeWidth ?? 20,
           fill: parseHexToRGBAString(
             shapeOption.fill as string,
             shapeOption.fillOpacity
@@ -44,6 +50,20 @@ export const KonvaRing = React.memo(
 
         // Update shape box
         shapeOption.box = createShapeBox(node);
+      }
+
+      // Update controll attrs
+      for (let idx = 0; idx < shapeOption.points.length; idx += 2) {
+        controlNodeRef.current[`${shapeOption.id}-${idx}`]?.setAttrs({
+          visible: prop.isEditted,
+          ...transformPoint(
+            {
+              x: shapeOption.points[idx],
+              y: shapeOption.points[idx + 1],
+            },
+            shapeOption
+          ),
+        });
       }
 
       // Call callback function
@@ -74,7 +94,7 @@ export const KonvaRing = React.memo(
     }, []);
 
     // Get node
-    const getNode = React.useCallback((): Konva.Ring => {
+    const getNode = React.useCallback((): Konva.Line => {
       return nodeRef.current;
     }, []);
 
@@ -133,19 +153,70 @@ export const KonvaRing = React.memo(
       currentPropRef.current.onMouseUp?.(shapeAPI);
     }, []);
 
+    const handleControlDragStart = React.useCallback((): void => {
+      setIsEnabled(true);
+    }, []);
+
+    const handleControlDragMove = React.useCallback(
+      (e: Konva.KonvaEventObject<DragEvent>): void => {
+        const node: Konva.Circle = e.target as Konva.Circle;
+        if (node) {
+          const id: string = node.id();
+
+          if (controlNodeRef.current[id]) {
+            const shapeOption: KonvaShape = currentPropRef.current.shapeOption;
+            const newPoint: Vector2d = invertPoint(
+              node.position(),
+              shapeOption
+            );
+
+            const idx: number = Number(id.slice(id.lastIndexOf("-") + 1));
+
+            shapeOption.points[idx] = newPoint.x;
+            shapeOption.points[idx + 1] = newPoint.y;
+
+            nodeRef.current?.points(shapeOption.points);
+          }
+        }
+      },
+      []
+    );
+
+    const handleControlDragEnd = React.useCallback((): void => {
+      setIsEnabled(false);
+
+      // Call callback function
+      applyProp("control-drag-end");
+    }, []);
+
     const handleDragStart = React.useCallback((): void => {
       setIsEnabled(true);
     }, []);
 
     const handleDragMove = React.useCallback(
       (e: Konva.KonvaEventObject<DragEvent>): void => {
-        const node: Konva.Ring = e.target as Konva.Ring;
+        const node: Konva.Line = e.target as Konva.Line;
         if (node) {
-          Object.assign(currentPropRef.current.shapeOption, {
-            x: node.x(),
-            y: node.y(),
+          const shapeOption: KonvaShape = currentPropRef.current.shapeOption;
+          const newPosition: Vector2d = node.position();
+
+          Object.assign(shapeOption, {
+            x: newPosition.x,
+            y: newPosition.y,
             box: createShapeBox(node),
           });
+
+          for (let idx = 0; idx < shapeOption.points.length; idx += 2) {
+            controlNodeRef.current[`${shapeOption.id}-${idx}`]?.position(
+              transformPoint(
+                {
+                  x: shapeOption.points[idx],
+                  y: shapeOption.points[idx + 1],
+                },
+                shapeOption
+              )
+            );
+          }
         }
 
         // Call callback function
@@ -161,11 +232,13 @@ export const KonvaRing = React.memo(
       currentPropRef.current.onAppliedProp?.(shapeAPI, "drag-end");
     }, []);
 
-    const handleTransformEnd = React.useCallback(
-      (e: Konva.KonvaEventObject<Event>): void => {
-        const node: Konva.Ring = e.target as Konva.Ring;
+    const handleTransform = React.useCallback(
+      (e: Konva.KonvaEventObject<DragEvent>): void => {
+        const node: Konva.Line = e.target as Konva.Line;
         if (node) {
-          Object.assign(currentPropRef.current.shapeOption, {
+          const shapeOption: KonvaShape = currentPropRef.current.shapeOption;
+
+          const newAttrs: KonvaShape = {
             rotation: node.rotation(),
             scaleX: node.scaleX(),
             scaleY: node.scaleY(),
@@ -173,14 +246,30 @@ export const KonvaRing = React.memo(
             skewY: node.skewY(),
             x: node.x(),
             y: node.y(),
-          });
-        }
+          };
 
-        // Call callback function
-        currentPropRef.current.onAppliedProp?.(shapeAPI, "transform-end");
+          Object.assign(shapeOption, newAttrs);
+
+          for (let idx = 0; idx < shapeOption.points.length; idx += 2) {
+            controlNodeRef.current[`${shapeOption.id}-${idx}`]?.position(
+              transformPoint(
+                {
+                  x: shapeOption.points[idx],
+                  y: shapeOption.points[idx + 1],
+                },
+                shapeOption
+              )
+            );
+          }
+        }
       },
       []
     );
+
+    const handleTransformEnd = React.useCallback((): void => {
+      // Call callback function
+      currentPropRef.current.onAppliedProp?.(shapeAPI, "transform-end");
+    }, []);
 
     const handleMouseOver = React.useCallback((): void => {
       // Call callback function
@@ -194,11 +283,9 @@ export const KonvaRing = React.memo(
 
     return (
       <Portal selector={"#shapes"} enabled={isEnabled}>
-        <Ring
+        <Line
           listening={true}
           ref={nodeRef}
-          innerRadius={undefined}
-          outerRadius={undefined}
           onClick={handleClick}
           onDblClick={handleDblClick}
           onMouseOver={handleMouseOver}
@@ -208,8 +295,44 @@ export const KonvaRing = React.memo(
           onDragStart={handleDragStart}
           onDragMove={handleDragMove}
           onDragEnd={handleDragEnd}
+          onTransform={handleTransform}
           onTransformEnd={handleTransformEnd}
         />
+
+        {prop.shapeOption.points.map((_, idx) => {
+          if (idx % 2 === 0) {
+            const id: string = `${prop.shapeOption.id}-${idx}`;
+
+            return (
+              <Circle
+                id={id}
+                key={id}
+                listening={true}
+                ref={(node: Konva.Circle): void => {
+                  if (node) {
+                    if (!controlNodeRef.current[id]) {
+                      controlNodeRef.current[id] = node;
+                    }
+                  } else {
+                    delete controlNodeRef.current[id];
+                  }
+                }}
+                draggable={true}
+                radius={10}
+                stroke={"#555555"}
+                strokeWidth={1}
+                fill={"#dddddd"}
+                onMouseOver={handleMouseOver}
+                onMouseLeave={handleMouseLeave}
+                onDragStart={handleControlDragStart}
+                onDragMove={handleControlDragMove}
+                onDragEnd={handleControlDragEnd}
+              />
+            );
+          } else {
+            return;
+          }
+        })}
       </Portal>
     );
   }

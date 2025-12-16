@@ -26,7 +26,7 @@ export const ToolbarHistory = React.memo((): React.JSX.Element => {
         "success"
       );
     },
-    [doShapes, updateSnackbarAlert]
+    [t, doShapes, updateSnackbarAlert]
   );
 
   useDebounceHotKey({

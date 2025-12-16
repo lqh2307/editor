@@ -3,6 +3,7 @@ export * from "./KonvaQuadraticCurve";
 export * from "./KonvaConvexPolygon";
 export * from "./KonvaBezierCurve";
 export * from "./KonvaFreeDrawing";
+export * from "./KonvaMultiLine";
 export * from "./KonvaRectangle";
 export * from "./KonvaEllipse";
 export * from "./KonvaCircle";

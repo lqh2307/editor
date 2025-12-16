@@ -1,10 +1,15 @@
-import { KonvaShape, KonvaShapeAPI, KonvaShapeProp } from "./Types";
+import { createLineDash, createShapeBox } from "../../utils/Shapes";
 import { parseHexToRGBAString } from "../../utils/Color";
-import { createShapeBox } from "../../utils/Shapes";
 import { Portal } from "react-konva-utils";
 import { Wedge } from "react-konva";
 import Konva from "konva";
 import React from "react";
+import {
+  KonvaShapeProp,
+  KonvaShapeAPI,
+  RenderReason,
+  KonvaShape,
+} from "./Types";
 
 export const KonvaWedge = React.memo(
   (prop: KonvaShapeProp): React.JSX.Element => {
@@ -13,7 +18,7 @@ export const KonvaWedge = React.memo(
     const [isEnabled, setIsEnabled] = React.useState<boolean>(false);
 
     // Apply prop
-    const applyProp = React.useCallback((): void => {
+    const applyProp = React.useCallback((reason?: RenderReason): void => {
       const node: Konva.Wedge = nodeRef.current;
       if (node) {
         const prop: KonvaShapeProp = currentPropRef.current;
@@ -34,6 +39,7 @@ export const KonvaWedge = React.memo(
             shapeOption.stroke as string,
             shapeOption.strokeOpacity
           ),
+          dash: createLineDash(shapeOption.lineStyle),
         });
 
         // Update shape box
@@ -41,7 +47,7 @@ export const KonvaWedge = React.memo(
       }
 
       // Call callback function
-      prop.onAppliedProp?.(shapeAPI, "apply-prop");
+      prop.onAppliedProp?.(shapeAPI, reason);
     }, []);
 
     // Update prop
@@ -50,7 +56,7 @@ export const KonvaWedge = React.memo(
         Object.assign(currentPropRef.current, prop);
       }
 
-      applyProp();
+      applyProp("apply-prop");
     }, []);
 
     // Update shape
@@ -59,15 +65,12 @@ export const KonvaWedge = React.memo(
         Object.assign(currentPropRef.current.shapeOption, shape);
       }
 
-      applyProp();
+      applyProp("apply-prop");
     }, []);
 
     // Get stage
     const getStage = React.useCallback((): Konva.Stage => {
-      const node: Konva.Wedge = nodeRef.current;
-      if (node) {
-        return node.getStage();
-      }
+      return nodeRef.current?.getStage();
     }, []);
 
     // Get node
@@ -96,7 +99,7 @@ export const KonvaWedge = React.memo(
     React.useEffect(() => {
       currentPropRef.current = prop;
 
-      applyProp();
+      applyProp("apply-prop");
 
       // Call callback function
       prop.onMounted?.(prop.shapeOption.id, shapeAPI);
@@ -115,6 +118,11 @@ export const KonvaWedge = React.memo(
       []
     );
 
+    const handleDblClick = React.useCallback((): void => {
+      // Call callback function
+      currentPropRef.current.onDblClick?.(shapeAPI);
+    }, []);
+
     const handleMouseDown = React.useCallback((): void => {
       // Call callback function
       currentPropRef.current.onMouseDown?.(shapeAPI);
@@ -123,6 +131,10 @@ export const KonvaWedge = React.memo(
     const handleMouseUp = React.useCallback((): void => {
       // Call callback function
       currentPropRef.current.onMouseUp?.(shapeAPI);
+    }, []);
+
+    const handleDragStart = React.useCallback((): void => {
+      setIsEnabled(true);
     }, []);
 
     const handleDragMove = React.useCallback(
@@ -188,11 +200,13 @@ export const KonvaWedge = React.memo(
           radius={undefined}
           angle={undefined}
           onClick={handleClick}
+          onDblClick={handleDblClick}
           onMouseOver={handleMouseOver}
           onMouseLeave={handleMouseLeave}
-          onDragMove={handleDragMove}
           onMouseDown={handleMouseDown}
           onMouseUp={handleMouseUp}
+          onDragStart={handleDragStart}
+          onDragMove={handleDragMove}
           onDragEnd={handleDragEnd}
           onTransformEnd={handleTransformEnd}
         />

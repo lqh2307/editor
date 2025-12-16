@@ -1,11 +1,16 @@
 import { HorizontalAlign, VerticalAlign } from "../../types/Window";
-import { KonvaShape, KonvaShapeAPI, KonvaShapeProp } from "./Types";
+import { createLineDash, createShapeBox } from "../../utils/Shapes";
 import { parseHexToRGBAString } from "../../utils/Color";
-import { createShapeBox } from "../../utils/Shapes";
 import { Html, Portal } from "react-konva-utils";
 import { Text } from "react-konva";
 import React from "react";
 import Konva from "konva";
+import {
+  KonvaShapeProp,
+  KonvaShapeAPI,
+  RenderReason,
+  KonvaShape,
+} from "./Types";
 
 export const KonvaText = React.memo(
   (prop: KonvaShapeProp): React.JSX.Element => {
@@ -14,27 +19,38 @@ export const KonvaText = React.memo(
     const [isEnabled, setIsEnabled] = React.useState<boolean>(false);
 
     // Store text
-    const textareaRef = React.useRef<HTMLTextAreaElement>(undefined);
+    const textAreaRef = React.useRef<HTMLTextAreaElement>(undefined);
+    const defaultTextAreaStyleRef = React.useRef<React.CSSProperties>({
+      visibility: "hidden",
+      position: "absolute",
+      transformOrigin: "center",
+      border: "none",
+      overflow: "hidden",
+      outline: "none",
+      background: "none",
+      resize: "none",
+      wordBreak: "break-word",
+      whiteSpace: "pre-wrap",
+      wordWrap: "break-word",
+      margin: "0px",
+    });
 
     // Apply prop
-    const applyProp = React.useCallback((): void => {
+    const applyProp = React.useCallback((reason?: RenderReason): void => {
+      const prop: KonvaShapeProp = currentPropRef.current;
+      const shapeOption: KonvaShape = prop.shapeOption;
+
+      // Update offset
+      shapeOption.offsetX = shapeOption.width / 2;
+      shapeOption.offsetY = shapeOption.height / 2;
+
       const node: Konva.Text = nodeRef.current;
       if (node) {
-        const prop: KonvaShapeProp = currentPropRef.current;
-        const shapeOption: KonvaShape = prop.shapeOption;
-
-        // Update offset
-        shapeOption.offsetX = shapeOption.width / 2;
-        shapeOption.offsetY = shapeOption.height / 2;
-
         // Update node attrs
         node.setAttrs({
           ...shapeOption,
           draggable: shapeOption.draggable && prop.isSelected,
-          hitStrokeWidth: shapeOption.hitStrokeWidth ?? 20,
-          visible:
-            !textareaRef.current ||
-            textareaRef.current.style.visibility === "hidden",
+          visible: !prop.isEditted,
           fill: parseHexToRGBAString(
             shapeOption.fill as string,
             shapeOption.fillOpacity
@@ -43,6 +59,7 @@ export const KonvaText = React.memo(
             shapeOption.stroke as string,
             shapeOption.strokeOpacity
           ),
+          dash: createLineDash(shapeOption.lineStyle),
           fontStyle:
             shapeOption.fontWeight === "bold"
               ? shapeOption.fontStyle === "italic"
@@ -55,8 +72,40 @@ export const KonvaText = React.memo(
         shapeOption.box = createShapeBox(node);
       }
 
+      // Update text area
+      const textArea = textAreaRef.current;
+      if (textArea) {
+        Object.assign(textArea.style, {
+          fontSize: `${shapeOption.fontSize}px`,
+          lineHeight: `${shapeOption.lineHeight}`,
+          fontFamily: shapeOption.fontFamily,
+          fontStyle: shapeOption.fontStyle,
+          fontWeight: shapeOption.fontWeight,
+          textAlign: shapeOption.align as HorizontalAlign,
+          verticalAlign: shapeOption.verticalAlign as VerticalAlign,
+          color: shapeOption.fill as string,
+          transform: `translate(-50%, -50%) rotateZ(${shapeOption.rotation}deg)`,
+          width: `${shapeOption.width}px`,
+          height: `${shapeOption.height}px`,
+          left: `${shapeOption.x}px`,
+          top: `${shapeOption.y}px`,
+          padding: `${shapeOption.padding}px`,
+          filter: `brightness(${(shapeOption.brightness || 0) + 1})`,
+        });
+
+        textArea.value = shapeOption.text;
+
+        if (currentPropRef.current.isEditted) {
+          textArea.style.visibility = "visible";
+
+          textArea.focus();
+        } else {
+          textArea.style.visibility = "hidden";
+        }
+      }
+
       // Call callback function
-      prop.onAppliedProp?.(shapeAPI, "apply-prop");
+      prop.onAppliedProp?.(shapeAPI, reason);
     }, []);
 
     // Update prop
@@ -65,7 +114,7 @@ export const KonvaText = React.memo(
         Object.assign(currentPropRef.current, prop);
       }
 
-      applyProp();
+      applyProp("apply-prop");
     }, []);
 
     // Update shape
@@ -74,15 +123,12 @@ export const KonvaText = React.memo(
         Object.assign(currentPropRef.current.shapeOption, shape);
       }
 
-      applyProp();
+      applyProp("apply-prop");
     }, []);
 
     // Get stage
     const getStage = React.useCallback((): Konva.Stage => {
-      const node: Konva.Text = nodeRef.current;
-      if (node) {
-        return node.getStage();
-      }
+      return nodeRef.current?.getStage();
     }, []);
 
     // Get node
@@ -111,7 +157,7 @@ export const KonvaText = React.memo(
     React.useEffect(() => {
       currentPropRef.current = prop;
 
-      applyProp();
+      applyProp("apply-prop");
 
       // Call callback function
       prop.onMounted?.(prop.shapeOption.id, shapeAPI);
@@ -130,6 +176,11 @@ export const KonvaText = React.memo(
       []
     );
 
+    const handleDblClick = React.useCallback((): void => {
+      // Call callback function
+      currentPropRef.current.onDblClick?.(shapeAPI);
+    }, []);
+
     const handleMouseDown = React.useCallback((): void => {
       // Call callback function
       currentPropRef.current.onMouseDown?.(shapeAPI);
@@ -138,6 +189,10 @@ export const KonvaText = React.memo(
     const handleMouseUp = React.useCallback((): void => {
       // Call callback function
       currentPropRef.current.onMouseUp?.(shapeAPI);
+    }, []);
+
+    const handleDragStart = React.useCallback((): void => {
+      setIsEnabled(true);
     }, []);
 
     const handleDragMove = React.useCallback(
@@ -183,19 +238,16 @@ export const KonvaText = React.memo(
             shapeOption.height * scaleY * newScaleY
           );
 
-          const textArea = textareaRef.current;
+          const textArea = textAreaRef.current;
           if (textArea) {
             textArea.style.width = `${shapeOption.width}px`;
 
             // To calculate new height
             textArea.style.height = "auto";
 
-            if (textArea.scrollHeight > newHeight) {
+            if (textArea.scrollHeight >= newHeight) {
               newHeight = Math.round(textArea.scrollHeight);
             }
-
-            textArea.style.height = `${newHeight}px`;
-            textArea.style.top = `${shapeOption.y - newHeight / 2}px`;
           }
 
           let fontSize: number;
@@ -238,48 +290,7 @@ export const KonvaText = React.memo(
       currentPropRef.current.onMouseLeave?.(shapeAPI);
     }, []);
 
-    const handleDblClick = React.useCallback(
-      (e: Konva.KonvaEventObject<MouseEvent>): void => {
-        const textArea = textareaRef.current;
-        if (!textArea) {
-          return;
-        }
-
-        const shapeOption: KonvaShape = currentPropRef.current.shapeOption;
-
-        e.target?.visible(false);
-
-        Object.assign(textArea.style, {
-          visibility: "visible",
-          fontSize: `${shapeOption.fontSize}px`,
-          lineHeight: shapeOption.lineHeight.toString(),
-          fontFamily: shapeOption.fontFamily,
-          fontStyle: shapeOption.fontStyle,
-          fontWeight: shapeOption.fontWeight,
-          textAlign: shapeOption.align as HorizontalAlign,
-          verticalAlign: shapeOption.verticalAlign as VerticalAlign,
-          color: shapeOption.fill as string,
-          transform: `rotateZ(${shapeOption.rotation}deg)`,
-          width: `${shapeOption.width}px`,
-          height: `${shapeOption.height}px`,
-          left: `${shapeOption.x - shapeOption.offsetX}px`,
-          top: `${shapeOption.y - shapeOption.offsetY}px`,
-          padding: `${shapeOption.padding}px`,
-          filter: `brightness(${(shapeOption.brightness || 0) + 1})`,
-        });
-
-        textArea.value = shapeOption.text;
-
-        textArea.focus();
-      },
-      []
-    );
-
     const onBlurHandler = React.useCallback((): void => {
-      if (textareaRef.current) {
-        textareaRef.current.style.visibility = "hidden";
-      }
-
       // Call callback function
       currentPropRef.current.onAppliedProp?.(shapeAPI, "commit");
     }, []);
@@ -296,17 +307,11 @@ export const KonvaText = React.memo(
         // Update text
         shapeOption.text = textArea.value;
 
-        // To calculate new height
+        // Calculate new height
         textArea.style.height = "auto";
 
-        const newHeight = textArea.scrollHeight;
-
-        if (newHeight >= shapeOption.height) {
-          textArea.style.height = `${newHeight}px`;
-          textArea.style.top = `${shapeOption.y - newHeight / 2}px`;
-
-          // Update height
-          shapeOption.height = newHeight;
+        if (textArea.scrollHeight >= shapeOption.height) {
+          shapeOption.height = Math.round(textArea.scrollHeight);
 
           applyProp();
         }
@@ -318,28 +323,8 @@ export const KonvaText = React.memo(
       <Portal selector={"#shapes"} enabled={isEnabled}>
         <Html>
           <textarea
-            ref={textareaRef}
-            style={{
-              visibility: "hidden",
-              display: "block",
-              position: "absolute",
-              transformOrigin: "left top",
-              border: "none",
-              overflow: "hidden",
-              outline: "none",
-              background: "none",
-              resize: "none",
-              filter: "none",
-              transform: "none",
-              wordBreak: "break-word",
-              whiteSpace: "pre-wrap",
-              wordWrap: "break-word",
-              fontStyle: "normal",
-              fontWeight: "normal",
-              padding: "0px",
-              margin: "0px",
-              height: "auto",
-            }}
+            ref={textAreaRef}
+            style={defaultTextAreaStyleRef.current}
             onBlur={onBlurHandler}
             onInput={onInputHandler}
           />
@@ -349,14 +334,15 @@ export const KonvaText = React.memo(
           listening={true}
           ref={nodeRef}
           onClick={handleClick}
+          onDblClick={handleDblClick}
           onMouseOver={handleMouseOver}
           onMouseLeave={handleMouseLeave}
-          onDragMove={handleDragMove}
           onMouseDown={handleMouseDown}
           onMouseUp={handleMouseUp}
+          onDragStart={handleDragStart}
+          onDragMove={handleDragMove}
           onDragEnd={handleDragEnd}
           onTransformEnd={handleTransformEnd}
-          onDblClick={handleDblClick}
         />
       </Portal>
     );

@@ -44,7 +44,7 @@ export const ToolbarAddIcon = React.memo((): React.JSX.Element => {
         );
       }
     },
-    [addShapes, getStageCenter, updateSnackbarAlert]
+    [t, addShapes, getStageCenter, updateSnackbarAlert]
   );
 
   const dragIconHandler = React.useCallback(
@@ -102,14 +102,14 @@ export const ToolbarAddIcon = React.memo((): React.JSX.Element => {
         "error"
       );
     }
-  }, [iconInfo.icons, updateSnackbarAlert]);
+  }, [t, iconInfo.icons, updateSnackbarAlert]);
 
   const IconCell = React.useCallback(
     (prop: CellComponentProps): React.JSX.Element => {
       const index =
         prop.rowIndex * iconConfigRef.current.renderColumn + prop.columnIndex;
       if (index >= iconInfo.icons.length) {
-        return <></>;
+        return;
       }
 
       const icon: KonvaIcon = iconInfo.icons[index];

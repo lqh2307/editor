@@ -1,1 +1,1 @@
-export type FreeDrawingMode = "pen" | "eraser" | "polyline";
+export type DrawingMode = "multi-line" | "source-over" | "destination-out";

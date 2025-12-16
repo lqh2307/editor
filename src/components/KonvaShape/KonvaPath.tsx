@@ -1,10 +1,15 @@
-import { KonvaShapeProp, KonvaShape, KonvaShapeAPI } from "./Types";
+import { createLineDash, createShapeBox } from "../../utils/Shapes";
 import { parseHexToRGBAString } from "../../utils/Color";
-import { createShapeBox } from "../../utils/Shapes";
 import { Portal } from "react-konva-utils";
 import { Group } from "react-konva";
 import React from "react";
 import Konva from "konva";
+import {
+  KonvaShapeProp,
+  KonvaShapeAPI,
+  RenderReason,
+  KonvaShape,
+} from "./Types";
 
 export const KonvaPath = React.memo(
   (prop: KonvaShapeProp): React.JSX.Element => {
@@ -13,7 +18,7 @@ export const KonvaPath = React.memo(
     const [isEnabled, setIsEnabled] = React.useState<boolean>(false);
 
     // Apply prop
-    const applyProp = React.useCallback((): void => {
+    const applyProp = React.useCallback((reason?: RenderReason): void => {
       const node: Konva.Group = nodeRef.current;
       if (node) {
         const prop: KonvaShapeProp = currentPropRef.current;
@@ -50,6 +55,8 @@ export const KonvaPath = React.memo(
           pathOption.strokeOpacity
         );
 
+        pathOption.dash = createLineDash(shapeOption.lineStyle);
+
         node.destroyChildren();
 
         // Add paths
@@ -84,7 +91,7 @@ export const KonvaPath = React.memo(
       }
 
       // Call callback function
-      prop.onAppliedProp?.(shapeAPI, "apply-prop");
+      prop.onAppliedProp?.(shapeAPI, reason);
     }, []);
 
     // Update prop
@@ -93,7 +100,7 @@ export const KonvaPath = React.memo(
         Object.assign(currentPropRef.current, prop);
       }
 
-      applyProp();
+      applyProp("apply-prop");
     }, []);
 
     // Update shape
@@ -102,15 +109,12 @@ export const KonvaPath = React.memo(
         Object.assign(currentPropRef.current.shapeOption, shape);
       }
 
-      applyProp();
+      applyProp("apply-prop");
     }, []);
 
     // Get stage
     const getStage = React.useCallback((): Konva.Stage => {
-      const node: Konva.Group = nodeRef.current;
-      if (node) {
-        return node.getStage();
-      }
+      return nodeRef.current?.getStage();
     }, []);
 
     // Get node
@@ -139,7 +143,7 @@ export const KonvaPath = React.memo(
     React.useEffect(() => {
       currentPropRef.current = prop;
 
-      applyProp();
+      applyProp("apply-prop");
 
       // Call callback function
       prop.onMounted?.(prop.shapeOption.id, shapeAPI);
@@ -158,6 +162,11 @@ export const KonvaPath = React.memo(
       []
     );
 
+    const handleDblClick = React.useCallback((): void => {
+      // Call callback function
+      currentPropRef.current.onDblClick?.(shapeAPI);
+    }, []);
+
     const handleMouseDown = React.useCallback((): void => {
       // Call callback function
       currentPropRef.current.onMouseDown?.(shapeAPI);
@@ -166,6 +175,10 @@ export const KonvaPath = React.memo(
     const handleMouseUp = React.useCallback((): void => {
       // Call callback function
       currentPropRef.current.onMouseUp?.(shapeAPI);
+    }, []);
+
+    const handleDragStart = React.useCallback((): void => {
+      setIsEnabled(true);
     }, []);
 
     const handleDragMove = React.useCallback(
@@ -229,11 +242,13 @@ export const KonvaPath = React.memo(
           listening={true}
           ref={nodeRef}
           onClick={handleClick}
+          onDblClick={handleDblClick}
           onMouseOver={handleMouseOver}
           onMouseLeave={handleMouseLeave}
-          onDragMove={handleDragMove}
           onMouseDown={handleMouseDown}
           onMouseUp={handleMouseUp}
+          onDragStart={handleDragStart}
+          onDragMove={handleDragMove}
           onDragEnd={handleDragEnd}
           onTransformEnd={handleTransformEnd}
         />

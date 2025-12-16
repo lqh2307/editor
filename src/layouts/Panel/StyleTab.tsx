@@ -6,6 +6,7 @@ import { NumberInput } from "../../components/NumberInput";
 import { SliderInput } from "../../components/SliderInput";
 import { ColorInput } from "../../components/ColorInput";
 import { LineCap, LineJoin } from "konva/lib/Shape";
+import { KonvaLineStyle } from "../../types/Konva";
 import { useShapesContext } from "../../contexts";
 import { useTranslation } from "react-i18next";
 import { fixNumber } from "../../utils/Number";
@@ -45,7 +46,7 @@ import {
 export const PanelStyleTab = React.memo((): React.JSX.Element => {
   const { t } = useTranslation();
 
-  const { selectedShape, croppedId, updateCroppedId, updateShape } =
+  const { selectedShape, edittedId, updateEdittedId, updateShape } =
     useShapesContext();
 
   const updateShapeHandler = React.useMemo(
@@ -302,6 +303,15 @@ export const PanelStyleTab = React.memo((): React.JSX.Element => {
           true
         );
       },
+      changeLineStyle: (value: string): void => {
+        updateShape(
+          {
+            lineStyle: value as KonvaLineStyle,
+          },
+          true,
+          true
+        );
+      },
       changeLineCap: (value: string): void => {
         updateShape(
           {
@@ -365,6 +375,15 @@ export const PanelStyleTab = React.memo((): React.JSX.Element => {
           true
         );
       },
+      changeClosed: (checked: boolean): void => {
+        updateShape(
+          {
+            closed: checked,
+          },
+          true,
+          true
+        );
+      },
     }),
     [updateShape]
   );
@@ -372,7 +391,7 @@ export const PanelStyleTab = React.memo((): React.JSX.Element => {
   const cropHandler = React.useCallback(
     (value: string): void => {
       if (value) {
-        updateCroppedId(croppedId ? undefined : value);
+        updateEdittedId(edittedId ? undefined : value);
       } else {
         updateShape(
           {
@@ -383,13 +402,21 @@ export const PanelStyleTab = React.memo((): React.JSX.Element => {
         );
       }
     },
-    [croppedId, updateShape, updateCroppedId]
+    [edittedId, updateShape, updateEdittedId]
   );
 
   const data: Record<string, SelectInputOption[]> = React.useMemo<
     Record<string, SelectInputOption[]>
   >(
     () => ({
+      lineStyles: Object.keys(
+        translation.panel.style.children.stroke.children.lineStyle.content
+      ).map((item) => ({
+        title: t(
+          `panel.style.children.stroke.children.lineStyle.content.${item}`
+        ),
+        value: item,
+      })),
       lineCaps: Object.keys(
         translation.panel.style.children.stroke.children.lineCap.content
       ).map((item) => ({
@@ -407,7 +434,7 @@ export const PanelStyleTab = React.memo((): React.JSX.Element => {
         value: item,
       })),
     }),
-    []
+    [t]
   );
 
   return (
@@ -561,6 +588,19 @@ export const PanelStyleTab = React.memo((): React.JSX.Element => {
               onChange={updateShapeHandler.changeHeight}
             />
           </Stack>
+
+          {/* Closed */}
+          <TooltipSwitch
+            display={selectedShape.type === "multi-line" ? "flex" : "none"}
+            label={
+              <Typography fontSize={12}>
+                {t("panel.style.children.general.children.closed.title")}
+              </Typography>
+            }
+            title={t("panel.style.children.general.children.closed.title")}
+            checked={selectedShape.closed}
+            onChange={updateShapeHandler.changeClosed}
+          />
 
           {/* ScaleX/ScaleY */}
           <Stack
@@ -744,6 +784,14 @@ export const PanelStyleTab = React.memo((): React.JSX.Element => {
               alignItems: "center",
             }}
           >
+            <SelectInput
+              label={t("panel.style.children.stroke.children.lineStyle.title")}
+              value={selectedShape.lineStyle}
+              onChange={updateShapeHandler.changeLineStyle}
+              disabled={!selectedShape.strokeEnabled}
+              options={data.lineStyles}
+            />
+
             <SelectInput
               label={t("panel.style.children.stroke.children.lineCap.title")}
               value={selectedShape.lineCap}
@@ -983,7 +1031,7 @@ export const PanelStyleTab = React.memo((): React.JSX.Element => {
           <ButtonGroup variant={"outlined"} size={"small"}>
             <TooltipButton
               sx={{
-                background: croppedId ? "grey" : "",
+                background: edittedId ? "grey" : "",
               }}
               icon={<CropRotateTwoTone fontSize={"small"} />}
               title={t("panel.style.children.crop.children.crop.title")}

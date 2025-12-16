@@ -163,7 +163,7 @@ export const ToolbarIO = React.memo((): React.JSX.Element => {
         "error"
       );
     }
-  }, [updateSnackbarAlert]);
+  }, [t, updateSnackbarAlert]);
 
   const reportInfoRef = React.useRef<Report>(undefined);
 
@@ -255,7 +255,13 @@ export const ToolbarIO = React.memo((): React.JSX.Element => {
         toCloudHandler.close();
       }
     }
-  }, [exportShapes, openSaveToCloudHandler, cleanHistory, updateSnackbarAlert]);
+  }, [
+    t,
+    exportShapes,
+    openSaveToCloudHandler,
+    cleanHistory,
+    updateSnackbarAlert,
+  ]);
 
   const saveToCloudHandler = React.useCallback(async (): Promise<void> => {
     try {
@@ -306,6 +312,7 @@ export const ToolbarIO = React.memo((): React.JSX.Element => {
       toCloudHandler.close();
     }
   }, [
+    t,
     saveInfo,
     exportShapes,
     exportStage,
@@ -378,7 +385,7 @@ export const ToolbarIO = React.memo((): React.JSX.Element => {
     } finally {
       fromCloudHandler.close();
     }
-  }, [addShapes, importInfo, updateSnackbarAlert]);
+  }, [t, addShapes, importInfo, updateSnackbarAlert]);
 
   const importFromDeviceHandler = React.useCallback(
     async (file: File): Promise<void> => {
@@ -403,7 +410,7 @@ export const ToolbarIO = React.memo((): React.JSX.Element => {
         );
       }
     },
-    [addShapes, updateSnackbarAlert]
+    [t, addShapes, updateSnackbarAlert]
   );
 
   const data: Record<string, SelectInputOption[]> = React.useMemo<
@@ -449,7 +456,7 @@ export const ToolbarIO = React.memo((): React.JSX.Element => {
         value: item,
       })),
     }),
-    []
+    [t]
   );
 
   // Store setting initial state
@@ -913,7 +920,7 @@ export const ToolbarIO = React.memo((): React.JSX.Element => {
         isExportLoading: false,
       }));
     }
-  }, [exportInfo, exportShapes, updateSnackbarAlert]);
+  }, [t, exportInfo, exportShapes, updateSnackbarAlert]);
 
   // Update preview
   React.useEffect(() => {
@@ -963,7 +970,7 @@ export const ToolbarIO = React.memo((): React.JSX.Element => {
           />
         </Box>
       );
-    }, []);
+    }, [t]);
 
   const exportDialogContent: React.JSX.Element =
     React.useMemo((): React.JSX.Element => {
@@ -1492,7 +1499,7 @@ export const ToolbarIO = React.memo((): React.JSX.Element => {
           </Grid>
         </Grid>
       );
-    }, [exportInfo, data]);
+    }, [t, exportInfo, data]);
 
   const exportDialogAction: React.JSX.Element =
     React.useMemo((): React.JSX.Element => {
@@ -1511,7 +1518,7 @@ export const ToolbarIO = React.memo((): React.JSX.Element => {
           {t("toolBar.export.common.button.export")}
         </TooltipButton>
       );
-    }, [exportHandler]);
+    }, [t, exportHandler]);
 
   const saveToCloudDialogTitle: React.JSX.Element =
     React.useMemo((): React.JSX.Element => {
@@ -1533,7 +1540,7 @@ export const ToolbarIO = React.memo((): React.JSX.Element => {
           />
         </Box>
       );
-    }, []);
+    }, [t]);
 
   const saveToCloudDialogContent: React.JSX.Element =
     React.useMemo((): React.JSX.Element => {
@@ -1578,7 +1585,7 @@ export const ToolbarIO = React.memo((): React.JSX.Element => {
           />
         </Box>
       );
-    }, [saveInfo, data]);
+    }, [t, saveInfo, data]);
 
   const saveToCloudDialogAction: React.JSX.Element =
     React.useMemo((): React.JSX.Element => {
@@ -1592,7 +1599,7 @@ export const ToolbarIO = React.memo((): React.JSX.Element => {
           {t("toolBar.save.common.button.save")}
         </TooltipButton>
       );
-    }, [saveToCloudHandler]);
+    }, [t, saveToCloudHandler]);
 
   const importFromCloudDialogTitle: React.JSX.Element =
     React.useMemo((): React.JSX.Element => {
@@ -1614,7 +1621,7 @@ export const ToolbarIO = React.memo((): React.JSX.Element => {
           />
         </Box>
       );
-    }, []);
+    }, [t]);
 
   const importFromCloudDialogContent: React.JSX.Element =
     React.useMemo((): React.JSX.Element => {
@@ -1638,7 +1645,7 @@ export const ToolbarIO = React.memo((): React.JSX.Element => {
           />
         </Box>
       );
-    }, [importInfo.name, reports, fetchReportHandler]);
+    }, [t, importInfo.name, reports, fetchReportHandler]);
 
   const importFromCloudDialogAction: React.JSX.Element =
     React.useMemo((): React.JSX.Element => {
@@ -1652,7 +1659,7 @@ export const ToolbarIO = React.memo((): React.JSX.Element => {
           {t("toolBar.import.common.button.import")}
         </TooltipButton>
       );
-    }, [importFromCloudHandler]);
+    }, [t, importFromCloudHandler]);
 
   useDebounceHotKey({
     keys: ["ctrl+shift+s", "cmd+shift+s"],

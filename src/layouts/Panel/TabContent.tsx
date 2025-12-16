@@ -1,4 +1,4 @@
-import { useFreeDrawingContext, useShapesContext } from "../../contexts";
+import { useDrawingContext, useShapesContext } from "../../contexts";
 import { PanelArrangeTab } from "./ArrangeTab";
 import { MapOriginPanel } from "../../components/MapOriginPanel/MapOriginPanel";
 import { useTranslation } from "react-i18next";
@@ -13,7 +13,7 @@ import React from "react";
 export const PanelTabContent = React.memo((): React.JSX.Element => {
   const { t } = useTranslation();
 
-  const { freeDrawingMode } = useFreeDrawingContext();
+  const { drawingMode } = useDrawingContext();
 
   const { selectedShape, shapeList } = useShapesContext();
 
@@ -24,8 +24,8 @@ export const PanelTabContent = React.memo((): React.JSX.Element => {
     guideText = t("guideText.emptyShapeList.title");
   } else if (!selectedShape.id) {
     guideText = t("guideText.noSelectedId.title");
-  } else if (freeDrawingMode) {
-    guideText = t("guideText.freeDrawing.title");
+  } else if (drawingMode) {
+    guideText = t("guideText.drawing.title");
   }
 
   React.useEffect(() => {

@@ -1,111 +1,99 @@
-import { useFreeDrawingContext, useShapesContext } from "../../contexts";
-import { Crop169TwoTone, DrawTwoTone, TimelineTwoTone } from "@mui/icons-material";
+import { useDrawingContext, useShapesContext } from "../../contexts";
 import { TooltipButton } from "../../components/TooltipButton";
 import { useTranslation } from "react-i18next";
 import { ButtonGroup } from "@mui/material";
 import React from "react";
+import {
+  PolylineTwoTone,
+  Crop169TwoTone,
+  DrawTwoTone,
+} from "@mui/icons-material";
 
 export const ToolbarDrawing = React.memo((): React.JSX.Element => {
   const { t } = useTranslation();
 
-  const { freeDrawingMode, setFreeDrawingMode } = useFreeDrawingContext();
+  const { drawingMode, setDrawingMode } = useDrawingContext();
 
   const { selectedShape } = useShapesContext();
 
-  const changeFreeDrawingModeHandler = React.useMemo(
+  const changeDrawingModeHandler = React.useMemo(
     () => ({
-      handleFreeDrawingPen: (): void =>
-        setFreeDrawingMode((prev) => {
+      multiLine: (): void =>
+        setDrawingMode((prev) => {
           switch (prev) {
             default: {
-              return "pen";
+              return "multi-line";
             }
 
-            case "pen": {
+            case "multi-line": {
               return undefined;
-            }
-
-            case "eraser": {
-              return "pen";
-            }
-
-            case "polyline": {
-              return "pen";
             }
           }
         }),
-      handleFreeDrawingEraser: (): void =>
-        setFreeDrawingMode((prev) => {
+      pen: (): void =>
+        setDrawingMode((prev) => {
           switch (prev) {
             default: {
-              return "eraser";
+              return "source-over";
             }
 
-            case "pen": {
-              return "eraser";
-            }
-
-            case "eraser": {
+            case "source-over": {
               return undefined;
             }
 
-            case "polyline": {
-              return "eraser";
+            case "destination-out": {
+              return "source-over";
             }
           }
         }),
-      handlePolyline: (): void =>
-        setFreeDrawingMode((prev) => {
+      eraser: (): void =>
+        setDrawingMode((prev) => {
           switch (prev) {
             default: {
-              return "polyline";
+              return "destination-out";
             }
 
-            case "polyline": {
+            case "source-over": {
+              return "destination-out";
+            }
+
+            case "destination-out": {
               return undefined;
-            }
-
-            case "pen": {
-              return "polyline";
-            }
-
-            case "eraser": {
-              return "polyline";
             }
           }
         }),
     }),
-    [setFreeDrawingMode]
+    [setDrawingMode]
   );
 
   return (
     <ButtonGroup variant={"contained"} size={"small"}>
       <TooltipButton
+        icon={<PolylineTwoTone />}
+        title={t("toolBar.multiLine.title")}
+        sx={{
+          background: drawingMode === "multi-line" ? "grey" : "",
+        }}
+        onClick={changeDrawingModeHandler.multiLine}
+      />
+
+      <TooltipButton
         icon={<DrawTwoTone />}
         title={t("toolBar.drawing.title")}
         sx={{
-          background: freeDrawingMode === "pen" ? "grey" : "",
+          background: drawingMode === "source-over" ? "grey" : "",
         }}
-        onClick={changeFreeDrawingModeHandler.handleFreeDrawingPen}
+        onClick={changeDrawingModeHandler.pen}
       />
 
       <TooltipButton
         icon={<Crop169TwoTone sx={{ rotate: "-45deg" }} />}
         title={t("toolBar.eraser.title")}
         sx={{
-          background: freeDrawingMode === "eraser" ? "grey" : "",
+          background: drawingMode === "destination-out" ? "grey" : "",
         }}
-        onClick={changeFreeDrawingModeHandler.handleFreeDrawingEraser}
+        onClick={changeDrawingModeHandler.eraser}
         disabled={selectedShape.type !== "free-drawing"}
-      />
-
-      <TooltipButton
-        icon={<TimelineTwoTone />}
-        title={t("toolBar.polyline.title", { defaultValue: "Polyline" })}
-        sx={{
-          background: freeDrawingMode === "polyline" ? "grey" : "",
-        }}
-        onClick={changeFreeDrawingModeHandler.handlePolyline}
       />
     </ButtonGroup>
   );

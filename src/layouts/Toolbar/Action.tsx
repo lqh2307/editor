@@ -53,7 +53,7 @@ export const ToolbarAction = React.memo((): React.JSX.Element => {
         "success"
       );
     },
-    [groupShapes, updateSnackbarAlert]
+    [t, groupShapes, updateSnackbarAlert]
   );
 
   const selectAllHandler = React.useCallback((): void => {
@@ -73,7 +73,7 @@ export const ToolbarAction = React.memo((): React.JSX.Element => {
         "success"
       );
     },
-    [copyShape, updateSnackbarAlert]
+    [t, copyShape, updateSnackbarAlert]
   );
 
   const pasteShapeHandler = React.useCallback((): void => {
@@ -83,7 +83,7 @@ export const ToolbarAction = React.memo((): React.JSX.Element => {
       t("toolBar.paste.common.snackBarAlert.paste"),
       "success"
     );
-  }, [pasteShape, updateSnackbarAlert]);
+  }, [t, pasteShape, updateSnackbarAlert]);
 
   const pasteShapeToPositionHandler = React.useCallback((): void => {
     pasteShape(getStagePointerPosition());
@@ -92,7 +92,7 @@ export const ToolbarAction = React.memo((): React.JSX.Element => {
       t("toolBar.paste.common.snackBarAlert.paste"),
       "success"
     );
-  }, [pasteShape, getStagePointerPosition, updateSnackbarAlert]);
+  }, [t, pasteShape, getStagePointerPosition, updateSnackbarAlert]);
 
   const duplicateShapeHandler = React.useCallback((): void => {
     duplicateShape(undefined);
@@ -101,7 +101,7 @@ export const ToolbarAction = React.memo((): React.JSX.Element => {
       t("toolBar.duplicate.common.snackBarAlert.duplicate"),
       "success"
     );
-  }, [duplicateShape, updateSnackbarAlert]);
+  }, [t, duplicateShape, updateSnackbarAlert]);
 
   const duplicateShapeToPositionHandler = React.useCallback((): void => {
     duplicateShape(undefined, getStagePointerPosition());
@@ -110,7 +110,7 @@ export const ToolbarAction = React.memo((): React.JSX.Element => {
       t("toolBar.duplicate.common.snackBarAlert.duplicate"),
       "success"
     );
-  }, [duplicateShape, getStagePointerPosition, updateSnackbarAlert]);
+  }, [t, duplicateShape, getStagePointerPosition, updateSnackbarAlert]);
 
   const deleteShapeHandler = React.useCallback((): void => {
     deleteShapes(undefined);
@@ -119,7 +119,7 @@ export const ToolbarAction = React.memo((): React.JSX.Element => {
       t("toolBar.delete.common.snackBarAlert.delete"),
       "success"
     );
-  }, [deleteShapes, updateSnackbarAlert]);
+  }, [t, deleteShapes, updateSnackbarAlert]);
 
   useDebounceHotKey({
     keys: ["ctrl+g", "cmd+g"],

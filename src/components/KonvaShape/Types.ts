@@ -1,3 +1,4 @@
+import { KonvaLineStyle } from "../../types/Konva";
 import { Size } from "../../types/Common";
 import Konva from "konva";
 
@@ -34,6 +35,9 @@ export type KonvaShape = Partial<Konva.ShapeConfig> &
     // Free drawing
     lines?: KonvaFreeDrawingLine[];
 
+    // Line
+    lineStyle?: KonvaLineStyle;
+
     // Path
     paths?: Konva.PathConfig[];
 
@@ -67,6 +71,7 @@ export type KonvaShapeType =
   | "line"
   | "polyline"
   | "free-drawing"
+  | "multi-line"
   | "path"
   | "arrow"
   | "ring"
@@ -101,7 +106,7 @@ export type KonvaFreeDrawingLine = Omit<Konva.LineConfig, "points"> & {
 
 export type KonvaShapeProp = {
   isSelected?: boolean;
-  isCropped?: boolean;
+  isEditted?: boolean;
 
   // Shape options
   shapeOption?: KonvaShape;
@@ -114,6 +119,7 @@ export type KonvaShapeProp = {
     e?: Konva.KonvaEventObject<MouseEvent>,
     shapeAPI?: KonvaShapeAPI
   ) => void;
+  onDblClick?: (shapeAPI?: KonvaShapeAPI) => void;
   onMouseDown?: (shapeAPI?: KonvaShapeAPI) => void;
   onMouseUp?: (shapeAPI?: KonvaShapeAPI) => void;
   onDragMove?: (shapeAPI?: KonvaShapeAPI) => void;
@@ -133,5 +139,6 @@ export type LayerAction = "back" | "front" | "backward" | "forward";
 export type RenderReason =
   | "apply-prop"
   | "drag-end"
+  | "control-drag-end"
   | "transform-end"
   | "commit";

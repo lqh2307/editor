@@ -1,13 +1,18 @@
-import { createShapeBox, createFilter } from "../../utils/Shapes";
 import { parseHexToRGBAString } from "../../utils/Color";
 import { Portal } from "react-konva-utils";
 import { Image } from "react-konva";
 import Konva from "konva";
 import React from "react";
 import {
+  createShapeBox,
+  createLineDash,
+  createFilter,
+} from "../../utils/Shapes";
+import {
   KonvaShapeClip,
   KonvaShapeProp,
   KonvaShapeAPI,
+  RenderReason,
   KonvaShape,
 } from "./Types";
 
@@ -26,7 +31,7 @@ export const KonvaImage = React.memo(
     // Update crop element
     const updateCropElement = React.useCallback((): void => {
       if (
-        currentPropRef.current.isCropped &&
+        currentPropRef.current.isEditted &&
         cropElementNodeRef.current &&
         cropImageNodeRef.current &&
         nodeRef.current
@@ -48,16 +53,16 @@ export const KonvaImage = React.memo(
     }, []);
 
     // Apply prop
-    const applyProp = React.useCallback((): void => {
+    const applyProp = React.useCallback((reason?: RenderReason): void => {
       const prop: KonvaShapeProp = currentPropRef.current;
       const shapeOption: KonvaShape = prop.shapeOption;
 
+      // Update offset
+      shapeOption.offsetX = shapeOption.width / 2;
+      shapeOption.offsetY = shapeOption.height / 2;
+
       const node: Konva.Image = nodeRef.current;
       if (node) {
-        // Update offset
-        shapeOption.offsetX = shapeOption.width / 2;
-        shapeOption.offsetY = shapeOption.height / 2;
-
         // Update node attrs
         node.setAttrs({
           ...shapeOption,
@@ -71,6 +76,7 @@ export const KonvaImage = React.memo(
             shapeOption.stroke as string,
             shapeOption.strokeOpacity
           ),
+          dash: createLineDash(shapeOption.lineStyle),
           filters: createFilter(shapeOption),
         });
 
@@ -90,8 +96,8 @@ export const KonvaImage = React.memo(
               .multiply(node.getAbsoluteTransform())
               .multiply(cropElementNodeRef.current.getAbsoluteTransform())
               .decompose(),
-            draggable: currentPropRef.current.isCropped,
-            visible: currentPropRef.current.isCropped,
+            draggable: currentPropRef.current.isEditted,
+            visible: currentPropRef.current.isEditted,
             image: node.image(),
             width: cropElementNodeRef.current.width(),
             height: cropElementNodeRef.current.height(),
@@ -115,9 +121,9 @@ export const KonvaImage = React.memo(
           };
 
           cropElementNodeRef.current.setAttrs(shapeOption.clip);
-        } else if (previousIsCroppedRef.current && !prop.isCropped) {
+        } else if (previousIsCroppedRef.current && !prop.isEditted) {
           cropImageNodeRef.current?.visible(false);
-        } else if (!previousIsCroppedRef.current && prop.isCropped) {
+        } else if (!previousIsCroppedRef.current && prop.isEditted) {
           cropImageNodeRef.current.setAttrs({
             ...node
               .getLayer()
@@ -127,8 +133,8 @@ export const KonvaImage = React.memo(
               .multiply(node.getAbsoluteTransform())
               .multiply(cropElementNodeRef.current.getAbsoluteTransform())
               .decompose(),
-            draggable: currentPropRef.current.isCropped,
-            visible: currentPropRef.current.isCropped,
+            draggable: currentPropRef.current.isEditted,
+            visible: currentPropRef.current.isEditted,
             image: node.image(),
             width: cropElementNodeRef.current.width(),
             height: cropElementNodeRef.current.height(),
@@ -138,17 +144,17 @@ export const KonvaImage = React.memo(
         }
 
         // Cache
-        if (!prop.isCropped && (shapeOption.width || shapeOption.height)) {
+        if (!prop.isEditted && (shapeOption.width || shapeOption.height)) {
           node.cache();
         }
       }
 
       // Store previous clip
       previousClipRef.current = shapeOption.clip;
-      previousIsCroppedRef.current = prop.isCropped;
+      previousIsCroppedRef.current = prop.isEditted;
 
       // Call callback function
-      prop.onAppliedProp?.(shapeAPI, "apply-prop");
+      prop.onAppliedProp?.(shapeAPI, reason);
     }, []);
 
     // Update prop
@@ -157,7 +163,7 @@ export const KonvaImage = React.memo(
         Object.assign(currentPropRef.current, prop);
       }
 
-      applyProp();
+      applyProp("apply-prop");
     }, []);
 
     // Update shape
@@ -166,15 +172,12 @@ export const KonvaImage = React.memo(
         Object.assign(currentPropRef.current.shapeOption, shape);
       }
 
-      applyProp();
+      applyProp("apply-prop");
     }, []);
 
     // Get stage
     const getStage = React.useCallback((): Konva.Stage => {
-      const node: Konva.Image = nodeRef.current;
-      if (node) {
-        return node.getStage();
-      }
+      return nodeRef.current?.getStage();
     }, []);
 
     // Get node
@@ -203,7 +206,7 @@ export const KonvaImage = React.memo(
     React.useEffect(() => {
       currentPropRef.current = prop;
 
-      applyProp();
+      applyProp("apply-prop");
 
       // Call callback function
       prop.onMounted?.(prop.shapeOption.id, shapeAPI);
@@ -222,6 +225,11 @@ export const KonvaImage = React.memo(
       []
     );
 
+    const handleDblClick = React.useCallback((): void => {
+      // Call callback function
+      currentPropRef.current.onDblClick?.(shapeAPI);
+    }, []);
+
     const handleMouseDown = React.useCallback((): void => {
       // Call callback function
       currentPropRef.current.onMouseDown?.(shapeAPI);
@@ -230,6 +238,10 @@ export const KonvaImage = React.memo(
     const handleMouseUp = React.useCallback((): void => {
       // Call callback function
       currentPropRef.current.onMouseUp?.(shapeAPI);
+    }, []);
+
+    const handleDragStart = React.useCallback((): void => {
+      setIsEnabled(true);
     }, []);
 
     const handleDragMove = React.useCallback(
@@ -338,11 +350,13 @@ export const KonvaImage = React.memo(
           ref={nodeRef}
           image={undefined}
           onClick={handleClick}
+          onDblClick={handleDblClick}
           onMouseOver={handleMouseOver}
           onMouseLeave={handleMouseLeave}
-          onDragMove={handleDragMove}
           onMouseDown={handleMouseDown}
           onMouseUp={handleMouseUp}
+          onDragStart={handleDragStart}
+          onDragMove={handleDragMove}
           onDragEnd={handleDragEnd}
           onTransform={updateCropElement}
           onTransformEnd={handleTransformEnd}
