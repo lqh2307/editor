@@ -687,22 +687,22 @@ export const CanvasShapes = React.memo((): React.JSX.Element => {
           );
         }
 
-        case "polyline": {
-          return (
-            <KonvaPolyline
-              onClick={handleShapeClick}
-              onMounted={handleOnMounted}
-              onUnMounted={handleOnUnMounted}
-              onMouseOver={handleShapeMouseOver}
-              onMouseLeave={handleShapeMouseLeave}
-              onDragMove={handleShapeDragMove}
-              onAppliedProp={handleAppliedProp}
-              isSelected={isSelected}
-              shapeOption={item}
-              key={item.id}
-            />
-          );
-        }
+        // case "polyline": {
+        //   return (
+        //     <KonvaPolyline
+        //       onClick={handleShapeClick}
+        //       onMounted={handleOnMounted}
+        //       onUnMounted={handleOnUnMounted}
+        //       onMouseOver={handleShapeMouseOver}
+        //       onMouseLeave={handleShapeMouseLeave}
+        //       onDragMove={handleShapeDragMove}
+        //       onAppliedProp={handleAppliedProp}
+        //       isSelected={isSelected}
+        //       shapeOption={item}
+        //       key={item.id}
+        //     />
+        //   );
+        // }
 
         case "text": {
           return (
