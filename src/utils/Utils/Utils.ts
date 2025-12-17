@@ -478,3 +478,27 @@ export function removeNestedArrayItems(arr1: any[], arr2: string[]): string[] {
 
   return helper(arr1)[0];
 }
+
+/* Compare array */
+export function compareArray(arr1: string[], arr2: string[], order?: boolean): boolean {
+  if (arr1.length !== arr2.length) {
+    return false;
+  }
+
+  if (order) {
+    for (let i = 0; i < arr1.length; i++) {
+      if (arr1[i] !== arr2[i]) {
+        return false;
+      }
+    }
+
+    return true;
+  } else {
+    const setA: Set<string> = new Set(arr1);
+    if (setA.size !== arr2.length) {
+      return false;
+    }
+
+    return arr2.every(item => setA.has(item));
+  }
+}

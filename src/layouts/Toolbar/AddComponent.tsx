@@ -121,6 +121,7 @@ export const ToolbarAddComponent = React.memo((): React.JSX.Element => {
 
           if (groupIds) {
             newShape.groupIds = groups[newShapeIds[groupIds[0]]];
+            newShape.originGroupIds = newShape.groupIds;
           }
 
           return newShape;

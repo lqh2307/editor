@@ -73,7 +73,9 @@ export const CanvasShapes = React.memo((): React.JSX.Element => {
       if (selectedGroupIds && selectedGroupIds === shape.groupIds) {
         // Set single selected ids
         updateSingleSelectedIds(
-          [shape.id],
+          shape.originGroupIds
+            ? shape.originGroupIds.flat(Infinity)
+            : [shape.id],
           e.evt?.ctrlKey
             ? singleSelectedIds[shape.id]
               ? undefined
