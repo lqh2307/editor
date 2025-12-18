@@ -146,14 +146,15 @@ export const ToolbarIO = React.memo((): React.JSX.Element => {
       const response: AxiosResponse = await searchReport({
         controller: fetchReportControllerRef.current,
         desc: true,
-        type: 1,
       });
 
       setReports(
-        (response.data as Report[]).map((item) => ({
-          title: item.name,
-          value: item.id,
-        }))
+        (response.data as Report[])
+          .filter((item) => item.type === 1)
+          .map((item) => ({
+            title: item.name,
+            value: item.id,
+          }))
       );
     } catch (error) {
       setReports(reportInitRef.current);

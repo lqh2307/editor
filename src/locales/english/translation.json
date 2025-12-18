@@ -352,8 +352,16 @@
         }
       }
     },
-    "addIcon": {
-      "title": "Add Icon",
+    "addBasicIcon": {
+      "title": "Add Basic Icon",
+      "common": {
+        "snackBarAlert": {
+          "error": "Error!"
+        }
+      }
+    },
+    "addMilitaryIcon": {
+      "title": "Add Military Icon",
       "common": {
         "snackBarAlert": {
           "error": "Error!"

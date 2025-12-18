@@ -1,12 +1,13 @@
 import { ToolbarAddRegularShape } from "./AddRegularShape";
+import { ToolbarAddMilitaryIcon } from "./AddMilitaryIcon";
 import { ToolbarAddComponent } from "./AddComponent";
+import { ToolbarAddBasicIcon } from "./AddBasicIcon";
 import { ToolbarUploadVideo } from "./UploadVideo";
 import { ToolbarUploadImage } from "./UploadImage";
 import { ToolbarAddTemplate } from "./AddTemplate";
 import { ToolbarAddImage } from "./AddImage";
 import { ButtonGroup } from "@mui/material";
 import { ToolbarAddText } from "./AddText";
-import { ToolbarAddIcon } from "./AddIcon";
 import React from "react";
 
 export const ToolbarAddShape = React.memo((): React.JSX.Element => {
@@ -15,8 +16,11 @@ export const ToolbarAddShape = React.memo((): React.JSX.Element => {
       {/* Add Shapes (Line/Arrow/Circle/Rectangle/Convex Polygon/Concave Polygon/Ring/Wedge) */}
       <ToolbarAddRegularShape />
 
-      {/* Add Icon */}
-      <ToolbarAddIcon />
+      {/* Add Basic Icon */}
+      <ToolbarAddBasicIcon />
+
+      {/* Add Military Icon */}
+      <ToolbarAddMilitaryIcon />
 
       {/* Add Text */}
       <ToolbarAddText />

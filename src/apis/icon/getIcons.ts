@@ -6,7 +6,7 @@ export async function getIcons(
   options: GetIconsOption
 ): Promise<AxiosResponse> {
   return await axios.get<GetIconsOption, AxiosResponse>(
-    `${BASE_URL}/assets/icons/icons.json`,
+    `${BASE_URL}/assets/icons/${options.type}.json`,
     {
       responseType: "json",
       timeout: 300000,

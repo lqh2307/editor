@@ -352,8 +352,16 @@
         }
       }
     },
-    "addIcon": {
-      "title": "Thêm biểu tượng",
+    "addBasicIcon": {
+      "title": "Thêm biểu tượng cơ bản",
+      "common": {
+        "snackBarAlert": {
+          "error": "Lỗi!"
+        }
+      }
+    },
+    "addMilitaryIcon": {
+      "title": "Thêm biểu tượng quân sự",
       "common": {
         "snackBarAlert": {
           "error": "Lỗi!"

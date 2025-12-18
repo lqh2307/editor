@@ -58,12 +58,11 @@ export const ToolbarAddTemplate = React.memo((): React.JSX.Element => {
       const response: AxiosResponse = await searchReport({
         controller: fetchTemplateControllerRef.current,
         desc: true,
-        type: 2,
       });
 
       setTemplateInfo({
         isLoading: false,
-        reports: response.data as Report[],
+        reports: (response.data as Report[]).filter((item) => item.type === 2),
       });
     } catch (error) {
       setTemplateInfo(templateInitRef.current);

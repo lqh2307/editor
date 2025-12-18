@@ -67,12 +67,11 @@ export const ToolbarAddComponent = React.memo((): React.JSX.Element => {
       const response: AxiosResponse = await searchReport({
         controller: fetchComponentControllerRef.current,
         desc: true,
-        type: 3,
       });
 
       setComponentInfo({
         isLoading: false,
-        reports: response.data as Report[],
+        reports: (response.data as Report[]).filter((item) => item.type === 3),
       });
     } catch (error) {
       setComponentInfo(componentInitRef.current);

@@ -6,4 +6,6 @@ export type KonvaDragDrop = {
   imageURL?: string;
   resolution?: Size;
   componentURL?: string;
+  svgURL?: string;
+  pathURL?: string;
 };

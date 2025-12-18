@@ -3,9 +3,10 @@ import { PartialItemGrid } from "../../components/PartialItemGrid";
 import { TooltipButton } from "../../components/TooltipButton";
 import { KonvaIcon, KonvaDragDrop } from "../../types/Konva";
 import { PopperButton } from "../../components/PopperButton";
-import { InsertEmoticonTwoTone } from "@mui/icons-material";
-import { createPathsFromSVG } from "../../utils/Shapes";
+import { MilitaryTechTwoTone } from "@mui/icons-material";
 import { abortRequest } from "../../utils/Request";
+import { stringToBase64 } from "../../utils/Image";
+import { removeSvgTag } from "../../utils/Shapes";
 import { CellComponentProps } from "react-window";
 import { useTranslation } from "react-i18next";
 import { IconInfo, ItemInfo } from "./Types";
@@ -14,7 +15,7 @@ import { AxiosResponse } from "axios";
 import { Box } from "@mui/material";
 import React from "react";
 
-export const ToolbarAddIcon = React.memo((): React.JSX.Element => {
+export const ToolbarAddMilitaryIcon = React.memo((): React.JSX.Element => {
   const { t } = useTranslation();
 
   const { getStageCenter, updateSnackbarAlert } = useStageContext();
@@ -30,11 +31,14 @@ export const ToolbarAddIcon = React.memo((): React.JSX.Element => {
           [
             {
               type: data.type,
-              paths: createPathsFromSVG(data.imageURL, 200, 200),
+              imageURL: await stringToBase64(
+                removeSvgTag(data.svgURL, "text"),
+                "svg"
+              ),
             },
           ],
           false,
-          false,
+          true,
           getStageCenter()
         );
       } catch (error) {
@@ -88,7 +92,9 @@ export const ToolbarAddIcon = React.memo((): React.JSX.Element => {
         true
       );
 
-      const response: AxiosResponse = await getIcons({});
+      const response: AxiosResponse = await getIcons({
+        type: "military",
+      });
 
       setIconInfo({
         isLoading: false,
@@ -98,7 +104,7 @@ export const ToolbarAddIcon = React.memo((): React.JSX.Element => {
       setIconInfo(iconInitRef.current);
 
       updateSnackbarAlert(
-        `${t("toolBar.addIcon.common.snackBarAlert.error")} ${error}`,
+        `${t("toolBar.addMilitaryIcon.common.snackBarAlert.error")} ${error}`,
         "error"
       );
     }
@@ -127,7 +133,7 @@ export const ToolbarAddIcon = React.memo((): React.JSX.Element => {
             icon={
               <Box
                 component={"img"}
-                src={`data:image/svg+xml;utf8,${icon.content}`}
+                src={`data:image/svg+xml;utf8,${encodeURIComponent(icon.content)}`}
                 alt={icon.name}
                 width={iconConfigRef.current.itemSize}
                 height={iconConfigRef.current.itemSize}
@@ -135,8 +141,8 @@ export const ToolbarAddIcon = React.memo((): React.JSX.Element => {
               />
             }
             value={JSON.stringify({
-              type: "path",
-              imageURL: icon.content,
+              type: "image",
+              svgURL: icon.content,
             })}
             title={icon.name}
             sx={{
@@ -158,8 +164,8 @@ export const ToolbarAddIcon = React.memo((): React.JSX.Element => {
   }
   return (
     <PopperButton
-      icon={<InsertEmoticonTwoTone />}
-      title={t("toolBar.addIcon.title")}
+      icon={<MilitaryTechTwoTone />}
+      title={t("toolBar.addMilitaryIcon.title")}
       onClick={fetchIconHandler}
     >
       <PartialItemGrid

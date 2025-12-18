@@ -480,7 +480,11 @@ export function removeNestedArrayItems(arr1: any[], arr2: string[]): string[] {
 }
 
 /* Compare array */
-export function compareArray(arr1: string[], arr2: string[], order?: boolean): boolean {
+export function compareArray(
+  arr1: string[],
+  arr2: string[],
+  order?: boolean
+): boolean {
   if (arr1.length !== arr2.length) {
     return false;
   }
@@ -499,6 +503,6 @@ export function compareArray(arr1: string[], arr2: string[], order?: boolean): b
       return false;
     }
 
-    return arr2.every(item => setA.has(item));
+    return arr2.every((item) => setA.has(item));
   }
 }

@@ -382,7 +382,7 @@ function reducer(state: State, action: Action): State {
           );
           if (shape?.groupIds) {
             if (shape.originGroupIds === shape.groupIds) {
-              return state;
+              continue;
             }
 
             if (previousGroupIds !== shape.groupIds) {
@@ -422,9 +422,13 @@ function reducer(state: State, action: Action): State {
           if (shape) {
             if (shape.groupIds) {
               if (
-                (compareArray(group.ids, shape.groupIds.flat(Infinity)), true)
+                compareArray(
+                  group.ids,
+                  shape.originGroupIds.flat(Infinity),
+                  true
+                )
               ) {
-                return state;
+                continue;
               }
 
               if (previousGroupIds !== shape.groupIds) {
@@ -1632,7 +1636,7 @@ export function ShapesProvider(prop: ShapesProviderProp): React.JSX.Element {
     async (save?: boolean, fileName?: string): Promise<string> => {
       const shapeList: KonvaShape[] = await Promise.all(
         state.shapeList.map(async (item) => {
-          const { id, ...newItem }: KonvaShape = item;
+          const newItem: KonvaShape = { ...item };
 
           if (newItem.image) {
             if (newItem.type === "image") {

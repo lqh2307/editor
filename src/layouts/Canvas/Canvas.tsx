@@ -1,7 +1,8 @@
+import { createPathsFromSVG, removeSvgTag } from "../../utils/Shapes";
 import { KonvaGridAPI, KonvaGrid } from "../../components/KonvaGrid";
 import { SnackbarAlert } from "../../components/SnackbarAlert";
 import { KonvaShape } from "../../components/KonvaShape";
-import { createPathsFromSVG } from "../../utils/Shapes";
+import { stringToBase64 } from "../../utils/Image";
 import { KonvaDragDrop } from "../../types/Konva";
 import { useTranslation } from "react-i18next";
 import { downloadFile } from "../../apis/file";
@@ -402,6 +403,7 @@ export const Canvas = React.memo((): React.JSX.Element => {
           e.dataTransfer?.getData("data")
         ) as KonvaDragDrop;
         let shapeOptions: KonvaShape[];
+        let processBase64ImageURL: boolean = false;
 
         if (data.componentURL) {
           // Call API to download file
@@ -410,18 +412,62 @@ export const Canvas = React.memo((): React.JSX.Element => {
             responseType: "json",
           });
 
-          shapeOptions = fileResponse.data as KonvaShape[];
+          const shapes: KonvaShape[] = fileResponse.data as KonvaShape[];
+
+          // Create new ids
+          const newShapeIds: Record<string, string> = {};
+
+          shapes.forEach((shape) => {
+            newShapeIds[shape.id] = nanoid();
+          });
+
+          const groups: Record<string, string[]> = {};
+
+          shapes.forEach((shape) => {
+            if (shape.groupIds && !groups[newShapeIds[shape.groupIds[0]]]) {
+              groups[newShapeIds[shape.groupIds[0]]] = shape.groupIds.map(
+                (id) => newShapeIds[id]
+              );
+            }
+          });
+
+          shapeOptions = shapes.map((item) => {
+            const { id, groupIds, ...newShape }: KonvaShape = item;
+
+            newShape.id = newShapeIds[item.id];
+
+            if (groupIds) {
+              newShape.groupIds = groups[newShapeIds[groupIds[0]]];
+              newShape.originGroupIds = newShape.groupIds;
+            }
+
+            return newShape;
+          });
+
+          processBase64ImageURL = true;
         } else {
           const shapeOption: KonvaShape = data as KonvaShape;
 
-          if (data.type === "path" && data.imageURL) {
-            shapeOption.paths = createPathsFromSVG(data.imageURL, 200, 200);
+          if (data.pathURL) {
+            shapeOption.paths = createPathsFromSVG(data.pathURL, 200, 200);
+          } else if (data.svgURL) {
+            shapeOption.imageURL = await stringToBase64(
+              removeSvgTag(data.svgURL, "text"),
+              "svg"
+            );
+
+            processBase64ImageURL = true;
           }
 
           shapeOptions = [shapeOption];
         }
 
-        await addShapes(shapeOptions, false, false, getStagePointerPosition());
+        await addShapes(
+          shapeOptions,
+          false,
+          processBase64ImageURL,
+          getStagePointerPosition()
+        );
       } catch (error) {
         updateSnackbarAlert(
           `${t("toolBar.addShape.common.snackBarAlert.error")} ${error}`,

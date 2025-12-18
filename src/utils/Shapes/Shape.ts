@@ -1,4 +1,5 @@
 import { WindowRect, WindowSize } from "../../types/Window";
+import { LineCap, LineJoin } from "konva/lib/Shape";
 import { KonvaLineStyle } from "../../types/Konva";
 import { IRect, Vector2d } from "konva/lib/types";
 import { createRandomHexColor } from "../Color";
@@ -552,6 +553,21 @@ export function createPathsFromSVG(
     }
   }
 
+  function getInheritedAttr(el: Element, attr: string): string {
+    let cur: Element = el;
+
+    while (cur) {
+      const val: string = cur.getAttribute(attr);
+      if (val) {
+        return val;
+      }
+
+      cur = cur.parentElement;
+    }
+
+    return;
+  }
+
   function traverse(node: Node) {
     if (node.nodeType !== 1) {
       return;
@@ -627,6 +643,17 @@ export function createPathsFromSVG(
         break;
       }
 
+      case "polyline": {
+        data = el
+          .getAttribute("points")
+          .trim()
+          .split(/\s+/)
+          .map((p, i) => (i === 0 ? "M" : "L") + p)
+          .join("");
+
+        break;
+      }
+
       case "path": {
         data = el.getAttribute("d");
 
@@ -635,18 +662,102 @@ export function createPathsFromSVG(
     }
 
     if (data) {
-      result.push({
-        data:
-          scaleX !== 1 || scaleY !== 1
-            ? new svgPath(data).scale(scaleX, scaleY).toString()
-            : data,
-      });
+      const scaledData: string =
+        scaleX !== 1 || scaleY !== 1
+          ? new svgPath(data).scale(scaleX, scaleY).toString()
+          : data;
+
+      const cfg: Konva.PathConfig = {
+        data: scaledData,
+      };
+
+      const fill: string = getInheritedAttr(el, "fill");
+      if (fill && fill !== "none") {
+        cfg.fill = fill;
+      }
+
+      const stroke: string = getInheritedAttr(el, "stroke");
+      if (stroke && stroke !== "none") {
+        cfg.stroke = stroke;
+      }
+
+      const strokeWidth: string = getInheritedAttr(el, "stroke-width");
+      if (strokeWidth) {
+        cfg.strokeWidth = Number(strokeWidth);
+      }
+
+      const strokeDasharray: string = getInheritedAttr(el, "stroke-dasharray");
+      if (strokeDasharray && strokeDasharray !== "none") {
+        const dash: number[] = strokeDasharray.split(/[\s,]+/).map(Number);
+
+        if (dash.length > 0) {
+          cfg.dash = dash;
+        }
+      }
+
+      const opacity: string = getInheritedAttr(el, "opacity");
+      if (opacity) {
+        cfg.opacity = Number(opacity);
+      }
+
+      const fillOpacity: string = getInheritedAttr(el, "fill-opacity");
+      if (fillOpacity) {
+        cfg.fillOpacity = Number(fillOpacity);
+      }
+
+      const fillRule: string = getInheritedAttr(el, "fill-rule");
+      if (fillRule) {
+        cfg.fillRule = fillRule as CanvasFillRule;
+      }
+
+      const strokeOpacity: string = getInheritedAttr(el, "stroke-opacity");
+      if (strokeOpacity) {
+        cfg.strokeOpacity = Number(strokeOpacity);
+      }
+
+      const miterLimit: string = getInheritedAttr(el, "stroke-miterlimit");
+      if (miterLimit) {
+        cfg.miterLimit = Number(miterLimit);
+      }
+
+      const lineJoin: string = getInheritedAttr(el, "stroke-linejoin");
+      if (lineJoin) {
+        cfg.lineJoin = lineJoin as LineJoin;
+      }
+
+      const lineCap: string = getInheritedAttr(el, "stroke-linecap");
+      if (lineCap) {
+        cfg.lineCap = lineCap as LineCap;
+      }
+
+      result.push(cfg);
     }
 
     el.childNodes.forEach(traverse);
   }
 
   traverse(root);
+
+  return result;
+}
+
+/**
+ * Remove all occurrences of a specific SVG tag (including nested ones)
+ */
+export function removeSvgTag(svg: string, tagName: string): string {
+  const regex: RegExp = new RegExp(
+    `<${tagName}\\b[^>]*>[\\s\\S]*?<\\/${tagName}>`,
+    "gi"
+  );
+
+  let prev: string;
+  let result = svg;
+
+  do {
+    prev = result;
+
+    result = result.replace(regex, "");
+  } while (result !== prev);
 
   return result;
 }
