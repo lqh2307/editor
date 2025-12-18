@@ -23,6 +23,7 @@ import {
   detectContentTypeFromFormat,
   removeNestedArrayItems,
   saveFileFromBuffer,
+  compareArray,
 } from "../utils/Utils";
 import {
   KonvaShapeBox,
@@ -372,14 +373,18 @@ function reducer(state: State, action: Action): State {
       let selectedIds: Record<string, boolean>;
 
       // Process group ids
-      if (group.unGroup) {
-        let previousGroupIds: any[];
+      let previousGroupIds: any[];
 
-        group.ids.forEach((id) => {
+      if (group.unGroup) {
+        for (const id of group.ids) {
           const shape: KonvaShape = state.shapeList.find(
             (item) => item.id === id
           );
           if (shape?.groupIds) {
+            if (shape.originGroupIds === shape.groupIds) {
+              continue;
+            }
+
             if (previousGroupIds !== shape.groupIds) {
               shape.groupIds.forEach((groupId) => {
                 if (Array.isArray(groupId)) {
@@ -404,22 +409,36 @@ function reducer(state: State, action: Action): State {
 
             previousGroupIds = shape.groupIds;
           }
-        });
+        }
 
         selectedIds = {};
       } else {
         const groupIds: any[] = [];
 
-        group.ids.forEach((id) => {
+        for (const id of group.ids) {
           const shape: KonvaShape = state.shapeList.find(
             (item) => item.id === id
           );
           if (shape) {
-            groupIds.push(shape.groupIds ? shape.groupIds : id);
+            if (shape.groupIds) {
+              if (
+                (compareArray(group.ids, shape.groupIds.flat(Infinity)), true)
+              ) {
+                return state;
+              }
+
+              if (previousGroupIds !== shape.groupIds) {
+                groupIds.push(shape.groupIds);
+
+                previousGroupIds = shape.groupIds;
+              }
+            } else {
+              groupIds.push(id);
+            }
 
             shape.groupIds = groupIds;
           }
-        });
+        }
 
         selectedIds = { ...state.selectedIds };
       }
@@ -793,8 +812,14 @@ function reducer(state: State, action: Action): State {
       const selectedIds: Record<string, boolean> = {};
 
       const newShapes: KonvaShape[] = state.copiedShapes.map((item) => {
-        const { id, lines, points, groupIds, ...newCopiedShape }: KonvaShape =
-          item;
+        const {
+          id,
+          lines,
+          points,
+          originGroupIds,
+          groupIds,
+          ...newCopiedShape
+        }: KonvaShape = item;
 
         newCopiedShape.id = newShapeIds[item.id];
 
@@ -816,6 +841,10 @@ function reducer(state: State, action: Action): State {
           }
 
           newCopiedShape.groupIds = cached;
+
+          if (originGroupIds) {
+            newCopiedShape.originGroupIds = newCopiedShape.groupIds;
+          }
         }
 
         const newShape: KonvaShape = createShape(newCopiedShape);
@@ -901,8 +930,14 @@ function reducer(state: State, action: Action): State {
       const selectedIds: Record<string, boolean> = {};
 
       const newShapes: KonvaShape[] = state.copiedShapes.map((item) => {
-        const { id, lines, points, groupIds, ...newCopiedShape }: KonvaShape =
-          item;
+        const {
+          id,
+          lines,
+          points,
+          originGroupIds,
+          groupIds,
+          ...newCopiedShape
+        }: KonvaShape = item;
 
         newCopiedShape.id = newShapeIds[item.id];
 
@@ -924,6 +959,10 @@ function reducer(state: State, action: Action): State {
           }
 
           newCopiedShape.groupIds = cached;
+
+          if (originGroupIds) {
+            newCopiedShape.originGroupIds = newCopiedShape.groupIds;
+          }
         }
 
         const newShape: KonvaShape = createShape(newCopiedShape);
