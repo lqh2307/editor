@@ -31,7 +31,7 @@ export const KonvaArrow = React.memo(
       const prop: KonvaShapeProp = currentPropRef.current;
       const shapeOption: KonvaShape = prop.shapeOption;
 
-      const node: Konva.Line = nodeRef.current;
+      const node: Konva.Arrow = nodeRef.current;
       if (node) {
         // Update node attrs
         node.setAttrs({
@@ -46,7 +46,7 @@ export const KonvaArrow = React.memo(
             shapeOption.strokeOpacity
           ),
           dash: createLineDash(shapeOption.lineStyle),
-        });
+        } as Konva.ArrowConfig);
 
         // Update shape box
         shapeOption.box = createShapeBox(node);
@@ -195,7 +195,7 @@ export const KonvaArrow = React.memo(
 
     const handleDragMove = React.useCallback(
       (e: Konva.KonvaEventObject<DragEvent>): void => {
-        const node: Konva.Line = e.target as Konva.Line;
+        const node: Konva.Arrow = e.target as Konva.Arrow;
         if (node) {
           const shapeOption: KonvaShape = currentPropRef.current.shapeOption;
           const newPosition: Vector2d = node.position();
@@ -234,7 +234,7 @@ export const KonvaArrow = React.memo(
 
     const handleTransform = React.useCallback(
       (e: Konva.KonvaEventObject<DragEvent>): void => {
-        const node: Konva.Line = e.target as Konva.Line;
+        const node: Konva.Arrow = e.target as Konva.Arrow;
         if (node) {
           const shapeOption: KonvaShape = currentPropRef.current.shapeOption;
 

@@ -324,6 +324,9 @@
         "circle": {
           "title": "Circle"
         },
+        "ellipse": {
+          "title": "Ellipse"
+        },
         "rectangle": {
           "title": "Rectangle"
         },
@@ -879,6 +882,9 @@
             },
             "closed": {
               "title": "Closed"
+            },
+            "curved": {
+              "title": "Curved"
             },
             "scaleX": {
               "title": "Horizontal Scale"

@@ -61,12 +61,17 @@ export function createShape(shape: KonvaShape): KonvaShape {
 
     case "arrow":
     case "line": {
-      // Size
+      // Arrow size
       if (newShape.type === "arrow") {
         newShape.pointerWidth =
           newShape.pointerWidth ?? newShape.pointerWidth ?? 10;
         newShape.pointerLength =
           newShape.pointerLength ?? newShape.pointerLength ?? 10;
+      } else {
+        newShape.pointerWidth =
+          newShape.pointerWidth ?? newShape.pointerWidth ?? 0;
+        newShape.pointerLength =
+          newShape.pointerLength ?? newShape.pointerLength ?? 0;
       }
 
       // Common
@@ -124,7 +129,7 @@ export function createShape(shape: KonvaShape): KonvaShape {
       // Size
       if (newShape.type === "ellipse") {
         newShape.radiusX = newShape.radiusX ?? 100;
-        newShape.radiusY = newShape.radiusY ?? 100;
+        newShape.radiusY = newShape.radiusY ?? 75;
       } else if (newShape.type === "circle") {
         newShape.radius = newShape.radius ?? 100;
       } else if (newShape.type === "convex-polygon") {
@@ -239,8 +244,15 @@ export function createShape(shape: KonvaShape): KonvaShape {
       newShape.strokeOpacity = newShape.strokeOpacity ?? 1;
       newShape.strokeScaleEnabled = newShape.strokeScaleEnabled ?? false;
       newShape.strokeWidth = newShape.strokeWidth ?? 5;
+      newShape.bezier = newShape.bezier ?? false;
       newShape.closed = newShape.closed ?? false;
       newShape.points = newShape.points ?? [];
+
+      // Arrow size
+      newShape.pointerWidth =
+        newShape.pointerWidth ?? newShape.pointerWidth ?? 0;
+      newShape.pointerLength =
+        newShape.pointerLength ?? newShape.pointerLength ?? 0;
 
       // Offset
       newShape.offsetX = newShape.offsetX ?? 0;
@@ -375,7 +387,7 @@ export function createShape(shape: KonvaShape): KonvaShape {
       newShape.fill = newShape.fill ?? randomColor;
       newShape.fillOpacity = newShape.fillOpacity ?? 1;
       newShape.lineCap = newShape.lineCap ?? "butt";
-      newShape.lineJoin = newShape.lineJoin ?? "round";
+      newShape.lineJoin = newShape.lineJoin ?? "miter";
       newShape.strokeEnabled = newShape.strokeEnabled ?? true;
       newShape.stroke = newShape.stroke ?? randomColor;
       newShape.strokeOpacity = newShape.strokeOpacity ?? 1;
@@ -391,6 +403,12 @@ export function createShape(shape: KonvaShape): KonvaShape {
           0, 0, 64.6, 135.4, 135.4, 64.6, 200, 200,
         ];
       }
+
+      // Arrow size
+      newShape.pointerWidth =
+        newShape.pointerWidth ?? newShape.pointerWidth ?? 0;
+      newShape.pointerLength =
+        newShape.pointerLength ?? newShape.pointerLength ?? 0;
 
       // Offset
       newShape.offsetX = newShape.offsetX ?? 100;

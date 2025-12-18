@@ -52,7 +52,7 @@ export const ToolbarAddRegularShape = React.memo((): React.JSX.Element => {
   );
 
   {
-    /* Add Shapes (Line/Arrow/Circle/Rectangle/Convex Polygon/Concave Polygon/Ring/Wedge) */
+    /* Add Shapes (Line/Arrow/Circle/Ellipse/Rectangle/Convex Polygon/Concave Polygon/Ring/Wedge) */
   }
   return (
     <PopperButton
@@ -123,11 +123,16 @@ export const ToolbarAddRegularShape = React.memo((): React.JSX.Element => {
           />
 
           <TooltipButton
-            icon={<RectangleTwoTone fontSize={"small"} />}
-            title={t("toolBar.addShape.children.rectangle.title")}
+            icon={
+              <CircleTwoTone
+                fontSize={"small"}
+                sx={{ transform: "scaleY(0.6)" }}
+              />
+            }
+            title={t("toolBar.addShape.children.ellipse.title")}
             onClick={addRegularShapeHandler}
             value={JSON.stringify({
-              type: "rectangle",
+              type: "ellipse",
             })}
             onDragStart={dragRegularShapeHandler}
             draggable={true}
@@ -147,6 +152,21 @@ export const ToolbarAddRegularShape = React.memo((): React.JSX.Element => {
             gap: "0.5rem",
           }}
         >
+          <TooltipButton
+            icon={<RectangleTwoTone fontSize={"small"} />}
+            title={t("toolBar.addShape.children.rectangle.title")}
+            onClick={addRegularShapeHandler}
+            value={JSON.stringify({
+              type: "rectangle",
+            })}
+            onDragStart={dragRegularShapeHandler}
+            draggable={true}
+            sx={{
+              minWidth: 36,
+              minHeight: 32,
+            }}
+          />
+
           <TooltipButton
             icon={<PentagonTwoTone fontSize={"small"} />}
             title={t("toolBar.addShape.children.convexPolygon.title")}
@@ -191,7 +211,17 @@ export const ToolbarAddRegularShape = React.memo((): React.JSX.Element => {
               minHeight: 32,
             }}
           />
+        </Box>
 
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: "row",
+            alignItems: "center",
+            justifyContent: "center",
+            gap: "0.5rem",
+          }}
+        >
           <TooltipButton
             icon={<SignalWifiStatusbarNullTwoTone fontSize={"small"} />}
             title={t("toolBar.addShape.children.wedge.title")}
@@ -206,17 +236,7 @@ export const ToolbarAddRegularShape = React.memo((): React.JSX.Element => {
               minHeight: 32,
             }}
           />
-        </Box>
 
-        <Box
-          sx={{
-            display: "flex",
-            flexDirection: "row",
-            alignItems: "center",
-            justifyContent: "center",
-            gap: "0.5rem",
-          }}
-        >
           <TooltipButton
             icon={<ShareTwoTone fontSize={"small"} />}
             title={t("toolBar.addShape.children.quadraticCurve.title")}

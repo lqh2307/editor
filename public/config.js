@@ -1,4 +1,2 @@
-window.BASE_URL = "";
-
 window.IMAGE_PROCESS_URL = "http://192.168.205.194:30002";
 window.IMAGE_STORAGE_URL = "http://192.168.205.194:30001";

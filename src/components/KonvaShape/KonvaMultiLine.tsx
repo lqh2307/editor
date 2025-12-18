@@ -1,7 +1,7 @@
 import { parseHexToRGBAString } from "../../utils/Color";
+import { Circle, Line, Arrow } from "react-konva";
 import { Vector2d } from "konva/lib/types";
 import { Portal } from "react-konva-utils";
-import { Circle, Line } from "react-konva";
 import Konva from "konva";
 import React from "react";
 import {
@@ -19,11 +19,13 @@ import {
 
 export const KonvaMultiLine = React.memo(
   (prop: KonvaShapeProp): React.JSX.Element => {
-    const nodeRef = React.useRef<Konva.Line>(undefined);
+    const nodeRef = React.useRef<Konva.Arrow>(undefined);
     const currentPropRef = React.useRef<KonvaShapeProp>(prop);
     const [isEnabled, setIsEnabled] = React.useState<boolean>(false);
 
     // Store control
+    const defaultLineDashRef = React.useRef<number[]>([10, 10, 0, 10]);
+    const lineNodeRef = React.useRef<Konva.Line>(undefined);
     const controlNodeRef = React.useRef<Record<string, Konva.Circle>>({});
 
     // Apply prop
@@ -31,7 +33,7 @@ export const KonvaMultiLine = React.memo(
       const prop: KonvaShapeProp = currentPropRef.current;
       const shapeOption: KonvaShape = prop.shapeOption;
 
-      const node: Konva.Line = nodeRef.current;
+      const node: Konva.Arrow = nodeRef.current;
       if (node) {
         // Update node attrs
         node.setAttrs({
@@ -46,11 +48,26 @@ export const KonvaMultiLine = React.memo(
             shapeOption.strokeOpacity
           ),
           dash: createLineDash(shapeOption.lineStyle),
-        });
+        } as Konva.ArrowConfig);
 
         // Update shape box
         shapeOption.box = createShapeBox(node);
       }
+
+      // Update controll attrs
+      lineNodeRef.current?.setAttrs({
+        visible: prop.isEditted && shapeOption.bezier,
+        rotation: shapeOption.rotation,
+        scaleX: shapeOption.scaleX,
+        scaleY: shapeOption.scaleY,
+        skewX: shapeOption.skewX,
+        skewY: shapeOption.skewY,
+        x: shapeOption.x,
+        y: shapeOption.y,
+        offsetX: shapeOption.offsetX,
+        offsetY: shapeOption.offsetY,
+        points: shapeOption.points,
+      });
 
       // Update controll attrs
       for (let idx = 0; idx < shapeOption.points.length; idx += 2) {
@@ -94,7 +111,7 @@ export const KonvaMultiLine = React.memo(
     }, []);
 
     // Get node
-    const getNode = React.useCallback((): Konva.Line => {
+    const getNode = React.useCallback((): Konva.Arrow => {
       return nodeRef.current;
     }, []);
 
@@ -176,6 +193,7 @@ export const KonvaMultiLine = React.memo(
             shapeOption.points[idx + 1] = newPoint.y;
 
             nodeRef.current?.points(shapeOption.points);
+            lineNodeRef.current?.points(shapeOption.points);
           }
         }
       },
@@ -195,7 +213,7 @@ export const KonvaMultiLine = React.memo(
 
     const handleDragMove = React.useCallback(
       (e: Konva.KonvaEventObject<DragEvent>): void => {
-        const node: Konva.Line = e.target as Konva.Line;
+        const node: Konva.Arrow = e.target as Konva.Arrow;
         if (node) {
           const shapeOption: KonvaShape = currentPropRef.current.shapeOption;
           const newPosition: Vector2d = node.position();
@@ -205,6 +223,8 @@ export const KonvaMultiLine = React.memo(
             y: newPosition.y,
             box: createShapeBox(node),
           });
+
+          lineNodeRef.current?.position(newPosition);
 
           for (let idx = 0; idx < shapeOption.points.length; idx += 2) {
             controlNodeRef.current[`${shapeOption.id}-${idx}`]?.position(
@@ -234,7 +254,7 @@ export const KonvaMultiLine = React.memo(
 
     const handleTransform = React.useCallback(
       (e: Konva.KonvaEventObject<DragEvent>): void => {
-        const node: Konva.Line = e.target as Konva.Line;
+        const node: Konva.Arrow = e.target as Konva.Arrow;
         if (node) {
           const shapeOption: KonvaShape = currentPropRef.current.shapeOption;
 
@@ -249,6 +269,8 @@ export const KonvaMultiLine = React.memo(
           };
 
           Object.assign(shapeOption, newAttrs);
+
+          lineNodeRef.current?.setAttrs(newAttrs);
 
           for (let idx = 0; idx < shapeOption.points.length; idx += 2) {
             controlNodeRef.current[`${shapeOption.id}-${idx}`]?.position(
@@ -283,9 +305,10 @@ export const KonvaMultiLine = React.memo(
 
     return (
       <Portal selector={"#shapes"} enabled={isEnabled}>
-        <Line
+        <Arrow
           listening={true}
           ref={nodeRef}
+          points={undefined}
           onClick={handleClick}
           onDblClick={handleDblClick}
           onMouseOver={handleMouseOver}
@@ -297,6 +320,18 @@ export const KonvaMultiLine = React.memo(
           onDragEnd={handleDragEnd}
           onTransform={handleTransform}
           onTransformEnd={handleTransformEnd}
+        />
+
+        <Line
+          id={`${prop.shapeOption.id}-line`}
+          listening={true}
+          ref={lineNodeRef}
+          points={undefined}
+          stroke={"#555555"}
+          strokeWidth={1}
+          fill={"#555555"}
+          opacity={0.75}
+          dash={defaultLineDashRef.current}
         />
 
         {prop.shapeOption.points.map((_, idx) => {

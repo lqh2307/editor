@@ -15,12 +15,12 @@ import { NumberInput } from "../../components/NumberInput";
 import { BasicDialog } from "../../components/BasicDialog";
 import { KonvaShape } from "../../components/KonvaShape";
 import { TextInput } from "../../components/TextInput";
-import { BASE_URL, importSchema } from "../../configs";
 import { validateJSON } from "../../utils/Validator";
 import { abortRequest } from "../../utils/Request";
 import { Format, Size } from "../../types/Common";
 import { useTranslation } from "react-i18next";
 import { fixNumber } from "../../utils/Number";
+import { importSchema } from "../../configs";
 import { AxiosResponse } from "axios";
 import { nanoid } from "nanoid";
 import React from "react";
@@ -1456,7 +1456,7 @@ export const ToolbarIO = React.memo((): React.JSX.Element => {
                 width: "auto%",
                 height: "92%",
               }}
-              fallbackSrc={`${BASE_URL}/assets/images/placeholder.png`}
+              fallbackSrc={"./assets/images/placeholder.png"}
               isLoading={exportInfo.isPreviewLoading}
             />
 

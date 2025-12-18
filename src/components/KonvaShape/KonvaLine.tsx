@@ -1,7 +1,7 @@
 import { parseHexToRGBAString } from "../../utils/Color";
+import { Circle, Arrow } from "react-konva";
 import { Portal } from "react-konva-utils";
 import { Vector2d } from "konva/lib/types";
-import { Circle, Line } from "react-konva";
 import Konva from "konva";
 import React from "react";
 import {
@@ -19,7 +19,7 @@ import {
 
 export const KonvaLine = React.memo(
   (prop: KonvaShapeProp): React.JSX.Element => {
-    const nodeRef = React.useRef<Konva.Line>(undefined);
+    const nodeRef = React.useRef<Konva.Arrow>(undefined);
     const currentPropRef = React.useRef<KonvaShapeProp>(prop);
     const [isEnabled, setIsEnabled] = React.useState<boolean>(false);
 
@@ -31,7 +31,7 @@ export const KonvaLine = React.memo(
       const prop: KonvaShapeProp = currentPropRef.current;
       const shapeOption: KonvaShape = prop.shapeOption;
 
-      const node: Konva.Line = nodeRef.current;
+      const node: Konva.Arrow = nodeRef.current;
       if (node) {
         // Update node attrs
         node.setAttrs({
@@ -46,7 +46,7 @@ export const KonvaLine = React.memo(
             shapeOption.strokeOpacity
           ),
           dash: createLineDash(shapeOption.lineStyle),
-        });
+        } as Konva.ArrowConfig);
 
         // Update shape box
         shapeOption.box = createShapeBox(node);
@@ -94,7 +94,7 @@ export const KonvaLine = React.memo(
     }, []);
 
     // Get node
-    const getNode = React.useCallback((): Konva.Line => {
+    const getNode = React.useCallback((): Konva.Arrow => {
       return nodeRef.current;
     }, []);
 
@@ -195,7 +195,7 @@ export const KonvaLine = React.memo(
 
     const handleDragMove = React.useCallback(
       (e: Konva.KonvaEventObject<DragEvent>): void => {
-        const node: Konva.Line = e.target as Konva.Line;
+        const node: Konva.Arrow = e.target as Konva.Arrow;
         if (node) {
           const shapeOption: KonvaShape = currentPropRef.current.shapeOption;
           const newPosition: Vector2d = node.position();
@@ -234,7 +234,7 @@ export const KonvaLine = React.memo(
 
     const handleTransform = React.useCallback(
       (e: Konva.KonvaEventObject<DragEvent>): void => {
-        const node: Konva.Line = e.target as Konva.Line;
+        const node: Konva.Arrow = e.target as Konva.Arrow;
         if (node) {
           const shapeOption: KonvaShape = currentPropRef.current.shapeOption;
 
@@ -283,7 +283,7 @@ export const KonvaLine = React.memo(
 
     return (
       <Portal selector={"#shapes"} enabled={isEnabled}>
-        <Line
+        <Arrow
           listening={true}
           ref={nodeRef}
           points={undefined}

@@ -1,5 +1,5 @@
 import { parseHexToRGBAString } from "../../utils/Color";
-import { Circle, Line } from "react-konva";
+import { Circle, Line, Arrow } from "react-konva";
 import { Vector2d } from "konva/lib/types";
 import { Portal } from "react-konva-utils";
 import Konva from "konva";
@@ -19,7 +19,7 @@ import {
 
 export const KonvaQuadraticCurve = React.memo(
   (prop: KonvaShapeProp): React.JSX.Element => {
-    const nodeRef = React.useRef<Konva.Line>(undefined);
+    const nodeRef = React.useRef<Konva.Arrow>(undefined);
     const currentPropRef = React.useRef<KonvaShapeProp>(prop);
     const [isEnabled, setIsEnabled] = React.useState<boolean>(false);
 
@@ -33,7 +33,7 @@ export const KonvaQuadraticCurve = React.memo(
       const prop: KonvaShapeProp = currentPropRef.current;
       const shapeOption: KonvaShape = prop.shapeOption;
 
-      const node: Konva.Line = nodeRef.current;
+      const node: Konva.Arrow = nodeRef.current;
       if (node) {
         // Update node attrs
         node.setAttrs({
@@ -48,7 +48,7 @@ export const KonvaQuadraticCurve = React.memo(
             shapeOption.strokeOpacity
           ),
           dash: createLineDash(shapeOption.lineStyle),
-        });
+        } as Konva.ArrowConfig);
 
         // Update shape box
         shapeOption.box = createShapeBox(node);
@@ -110,7 +110,7 @@ export const KonvaQuadraticCurve = React.memo(
     }, []);
 
     // Get node
-    const getNode = React.useCallback((): Konva.Line => {
+    const getNode = React.useCallback((): Konva.Arrow => {
       return nodeRef.current;
     }, []);
 
@@ -219,7 +219,7 @@ export const KonvaQuadraticCurve = React.memo(
 
     const handleDragMove = React.useCallback(
       (e: Konva.KonvaEventObject<DragEvent>): void => {
-        const node: Konva.Line = e.target as Konva.Line;
+        const node: Konva.Arrow = e.target as Konva.Arrow;
         if (node) {
           const shapeOption: KonvaShape = currentPropRef.current.shapeOption;
           const newPosition: Vector2d = node.position();
@@ -260,7 +260,7 @@ export const KonvaQuadraticCurve = React.memo(
 
     const handleTransform = React.useCallback(
       (e: Konva.KonvaEventObject<DragEvent>): void => {
-        const node: Konva.Line = e.target as Konva.Line;
+        const node: Konva.Arrow = e.target as Konva.Arrow;
         if (node) {
           const shapeOption: KonvaShape = currentPropRef.current.shapeOption;
 
@@ -311,9 +311,10 @@ export const KonvaQuadraticCurve = React.memo(
 
     return (
       <Portal selector={"#shapes"} enabled={isEnabled}>
-        <Line
+        <Arrow
           listening={true}
           ref={nodeRef}
+          points={undefined}
           onClick={handleClick}
           onDblClick={handleDblClick}
           onMouseOver={handleMouseOver}

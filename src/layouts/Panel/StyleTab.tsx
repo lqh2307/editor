@@ -384,6 +384,15 @@ export const PanelStyleTab = React.memo((): React.JSX.Element => {
           true
         );
       },
+      changeCurved: (checked: boolean): void => {
+        updateShape(
+          {
+            bezier: checked,
+          },
+          true,
+          true
+        );
+      },
     }),
     [updateShape]
   );
@@ -589,18 +598,37 @@ export const PanelStyleTab = React.memo((): React.JSX.Element => {
             />
           </Stack>
 
-          {/* Closed */}
-          <TooltipSwitch
-            display={selectedShape.type === "multi-line" ? "flex" : "none"}
-            label={
-              <Typography fontSize={12}>
-                {t("panel.style.children.general.children.closed.title")}
-              </Typography>
-            }
-            title={t("panel.style.children.general.children.closed.title")}
-            checked={selectedShape.closed}
-            onChange={updateShapeHandler.changeClosed}
-          />
+          {/* Closed/Curved */}
+          <Stack
+            sx={{
+              display: selectedShape.type === "multi-line" ? "flex" : "none",
+              flexDirection: "row",
+              gap: "0.5rem",
+              alignItems: "center",
+            }}
+          >
+            <TooltipSwitch
+              label={
+                <Typography fontSize={12}>
+                  {t("panel.style.children.general.children.closed.title")}
+                </Typography>
+              }
+              title={t("panel.style.children.general.children.closed.title")}
+              checked={selectedShape.closed}
+              onChange={updateShapeHandler.changeClosed}
+            />
+
+            <TooltipSwitch
+              label={
+                <Typography fontSize={12}>
+                  {t("panel.style.children.general.children.curved.title")}
+                </Typography>
+              }
+              title={t("panel.style.children.general.children.curved.title")}
+              checked={selectedShape.curved}
+              onChange={updateShapeHandler.changeCurved}
+            />
+          </Stack>
 
           {/* ScaleX/ScaleY */}
           <Stack
@@ -872,7 +900,14 @@ export const PanelStyleTab = React.memo((): React.JSX.Element => {
       {/* Pointer */}
       <Accordion
         sx={{
-          display: selectedShape.type === "arrow" ? "block" : "none",
+          display:
+            selectedShape.type === "line" ||
+            selectedShape.type === "arrow" ||
+            selectedShape.type === "quadratic-curve" ||
+            selectedShape.type === "bezier-curve" ||
+            selectedShape.type === "multi-line"
+              ? "block"
+              : "none",
         }}
       >
         <AccordionSummary expandIcon={<ExpandMoreTwoTone />}>
