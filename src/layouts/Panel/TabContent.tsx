@@ -8,6 +8,7 @@ import { PanelTextTab } from "./TextTab";
 import { Box, Tab } from "@mui/material";
 import { FilterTab } from "./FilterTab";
 import React from "react";
+import { MapOriginPanel } from "../../components/MapOriginPanel/MapOriginPanel";
 
 export const PanelTabContent = React.memo((): React.JSX.Element => {
   const { t } = useTranslation();
@@ -33,6 +34,8 @@ export const PanelTabContent = React.memo((): React.JSX.Element => {
         return "text";
       } else if (selectedShape.type === "video") {
         return "control";
+      } else if (selectedShape.type === "image") {
+        return "map";
       } else {
         return "style";
       }
@@ -148,6 +151,22 @@ export const PanelTabContent = React.memo((): React.JSX.Element => {
           label={t("panel.filter.title")}
           value={"filter"}
         />
+
+        <Tab
+          sx={{
+            fontSize: 13,
+            fontWeight: 700,
+            display: selectedShape.type === "image" ? "flex" : "none",
+            minWidth: 0,
+            flex: 1,
+            paddingX: 0,
+            wordSpacing: "10rem",
+            wordBreak: "break-word",
+            textAlign: "center",
+          }}
+          label={"Map"}
+          value={"map"}
+        />
       </TabList>
 
       <PanelControlTab />
@@ -159,6 +178,8 @@ export const PanelTabContent = React.memo((): React.JSX.Element => {
       <PanelArrangeTab />
 
       <FilterTab />
+
+      {tab === "map" && <MapOriginPanel />}
     </TabContext>
   );
 });

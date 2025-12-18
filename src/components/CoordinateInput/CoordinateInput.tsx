@@ -27,7 +27,7 @@ export const CoordinateInput = React.memo(
     sx,
     ...props
   }: CoordinateInputProp): React.JSX.Element => {
-    const [isDec, setIsDec] = React.useState<boolean>(false);
+    const [isDec, setIsDec] = React.useState<boolean>(true);
     const [dec, setDec] = React.useState<number>(Number(value ?? defaultValue));
     const [dms, setDms] = React.useState<DDMMSS>(
       convertDEGToDMS(Number(value ?? defaultValue))

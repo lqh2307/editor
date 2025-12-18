@@ -4,3 +4,4 @@ export * from "./StageContext";
 export * from "./AppContext";
 export * from "./Interfaces";
 export * from "./Types";
+export * from "./MapContext";
