@@ -8,8 +8,8 @@ import { ToolbarAddTemplate } from "./AddTemplate";
 import { ToolbarAddImage } from "./AddImage";
 import { ButtonGroup } from "@mui/material";
 import { ToolbarAddText } from "./AddText";
-import React from "react";
 import { ToolbarFakeAPI } from "./FakeApi";
+import React from "react";
 
 export const ToolbarAddShape = React.memo((): React.JSX.Element => {
   return (
@@ -30,7 +30,7 @@ export const ToolbarAddShape = React.memo((): React.JSX.Element => {
       <ToolbarAddImage />
 
       {/*Fake API*/}
-      <ToolbarFakeAPI/>
+      <ToolbarFakeAPI />
 
       {/* Add Component */}
       <ToolbarAddComponent />

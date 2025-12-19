@@ -1,12 +1,13 @@
 import { useShapesContext, useStageContext } from "../../contexts";
 import { TooltipButton } from "../../components/TooltipButton";
-import { createPathsFromSVG } from "../../utils/Shapes";
+import { removeSvgTag } from "../../utils/Shapes";
 import { getIcons } from "../../apis/icon";
 import { KonvaIcon } from "../../types/Konva";
 import { ImageTwoTone } from "@mui/icons-material";
 import { AxiosResponse } from "axios";
 import React from "react";
 import { useMapContext } from "../../contexts";
+import { stringToBase64 } from "../../utils/Image";
 
 type FakeApiEvent = {
   key: string;
@@ -57,8 +58,15 @@ export const ToolbarFakeAPI = React.memo((): React.JSX.Element => {
     if (icons && icons.length) return icons;
     setLoading(true);
     try {
-      const resp: AxiosResponse = await getIcons({ type: undefined });
-      const data = resp.data as KonvaIcon[];
+      const response: AxiosResponse = await getIcons({ type: "military" });
+      const data = Object.values(response.data).reduce(
+        (acc: KonvaIcon[], item: any) => {
+          acc.push(...item.svgs);
+
+          return acc;
+        },
+        []
+      ) as KonvaIcon[];
       setIcons(data);
       return data;
     } catch (err) {
@@ -86,7 +94,7 @@ export const ToolbarFakeAPI = React.memo((): React.JSX.Element => {
         ],
         false,
         false,
-        { x: 0, y: 0 }
+        undefined
       );
 
       // Align the newly added image to the stage top-left
@@ -96,20 +104,25 @@ export const ToolbarFakeAPI = React.memo((): React.JSX.Element => {
 
       // Also add one fake icon to illustrate sending map & ship
       const list = icons && icons.length ? icons : await ensureIcons();
-      console.log(list);
-      let shipIcon: KonvaIcon | undefined = list.find((i) => /ship|boat|vessel/i.test(i.name));
+
+      let shipIcon: KonvaIcon | undefined = list.find((i) =>
+        /ship|boat|vessel/i.test(i.name)
+      );
       if (!shipIcon) shipIcon = pickRandomIcon(list);
       if (shipIcon) {
         await addShapes(
           [
             {
-              type: "path",
-              paths: createPathsFromSVG(shipIcon.content, 160, 160),
+              type: "image",
+              imageURL: await stringToBase64(
+                removeSvgTag(shipIcon.content, "text"),
+                "svg"
+              ),
             },
           ],
           false,
-          false,
-          { x: 140, y: 140 }
+          true,
+          undefined
         );
       }
       updateSnackbarAlert?.(
@@ -119,16 +132,22 @@ export const ToolbarFakeAPI = React.memo((): React.JSX.Element => {
     } catch (err) {
       updateSnackbarAlert?.(`Fake import ảnh lỗi: ${err}`, "error");
     }
-  }, [addShapes, alignShape, setTopRight, setBottomLeft, ensureIcons, icons, updateSnackbarAlert]);
+  }, [
+    addShapes,
+    alignShape,
+    setTopRight,
+    setBottomLeft,
+    ensureIcons,
+    icons,
+    updateSnackbarAlert,
+  ]);
 
   return (
-    <>
-      <TooltipButton
-        icon={<ImageTwoTone />}
-        title={"Fake Import test.png"}
-        onClick={onClickImportTestImage}
-        disabled={loading}
-      />
-    </>
+    <TooltipButton
+      icon={<ImageTwoTone />}
+      title={"Fake Import test.png"}
+      onClick={onClickImportTestImage}
+      disabled={loading}
+    />
   );
 });

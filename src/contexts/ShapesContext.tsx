@@ -225,6 +225,7 @@ function reducer(state: State, action: Action): State {
       // ids !== undefined & overwrite === undefined -> delete many
       // ids !== undefined & overwrite === false -> select many without overwrite
       // ids !== undefined & overwrite === true -> select many with overwrite
+      // ids === undefined & overwrite === undefined -> delete all
       // ids === undefined & overwrite === false -> select all
       // ids === undefined & overwrite === true -> {}
       if (updateSelectedIds.ids) {
@@ -275,6 +276,7 @@ function reducer(state: State, action: Action): State {
       // ids !== undefined & overwrite === undefined -> delete many
       // ids !== undefined & overwrite === false -> select many without overwrite
       // ids !== undefined & overwrite === true -> select many with overwrite
+      // ids === undefined & overwrite === undefined -> delete all
       // ids === undefined & overwrite === false -> select all
       // ids === undefined & overwrite === true -> {}
       if (updateSingleSelectedIds.ids) {

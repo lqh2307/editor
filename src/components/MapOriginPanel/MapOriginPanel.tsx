@@ -6,10 +6,18 @@ import React from "react";
 export const MapOriginPanel = React.memo((): React.JSX.Element => {
   const { calibration, setTopRight, setBottomLeft } = useMapContext();
 
-  const [trLat, setTrLat] = React.useState<number>(calibration.topRight?.lat ?? 0);
-  const [trLon, setTrLon] = React.useState<number>(calibration.topRight?.lon ?? 0);
-  const [blLat, setBlLat] = React.useState<number>(calibration.bottomLeft?.lat ?? 0);
-  const [blLon, setBlLon] = React.useState<number>(calibration.bottomLeft?.lon ?? 0);
+  const [trLat, setTrLat] = React.useState<number>(
+    calibration.topRight?.lat ?? 0
+  );
+  const [trLon, setTrLon] = React.useState<number>(
+    calibration.topRight?.lon ?? 0
+  );
+  const [blLat, setBlLat] = React.useState<number>(
+    calibration.bottomLeft?.lat ?? 0
+  );
+  const [blLon, setBlLon] = React.useState<number>(
+    calibration.bottomLeft?.lon ?? 0
+  );
 
   React.useEffect(() => {
     setTrLat(calibration.topRight?.lat ?? 0);
@@ -26,7 +34,6 @@ export const MapOriginPanel = React.memo((): React.JSX.Element => {
     setBottomLeft({ lat: blLat, lon: blLon });
   }, [blLat, blLon, setBottomLeft]);
 
-
   React.useEffect(() => {
     updateTopRight();
   }, [trLat, trLon, updateTopRight]);
@@ -34,7 +41,6 @@ export const MapOriginPanel = React.memo((): React.JSX.Element => {
   React.useEffect(() => {
     updateBottomLeft();
   }, [blLat, blLon, updateBottomLeft]);
-
 
   return (
     <Stack sx={{ gap: "0.75rem", width: "100%" }}>
@@ -57,7 +63,9 @@ export const MapOriginPanel = React.memo((): React.JSX.Element => {
           delay={150}
         />
       </Box>
-      <Typography sx={{ fontSize: 13, fontWeight: 700, marginTop: "0.5rem" }}>Bottom-Left</Typography>
+      <Typography sx={{ fontSize: 13, fontWeight: 700, marginTop: "0.5rem" }}>
+        Bottom-Left
+      </Typography>
       <Box sx={{ display: "flex", gap: "0.5rem" }}>
         <CoordinateInput
           title={"Latitude"}

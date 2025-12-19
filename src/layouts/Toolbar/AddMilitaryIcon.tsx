@@ -3,6 +3,7 @@ import { PartialItemGrid } from "../../components/PartialItemGrid";
 import { TooltipButton } from "../../components/TooltipButton";
 import { KonvaIcon, KonvaDragDrop } from "../../types/Konva";
 import { PopperButton } from "../../components/PopperButton";
+import { LoadingImage } from "../../components/LoadingImage";
 import { MilitaryTechTwoTone } from "@mui/icons-material";
 import { abortRequest } from "../../utils/Request";
 import { stringToBase64 } from "../../utils/Image";
@@ -98,7 +99,14 @@ export const ToolbarAddMilitaryIcon = React.memo((): React.JSX.Element => {
 
       setIconInfo({
         isLoading: false,
-        icons: response.data as KonvaIcon[],
+        icons: Object.values(response.data).reduce(
+          (acc: KonvaIcon[], item: any) => {
+            acc.push(...item.svgs);
+
+            return acc;
+          },
+          []
+        ) as KonvaIcon[],
       });
     } catch (error) {
       setIconInfo(iconInitRef.current);
@@ -131,13 +139,16 @@ export const ToolbarAddMilitaryIcon = React.memo((): React.JSX.Element => {
         >
           <TooltipButton
             icon={
-              <Box
-                component={"img"}
-                src={`data:image/svg+xml;utf8,${encodeURIComponent(icon.content)}`}
+              <LoadingImage
                 alt={icon.name}
+                src={`data:image/svg+xml;utf8,${encodeURIComponent(icon.content)}`}
                 width={iconConfigRef.current.itemSize}
                 height={iconConfigRef.current.itemSize}
                 draggable={false}
+                fallbackSrc={"./assets/images/placeholder.png"}
+                sx={{
+                  backgroundColor: "#000000",
+                }}
               />
             }
             value={JSON.stringify({

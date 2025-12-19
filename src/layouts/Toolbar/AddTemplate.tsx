@@ -2,6 +2,7 @@ import { PartialItemGrid } from "../../components/PartialItemGrid";
 import { useShapesContext, useStageContext } from "../../contexts";
 import { TooltipButton } from "../../components/TooltipButton";
 import { PopperButton } from "../../components/PopperButton";
+import { LoadingImage } from "../../components/LoadingImage";
 import { LibraryBooksTwoTone } from "@mui/icons-material";
 import { Report, searchReport } from "../../apis/report";
 import { KonvaShape } from "../../components/KonvaShape";
@@ -128,16 +129,12 @@ export const ToolbarAddTemplate = React.memo((): React.JSX.Element => {
         >
           <TooltipButton
             icon={
-              <Box
-                component={"img"}
+              <LoadingImage
                 src={templateURL}
                 alt={template.name}
                 width={templateConfigRef.current.itemSize}
                 height={templateConfigRef.current.itemSize}
                 draggable={false}
-                sx={{
-                  objectFit: "contain",
-                }}
               />
             }
             value={template.json_file_id}

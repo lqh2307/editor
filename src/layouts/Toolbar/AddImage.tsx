@@ -2,6 +2,7 @@ import { useShapesContext, useStageContext } from "../../contexts";
 import { PartialItemGrid } from "../../components/PartialItemGrid";
 import { TooltipButton } from "../../components/TooltipButton";
 import { PopperButton } from "../../components/PopperButton";
+import { LoadingImage } from "../../components/LoadingImage";
 import { PhotoLibraryTwoTone } from "@mui/icons-material";
 import { Image, searchImage } from "../../apis/image";
 import { IMAGE_STORAGE_URL } from "../../configs";
@@ -118,16 +119,13 @@ export const ToolbarAddImage = React.memo((): React.JSX.Element => {
         >
           <TooltipButton
             icon={
-              <Box
-                component={"img"}
-                src={imageURL}
+              <LoadingImage
                 alt={image.name}
+                src={imageURL}
                 width={imageConfigRef.current.itemSize}
                 height={imageConfigRef.current.itemSize}
                 draggable={false}
-                sx={{
-                  objectFit: "contain",
-                }}
+                fallbackSrc={"./assets/images/placeholder.png"}
               />
             }
             value={JSON.stringify({

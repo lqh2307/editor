@@ -16,6 +16,7 @@ import { AxiosResponse } from "axios";
 import { Box } from "@mui/material";
 import { nanoid } from "nanoid";
 import React from "react";
+import { LoadingImage } from "../../components/LoadingImage";
 
 export const ToolbarAddComponent = React.memo((): React.JSX.Element => {
   const { t } = useTranslation();
@@ -161,16 +162,13 @@ export const ToolbarAddComponent = React.memo((): React.JSX.Element => {
         >
           <TooltipButton
             icon={
-              <Box
-                component={"img"}
+              <LoadingImage
                 src={componentURL}
                 alt={component.name}
                 width={componentConfigRef.current.itemSize}
                 height={componentConfigRef.current.itemSize}
                 draggable={false}
-                sx={{
-                  objectFit: "contain",
-                }}
+                fallbackSrc={"./assets/images/placeholder.png"}
               />
             }
             value={JSON.stringify({

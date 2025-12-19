@@ -27,7 +27,11 @@ const defaultValue: MapContextValue = {
 
 export const MapContext = React.createContext<MapContextValue>(defaultValue);
 
-export function MapProvider({ children }: { children: React.ReactNode }): React.JSX.Element {
+export function MapProvider({
+  children,
+}: {
+  children: React.ReactNode;
+}): React.JSX.Element {
   const [calibration, setCalibration] = React.useState<MapCalibrationState>({});
 
   const setTopRight = React.useCallback((p?: GeoPoint): void => {
@@ -47,7 +51,13 @@ export function MapProvider({ children }: { children: React.ReactNode }): React.
   }, []);
 
   const value = React.useMemo<MapContextValue>(
-    () => ({ calibration, setTopRight, setBottomLeft, setTopLeft, setBottomRight }),
+    () => ({
+      calibration,
+      setTopRight,
+      setBottomLeft,
+      setTopLeft,
+      setBottomRight,
+    }),
     [calibration, setTopRight, setBottomLeft, setTopLeft, setBottomRight]
   );
 

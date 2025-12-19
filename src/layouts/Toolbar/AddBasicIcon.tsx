@@ -3,6 +3,7 @@ import { PartialItemGrid } from "../../components/PartialItemGrid";
 import { TooltipButton } from "../../components/TooltipButton";
 import { KonvaIcon, KonvaDragDrop } from "../../types/Konva";
 import { PopperButton } from "../../components/PopperButton";
+import { LoadingImage } from "../../components/LoadingImage";
 import { InsertEmoticonTwoTone } from "@mui/icons-material";
 import { createPathsFromSVG } from "../../utils/Shapes";
 import { abortRequest } from "../../utils/Request";
@@ -127,13 +128,13 @@ export const ToolbarAddBasicIcon = React.memo((): React.JSX.Element => {
         >
           <TooltipButton
             icon={
-              <Box
-                component={"img"}
-                src={`data:image/svg+xml;utf8,${encodeURIComponent(icon.content)}`}
+              <LoadingImage
                 alt={icon.name}
+                src={`data:image/svg+xml;utf8,${encodeURIComponent(icon.content)}`}
                 width={iconConfigRef.current.itemSize}
                 height={iconConfigRef.current.itemSize}
                 draggable={false}
+                fallbackSrc={"./assets/images/placeholder.png"}
               />
             }
             value={JSON.stringify({

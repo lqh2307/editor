@@ -598,7 +598,7 @@ export const Canvas = React.memo((): React.JSX.Element => {
   );
 
   const handleStageMouseMove = React.useCallback((): void => {
-    console.log('handleStageMouseMove called'); // Log xác nhận sự kiện chuột
+    console.log("handleStageMouseMove called"); // Log xác nhận sự kiện chuột
     if (getIsStageDragable()) {
       dragStage();
       return;
@@ -624,7 +624,12 @@ export const Canvas = React.memo((): React.JSX.Element => {
 
     // Luôn cập nhật tooltip khi di chuột trên canvas
     const p: Vector2d = getStagePointerPosition();
-    if (p && calibration.topRight && calibration.bottomLeft && tooltipRef.current) {
+    if (
+      p &&
+      calibration.topRight &&
+      calibration.bottomLeft &&
+      tooltipRef.current
+    ) {
       const bgApi = getBackground();
       const bgNode = bgApi?.getNode();
       const latLon = calculateLatLonFromPointer(p, bgNode, calibration);
@@ -638,7 +643,14 @@ export const Canvas = React.memo((): React.JSX.Element => {
         tooltipRef.current.updateProp({ text: "" });
       }
     }
-  }, [updateShape, dragStage, getIsStageDragable, getStagePointerPosition, calibration, getBackground]);
+  }, [
+    updateShape,
+    dragStage,
+    getIsStageDragable,
+    getStagePointerPosition,
+    calibration,
+    getBackground,
+  ]);
 
   const handleStageMouseUp = React.useCallback(
     (e: Konva.KonvaEventObject<MouseEvent>): void => {

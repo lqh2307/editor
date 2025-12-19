@@ -20,4 +20,4 @@ export * from "./Types";
 export * from "./Zoom";
 export * from "./Help";
 export * from "./IO";
-export * from "./FakeApi"
+export * from "./FakeApi";

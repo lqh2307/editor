@@ -27,7 +27,7 @@ export const Toolbar = React.memo((): React.JSX.Element => {
           flexDirection: "row",
           justifyContent: "center",
           alignItems: "center",
-          width: "85%",
+          width: "95%",
           height: "100%",
           overflowX: "auto",
         }}
@@ -72,9 +72,9 @@ export const Toolbar = React.memo((): React.JSX.Element => {
           flexDirection: "row",
           justifyContent: "center",
           alignItems: "center",
-          width: "15%",
+          width: "5%",
           height: "100%",
-          overflowX: "auto",
+          overflowX: "hidden",
         }}
         direction={"row"}
         divider={<Divider orientation={"vertical"} flexItem={true} />}
