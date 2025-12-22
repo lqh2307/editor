@@ -369,7 +369,8 @@
         "snackBarAlert": {
           "error": "Error!"
         }
-      }
+      },
+      "favorites": "Favorite"
     },
     "uploadImage": {
       "title": "Upload Image",

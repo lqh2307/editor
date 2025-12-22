@@ -35,8 +35,8 @@ export const PartialItemGrid = React.memo(
           justifyContent: "center",
           alignItems: "center",
           backgroundColor: "#ffffff",
-          border: "1px solid rgba(204, 204, 204, 1)",
-          boxShadow: "2px 4px 6px rgba(0, 0, 0, 0.2)",
+          // border: "1px solid rgba(204, 204, 204, 1)",
+          // boxShadow: "2px 4px 6px rgba(0, 0, 0, 0.2)",
           ...style,
         }}
       >
@@ -78,8 +78,8 @@ export const PartialItemGrid = React.memo(
           width: gridWidth,
           height: gridHeight,
           backgroundColor: "#ffffff",
-          border: "1px solid rgba(204, 204, 204, 1)",
-          boxShadow: "2px 4px 6px rgba(0, 0, 0, 0.2)",
+          // border: "1px solid rgba(204, 204, 204, 1)",
+          // boxShadow: "2px 4px 6px rgba(0, 0, 0, 0.2)",
           ...style,
         }}
         {...props}

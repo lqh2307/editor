@@ -369,7 +369,8 @@
         "snackBarAlert": {
           "error": "Lỗi!"
         }
-      }
+      },
+      "favorites": "Yêu thích"
     },
     "uploadImage": {
       "title": "Tải lên ảnh",
