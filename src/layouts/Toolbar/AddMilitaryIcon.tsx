@@ -13,7 +13,9 @@ import { useTranslation } from "react-i18next";
 import { IconInfo, ItemInfo } from "./Types";
 import { getIcons } from "../../apis/icon";
 import { AxiosResponse } from "axios";
-import { Box } from "@mui/material";
+import { Box, IconButton } from "@mui/material";
+import CloseIcon from "@mui/icons-material/Close";
+import DraggableTabsPanel from "../../components/DraggableTabsPanel/DraggableTabsPanelProps";
 import React from "react";
 
 export const ToolbarAddMilitaryIcon = React.memo((): React.JSX.Element => {
@@ -74,10 +76,23 @@ export const ToolbarAddMilitaryIcon = React.memo((): React.JSX.Element => {
 
   const [iconInfo, setIconInfo] = React.useState<IconInfo>(iconInitRef.current);
 
+  const [groupedIcons, setGroupedIcons] = React.useState<
+    Record<string, KonvaIcon[]>
+  >({});
+
+  const [tabsState, setTabsState] = React.useState<{
+    key: string;
+    label: string;
+  }[]>([]);
+
+  const [panelOpen, setPanelOpen] = React.useState(false);
+
   const fetchIconControllerRef = React.useRef<AbortController>(undefined);
 
   const fetchIconHandler = React.useCallback(async (): Promise<void> => {
     if (iconInfo.icons?.length) {
+      // if we already loaded, just open panel
+      setPanelOpen(true);
       return;
     }
 
@@ -93,21 +108,29 @@ export const ToolbarAddMilitaryIcon = React.memo((): React.JSX.Element => {
         true
       );
 
-      const response: AxiosResponse = await getIcons({
-        type: "military",
-      });
+      const response: AxiosResponse = await getIcons({ type: "military" });
 
-      setIconInfo({
-        isLoading: false,
-        icons: Object.values(response.data).reduce(
-          (acc: KonvaIcon[], item: any) => {
-            acc.push(...item.svgs);
+      // keep grouped icons by top-level keys (categories)
+      const data: any = response.data;
 
-            return acc;
-          },
-          []
-        ) as KonvaIcon[],
-      });
+      const groups = Object.entries(data).reduce(
+        (acc: Record<string, KonvaIcon[]>, [key, item]: any) => {
+          acc[key] = item?.svgs || [];
+
+          return acc;
+        },
+        {}
+      );
+
+      const tabs = Object.entries(data).map(([key, item]: any) => ({
+        key,
+        label: item?.title || key,
+      }));
+
+      setIconInfo((prev) => ({ ...prev, isLoading: false }));
+      setGroupedIcons(groups);
+      setTabsState(tabs);
+      setPanelOpen(true);
     } catch (error) {
       setIconInfo(iconInitRef.current);
 
@@ -118,15 +141,16 @@ export const ToolbarAddMilitaryIcon = React.memo((): React.JSX.Element => {
     }
   }, [t, iconInfo.icons, updateSnackbarAlert]);
 
-  const IconCell = React.useCallback(
-    (prop: CellComponentProps): React.JSX.Element => {
+  // factory to create a cell renderer for a specific icon list (no hooks inside)
+  const makeIconCell = (icons: KonvaIcon[]) => {
+    return (prop: CellComponentProps): React.JSX.Element | null => {
       const index =
         prop.rowIndex * iconConfigRef.current.renderColumn + prop.columnIndex;
-      if (index >= iconInfo.icons.length) {
-        return;
+      if (!icons || index >= icons.length) {
+        return null;
       }
 
-      const icon: KonvaIcon = iconInfo.icons[index];
+      const icon: KonvaIcon = icons[index];
 
       return (
         <Box
@@ -141,7 +165,9 @@ export const ToolbarAddMilitaryIcon = React.memo((): React.JSX.Element => {
             icon={
               <LoadingImage
                 alt={icon.name}
-                src={`data:image/svg+xml;utf8,${encodeURIComponent(icon.content)}`}
+                src={`data:image/svg+xml;utf8,${encodeURIComponent(
+                  icon.content
+                )}`}
                 width={iconConfigRef.current.itemSize}
                 height={iconConfigRef.current.itemSize}
                 draggable={false}
@@ -166,28 +192,82 @@ export const ToolbarAddMilitaryIcon = React.memo((): React.JSX.Element => {
           />
         </Box>
       );
-    },
-    [addIconHandler, iconInfo.icons]
-  );
+    };
+  };
 
   {
     /* Add Icon */
   }
   return (
-    <PopperButton
-      icon={<MilitaryTechTwoTone />}
-      title={t("toolBar.addMilitaryIcon.title")}
-      onClick={fetchIconHandler}
-    >
-      <PartialItemGrid
-        isLoading={iconInfo.isLoading}
-        cellComponent={IconCell}
-        items={iconInfo.icons}
-        renderColumn={iconConfigRef.current.renderColumn}
-        renderRow={iconConfigRef.current.renderRow}
-        itemWidth={iconConfigRef.current.itemWidth}
-        itemHeight={iconConfigRef.current.itemHeight}
+    <>
+      <PopperButton
+        icon={<MilitaryTechTwoTone />}
+        title={t("toolBar.addMilitaryIcon.title")}
+        onClick={fetchIconHandler}
       />
-    </PopperButton>
+
+      {panelOpen && (
+        <DraggableTabsPanel
+          tabs={tabsState}
+          data={groupedIcons}
+          renderTab={(key: string, data: Record<string, KonvaIcon[]>) => {
+            const icons = data?.[key] || [];
+            const Cell = makeIconCell(icons);
+
+            const panelW = Math.min(window?.innerWidth - 80, 560);
+            const panelH = Math.min(window?.innerHeight - 120, 360);
+
+            // header ~40, tabs ~48, padding ~24 => remaining height for grid
+            const headerH = 40;
+            const tabsH = 48;
+            const padding = 24;
+
+            const paddingHorizontal = 24; // panel content padding left+right (12+12)
+            const paddingVertical = 24; // top+bottom padding estimate
+
+            const availableWidth = Math.max(220, panelW - paddingHorizontal);
+            const availableHeight = Math.max(
+              140,
+              panelH - headerH - tabsH - paddingVertical
+            );
+
+            const gapX = 8;
+            const gapY = 8;
+            const itemW = iconConfigRef.current.itemWidth;
+            const itemH = iconConfigRef.current.itemHeight;
+
+            const columnUnit = itemW + gapX;
+            const rowUnit = itemH + gapY;
+
+            const dynamicColumns = Math.max(1, Math.floor(availableWidth / columnUnit));
+            const dynamicRows = Math.max(1, Math.floor(availableHeight / rowUnit));
+
+            return (
+              <Box sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
+                <Box sx={{ flex: 1, overflow: 'hidden' }}>
+                  <PartialItemGrid
+                    isLoading={iconInfo.isLoading}
+                    cellComponent={Cell}
+                    items={icons}
+                    renderColumn={dynamicColumns}
+                    renderRow={dynamicRows}
+                    itemWidth={iconConfigRef.current.itemWidth}
+                    itemHeight={iconConfigRef.current.itemHeight}
+                  />
+                </Box>
+              </Box>
+            );
+          }}
+          title={t("toolBar.addMilitaryIcon.title")}
+          width={Math.min(window?.innerWidth - 220, 570)}
+          height={Math.min(window?.innerHeight - 520, 360)}
+          onClose={() => setPanelOpen(false)}
+          defaultPosition={{
+            x: Math.max(40, window?.innerWidth / 2 - 280),
+            y: Math.max(20, window?.innerHeight / 2 - 180),
+          }}
+        />
+      )}
+    </>
   );
 });
