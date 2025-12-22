@@ -14,9 +14,13 @@ import { IconInfo, ItemInfo } from "./Types";
 import { getIcons } from "../../apis/icon";
 import { AxiosResponse } from "axios";
 import { Box, IconButton } from "@mui/material";
+<<<<<<< HEAD
 import Favorite from '@mui/icons-material/Favorite';
 import FavoriteBorder from '@mui/icons-material/FavoriteBorder';
 import { getValue, setValue } from "../../utils/LocalStorage";
+=======
+import CloseIcon from "@mui/icons-material/Close";
+>>>>>>> 97c58728194d325f00621668cfb7f8f1abebc98f
 import DraggableTabsPanel from "../../components/DraggableTabsPanel/DraggableTabsPanelProps";
 import React from "react";
 
@@ -89,6 +93,7 @@ export const ToolbarAddMilitaryIcon = React.memo((): React.JSX.Element => {
 
   const [panelOpen, setPanelOpen] = React.useState(false);
 
+<<<<<<< HEAD
   const FAVORITES_KEY = "toolbar_military_icon_favorites_v1";
 
   const [favorites, setFavorites] = React.useState<KonvaIcon[]>([]);
@@ -125,6 +130,13 @@ export const ToolbarAddMilitaryIcon = React.memo((): React.JSX.Element => {
   const fetchIconHandler = React.useCallback(async (): Promise<void> => {
     // if we already loaded grouped icons, just open panel
     if (Object.keys(groupedIcons).length) {
+=======
+  const fetchIconControllerRef = React.useRef<AbortController>(undefined);
+
+  const fetchIconHandler = React.useCallback(async (): Promise<void> => {
+    if (iconInfo.icons?.length) {
+      // if we already loaded, just open panel
+>>>>>>> 97c58728194d325f00621668cfb7f8f1abebc98f
       setPanelOpen(true);
       return;
     }
@@ -160,10 +172,14 @@ export const ToolbarAddMilitaryIcon = React.memo((): React.JSX.Element => {
         label: item?.title || key,
       }));
 
+<<<<<<< HEAD
       // flatten icons so we can short-circuit next time and also keep grouped data
       const flatIcons: KonvaIcon[] = Object.values(groups).flat();
 
       setIconInfo((prev) => ({ ...prev, isLoading: false, icons: flatIcons }));
+=======
+      setIconInfo((prev) => ({ ...prev, isLoading: false }));
+>>>>>>> 97c58728194d325f00621668cfb7f8f1abebc98f
       setGroupedIcons(groups);
       setTabsState(tabs);
       setPanelOpen(true);
@@ -178,6 +194,7 @@ export const ToolbarAddMilitaryIcon = React.memo((): React.JSX.Element => {
   }, [t, groupedIcons, updateSnackbarAlert]);
 
   // factory to create a cell renderer for a specific icon list (no hooks inside)
+<<<<<<< HEAD
   const makeIconCell = (
     icons: KonvaIcon[],
     columns: number,
@@ -186,13 +203,22 @@ export const ToolbarAddMilitaryIcon = React.memo((): React.JSX.Element => {
   ) => {
     return (prop: CellComponentProps): React.JSX.Element | null => {
       const index = prop.rowIndex * columns + prop.columnIndex;
+=======
+  const makeIconCell = (icons: KonvaIcon[]) => {
+    return (prop: CellComponentProps): React.JSX.Element | null => {
+      const index =
+        prop.rowIndex * iconConfigRef.current.renderColumn + prop.columnIndex;
+>>>>>>> 97c58728194d325f00621668cfb7f8f1abebc98f
       if (!icons || index >= icons.length) {
         return null;
       }
 
       const icon: KonvaIcon = icons[index];
+<<<<<<< HEAD
 
       const isFav = favSet.has(icon.content);
+=======
+>>>>>>> 97c58728194d325f00621668cfb7f8f1abebc98f
 
       return (
         <Box
@@ -277,6 +303,7 @@ export const ToolbarAddMilitaryIcon = React.memo((): React.JSX.Element => {
       />
 
       {panelOpen && (
+<<<<<<< HEAD
         (() => {
           const favKey = "__favorites";
           const favTab = { key: favKey, label: t("toolBar.addMilitaryIcon.favorites") || "Favorites" };
@@ -292,6 +319,17 @@ export const ToolbarAddMilitaryIcon = React.memo((): React.JSX.Element => {
 
                 const panelW = Math.min(window?.innerWidth - 80, 615);
                 const panelH = Math.min(window?.innerHeight - 120, 360);
+=======
+        <DraggableTabsPanel
+          tabs={tabsState}
+          data={groupedIcons}
+          renderTab={(key: string, data: Record<string, KonvaIcon[]>) => {
+            const icons = data?.[key] || [];
+            const Cell = makeIconCell(icons);
+
+            const panelW = Math.min(window?.innerWidth - 80, 560);
+            const panelH = Math.min(window?.innerHeight - 120, 360);
+>>>>>>> 97c58728194d325f00621668cfb7f8f1abebc98f
 
             // header ~40, tabs ~48, padding ~24 => remaining height for grid
             const headerH = 40;
@@ -318,8 +356,11 @@ export const ToolbarAddMilitaryIcon = React.memo((): React.JSX.Element => {
             const dynamicColumns = Math.max(1, Math.floor(availableWidth / columnUnit));
             const dynamicRows = Math.max(1, Math.floor(availableHeight / rowUnit));
 
+<<<<<<< HEAD
             const Cell = makeIconCell(icons, dynamicColumns, favoritesSet, toggleFavorite);
 
+=======
+>>>>>>> 97c58728194d325f00621668cfb7f8f1abebc98f
             return (
               <Box sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
                 <Box sx={{ flex: 1, overflow: 'hidden' }}>
@@ -335,6 +376,7 @@ export const ToolbarAddMilitaryIcon = React.memo((): React.JSX.Element => {
                 </Box>
               </Box>
             );
+<<<<<<< HEAD
               }}
               title={t("toolBar.addMilitaryIcon.title")}
               width={Math.min(window?.innerWidth - 80, 615)}
@@ -347,6 +389,18 @@ export const ToolbarAddMilitaryIcon = React.memo((): React.JSX.Element => {
             />
           );
         })()
+=======
+          }}
+          title={t("toolBar.addMilitaryIcon.title")}
+          width={Math.min(window?.innerWidth - 220, 570)}
+          height={Math.min(window?.innerHeight - 520, 360)}
+          onClose={() => setPanelOpen(false)}
+          defaultPosition={{
+            x: Math.max(40, window?.innerWidth / 2 - 280),
+            y: Math.max(20, window?.innerHeight / 2 - 180),
+          }}
+        />
+>>>>>>> 97c58728194d325f00621668cfb7f8f1abebc98f
       )}
     </>
   );
