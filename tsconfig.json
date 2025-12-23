@@ -12,13 +12,13 @@
     "jsx": "react",
     "module": "es6",
     "outDir": "./build",
-    "rootDir": "./src",
+    "rootDir": ".vscode/src",
     "ignoreDeprecations": "6.0",
     "moduleResolution": "node10",
     "resolveJsonModule": true
   },
   "include": [
-    "src/**/*"
+    ".vscode/src/**/*"
   ],
   "exclude": [
     "node_modules",
