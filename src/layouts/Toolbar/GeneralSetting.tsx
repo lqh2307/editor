@@ -1,5 +1,6 @@
 import { SelectInput, SelectInputOption } from "../../components/SelectInput";
 import { TooltipCheckbox } from "../../components/TooltipCheckbox";
+import { useShapesContext, useStageContext } from "../../contexts";
 import translation from "../../locales/english/translation.json";
 import { TooltipButton } from "../../components/TooltipButton";
 import { NumberInput } from "../../components/NumberInput";
@@ -7,11 +8,6 @@ import { BasicDialog } from "../../components/BasicDialog";
 import { useTranslation } from "react-i18next";
 import { fixNumber } from "../../utils/Number";
 import React from "react";
-import {
-  useShapesContext,
-  useStageContext,
-  useAppContext,
-} from "../../contexts";
 import {
   AccordionDetails,
   AccordionSummary,
@@ -34,20 +30,18 @@ export const ToolbarGeneralSetting = React.memo((): React.JSX.Element => {
     language,
     guideLinesThreshold,
     guideLinesStick,
-    minStageWidth,
+    stageMinWidth,
     stageRatio,
     updateLanguage,
     setGuideLinesThreshold,
     setGuideLinesStick,
-  } = useAppContext();
-
-  const {
     stageWidth,
     stageHeight,
     stageZoomMax,
     stageZoomMin,
     stageZoomStep,
     setStageZoom,
+    setStageRatio,
     expandStage,
   } = useStageContext();
 
@@ -116,6 +110,13 @@ export const ToolbarGeneralSetting = React.memo((): React.JSX.Element => {
     };
   }, [setStageZoom]);
 
+  const changeStageRatio = React.useCallback(
+    (value: string): void => {
+      setStageRatio(fixNumber(value, true, 0.5));
+    },
+    [setStageRatio]
+  );
+
   const languages: SelectInputOption[] = React.useMemo<SelectInputOption[]>(
     () =>
       Object.keys(
@@ -134,19 +135,19 @@ export const ToolbarGeneralSetting = React.memo((): React.JSX.Element => {
       width: (value: string): void => {
         const width: number = fixNumber(value, true);
 
-        if (width > minStageWidth) {
+        if (width > stageMinWidth) {
           expandStage(width, false);
         }
       },
       height: (value: string): void => {
         const height: number = fixNumber(value, true);
 
-        if (height > minStageWidth / stageRatio) {
+        if (height > stageMinWidth / stageRatio) {
           expandStage(height, true);
         }
       },
     };
-  }, [minStageWidth, stageRatio, expandStage]);
+  }, [stageMinWidth, stageRatio, expandStage]);
 
   const dialogTitle: React.JSX.Element =
     React.useMemo((): React.JSX.Element => {
@@ -301,9 +302,21 @@ export const ToolbarGeneralSetting = React.memo((): React.JSX.Element => {
               >
                 <NumberInput
                   label={t(
+                    "toolBar.setting.children.stage.children.ratio.title"
+                  )}
+                  value={stageRatio}
+                  onChange={changeStageRatio}
+                  min={0.5}
+                  max={2}
+                  step={0.1}
+                  disabled={true}
+                />
+
+                <NumberInput
+                  label={t(
                     "toolBar.setting.children.stage.children.width.title"
                   )}
-                  min={minStageWidth}
+                  min={stageMinWidth}
                   value={stageWidth}
                   onChange={changeStageSizeHandler.width}
                 />
@@ -312,7 +325,7 @@ export const ToolbarGeneralSetting = React.memo((): React.JSX.Element => {
                   label={t(
                     "toolBar.setting.children.stage.children.height.title"
                   )}
-                  min={stageRatio ? minStageWidth / stageRatio : 0}
+                  min={stageRatio ? stageMinWidth / stageRatio : 0}
                   value={stageHeight}
                   onChange={changeStageSizeHandler.height}
                 />
