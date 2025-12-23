@@ -80,9 +80,6 @@ export interface IStageContext {
   stageWidth?: number;
   stageHeight?: number;
 
-  stageRatio?: number;
-  setStageRatio?: (ratio: number) => void;
-
   setStageZoom?: (zoom: number, type?: "min" | "max" | "step") => void;
   zoomStage?: (zoomOut: boolean, pointer?: boolean) => void;
 
@@ -147,4 +144,9 @@ export interface IAppContext {
   setToolbarHeight?: (height: number) => void;
   toolbarColor?: string;
   setToolbarColor?: (color: string) => void;
+
+  minStageWidth?: number;
+  setMinStageWidth?: (width: number) => void;
+  stageRatio?: number;
+  setStageRatio?: (ratio: number) => void;
 }

@@ -1,5 +1,4 @@
 import { KonvaGridStyle, KonvaGridAPI } from "../components/KonvaGrid";
-import { KonvaTransformerAPI } from "../components/KonvaTransformer";
 import { KonvaGuideLinesAPI } from "../components/KonvaGuideLines";
 import { KonvaBackgroundAPI } from "../components/KonvaBackground";
 import { SnackbarAlertProp } from "../components/SnackbarAlert";
@@ -18,7 +17,6 @@ import Konva from "konva";
 export const StageContext = React.createContext<IStageContext>({});
 
 type StageState = {
-  stageRatio: number;
   stageZoom: number;
   stageZoomMin: number;
   stageZoomMax: number;
@@ -31,19 +29,13 @@ type StageState = {
 
 type StageAction = {
   type:
-    | "SET_RATIO"
     | "SET_ZOOM"
     | "SET_CANVAS_SIZE"
     | "FIT_SCREEN"
     | "DRAG"
     | "EXPAND"
     | "ZOOM";
-  payload?: Ratio | SetZoom | SetCanvasSize | Fit | Drag | Expand | Zoom;
-};
-
-type Ratio = {
-  stage: Konva.Stage;
-  ratio: number;
+  payload?: SetZoom | SetCanvasSize | Fit | Drag | Expand | Zoom;
 };
 
 type SetZoom = {
@@ -144,27 +136,6 @@ function stageReducer(state: StageState, action: StageAction): StageState {
       return state;
     }
 
-    case "SET_RATIO": {
-      const ratio: Ratio = action.payload as Ratio;
-
-      const stage: Konva.Stage = ratio.stage;
-      if (!stage) {
-        return state;
-      }
-
-      const newHeight: number = state.stageWidth / ratio.ratio;
-
-      stage.setAttrs({
-        height: newHeight,
-      });
-
-      return {
-        ...state,
-        stageRatio: ratio.ratio,
-        stageHeight: newHeight,
-      };
-    }
-
     case "SET_ZOOM": {
       const setZoom: SetZoom = action.payload as SetZoom;
 
@@ -227,21 +198,9 @@ function stageReducer(state: StageState, action: StageAction): StageState {
     case "SET_CANVAS_SIZE": {
       const setCanvasSize: SetCanvasSize = action.payload as SetCanvasSize;
 
-      const stage = setCanvasSize.stage;
-      if (!stage) {
+      if (!setCanvasSize.stage) {
         return state;
       }
-
-      // const prevCx: number = state.canvasWidth / 2;
-      // const prevCy: number = state.canvasHeight / 2;
-
-      // const centerLogicX: number = (prevCx - stage.x()) / state.stageZoom;
-      // const centerLogicY: number = (prevCy - stage.y()) / state.stageZoom;
-
-      // stage.setAttrs({
-      //   x: setCanvasSize.width / 2 - centerLogicX * state.stageZoom,
-      //   y: setCanvasSize.height / 2 - centerLogicY * state.stageZoom,
-      // });
 
       return {
         ...state,
@@ -260,15 +219,16 @@ function stageReducer(state: StageState, action: StageAction): StageState {
 
       let newWidth: number;
       let newHeight: number;
+      const ratio: number = stage.width() / stage.height();
 
       if (expand.targetHeight) {
         newHeight = expand.newValue;
 
-        newWidth = newHeight * state.stageRatio;
+        newWidth = newHeight * ratio;
       } else {
         newWidth = expand.newValue;
 
-        newHeight = newWidth / state.stageRatio;
+        newHeight = newWidth / ratio;
       }
 
       stage.setAttrs({
@@ -546,7 +506,6 @@ export function StageProvider(prop: StageProviderProp): React.JSX.Element {
 
   // Store stage info
   const [stageState, stageDispatch] = React.useReducer(stageReducer, {
-    stageRatio: prop.stageRatio,
     stageZoom: prop.stageZoom,
     stageZoomMin: prop.stageZoomMin,
     stageZoomMax: prop.stageZoomMax,
@@ -662,19 +621,6 @@ export function StageProvider(prop: StageProviderProp): React.JSX.Element {
     },
     []
   );
-
-  /**
-   * Set stage ratio
-   */
-  const setStageRatio = React.useCallback((ratio: number): void => {
-    stageDispatch({
-      type: "SET_RATIO",
-      payload: {
-        stage: stageRef.current,
-        ratio: ratio,
-      },
-    });
-  }, []);
 
   /**
    * Expand stage
@@ -868,21 +814,6 @@ export function StageProvider(prop: StageProviderProp): React.JSX.Element {
     []
   );
 
-  React.useEffect(() => {
-    /**
-     * Resize handler
-     */
-    function resizeHandler() {
-      setCanvasSize(innerWidth, innerHeight);
-    }
-
-    addEventListener("resize", resizeHandler);
-
-    return () => {
-      removeEventListener("resize", resizeHandler);
-    };
-  }, []);
-
   // Update background/grid size
   React.useEffect(() => {
     backgroundRef.current?.updateProp({
@@ -906,9 +837,6 @@ export function StageProvider(prop: StageProviderProp): React.JSX.Element {
       stageZoomStep: stageState.stageZoomStep,
       stageWidth: stageState.stageWidth,
       stageHeight: stageState.stageHeight,
-
-      stageRatio: stageState.stageRatio,
-      setStageRatio,
 
       setStageZoom,
       zoomStage,

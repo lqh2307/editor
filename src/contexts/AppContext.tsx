@@ -48,6 +48,12 @@ export function AppProvider(prop: AppProviderProp): React.JSX.Element {
     prop.toolbarColor
   );
 
+  // Store stage size
+  const [minStageWidth, setMinStageWidth] = React.useState<number>(
+    prop.minStageWidth
+  );
+  const [stageRatio, setStageRatio] = React.useState<number>(prop.stageRatio);
+
   const contextValue: IAppContext = React.useMemo<IAppContext>(
     () => ({
       language,
@@ -71,6 +77,11 @@ export function AppProvider(prop: AppProviderProp): React.JSX.Element {
       setToolbarHeight,
       toolbarColor,
       setToolbarColor,
+
+      minStageWidth,
+      setMinStageWidth,
+      stageRatio,
+      setStageRatio,
     }),
     [
       language,
@@ -81,6 +92,8 @@ export function AppProvider(prop: AppProviderProp): React.JSX.Element {
       canvasColor,
       toolbarHeight,
       toolbarColor,
+      minStageWidth,
+      stageRatio,
     ]
   );
 

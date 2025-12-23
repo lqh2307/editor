@@ -86,6 +86,8 @@ export type KonvaShapeBox = {
   bottom?: number;
   centerX?: number;
   centerY?: number;
+  localOffsetX?: number;
+  localOffsetY?: number;
 };
 
 export type KonvaShapeClip = {

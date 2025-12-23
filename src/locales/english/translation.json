@@ -365,12 +365,16 @@
     },
     "addMilitaryIcon": {
       "title": "Add Military Icon",
+      "children": {
+        "favorite": {
+          "title": "Favorite"
+        }
+      },
       "common": {
         "snackBarAlert": {
           "error": "Error!"
         }
-      },
-      "favorites": "Favorite"
+      }
     },
     "uploadImage": {
       "title": "Upload Image",

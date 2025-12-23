@@ -14,8 +14,6 @@ export type StageProviderProp = {
 
   stageWidth: number;
   stageHeight: number;
-
-  stageRatio: number;
 };
 
 export type AppProviderProp = {
@@ -34,6 +32,9 @@ export type AppProviderProp = {
 
   toolbarHeight: number;
   toolbarColor: string;
+
+  minStageWidth: number;
+  stageRatio: number;
 };
 
 export type DrawingProviderProp = {

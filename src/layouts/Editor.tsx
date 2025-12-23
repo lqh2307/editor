@@ -33,6 +33,9 @@ export const Editor = React.memo((prop: EditorProp): React.JSX.Element => {
     stageZoomMax = 2,
     stageZoomStep = 0.1,
 
+    minStageWidth = 1600,
+    stageRatio = Math.SQRT2,
+
     maxHistory = 50,
   }: EditorProp = prop;
 
@@ -40,13 +43,11 @@ export const Editor = React.memo((prop: EditorProp): React.JSX.Element => {
   const canvasWidth: number = innerWidth - panelWidth;
   const canvasHeight: number = innerHeight - toolbarHeight;
 
-  const stageRatio: number = Math.SQRT2;
-
-  let stageWidth: number = canvasWidth;
+  let stageWidth: number = limitValue(canvasWidth, minStageWidth);
   let stageHeight: number = stageWidth / stageRatio;
 
   if (stageHeight < canvasHeight) {
-    stageHeight = canvasHeight;
+    stageHeight = limitValue(canvasHeight, stageWidth / stageRatio);
     stageWidth = stageHeight * stageRatio;
   }
 
@@ -68,13 +69,14 @@ export const Editor = React.memo((prop: EditorProp): React.JSX.Element => {
       canvasColor={canvasColor}
       toolbarHeight={toolbarHeight}
       toolbarColor={toolbarColor}
+      minStageWidth={minStageWidth}
+      stageRatio={stageRatio}
     >
       <StageProvider
         stageZoom={stageZoom}
         stageZoomMin={stageZoomMin}
         stageZoomMax={stageZoomMax}
         stageZoomStep={stageZoomStep}
-        stageRatio={stageRatio}
         canvasWidth={canvasWidth}
         canvasHeight={canvasHeight}
         stageWidth={stageWidth}

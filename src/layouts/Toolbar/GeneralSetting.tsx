@@ -34,6 +34,8 @@ export const ToolbarGeneralSetting = React.memo((): React.JSX.Element => {
     language,
     guideLinesThreshold,
     guideLinesStick,
+    minStageWidth,
+    stageRatio,
     updateLanguage,
     setGuideLinesThreshold,
     setGuideLinesStick,
@@ -42,12 +44,10 @@ export const ToolbarGeneralSetting = React.memo((): React.JSX.Element => {
   const {
     stageWidth,
     stageHeight,
-    stageRatio,
     stageZoomMax,
     stageZoomMin,
     stageZoomStep,
     setStageZoom,
-    setStageRatio,
     expandStage,
   } = useStageContext();
 
@@ -116,13 +116,6 @@ export const ToolbarGeneralSetting = React.memo((): React.JSX.Element => {
     };
   }, [setStageZoom]);
 
-  const changeStageRatio = React.useCallback(
-    (value: string): void => {
-      setStageRatio(fixNumber(value, true, 0.5));
-    },
-    [setStageRatio]
-  );
-
   const languages: SelectInputOption[] = React.useMemo<SelectInputOption[]>(
     () =>
       Object.keys(
@@ -139,13 +132,21 @@ export const ToolbarGeneralSetting = React.memo((): React.JSX.Element => {
   const changeStageSizeHandler = React.useMemo(() => {
     return {
       width: (value: string): void => {
-        expandStage(fixNumber(value, true), false);
+        const width: number = fixNumber(value, true);
+
+        if (width > minStageWidth) {
+          expandStage(width, false);
+        }
       },
       height: (value: string): void => {
-        expandStage(fixNumber(value, true), true);
+        const height: number = fixNumber(value, true);
+
+        if (height > minStageWidth / stageRatio) {
+          expandStage(height, true);
+        }
       },
     };
-  }, [expandStage]);
+  }, [minStageWidth, stageRatio, expandStage]);
 
   const dialogTitle: React.JSX.Element =
     React.useMemo((): React.JSX.Element => {
@@ -300,19 +301,9 @@ export const ToolbarGeneralSetting = React.memo((): React.JSX.Element => {
               >
                 <NumberInput
                   label={t(
-                    "toolBar.setting.children.stage.children.ratio.title"
-                  )}
-                  value={stageRatio}
-                  onChange={changeStageRatio}
-                  min={0.5}
-                  max={2}
-                  step={0.1}
-                />
-
-                <NumberInput
-                  label={t(
                     "toolBar.setting.children.stage.children.width.title"
                   )}
+                  min={minStageWidth}
                   value={stageWidth}
                   onChange={changeStageSizeHandler.width}
                 />
@@ -321,6 +312,7 @@ export const ToolbarGeneralSetting = React.memo((): React.JSX.Element => {
                   label={t(
                     "toolBar.setting.children.stage.children.height.title"
                   )}
+                  min={stageRatio ? minStageWidth / stageRatio : 0}
                   value={stageHeight}
                   onChange={changeStageSizeHandler.height}
                 />
@@ -377,11 +369,9 @@ export const ToolbarGeneralSetting = React.memo((): React.JSX.Element => {
       changeMaxHistory,
       changeGuideLinesThreshold,
       changeGuideLinesStick,
-      changeStageRatio,
       maxHistory,
       guideLinesThreshold,
       guideLinesStick,
-      stageRatio,
       stageWidth,
       stageHeight,
       changeStageSizeHandler,
