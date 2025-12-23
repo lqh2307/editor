@@ -18,10 +18,7 @@ export function useDebounceHotKey({
 
       debounced(e, handler);
     },
-    {
-      preventDefault: true,
-      ...(options ?? {})
-    },
+    { ...(options ?? {}) },
     deps ?? []
   );
 }
