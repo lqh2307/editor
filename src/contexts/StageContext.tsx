@@ -1,9 +1,9 @@
 import { KonvaGridStyle, KonvaGridAPI } from "../components/KonvaGrid";
-import { KonvaTransformerAPI } from "../components/KonvaTransformer";
 import { KonvaGuideLinesAPI } from "../components/KonvaGuideLines";
 import { KonvaBackgroundAPI } from "../components/KonvaBackground";
 import { SnackbarAlertProp } from "../components/SnackbarAlert";
 import { detectContentTypeFromFormat } from "../utils/Utils";
+import { useTranslation } from "react-i18next";
 import { ImageFormat } from "../types/Common";
 import { IStageContext } from "./Interfaces";
 import { WindowRect } from "../types/Window";
@@ -18,6 +18,7 @@ import Konva from "konva";
 export const StageContext = React.createContext<IStageContext>({});
 
 type StageState = {
+  stageMinWidth: number;
   stageRatio: number;
   stageZoom: number;
   stageZoomMin: number;
@@ -31,19 +32,13 @@ type StageState = {
 
 type StageAction = {
   type:
-    | "SET_RATIO"
     | "SET_ZOOM"
     | "SET_CANVAS_SIZE"
     | "FIT_SCREEN"
     | "DRAG"
     | "EXPAND"
     | "ZOOM";
-  payload?: Ratio | SetZoom | SetCanvasSize | Fit | Drag | Expand | Zoom;
-};
-
-type Ratio = {
-  stage: Konva.Stage;
-  ratio: number;
+  payload?: SetZoom | SetCanvasSize | Fit | Drag | Expand | Zoom;
 };
 
 type SetZoom = {
@@ -144,27 +139,6 @@ function stageReducer(state: StageState, action: StageAction): StageState {
       return state;
     }
 
-    case "SET_RATIO": {
-      const ratio: Ratio = action.payload as Ratio;
-
-      const stage: Konva.Stage = ratio.stage;
-      if (!stage) {
-        return state;
-      }
-
-      const newHeight: number = state.stageWidth / ratio.ratio;
-
-      stage.setAttrs({
-        height: newHeight,
-      });
-
-      return {
-        ...state,
-        stageRatio: ratio.ratio,
-        stageHeight: newHeight,
-      };
-    }
-
     case "SET_ZOOM": {
       const setZoom: SetZoom = action.payload as SetZoom;
 
@@ -227,21 +201,9 @@ function stageReducer(state: StageState, action: StageAction): StageState {
     case "SET_CANVAS_SIZE": {
       const setCanvasSize: SetCanvasSize = action.payload as SetCanvasSize;
 
-      const stage = setCanvasSize.stage;
-      if (!stage) {
+      if (!setCanvasSize.stage) {
         return state;
       }
-
-      // const prevCx: number = state.canvasWidth / 2;
-      // const prevCy: number = state.canvasHeight / 2;
-
-      // const centerLogicX: number = (prevCx - stage.x()) / state.stageZoom;
-      // const centerLogicY: number = (prevCy - stage.y()) / state.stageZoom;
-
-      // stage.setAttrs({
-      //   x: setCanvasSize.width / 2 - centerLogicX * state.stageZoom,
-      //   y: setCanvasSize.height / 2 - centerLogicY * state.stageZoom,
-      // });
 
       return {
         ...state,
@@ -260,15 +222,16 @@ function stageReducer(state: StageState, action: StageAction): StageState {
 
       let newWidth: number;
       let newHeight: number;
+      const ratio: number = stage.width() / stage.height();
 
       if (expand.targetHeight) {
         newHeight = expand.newValue;
 
-        newWidth = newHeight * state.stageRatio;
+        newWidth = newHeight * ratio;
       } else {
         newWidth = expand.newValue;
 
-        newHeight = newWidth / state.stageRatio;
+        newHeight = newWidth / ratio;
       }
 
       stage.setAttrs({
@@ -431,6 +394,65 @@ function gridReducer(state: GridState, action: GridAction): GridState {
 }
 
 export function StageProvider(prop: StageProviderProp): React.JSX.Element {
+  const { i18n } = useTranslation();
+
+  // Store guide lines threshold
+  const [guideLinesThreshold, setGuideLinesThreshold] = React.useState<number>(
+    prop.guideLinesThreshold
+  );
+
+  // Store auto guide lines stick
+  const [guideLinesStick, setGuideLinesStick] = React.useState<boolean>(
+    prop.guideLinesStick
+  );
+
+  // Store language
+  const [language, setLanguage] = React.useState<string>(prop.language);
+
+  const updateLanguage = React.useCallback(
+    (lang: string): void => {
+      i18n.changeLanguage(lang, () => {
+        setLanguage(lang);
+      });
+    },
+    [i18n]
+  );
+
+  // Store panel width
+  const [panelWidth, setPanelWidth] = React.useState<number>(prop.panelWidth);
+
+  // Store panel color
+  const [panelColor, setPanelColor] = React.useState<string>(prop.panelColor);
+
+  // Store canvas color
+  const [canvasColor, setCanvasColor] = React.useState<string>(
+    prop.canvasColor
+  );
+
+  // Store toolbar height
+  const [toolbarHeight, setToolbarHeight] = React.useState<number>(
+    prop.toolbarHeight
+  );
+
+  // Store toolbar color
+  const [toolbarColor, setToolbarColor] = React.useState<string>(
+    prop.toolbarColor
+  );
+
+  // Store stage info
+  const [stageState, stageDispatch] = React.useReducer(stageReducer, {
+    stageRatio: prop.stageRatio,
+    stageMinWidth: prop.stageMinWidth,
+    stageZoom: prop.stageZoom,
+    stageZoomMin: prop.stageZoomMin,
+    stageZoomMax: prop.stageZoomMax,
+    stageZoomStep: prop.stageZoomStep,
+    canvasWidth: prop.canvasWidth,
+    canvasHeight: prop.canvasHeight,
+    stageWidth: prop.stageWidth,
+    stageHeight: prop.stageHeight,
+  });
+
   // Store last pointer position
   const lastPointerPosition = React.useRef<Vector2d>(undefined);
 
@@ -503,18 +525,29 @@ export function StageProvider(prop: StageProviderProp): React.JSX.Element {
   /**
    * Set stage
    */
-  const setStage = React.useCallback((stage: Konva.Stage): void => {
-    stageRef.current = stage;
+  const setStage = React.useCallback(
+    (stage: Konva.Stage): void => {
+      stageRef.current = stage;
 
-    stage?.setAttrs({
-      width: prop.stageWidth,
-      height: prop.stageHeight,
-      scaleX: prop.stageZoom,
-      scaleY: prop.stageZoom,
-      x: (prop.canvasWidth - prop.stageWidth * prop.stageZoom) / 2,
-      y: (prop.canvasHeight - prop.stageHeight * prop.stageZoom) / 2,
-    });
-  }, []);
+      console.log(stageState);
+
+      stage?.setAttrs({
+        width: stageState.stageWidth,
+        height: stageState.stageHeight,
+        scaleX: stageState.stageZoom,
+        scaleY: stageState.stageZoom,
+        x:
+          (stageState.canvasWidth -
+            stageState.stageWidth * stageState.stageZoom) /
+          2,
+        y:
+          (stageState.canvasHeight -
+            stageState.stageHeight * stageState.stageZoom) /
+          2,
+      });
+    },
+    [stageState]
+  );
 
   // Store guideLines
   const guideLinesRef = React.useRef<KonvaGuideLinesAPI>(undefined);
@@ -543,19 +576,6 @@ export function StageProvider(prop: StageProviderProp): React.JSX.Element {
     },
     []
   );
-
-  // Store stage info
-  const [stageState, stageDispatch] = React.useReducer(stageReducer, {
-    stageRatio: prop.stageRatio,
-    stageZoom: prop.stageZoom,
-    stageZoomMin: prop.stageZoomMin,
-    stageZoomMax: prop.stageZoomMax,
-    stageZoomStep: prop.stageZoomStep,
-    canvasWidth: prop.canvasWidth,
-    canvasHeight: prop.canvasHeight,
-    stageWidth: prop.stageWidth,
-    stageHeight: prop.stageHeight,
-  });
 
   // Store background info
   const [backgroundState, backgroundDispatch] = React.useReducer(
@@ -662,19 +682,6 @@ export function StageProvider(prop: StageProviderProp): React.JSX.Element {
     },
     []
   );
-
-  /**
-   * Set stage ratio
-   */
-  const setStageRatio = React.useCallback((ratio: number): void => {
-    stageDispatch({
-      type: "SET_RATIO",
-      payload: {
-        stage: stageRef.current,
-        ratio: ratio,
-      },
-    });
-  }, []);
 
   /**
    * Expand stage
@@ -868,21 +875,6 @@ export function StageProvider(prop: StageProviderProp): React.JSX.Element {
     []
   );
 
-  React.useEffect(() => {
-    /**
-     * Resize handler
-     */
-    function resizeHandler() {
-      setCanvasSize(innerWidth, innerHeight);
-    }
-
-    addEventListener("resize", resizeHandler);
-
-    return () => {
-      removeEventListener("resize", resizeHandler);
-    };
-  }, []);
-
   // Update background/grid size
   React.useEffect(() => {
     backgroundRef.current?.updateProp({
@@ -898,6 +890,30 @@ export function StageProvider(prop: StageProviderProp): React.JSX.Element {
 
   const contextValue: IStageContext = React.useMemo<IStageContext>(
     () => ({
+      language,
+      updateLanguage,
+
+      guideLinesThreshold,
+      setGuideLinesThreshold,
+
+      guideLinesStick,
+      setGuideLinesStick,
+
+      panelWidth,
+      setPanelWidth,
+      panelColor,
+      setPanelColor,
+
+      canvasColor,
+      setCanvasColor,
+
+      toolbarHeight,
+      setToolbarHeight,
+      toolbarColor,
+      setToolbarColor,
+
+      stageRatio: stageState.stageRatio,
+      stageMinWidth: stageState.stageMinWidth,
       canvasWidth: stageState.canvasWidth,
       canvasHeight: stageState.canvasHeight,
       stageZoom: stageState.stageZoom,
@@ -906,9 +922,6 @@ export function StageProvider(prop: StageProviderProp): React.JSX.Element {
       stageZoomStep: stageState.stageZoomStep,
       stageWidth: stageState.stageWidth,
       stageHeight: stageState.stageHeight,
-
-      stageRatio: stageState.stageRatio,
-      setStageRatio,
 
       setStageZoom,
       zoomStage,
@@ -946,7 +959,20 @@ export function StageProvider(prop: StageProviderProp): React.JSX.Element {
       snackBarAlert,
       updateSnackbarAlert,
     }),
-    [stageState, backgroundState, gridState, snackBarAlert]
+    [
+      language,
+      guideLinesThreshold,
+      guideLinesStick,
+      panelWidth,
+      panelColor,
+      canvasColor,
+      toolbarHeight,
+      toolbarColor,
+      stageState,
+      backgroundState,
+      gridState,
+      snackBarAlert,
+    ]
   );
 
   return (

@@ -3,28 +3,15 @@ import React from "react";
 export type StageProviderProp = {
   children?: React.ReactNode;
 
+  language: string;
+
   stageZoom: number;
-
-  stageZoomMin: number;
-  stageZoomMax: number;
-  stageZoomStep: number;
-
   canvasWidth: number;
   canvasHeight: number;
-
   stageWidth: number;
   stageHeight: number;
 
-  stageRatio: number;
-};
-
-export type AppProviderProp = {
-  children?: React.ReactNode;
-
-  language: string;
-
   guideLinesThreshold: number;
-
   guideLinesStick: boolean;
 
   panelWidth: number;
@@ -34,6 +21,13 @@ export type AppProviderProp = {
 
   toolbarHeight: number;
   toolbarColor: string;
+
+  stageMinWidth: number;
+  stageRatio: number;
+
+  stageZoomMin: number;
+  stageZoomMax: number;
+  stageZoomStep: number;
 };
 
 export type DrawingProviderProp = {

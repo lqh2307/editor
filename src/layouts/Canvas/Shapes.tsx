@@ -29,13 +29,12 @@ import {
   useDrawingContext,
   useShapesContext,
   useStageContext,
-  useAppContext,
 } from "../../contexts";
 
 export const CanvasShapes = React.memo((): React.JSX.Element => {
-  const { guideLinesThreshold, guideLinesStick } = useAppContext();
-
   const {
+    guideLinesThreshold,
+    guideLinesStick,
     stageWidth,
     stageHeight,
     getGuideLines,

@@ -436,19 +436,25 @@ export function createShapeBox(node: Konva.Node): KonvaShapeBox {
     return;
   }
 
-  const box: WindowRect = node.getClientRect({
+  const absBox: WindowRect = node.getClientRect({
     skipTransform: false,
     skipShadow: false,
     skipStroke: false,
   });
 
+  const localBox: WindowRect = node.getClientRect({
+    skipTransform: true,
+    skipShadow: false,
+    skipStroke: false,
+  });
+
   const topLeft: Vector2d = transform.point({
-    x: box.x,
-    y: box.y,
+    x: absBox.x,
+    y: absBox.y,
   });
   const bottomRight: Vector2d = transform.point({
-    x: box.x + box.width,
-    y: box.y + box.height,
+    x: absBox.x + absBox.width,
+    y: absBox.y + absBox.height,
   });
 
   return {
@@ -458,6 +464,8 @@ export function createShapeBox(node: Konva.Node): KonvaShapeBox {
     bottom: bottomRight.y,
     centerX: (topLeft.x + bottomRight.x) / 2,
     centerY: (topLeft.y + bottomRight.y) / 2,
+    localOffsetX: localBox.width / 2,
+    localOffsetY: localBox.height / 2,
   };
 }
 

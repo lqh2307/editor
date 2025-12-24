@@ -17,5 +17,8 @@ export type EditorProp = {
   stageZoomMax?: number;
   stageZoomStep?: number;
 
+  stageMinWidth?: number;
+  stageRatio?: number;
+
   maxHistory?: number;
 };

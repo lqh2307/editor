@@ -71,6 +71,33 @@ export interface IDrawingContext {
 }
 
 export interface IStageContext {
+  language?: string;
+  updateLanguage?: (lang: string) => void;
+
+  guideLinesThreshold?: number;
+  setGuideLinesThreshold?: (threshold: number) => void;
+
+  guideLinesStick?: boolean;
+  setGuideLinesStick?: (auto: boolean) => void;
+
+  panelWidth?: number;
+  setPanelWidth?: (width: number) => void;
+  panelColor?: string;
+  setPanelColor?: (color: string) => void;
+
+  canvasColor?: string;
+  setCanvasColor?: (color: string) => void;
+
+  toolbarHeight?: number;
+  setToolbarHeight?: (height: number) => void;
+  toolbarColor?: string;
+  setToolbarColor?: (color: string) => void;
+
+  stageMinWidth?: number;
+  setStageMinWidth?: (width: number) => void;
+  stageRatio?: number;
+  setStageRatio?: (ratio: number) => void;
+
   canvasWidth?: number;
   canvasHeight?: number;
   stageZoom?: number;
@@ -79,9 +106,6 @@ export interface IStageContext {
   stageZoomStep?: number;
   stageWidth?: number;
   stageHeight?: number;
-
-  stageRatio?: number;
-  setStageRatio?: (ratio: number) => void;
 
   setStageZoom?: (zoom: number, type?: "min" | "max" | "step") => void;
   zoomStage?: (zoomOut: boolean, pointer?: boolean) => void;
@@ -123,28 +147,4 @@ export interface IStageContext {
 
   snackBarAlert?: SnackbarAlertProp;
   updateSnackbarAlert?: (message: string, severity: AlertColor) => void;
-}
-
-export interface IAppContext {
-  language?: string;
-  updateLanguage?: (lang: string) => void;
-
-  guideLinesThreshold?: number;
-  setGuideLinesThreshold?: (threshold: number) => void;
-
-  guideLinesStick?: boolean;
-  setGuideLinesStick?: (auto: boolean) => void;
-
-  panelWidth?: number;
-  setPanelWidth?: (width: number) => void;
-  panelColor?: string;
-  setPanelColor?: (color: string) => void;
-
-  canvasColor?: string;
-  setCanvasColor?: (color: string) => void;
-
-  toolbarHeight?: number;
-  setToolbarHeight?: (height: number) => void;
-  toolbarColor?: string;
-  setToolbarColor?: (color: string) => void;
 }
