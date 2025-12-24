@@ -12,7 +12,8 @@ import { useTranslation } from "react-i18next";
 import { IconInfo, ItemInfo } from "./Types";
 import { getIcons } from "../../apis/icon";
 import { AxiosResponse } from "axios";
-import { Box } from "@mui/material";
+import { Box, TextField, InputAdornment } from "@mui/material";
+import SearchTwoTone from '@mui/icons-material/SearchTwoTone';
 import React from "react";
 
 export const ToolbarAddBasicIcon = React.memo((): React.JSX.Element => {
@@ -69,6 +70,7 @@ export const ToolbarAddBasicIcon = React.memo((): React.JSX.Element => {
   });
 
   const [iconInfo, setIconInfo] = React.useState<IconInfo>(iconInitRef.current);
+  const [searchQuery, setSearchQuery] = React.useState<string>("");
 
   const fetchIconControllerRef = React.useRef<AbortController>(undefined);
 
@@ -109,13 +111,18 @@ export const ToolbarAddBasicIcon = React.memo((): React.JSX.Element => {
 
   const IconCell = React.useCallback(
     (prop: CellComponentProps): React.JSX.Element => {
+      const q = (searchQuery || "").toLowerCase();
+      const filteredIcons = q
+        ? iconInfo.icons.filter((i) => (i?.name || "").toLowerCase().includes(q))
+        : iconInfo.icons;
+
       const index =
         prop.rowIndex * iconConfigRef.current.renderColumn + prop.columnIndex;
-      if (index >= iconInfo.icons.length) {
+      if (index >= filteredIcons.length) {
         return;
       }
 
-      const icon: KonvaIcon = iconInfo.icons[index];
+      const icon: KonvaIcon = filteredIcons[index];
 
       return (
         <Box
@@ -153,7 +160,7 @@ export const ToolbarAddBasicIcon = React.memo((): React.JSX.Element => {
         </Box>
       );
     },
-    [addIconHandler, iconInfo.icons]
+    [addIconHandler, iconInfo.icons, searchQuery]
   );
 
   {
@@ -165,15 +172,38 @@ export const ToolbarAddBasicIcon = React.memo((): React.JSX.Element => {
       title={t("toolBar.addBasicIcon.title")}
       onClick={fetchIconHandler}
     >
-      <PartialItemGrid
-        isLoading={iconInfo.isLoading}
-        cellComponent={IconCell}
-        items={iconInfo.icons}
-        renderColumn={iconConfigRef.current.renderColumn}
-        renderRow={iconConfigRef.current.renderRow}
-        itemWidth={iconConfigRef.current.itemWidth}
-        itemHeight={iconConfigRef.current.itemHeight}
-      />
+      <Box sx={{ display: 'flex', flexDirection: 'column', width: '100%' }}>
+        <Box sx={{ p: 0, mb: 1 }}>
+          <TextField
+            size="small"
+            fullWidth
+            placeholder={t("common.search") || "Search icons"}
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">
+                  <SearchTwoTone fontSize="small" />
+                </InputAdornment>
+              ),
+            }}
+          />
+        </Box>
+        <PartialItemGrid
+          isLoading={iconInfo.isLoading}
+          cellComponent={IconCell}
+          items={(() => {
+            const q = (searchQuery || "").toLowerCase();
+            return q
+              ? iconInfo.icons.filter((i) => (i?.name || "").toLowerCase().includes(q))
+              : iconInfo.icons;
+          })()}
+          renderColumn={iconConfigRef.current.renderColumn}
+          renderRow={iconConfigRef.current.renderRow}
+          itemWidth={iconConfigRef.current.itemWidth}
+          itemHeight={iconConfigRef.current.itemHeight}
+        />
+      </Box>
     </PopperButton>
   );
 });

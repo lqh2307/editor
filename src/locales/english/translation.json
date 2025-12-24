@@ -1189,5 +1189,7 @@
       }
     }
   },
-  "common": {}
+  "common": {
+    "search": "Search"
+  }
 }

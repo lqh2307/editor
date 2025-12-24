@@ -22,7 +22,7 @@ export const PartialItemGrid = React.memo(
     const columnWidth: number = itemWidth + gapX;
     const rowHeight: number = itemHeight + gapY;
     const gridWidth: number =
-      columnWidth * renderColumn + (totalRow > renderRow ? 17 : 0);
+      columnWidth * renderColumn + (totalRow > renderRow ? 16 : 0);
     const gridHeight: number = rowHeight * renderRow;
 
     return isLoading ? (
