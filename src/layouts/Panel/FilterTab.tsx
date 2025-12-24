@@ -19,6 +19,8 @@ import {
   ContrastTwoTone,
   BlurOnTwoTone,
   GrainTwoTone,
+  FormatColorFillTwoTone,
+  OpacityTwoTone,
 } from "@mui/icons-material";
 import {
   AccordionDetails,
@@ -27,6 +29,7 @@ import {
   Accordion,
   Stack,
 } from "@mui/material";
+import { ColorInput } from "../../components/ColorInput";
 
 export const FilterTab = React.memo((): React.JSX.Element => {
   const { t } = useTranslation();
@@ -120,6 +123,33 @@ export const FilterTab = React.memo((): React.JSX.Element => {
         updateShape(
           {
             solarize: checked,
+          },
+          true,
+          true
+        );
+      },
+      changeRGBA: (checked: boolean): void => {
+        updateShape(
+          {
+            rgba: checked,
+          },
+          true,
+          true
+        );
+      },
+      changeRGBAColor: (value: string): void => {
+        updateShape(
+          {
+            rgbaColor: value,
+          },
+          true,
+          true
+        );
+      },
+      changeRGBAOpacity: (value: number): void => {
+        updateShape(
+          {
+            rgbaOpacity: value,
           },
           true,
           true
@@ -241,6 +271,8 @@ export const FilterTab = React.memo((): React.JSX.Element => {
               onChange={updateShapeHandler.changeBlurRadius}
             />
           </Stack>
+
+          {/* RGBA */}
         </AccordionDetails>
       </Accordion>
 
@@ -321,6 +353,58 @@ export const FilterTab = React.memo((): React.JSX.Element => {
               title={t("panel.filter.children.color.children.solarize.title")}
               checked={selectedShape.solarize}
               onChange={updateShapeHandler.changeSolarize}
+            />
+          </Stack>
+
+          {/* RGBA */}
+          <Stack
+            sx={{
+              display: "flex",
+              flexDirection: "row",
+              gap: "0.5rem",
+              alignItems: "center",
+            }}
+          >
+            <TooltipCheckbox
+              label={
+                <Typography fontSize={12}>
+                  {t("panel.filter.children.color.children.rgba.title")}
+                </Typography>
+              }
+              title={t("panel.filter.children.color.children.rgba.title")}
+              checked={selectedShape.rgba}
+              onChange={updateShapeHandler.changeRGBA}
+            />
+          </Stack>
+
+          {/* RGBA Color/RGBA Opacity */}
+          <Stack
+            sx={{
+              display: selectedShape.rgba ? "flex" : "none",
+              flexDirection: "row",
+              gap: "0.5rem",
+              alignItems: "center",
+            }}
+          >
+            <ColorInput
+              icon={<FormatColorFillTwoTone fontSize={"small"} />}
+              title={t(
+                "panel.filter.children.color.children.rgba.children.color.title"
+              )}
+              value={selectedShape.rgbaColor}
+              onChange={updateShapeHandler.changeRGBAColor}
+            />
+
+            <SliderInput
+              icon={<OpacityTwoTone fontSize={"small"} />}
+              title={t(
+                "panel.filter.children.color.children.rgba.children.opacity.title"
+              )}
+              value={selectedShape.rgbaOpacity}
+              max={1}
+              step={0.05}
+              marks={normalizedMarks}
+              onChange={updateShapeHandler.changeRGBAOpacity}
             />
           </Stack>
         </AccordionDetails>

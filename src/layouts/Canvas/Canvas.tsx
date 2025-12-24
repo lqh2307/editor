@@ -42,7 +42,6 @@ export const Canvas = React.memo((): React.JSX.Element => {
 
   const {
     snackBarAlert,
-    fitStageScreen,
     getStage,
     setStage,
     getBackground,
@@ -385,19 +384,6 @@ export const Canvas = React.memo((): React.JSX.Element => {
     selectedShape.lines,
     setPointerStyle,
   ]);
-
-  // Update if size is changed
-  React.useEffect(() => {
-    function resizeHandler() {
-      fitStageScreen();
-    }
-
-    addEventListener("resize", resizeHandler);
-
-    return () => {
-      removeEventListener("resize", resizeHandler);
-    };
-  }, [fitStageScreen]);
 
   const handleStageMouseWheel = React.useCallback(
     (e: Konva.KonvaEventObject<WheelEvent>): void => {

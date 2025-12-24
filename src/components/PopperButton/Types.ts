@@ -11,5 +11,4 @@ export type PopperButtonProp = Omit<ButtonProps, "onClick"> & {
 
   delay?: number;
   onClick?: (value: string) => void;
-  closeOnClickAway?: boolean;
 };

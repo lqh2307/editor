@@ -13,13 +13,11 @@ import { useTranslation } from "react-i18next";
 import { IconInfo, ItemInfo } from "./Types";
 import { getIcons } from "../../apis/icon";
 import { AxiosResponse } from "axios";
-import { Box, IconButton, TextField, InputAdornment, Select, MenuItem, CircularProgress } from "@mui/material";
-import SearchTwoTone from '@mui/icons-material/SearchTwoTone';
-import Favorite from '@mui/icons-material/Favorite';
-import FavoriteBorder from '@mui/icons-material/FavoriteBorder';
+import { Box, IconButton } from "@mui/material";
+import Favorite from "@mui/icons-material/Favorite";
+import FavoriteBorder from "@mui/icons-material/FavoriteBorder";
 import { getValue, setValue } from "../../utils/LocalStorage";
 import DraggableTabsPanel from "../../components/DraggableTabsPanel/DraggableTabsPanelProps";
-import { useDebounce } from "../../hooks";
 import React from "react";
 
 export const ToolbarAddMilitaryIcon = React.memo((): React.JSX.Element => {
@@ -84,17 +82,14 @@ export const ToolbarAddMilitaryIcon = React.memo((): React.JSX.Element => {
     Record<string, KonvaIcon[]>
   >({});
 
-  const [tabsState, setTabsState] = React.useState<{
-    key: string;
-    label: string;
-  }[]>([]);
+  const [tabsState, setTabsState] = React.useState<
+    {
+      key: string;
+      label: string;
+    }[]
+  >([]);
 
   const [panelOpen, setPanelOpen] = React.useState(false);
-  const [activeKey, setActiveKey] = React.useState<string | undefined>(undefined);
-
-  const [searchInput, setSearchInput] = React.useState<string>("");
-  const [searchQuery, setSearchQuery] = React.useState<string>("");
-  const [debouncedSetQuery] = useDebounce((v: string) => setSearchQuery(v), 200, []);
 
   const FAVORITES_KEY = "toolbar_military_icon_favorites_v1";
 
@@ -117,7 +112,9 @@ export const ToolbarAddMilitaryIcon = React.memo((): React.JSX.Element => {
   const toggleFavorite = React.useCallback((icon: KonvaIcon) => {
     setFavorites((prev) => {
       const exists = prev.find((p) => p.content === icon.content);
-      const next = exists ? prev.filter((p) => p.content !== icon.content) : [icon, ...prev];
+      const next = exists
+        ? prev.filter((p) => p.content !== icon.content)
+        : [icon, ...prev];
       try {
         setValue(FAVORITES_KEY, next);
       } catch (e) {
@@ -137,9 +134,6 @@ export const ToolbarAddMilitaryIcon = React.memo((): React.JSX.Element => {
     }
 
     try {
-      // open panel immediately to show loading state under button
-      setPanelOpen(true);
-      setActiveKey((prev) => prev ?? "__placeholder");
       setIconInfo((prev) => ({
         ...prev,
         isLoading: true,
@@ -176,7 +170,7 @@ export const ToolbarAddMilitaryIcon = React.memo((): React.JSX.Element => {
       setIconInfo((prev) => ({ ...prev, isLoading: false, icons: flatIcons }));
       setGroupedIcons(groups);
       setTabsState(tabs);
-      // already opened above
+      setPanelOpen(true);
     } catch (error) {
       setIconInfo(iconInitRef.current);
 
@@ -186,16 +180,6 @@ export const ToolbarAddMilitaryIcon = React.memo((): React.JSX.Element => {
       );
     }
   }, [t, groupedIcons, updateSnackbarAlert]);
-
-  // keep active tab key valid when tabs/favorites change while panel open
-  React.useEffect(() => {
-    if (!panelOpen) return;
-    const favKey = "__favorites";
-    const hasFav = favorites.length > 0;
-    const keys = (hasFav ? [favKey] : []).concat(tabsState.map((t) => t.key));
-    if (!keys.length) return;
-    setActiveKey((prev) => (prev && keys.includes(prev) ? prev : keys[0]));
-  }, [panelOpen, favorites.length, tabsState]);
 
   // factory to create a cell renderer for a specific icon list (no hooks inside)
   const makeIconCell = (
@@ -267,8 +251,8 @@ export const ToolbarAddMilitaryIcon = React.memo((): React.JSX.Element => {
               width: 20,
               height: 20,
               zIndex: 3,
-              boxShadow: 'none',
-              '&:hover': { background: 'rgba(255,255,255,0.95)' },
+              boxShadow: "none",
+              "&:hover": { background: "rgba(255,255,255,0.95)" },
               fontSize: 14,
             }}
             aria-label={isFav ? "remove favorite" : "add favorite"}
@@ -293,127 +277,106 @@ export const ToolbarAddMilitaryIcon = React.memo((): React.JSX.Element => {
         icon={<MilitaryTechTwoTone />}
         title={t("toolBar.addMilitaryIcon.title")}
         onClick={fetchIconHandler}
-        closeOnClickAway={false}
-      >
-        {panelOpen ? (
-          (() => {
-            const favKey = "__favorites";
-            const favTab = { key: favKey, label: t("toolBar.addMilitaryIcon.favorites") || "Favorites" };
-            const tabsProp = favorites.length ? [favTab, ...tabsState] : tabsState;
-            const dataProp = favorites.length ? { [favKey]: favorites, ...groupedIcons } : groupedIcons;
+      />
 
-            const active = activeKey ?? "__placeholder";
-            const dataWithPlaceholder = Object.keys(dataProp).length
-              ? dataProp
-              : { __placeholder: [] };
+      {panelOpen &&
+        (() => {
+          const favKey = "__favorites";
+          const favTab = {
+            key: favKey,
+            label: t("toolBar.addMilitaryIcon.children.favorite.title"),
+          };
+          const tabsProp = favorites.length
+            ? [favTab, ...tabsState]
+            : tabsState;
+          const dataProp = favorites.length
+            ? { [favKey]: favorites, ...groupedIcons }
+            : groupedIcons;
 
-            return (
-              <DraggableTabsPanel
-                usePortal={false}
-                draggable={false}
-                bounds="parent"
-                tabs={tabsProp}
-                data={dataWithPlaceholder}
-                hideTabs
-                activeKey={active}
-                onChangeActiveKey={setActiveKey}
-                headerRight={
-                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                    <Select
-                      size="small"
-                      value={activeKey ?? ''}
-                      onChange={(e) => setActiveKey(e.target.value as string)}
-                      displayEmpty
-                      sx={{ minWidth: 180, background: '#fff' }}
-                      renderValue={(val) => {
-                        if (!val) return t("common.select") || "Select";
-                        const found = tabsProp.find((x) => x.key === val);
-                        return found?.label || val;
-                      }}
-                    >
-                      {tabsProp.map((tb) => (
-                        <MenuItem key={tb.key} value={tb.key}>{tb.label}</MenuItem>
-                      ))}
-                    </Select>
-                    <TextField
-                      size="small"
-                      placeholder={t("common.search") || "Search icons"}
-                      value={searchInput}
-                      onChange={(e) => { setSearchInput(e.target.value); debouncedSetQuery(e.target.value); }}
-                      InputProps={{
-                        startAdornment: (
-                          <InputAdornment position="start">
-                            <SearchTwoTone fontSize="small" />
-                          </InputAdornment>
-                        ),
-                      }}
-                    />
-                  </Box>
-                }
-                renderTab={(key: string, data: Record<string, KonvaIcon[]>) => {
-                  const icons = data?.[key] || [];
-                  const q = (searchQuery || "").toLowerCase();
-                  const filteredIcons = q
-                    ? icons.filter((i) => (i?.name || "").toLowerCase().includes(q))
-                    : icons;
+          return (
+            <DraggableTabsPanel
+              tabs={tabsProp}
+              data={dataProp}
+              renderTab={(key: string, data: Record<string, KonvaIcon[]>) => {
+                const icons = data?.[key] || [];
 
-                  const panelW = Math.min(window?.innerWidth - 80, 615);
-                  const panelH = Math.min(window?.innerHeight - 120, 360);
+                const panelW = Math.min(window?.innerWidth - 80, 615);
+                const panelH = Math.min(window?.innerHeight - 120, 360);
 
-                  // header ~40 (with controls), no tabs when hideTabs=true, padding ~24
-                  const headerH = 40;
-                  const tabsH = 0;
-                  const padding = 24;
+                // header ~40, tabs ~48, padding ~24 => remaining height for grid
+                const headerH = 40;
+                const tabsH = 48;
+                const padding = 24;
 
-                  const paddingHorizontal = 24; // panel content padding left+right (12+12)
-                  const paddingVertical = 24; // top+bottom padding estimate
+                const paddingHorizontal = 24; // panel content padding left+right (12+12)
+                const paddingVertical = 24; // top+bottom padding estimate
 
-                  const availableWidth = Math.max(220, panelW - paddingHorizontal);
-                  const availableHeight = Math.max(140, panelH - headerH - tabsH - paddingVertical);
+                const availableWidth = Math.max(
+                  220,
+                  panelW - paddingHorizontal
+                );
+                const availableHeight = Math.max(
+                  140,
+                  panelH - headerH - tabsH - paddingVertical
+                );
 
-                  const gapX = 8;
-                  const gapY = 8;
-                  const itemW = iconConfigRef.current.itemWidth;
-                  const itemH = iconConfigRef.current.itemHeight;
+                const gapX = 8;
+                const gapY = 8;
+                const itemW = iconConfigRef.current.itemWidth;
+                const itemH = iconConfigRef.current.itemHeight;
 
-                  const columnUnit = itemW + gapX;
-                  const rowUnit = itemH + gapY;
+                const columnUnit = itemW + gapX;
+                const rowUnit = itemH + gapY;
 
-                  const dynamicColumns = Math.max(1, Math.floor(availableWidth / columnUnit));
-                  const dynamicRows = Math.max(1, Math.floor(availableHeight / rowUnit));
+                const dynamicColumns = Math.max(
+                  1,
+                  Math.floor(availableWidth / columnUnit)
+                );
+                const dynamicRows = Math.max(
+                  1,
+                  Math.floor(availableHeight / rowUnit)
+                );
 
-                  const Cell = makeIconCell(filteredIcons, dynamicColumns, favoritesSet, toggleFavorite);
+                const Cell = makeIconCell(
+                  icons,
+                  dynamicColumns,
+                  favoritesSet,
+                  toggleFavorite
+                );
 
-                  return (
-                    <Box sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
-                      <Box sx={{ flex: 1, overflow: 'hidden' }}>
-                        <PartialItemGrid
-                          isLoading={iconInfo.isLoading}
-                          cellComponent={Cell}
-                          items={filteredIcons}
-                          renderColumn={dynamicColumns}
-                          renderRow={dynamicRows}
-                          itemWidth={iconConfigRef.current.itemWidth}
-                          itemHeight={iconConfigRef.current.itemHeight}
-                        />
-                      </Box>
+                return (
+                  <Box
+                    sx={{
+                      height: "100%",
+                      display: "flex",
+                      flexDirection: "column",
+                    }}
+                  >
+                    <Box sx={{ flex: 1, overflow: "hidden" }}>
+                      <PartialItemGrid
+                        isLoading={iconInfo.isLoading}
+                        cellComponent={Cell}
+                        items={icons}
+                        renderColumn={dynamicColumns}
+                        renderRow={dynamicRows}
+                        itemWidth={iconConfigRef.current.itemWidth}
+                        itemHeight={iconConfigRef.current.itemHeight}
+                      />
                     </Box>
-                  );
-                }}
-                title={t("toolBar.addMilitaryIcon.title")}
-                width={Math.min(window?.innerWidth - 80, 615)}
-                height={Math.min(window?.innerHeight - 120, 360)}
-              />
-            );
-          })()
-        ) : iconInfo.isLoading ? (
-          <Box sx={{ p: 2, background: '#fff', border: '1px solid #ddd', borderRadius: 1, display: 'flex', alignItems: 'center', gap: 1 }}>
-            <CircularProgress size={16} />
-            <span>{t('common.loading') || 'Loading...'}</span>
-          </Box>
-        ) : null}
-      </PopperButton>
-
+                  </Box>
+                );
+              }}
+              title={t("toolBar.addMilitaryIcon.title")}
+              width={Math.min(window?.innerWidth - 80, 615)}
+              height={Math.min(window?.innerHeight - 120, 360)}
+              onClose={() => setPanelOpen(false)}
+              defaultPosition={{
+                x: Math.max(40, window?.innerWidth / 2 - 280),
+                y: Math.max(20, window?.innerHeight / 2 - 180),
+              }}
+            />
+          );
+        })()}
     </>
   );
 });

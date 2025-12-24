@@ -1,5 +1,6 @@
-import { parseHexToRGBAString } from "../../utils/Color";
+import { parseHexToRGB, parseHexToRGBAString } from "../../utils/Color";
 import { Portal } from "react-konva-utils";
+import { Color } from "../../types/Color";
 import { Image } from "react-konva";
 import Konva from "konva";
 import React from "react";
@@ -79,6 +80,15 @@ export const KonvaImage = React.memo(
           dash: createLineDash(shapeOption.lineStyle),
           filters: createFilter(shapeOption),
         });
+
+        if (shapeOption.rgba) {
+          const color: Color = parseHexToRGB(shapeOption.rgbaColor);
+
+          node.red(color.r);
+          node.green(color.g);
+          node.blue(color.b);
+          node.alpha(shapeOption.rgbaOpacity);
+        }
 
         // Update shape box
         shapeOption.box = createShapeBox(node);

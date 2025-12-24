@@ -71,53 +71,54 @@ export interface IDrawingContext {
 }
 
 export interface IStageContext {
-  language?: string;
-  updateLanguage?: (lang: string) => void;
+  setLanguage?: (lang: string) => void;
 
-  guideLinesThreshold?: number;
-  setGuideLinesThreshold?: (threshold: number) => void;
-
-  guideLinesStick?: boolean;
-  setGuideLinesStick?: (auto: boolean) => void;
-
-  panelWidth?: number;
   setPanelWidth?: (width: number) => void;
-  panelColor?: string;
   setPanelColor?: (color: string) => void;
 
-  canvasColor?: string;
   setCanvasColor?: (color: string) => void;
 
-  toolbarHeight?: number;
   setToolbarHeight?: (height: number) => void;
-  toolbarColor?: string;
   setToolbarColor?: (color: string) => void;
 
-  stageMinWidth?: number;
-  setStageMinWidth?: (width: number) => void;
-  stageRatio?: number;
-  setStageRatio?: (ratio: number) => void;
+  backgroundColor?: string;
+  backgroundOpacity?: number;
 
-  canvasWidth?: number;
-  canvasHeight?: number;
-  stageZoom?: number;
+  gridStyle?: KonvaGridStyle;
+
+  guideLinesThreshold?: number;
+  guideLinesStick?: boolean;
+
+  language?: string;
+
+  panelWidth?: number;
+  panelColor?: string;
+
+  canvasColor?: string;
+
+  toolbarHeight?: number;
+  toolbarColor?: string;
+
+  snackBarAlert?: SnackbarAlertProp;
+
+  stageMinWidth?: number;
+  stageRatio?: number;
   stageZoomMin?: number;
   stageZoomMax?: number;
   stageZoomStep?: number;
+  stageZoom?: number;
   stageWidth?: number;
   stageHeight?: number;
 
-  setStageZoom?: (zoom: number, type?: "min" | "max" | "step") => void;
-  zoomStage?: (zoomOut: boolean, pointer?: boolean) => void;
-
+  setStageRatio?: (ratio?: number) => void;
+  setStageMinWidth?: (width?: number) => void;
   dragStage?: () => void;
-  fitStageScreen?: (resetZoom?: boolean) => void;
+  fitStage?: (resetZoom?: boolean) => void;
   setPointerStyle?: (style?: string) => void;
   expandStage?: (
-    newValue: number,
+    value: number,
     targetHeight?: boolean,
-    newX?: number,
-    newY?: number
+    position?: Vector2d
   ) => void;
   exportStage?: (format?: ImageFormat, crop?: boolean) => string;
   getStageCenter?: () => Vector2d;
@@ -125,26 +126,24 @@ export interface IStageContext {
   setStagePointerPosition?: (event: any) => void;
   setStageDragable?: (dragable: boolean) => void;
   getIsStageDragable?: () => boolean;
-  setCanvasSize?: (width: number, height: number) => void;
-
+  setStageZoom?: (zoom: number, type?: "min" | "max" | "step") => void;
+  zoomStage?: (zoomOut: boolean, pointer?: boolean) => void;
   getStage?: () => Konva.Stage;
   setStage?: (stage: Konva.Stage) => void;
 
+  setGuideLinesThreshold?: (threshold: number) => void;
+  setGuideLinesStick?: (auto: boolean) => void;
   getGuideLines?: () => KonvaGuideLinesAPI;
   setGuideLines?: (guideLines: KonvaGuideLinesAPI) => void;
 
-  backgroundColor?: string;
-  backgroundOpacity?: number;
   getBackground?: () => KonvaBackgroundAPI;
   setBackground?: (background: KonvaBackgroundAPI) => void;
   updateBackgroundColor?: (color: string) => void;
   updateBackgroundOpacity?: (opacity: number) => void;
 
-  gridStyle?: KonvaGridStyle;
   getGrid?: () => KonvaGridAPI;
   setGrid?: (grid: KonvaGridAPI) => void;
   updateGridStyle?: (style: KonvaGridStyle) => void;
 
-  snackBarAlert?: SnackbarAlertProp;
   updateSnackbarAlert?: (message: string, severity: AlertColor) => void;
 }

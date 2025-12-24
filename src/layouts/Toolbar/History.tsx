@@ -30,7 +30,7 @@ export const ToolbarHistory = React.memo((): React.JSX.Element => {
   );
 
   useDebounceHotKey({
-    keys: ["ctrl+z", "cmd+z"],
+    keys: ["ctrl+z", "meta+z"],
     callback: () => {
       doShapesHandler();
     },
@@ -38,7 +38,7 @@ export const ToolbarHistory = React.memo((): React.JSX.Element => {
   });
 
   useDebounceHotKey({
-    keys: ["ctrl+y", "cmd+y"],
+    keys: ["ctrl+y", "meta+y"],
     callback: () => {
       doShapesHandler("true");
     },

@@ -125,7 +125,7 @@ export const ToolbarClose = React.memo((): React.JSX.Element => {
   });
 
   useDebounceHotKey({
-    keys: "ctrl+w",
+    keys: ["ctrl+w", "meta+w"],
     callback: () => {
       closeHandler.open();
     },

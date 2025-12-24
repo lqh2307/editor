@@ -244,14 +244,14 @@ export const CanvasShapes = React.memo((): React.JSX.Element => {
         // Expand
         if (newScaleX > 1 && newScaleY > 1) {
           if (newScaleX > newScaleY) {
-            expandStage(box.right * expandRatio, false);
+            expandStage(Math.round(box.right * expandRatio), false);
           } else {
-            expandStage(box.bottom * expandRatio, true);
+            expandStage(Math.round(box.bottom * expandRatio), true);
           }
         } else if (newScaleX > 1) {
-          expandStage(box.right * expandRatio, false);
+          expandStage(Math.round(box.right * expandRatio), false);
         } else if (newScaleY > 1) {
-          expandStage(box.bottom * expandRatio, true);
+          expandStage(Math.round(box.bottom * expandRatio), true);
         }
       } else if (reason === "transform-end") {
         // Update shape

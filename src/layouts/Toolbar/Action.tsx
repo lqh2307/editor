@@ -122,7 +122,7 @@ export const ToolbarAction = React.memo((): React.JSX.Element => {
   }, [t, deleteShapes, updateSnackbarAlert]);
 
   useDebounceHotKey({
-    keys: ["ctrl+g", "cmd+g"],
+    keys: ["ctrl+g", "meta+g"],
     callback: () => {
       groupShapesHandler();
     },
@@ -130,7 +130,7 @@ export const ToolbarAction = React.memo((): React.JSX.Element => {
   });
 
   useDebounceHotKey({
-    keys: ["ctrl+shift+g", "cmd+shift+g"],
+    keys: ["ctrl+shift+g", "meta+shift+g"],
     callback: () => {
       groupShapesHandler("true");
     },
@@ -138,7 +138,7 @@ export const ToolbarAction = React.memo((): React.JSX.Element => {
   });
 
   useDebounceHotKey({
-    keys: ["ctrl+a", "cmd+a"],
+    keys: ["ctrl+a", "meta+a"],
     callback: () => {
       selectAllHandler();
     },
@@ -154,7 +154,7 @@ export const ToolbarAction = React.memo((): React.JSX.Element => {
   });
 
   useDebounceHotKey({
-    keys: ["ctrl+x", "cmd+x"],
+    keys: ["ctrl+x", "meta+x"],
     callback: () => {
       copyShapeHandler("true");
     },
@@ -162,7 +162,7 @@ export const ToolbarAction = React.memo((): React.JSX.Element => {
   });
 
   useDebounceHotKey({
-    keys: ["ctrl+c", "cmd+c"],
+    keys: ["ctrl+c", "meta+c"],
     callback: () => {
       copyShapeHandler();
     },
@@ -170,7 +170,7 @@ export const ToolbarAction = React.memo((): React.JSX.Element => {
   });
 
   useDebounceHotKey({
-    keys: ["ctrl+v", "cmd+v"],
+    keys: ["ctrl+v", "meta+v"],
     callback: () => {
       pasteShapeToPositionHandler();
     },
@@ -178,7 +178,7 @@ export const ToolbarAction = React.memo((): React.JSX.Element => {
   });
 
   useDebounceHotKey({
-    keys: ["ctrl+d", "cmd+d"],
+    keys: ["ctrl+d", "meta+d"],
     callback: () => {
       duplicateShapeToPositionHandler();
     },

@@ -60,6 +60,9 @@ export const Editor = React.memo((prop: EditorProp): React.JSX.Element => {
   return (
     <StageProvider
       language={language}
+      backGroundColor={"#ffffff"}
+      backgroundOpacity={1}
+      gridStyle={"none"}
       stageZoom={stageZoom}
       canvasWidth={canvasWidth}
       canvasHeight={canvasHeight}

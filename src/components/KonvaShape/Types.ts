@@ -32,6 +32,7 @@ export type KonvaShape = Partial<Konva.ShapeConfig> &
     invert?: boolean;
     sepia?: boolean;
     solarize?: boolean;
+    rgba?: boolean;
 
     // Free drawing
     lines?: KonvaFreeDrawingLine[];
@@ -55,6 +56,8 @@ export type KonvaShape = Partial<Konva.ShapeConfig> &
     // Color
     fillOpacity?: number;
     strokeOpacity?: number;
+    rgbaColor?: string;
+    rgbaOpacity?: number;
 
     // Text
     fontWeight?: string;

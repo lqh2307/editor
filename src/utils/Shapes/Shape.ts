@@ -292,6 +292,9 @@ export function createShape(shape: KonvaShape): KonvaShape {
       newShape.invert = newShape.invert ?? false;
       newShape.sepia = newShape.sepia ?? false;
       newShape.solarize = newShape.solarize ?? false;
+      newShape.rgba = newShape.rgba ?? false;
+      newShape.rgbaColor = newShape.rgbaColor ?? "#ff0000";
+      newShape.rgbaOpacity = newShape.rgbaOpacity ?? 0;
 
       // General filter
       newShape.pixelSize = newShape.pixelSize ?? 1;
@@ -873,6 +876,10 @@ export function createFilter(option: KonvaShape): Filter[] {
 
   if (option.solarize) {
     filters.push(Konva.Filters.Solarize);
+  }
+
+  if (option.rgba) {
+    filters.push(Konva.Filters.RGBA);
   }
 
   return filters;

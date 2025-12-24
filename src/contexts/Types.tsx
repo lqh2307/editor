@@ -1,9 +1,15 @@
+import { KonvaGridStyle } from "../components/KonvaGrid";
 import React from "react";
 
 export type StageProviderProp = {
   children?: React.ReactNode;
 
   language: string;
+
+  backGroundColor: string;
+  backgroundOpacity: number;
+
+  gridStyle: KonvaGridStyle;
 
   stageZoom: number;
   canvasWidth: number;

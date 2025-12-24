@@ -114,8 +114,7 @@ type CloudInfo = {
 export const ToolbarIO = React.memo((): React.JSX.Element => {
   const { t } = useTranslation();
 
-  const { fitStageScreen, exportStage, updateSnackbarAlert } =
-    useStageContext();
+  const { fitStage, exportStage, updateSnackbarAlert } = useStageContext();
 
   const {
     shapeList,
@@ -214,13 +213,13 @@ export const ToolbarIO = React.memo((): React.JSX.Element => {
     // Reset selected ids
     updateSelectedIds(undefined, true);
 
-    fitStageScreen(true);
+    fitStage(true);
 
     setSaveInfo({
       ...initRef.current,
       isOpen: true,
     });
-  }, [fitStageScreen, updateSelectedIds]);
+  }, [fitStage, updateSelectedIds]);
 
   const saveHandler = React.useCallback(async (): Promise<void> => {
     if (!reportInfoRef.current) {
@@ -277,7 +276,7 @@ export const ToolbarIO = React.memo((): React.JSX.Element => {
         format: "json",
       });
 
-      // Call API to upload fiel
+      // Call API to upload file
       if (saveInfo.type !== "report") {
         imageFileResponse = await uploadFile({
           blob: base64ToBlob(exportStage("png", true), "png"),
@@ -676,7 +675,7 @@ export const ToolbarIO = React.memo((): React.JSX.Element => {
     // Reset selected ids
     updateSelectedIds(undefined, true);
 
-    fitStageScreen(true);
+    fitStage(true);
 
     setExportInfo({
       ...settingInitRef.current,
@@ -698,7 +697,7 @@ export const ToolbarIO = React.memo((): React.JSX.Element => {
         }
       }
     });
-  }, [fitStageScreen, shapeList, updateSelectedIds]);
+  }, [fitStage, shapeList, updateSelectedIds]);
 
   const renderPreviewControllerRef = React.useRef<AbortController>(undefined);
 
@@ -1663,7 +1662,15 @@ export const ToolbarIO = React.memo((): React.JSX.Element => {
     }, [t, importFromCloudHandler]);
 
   useDebounceHotKey({
-    keys: ["ctrl+shift+s", "cmd+shift+s"],
+    keys: ["ctrl+s", "meta+s"],
+    callback: () => {
+      saveHandler();
+    },
+    deps: [saveHandler],
+  });
+
+  useDebounceHotKey({
+    keys: ["ctrl+shift+s", "meta+shift+s"],
     callback: () => {
       saveToCloudHandler();
     },

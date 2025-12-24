@@ -32,7 +32,7 @@ export const ToolbarGeneralSetting = React.memo((): React.JSX.Element => {
     guideLinesStick,
     stageMinWidth,
     stageRatio,
-    updateLanguage,
+    setLanguage,
     setGuideLinesThreshold,
     setGuideLinesStick,
     stageWidth,
@@ -52,9 +52,9 @@ export const ToolbarGeneralSetting = React.memo((): React.JSX.Element => {
 
   const changeLanguage = React.useCallback(
     (value: string): void => {
-      updateLanguage(value);
+      setLanguage(value);
     },
-    [updateLanguage]
+    [setLanguage]
   );
 
   const changeMaxHistory = React.useCallback(

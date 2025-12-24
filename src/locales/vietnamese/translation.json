@@ -623,7 +623,7 @@
                     "Ctrl + Plus/Cmd + Plus: Phóng to.",
                     "Ctrl + Minus/Cmd + Minus: Thu nhỏ.",
                     "Ctrl + 0/Cmd + 0: Vừa màn hình.",
-                    "Esc/Escape: Kết thúc vẽ dự do/Bỏ chọn đối tượng.",
+                    "Esc/Escape: Kết thúc vẽ tự do/Bỏ chọn đối tượng.",
                     "Ctrl + W/Cmd + W: Đóng trang."
                   ]
                 },
@@ -1183,13 +1183,22 @@
             },
             "solarize": {
               "title": "Âm bản"
+            },
+            "rgba": {
+              "title": "RGBA",
+              "children": {
+                "color": {
+                  "title": "Màu RGBA"
+                },
+                "opacity": {
+                  "title": "Độ mờ RGBA"
+                }
+              }
             }
           }
         }
       }
     }
   },
-  "common": {
-    "search": "Tìm kiếm"
-  }
+  "common": {}
 }

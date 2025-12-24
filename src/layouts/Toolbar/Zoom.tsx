@@ -14,7 +14,7 @@ export const ToolbarZoom = React.memo((): React.JSX.Element => {
   const { t } = useTranslation();
 
   const {
-    fitStageScreen,
+    fitStage,
     updateSnackbarAlert,
     zoomStage,
     stageZoom,
@@ -22,9 +22,9 @@ export const ToolbarZoom = React.memo((): React.JSX.Element => {
     stageZoomMax,
   } = useStageContext();
 
-  const fitStageScreenHandler = React.useCallback((): void => {
-    fitStageScreen(false);
-  }, [fitStageScreen]);
+  const fitStageHandler = React.useCallback((): void => {
+    fitStage(false);
+  }, [fitStage]);
 
   const zoomStageHandler = React.useCallback(
     (value: string): void => {
@@ -56,7 +56,7 @@ export const ToolbarZoom = React.memo((): React.JSX.Element => {
   }, [t, stageZoom, updateSnackbarAlert]);
 
   useDebounceHotKey({
-    keys: ["ctrl+plus", "cmd+plus"],
+    keys: ["ctrl++", "meta++"],
     callback: () => {
       zoomStageToPointerHandler();
     },
@@ -64,7 +64,7 @@ export const ToolbarZoom = React.memo((): React.JSX.Element => {
   });
 
   useDebounceHotKey({
-    keys: ["ctrl+minus", "cmd+minus"],
+    keys: ["ctrl+-", "meta+-"],
     callback: () => {
       zoomStageToPointerHandler("true");
     },
@@ -72,11 +72,11 @@ export const ToolbarZoom = React.memo((): React.JSX.Element => {
   });
 
   useDebounceHotKey({
-    keys: ["ctrl+0", "cmd+0"],
+    keys: ["ctrl+0", "meta+0"],
     callback: () => {
-      fitStageScreenHandler();
+      fitStageHandler();
     },
-    deps: [fitStageScreenHandler],
+    deps: [fitStageHandler],
   });
 
   return (
@@ -102,7 +102,7 @@ export const ToolbarZoom = React.memo((): React.JSX.Element => {
       <TooltipButton
         icon={<FitScreenTwoTone />}
         title={t("toolBar.fitScreen.title")}
-        onClick={fitStageScreenHandler}
+        onClick={fitStageHandler}
       />
     </ButtonGroup>
   );

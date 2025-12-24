@@ -1183,13 +1183,22 @@
             },
             "solarize": {
               "title": "Solarize"
+            },
+            "rgba": {
+              "title": "RGBA",
+              "children": {
+                "color": {
+                  "title": "RGBA Color"
+                },
+                "opacity": {
+                  "title": "RGBA Opacity"
+                }
+              }
             }
           }
         }
       }
     }
   },
-  "common": {
-    "search": "Search"
-  }
+  "common": {}
 }
