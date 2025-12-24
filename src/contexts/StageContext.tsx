@@ -61,6 +61,16 @@ type SetGridStyle = {
   style: KonvaGridStyle;
 };
 
+type SetToolbarHeight = {
+  stage: Konva.Stage;
+  height: number;
+};
+
+type SetPanelWidth = {
+  stage: Konva.Stage;
+  width: number;
+};
+
 type SetStageMinWidth = {
   stage: Konva.Stage;
   width: number;
@@ -124,6 +134,8 @@ type StageAction = {
     | boolean
     | number
     | string
+    | SetToolbarHeight
+    | SetPanelWidth
     | SetStageMinWidth
     | SetStageRatio
     | SetBackgroundColor
@@ -216,9 +228,36 @@ function reducer(state: State, action: StageAction): State {
     }
 
     case "SET_PANEL_WIDTH": {
+      const panelWidth: SetPanelWidth = action.payload as SetPanelWidth;
+
+      const stage: Konva.Stage = panelWidth.stage;
+      if (!stage) {
+        return state;
+      }
+
+      const width: number = innerWidth - state.panelWidth;
+      const height: number = innerHeight - state.toolbarHeight;
+
+      const scaleX: number = width / state.stageWidth;
+      const scaleY: number = height / state.stageHeight;
+
+      const newStageZoom = limitValue(
+        scaleX < scaleY ? scaleX : scaleY,
+        state.stageZoomMin,
+        state.stageZoomMax
+      );
+
+      stage.setAttrs({
+        scaleX: newStageZoom,
+        scaleY: newStageZoom,
+        x: (width - state.stageWidth * newStageZoom) / 2,
+        y: (height - state.stageHeight * newStageZoom) / 2,
+      });
+
       return {
         ...state,
-        panelWidth: action.payload as number,
+        stageZoom: newStageZoom,
+        panelWidth: panelWidth.width,
       };
     }
 
@@ -237,9 +276,37 @@ function reducer(state: State, action: StageAction): State {
     }
 
     case "SET_TOOLBAR_HEIGHT": {
+      const toolbarHeight: SetToolbarHeight =
+        action.payload as SetToolbarHeight;
+
+      const stage: Konva.Stage = toolbarHeight.stage;
+      if (!stage) {
+        return state;
+      }
+
+      const width: number = innerWidth - state.panelWidth;
+      const height: number = innerHeight - state.toolbarHeight;
+
+      const scaleX: number = width / state.stageWidth;
+      const scaleY: number = height / state.stageHeight;
+
+      const newStageZoom = limitValue(
+        scaleX < scaleY ? scaleX : scaleY,
+        state.stageZoomMin,
+        state.stageZoomMax
+      );
+
+      stage.setAttrs({
+        scaleX: newStageZoom,
+        scaleY: newStageZoom,
+        x: (width - state.stageWidth * newStageZoom) / 2,
+        y: (height - state.stageHeight * newStageZoom) / 2,
+      });
+
       return {
         ...state,
-        toolbarHeight: action.payload as number,
+        stageZoom: newStageZoom,
+        toolbarHeight: toolbarHeight.height,
       };
     }
 
@@ -840,15 +907,9 @@ export function StageProvider(prop: StageProviderProp): React.JSX.Element {
       return;
     }
 
-    const position: Vector2d = stage
-      .getAbsoluteTransform()
-      .copy()
-      .invert()
-      .point(stage.position());
-
     return {
-      x: stage.width() / 2 - position.x,
-      y: stage.height() / 2 - position.y,
+      x: stage.width() / 2,
+      y: stage.height() / 2,
     };
   }, []);
 
@@ -861,15 +922,11 @@ export function StageProvider(prop: StageProviderProp): React.JSX.Element {
       return;
     }
 
-    if (dragable) {
-      stage.draggable(true);
+    stage.draggable(dragable);
 
-      lastPointerPosition.current = stage.getPointerPosition();
-    } else {
-      stage.draggable(false);
-
-      lastPointerPosition.current = undefined;
-    }
+    lastPointerPosition.current = dragable
+      ? stage.getPointerPosition()
+      : undefined;
   }, []);
 
   /**
@@ -897,7 +954,7 @@ export function StageProvider(prop: StageProviderProp): React.JSX.Element {
       guideLinesRef.current = guideLines;
 
       guideLines?.updateProp({
-        id: "guideLines",
+        id: "guide-lines",
         style: "dotted",
         strokeWidth: 1.5,
         stroke: "#ff0000",
@@ -936,7 +993,10 @@ export function StageProvider(prop: StageProviderProp): React.JSX.Element {
   const setPanelWidth = React.useCallback((width: number): void => {
     dispatch({
       type: "SET_PANEL_WIDTH",
-      payload: width,
+      payload: {
+        stage: stageRef.current,
+        width: width,
+      },
     });
   }, []);
 
@@ -966,7 +1026,10 @@ export function StageProvider(prop: StageProviderProp): React.JSX.Element {
   const setToolbarHeight = React.useCallback((height: number): void => {
     dispatch({
       type: "SET_TOOLBAR_HEIGHT",
-      payload: height,
+      payload: {
+        stage: stageRef.current,
+        height: height,
+      },
     });
   }, []);
 
