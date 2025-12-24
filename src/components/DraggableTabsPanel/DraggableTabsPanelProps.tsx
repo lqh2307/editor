@@ -21,6 +21,13 @@ export interface DraggableTabsPanelProps<T = any> {
   width?: number;
   height?: number;
   onClose?: () => void;
+  hideTabs?: boolean;
+  activeKey?: string;
+  onChangeActiveKey?: (key: string) => void;
+  headerRight?: React.ReactNode;
+  usePortal?: boolean;
+  bounds?: any;
+  draggable?: boolean;
 }
 
 const DraggableTabsPanel = <T,>({
@@ -28,14 +35,28 @@ const DraggableTabsPanel = <T,>({
   data,
   renderTab,
   title = 'Panel',
-  defaultPosition = { x: 100, y: 100 },
+  defaultPosition = { x: 0, y: 10 },
   width,
   height,
   onClose,
+  hideTabs,
+  activeKey,
+  onChangeActiveKey,
+  headerRight,
+  usePortal = true,
+  bounds,
+  draggable = true,
 }: DraggableTabsPanelProps<T>) => {
-  const [activeTab, setActiveTab] = useState<string | undefined>(
-    tabs?.[0]?.key
-  );
+  const [internalActive, setInternalActive] = useState<string | undefined>(tabs?.[0]?.key);
+
+  const activeTab = activeKey !== undefined ? activeKey : internalActive;
+  const setActiveTab = (key: string) => {
+    if (onChangeActiveKey) {
+      onChangeActiveKey(key);
+    } else {
+      setInternalActive(key);
+    }
+  };
 
   const nodeRef = useRef<HTMLDivElement | null>(null);
 
@@ -43,7 +64,8 @@ const DraggableTabsPanel = <T,>({
     <Draggable
       nodeRef={nodeRef}
       handle=".drag-handle"
-      bounds="body"
+      bounds={bounds ?? "body"}
+      disabled={!draggable}
       defaultPosition={defaultPosition}
     >
       <div
@@ -51,9 +73,9 @@ const DraggableTabsPanel = <T,>({
         style={{
           width: width ?? 540,
           height: height ?? 420,
-          position: 'fixed',
-          top: 0,
-          left: 0,
+          position: usePortal ? 'fixed' : 'relative',
+          top: usePortal ? 0 : undefined,
+          left: usePortal ? 0 : undefined,
           background: '#fff',
           border: '1px solid #ddd',
           borderRadius: 8,
@@ -77,17 +99,21 @@ const DraggableTabsPanel = <T,>({
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between',
+            gap: 8,
           }}
         >
-          <div style={{ flex: 1 }}>{title}</div>
+          <div style={{ flex: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{title}</div>
+          {headerRight && (
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+              {headerRight}
+            </div>
+          )}
           {onClose && (
             <IconButton
               size="small"
               onClick={(e) => {
-                e.stopPropagation();
                 onClose();
               }}
-              onMouseDown={(e) => e.stopPropagation()}
               aria-label="close"
             >
               <CloseIcon fontSize="small" />
@@ -95,38 +121,40 @@ const DraggableTabsPanel = <T,>({
           )}
         </div>
 
-        {/* TABS - horizontally scrollable when many groups */}
-        <div
-          style={{
-            display: 'block',
-            borderBottom: '1px solid #eee',
-            overflowX: 'auto',
-            whiteSpace: 'nowrap',
-          }}
-        >
-          {tabs.map((tab) => (
-            <div
-              key={tab.key}
-              onClick={() => setActiveTab(tab.key)}
-              style={{
-                display: 'inline-block',
-                padding: '6px 10px',
-                cursor: 'pointer',
-                borderBottom:
-                  activeTab === tab.key
-                    ? '2px solid #1677ff'
-                    : '2px solid transparent',
-                marginRight: 6,
-                userSelect: 'none',
-                fontSize: 13,
-                minWidth: 80,
-                textAlign: 'center',
-              }}
-            >
-              {tab.label}
-            </div>
-          ))}
-        </div>
+        {!hideTabs && tabs?.length > 0 && (
+          // TABS - horizontally scrollable when many groups
+          <div
+            style={{
+              display: 'block',
+              borderBottom: '1px solid #eee',
+              overflowX: 'auto',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            {tabs.map((tab) => (
+              <div
+                key={tab.key}
+                onClick={() => setActiveTab(tab.key)}
+                style={{
+                  display: 'inline-block',
+                  padding: '6px 10px',
+                  cursor: 'pointer',
+                  borderBottom:
+                    activeTab === tab.key
+                      ? '2px solid #1677ff'
+                      : '2px solid transparent',
+                  marginRight: 6,
+                  userSelect: 'none',
+                  fontSize: 13,
+                  minWidth: 80,
+                  textAlign: 'center',
+                }}
+              >
+                {tab.label}
+              </div>
+            ))}
+          </div>
+        )}
 
         {/* CONTENT */}
         <div style={{ flex: 1, padding: 12, overflow: 'auto' }}>
@@ -136,7 +164,7 @@ const DraggableTabsPanel = <T,>({
     </Draggable>
   );
 
-  return createPortal(panel, document.body);
+  return usePortal ? createPortal(panel, document.body) : panel;
 };
 
 export default DraggableTabsPanel;
