@@ -60,7 +60,7 @@ const DraggableTabsPanel = <T,>({
           boxShadow: '0 8px 24px rgba(0,0,0,0.15)',
           display: 'flex',
           flexDirection: 'column',
-          zIndex: 99999,
+          zIndex: 1000,
           pointerEvents: 'auto',
         }}
       >

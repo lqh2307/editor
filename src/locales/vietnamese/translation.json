@@ -1185,5 +1185,7 @@
       }
     }
   },
-  "common": {}
+  "common": {
+    "search": "Tìm kiếm"
+  }
 }

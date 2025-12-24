@@ -13,7 +13,8 @@ import { useTranslation } from "react-i18next";
 import { IconInfo, ItemInfo } from "./Types";
 import { getIcons } from "../../apis/icon";
 import { AxiosResponse } from "axios";
-import { Box, IconButton } from "@mui/material";
+import { Box, IconButton, TextField, InputAdornment } from "@mui/material";
+import SearchTwoTone from '@mui/icons-material/SearchTwoTone';
 import Favorite from '@mui/icons-material/Favorite';
 import FavoriteBorder from '@mui/icons-material/FavoriteBorder';
 import { getValue, setValue } from "../../utils/LocalStorage";
@@ -88,6 +89,8 @@ export const ToolbarAddMilitaryIcon = React.memo((): React.JSX.Element => {
   }[]>([]);
 
   const [panelOpen, setPanelOpen] = React.useState(false);
+
+  const [searchQuery, setSearchQuery] = React.useState<string>("");
 
   const FAVORITES_KEY = "toolbar_military_icon_favorites_v1";
 
@@ -288,52 +291,69 @@ export const ToolbarAddMilitaryIcon = React.memo((): React.JSX.Element => {
               data={dataProp}
               renderTab={(key: string, data: Record<string, KonvaIcon[]>) => {
                 const icons = data?.[key] || [];
+                const q = (searchQuery || "").toLowerCase();
+                const filteredIcons = q
+                  ? icons.filter((i) => (i?.name || "").toLowerCase().includes(q))
+                  : icons;
 
                 const panelW = Math.min(window?.innerWidth - 80, 615);
                 const panelH = Math.min(window?.innerHeight - 120, 360);
 
-            // header ~40, tabs ~48, padding ~24 => remaining height for grid
-            const headerH = 40;
-            const tabsH = 48;
-            const padding = 24;
+                // header ~40, tabs ~48, padding ~24 => remaining height for grid
+                const headerH = 40;
+                const tabsH = 48;
+                const padding = 24;
 
-            const paddingHorizontal = 24; // panel content padding left+right (12+12)
-            const paddingVertical = 24; // top+bottom padding estimate
+                const paddingHorizontal = 24; // panel content padding left+right (12+12)
+                const paddingVertical = 24; // top+bottom padding estimate
 
-            const availableWidth = Math.max(220, panelW - paddingHorizontal);
-            const availableHeight = Math.max(
-              140,
-              panelH - headerH - tabsH - paddingVertical
-            );
+                const availableWidth = Math.max(220, panelW - paddingHorizontal);
+                const availableHeight = Math.max(140, panelH - headerH - tabsH - paddingVertical);
 
-            const gapX = 8;
-            const gapY = 8;
-            const itemW = iconConfigRef.current.itemWidth;
-            const itemH = iconConfigRef.current.itemHeight;
+                const gapX = 8;
+                const gapY = 8;
+                const itemW = iconConfigRef.current.itemWidth;
+                const itemH = iconConfigRef.current.itemHeight;
 
-            const columnUnit = itemW + gapX;
-            const rowUnit = itemH + gapY;
+                const columnUnit = itemW + gapX;
+                const rowUnit = itemH + gapY;
 
-            const dynamicColumns = Math.max(1, Math.floor(availableWidth / columnUnit));
-            const dynamicRows = Math.max(1, Math.floor(availableHeight / rowUnit));
+                const dynamicColumns = Math.max(1, Math.floor(availableWidth / columnUnit));
+                const dynamicRows = Math.max(1, Math.floor(availableHeight / rowUnit));
 
-            const Cell = makeIconCell(icons, dynamicColumns, favoritesSet, toggleFavorite);
+                const Cell = makeIconCell(filteredIcons, dynamicColumns, favoritesSet, toggleFavorite);
 
-            return (
-              <Box sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
-                <Box sx={{ flex: 1, overflow: 'hidden' }}>
-                  <PartialItemGrid
-                    isLoading={iconInfo.isLoading}
-                    cellComponent={Cell}
-                    items={icons}
-                    renderColumn={dynamicColumns}
-                    renderRow={dynamicRows}
-                    itemWidth={iconConfigRef.current.itemWidth}
-                    itemHeight={iconConfigRef.current.itemHeight}
-                  />
-                </Box>
-              </Box>
-            );
+                return (
+                  <Box sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
+                    <Box sx={{ p: 0, mb: 1 }}>
+                      <TextField
+                        size="small"
+                        fullWidth
+                        placeholder={t("common.search") || "Search icons"}
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                        InputProps={{
+                          startAdornment: (
+                            <InputAdornment position="start">
+                              <SearchTwoTone fontSize="small" />
+                            </InputAdornment>
+                          ),
+                        }}
+                      />
+                    </Box>
+                    <Box sx={{ flex: 1, overflow: 'hidden' }}>
+                      <PartialItemGrid
+                        isLoading={iconInfo.isLoading}
+                        cellComponent={Cell}
+                        items={filteredIcons}
+                        renderColumn={dynamicColumns}
+                        renderRow={dynamicRows}
+                        itemWidth={iconConfigRef.current.itemWidth}
+                        itemHeight={iconConfigRef.current.itemHeight}
+                      />
+                    </Box>
+                  </Box>
+                );
               }}
               title={t("toolBar.addMilitaryIcon.title")}
               width={Math.min(window?.innerWidth - 80, 615)}
