@@ -1,5 +1,6 @@
 import { TooltipCheckbox } from "../../components/TooltipCheckbox";
 import { SliderInput } from "../../components/SliderInput";
+import { ColorInput } from "../../components/ColorInput";
 import { useShapesContext } from "../../contexts";
 import { useTranslation } from "react-i18next";
 import { TabPanel } from "@mui/lab";
@@ -13,14 +14,14 @@ import {
 } from "../../types/Common";
 import {
   HdrEnhancedSelectTwoTone,
+  FormatColorFillTwoTone,
   HighQualityTwoTone,
   Brightness6TwoTone,
   ExpandMoreTwoTone,
   ContrastTwoTone,
+  OpacityTwoTone,
   BlurOnTwoTone,
   GrainTwoTone,
-  FormatColorFillTwoTone,
-  OpacityTwoTone,
 } from "@mui/icons-material";
 import {
   AccordionDetails,
@@ -29,7 +30,6 @@ import {
   Accordion,
   Stack,
 } from "@mui/material";
-import { ColorInput } from "../../components/ColorInput";
 
 export const FilterTab = React.memo((): React.JSX.Element => {
   const { t } = useTranslation();

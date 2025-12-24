@@ -1,10 +1,12 @@
+import { UseFetchAPIProp } from "./Types";
 import React from "react";
 import axios from "axios";
 
-export function useFetchAPI(
-  url: string,
-  options: any
-): { data: any; loading: boolean; error: any } {
+export function useFetchAPI({ url, options }: UseFetchAPIProp): {
+  data: any;
+  loading: boolean;
+  error: any;
+} {
   const [data, setData] = React.useState<any>();
   const [loading, setLoading] = React.useState<boolean>(true);
   const [error, setError] = React.useState<any>();

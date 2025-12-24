@@ -1,5 +1,7 @@
+import { KonvaTooltipAPI, KonvaTooltip } from "../../components/KonvaTooltip";
 import { createPathsFromSVG, removeSvgTag } from "../../utils/Shapes";
 import { KonvaGridAPI, KonvaGrid } from "../../components/KonvaGrid";
+import { calculateLatLonFromPointer } from "../../utils/Map/Utils";
 import { SnackbarAlert } from "../../components/SnackbarAlert";
 import { KonvaShape } from "../../components/KonvaShape";
 import { stringToBase64 } from "../../utils/Image";
@@ -23,7 +25,6 @@ import {
   KonvaGuideLinesAPI,
   KonvaGuideLines,
 } from "../../components/KonvaGuideLines";
-import { KonvaTooltipAPI, KonvaTooltip } from "../../components/KonvaTooltip";
 import { useMapContext } from "../../contexts";
 import {
   useDrawingContext,
@@ -35,7 +36,6 @@ import {
   KonvaTransformer,
   KonvaTFM,
 } from "../../components/KonvaTransformer";
-import { calculateLatLonFromPointer } from "../../utils/Map/Utils";
 
 export const Canvas = React.memo((): React.JSX.Element => {
   const { t } = useTranslation();

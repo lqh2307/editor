@@ -8,7 +8,7 @@ export function useDebounceHotKey({
   delay = 200,
   options,
   deps,
-}: UseDebounceHotKeyProp) {
+}: UseDebounceHotKeyProp): void {
   const [debounced] = useDebounce(callback, delay, deps);
 
   useHotkeys(

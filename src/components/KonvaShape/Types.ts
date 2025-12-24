@@ -1,5 +1,5 @@
 import { KonvaLineStyle } from "../../types/Konva";
-import { Size } from "../../types/Common";
+import { Point, Size } from "../../types/Common";
 import Konva from "konva";
 
 export type KonvaShape = Partial<Konva.ShapeConfig> &
@@ -20,6 +20,7 @@ export type KonvaShape = Partial<Konva.ShapeConfig> &
     type?: KonvaShapeType;
     box?: KonvaShapeBox;
     clip?: KonvaShapeClip;
+    coordinate?: Point;
 
     // Filter
     brightness?: number;

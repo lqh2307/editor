@@ -10,3 +10,8 @@ export type UseDebounceHotKeyProp = {
   options?: Options;
   deps: any;
 };
+
+export type UseFetchAPIProp = {
+  url: string;
+  options: any;
+};

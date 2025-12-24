@@ -146,42 +146,58 @@ function reducer(state: State, action: StageAction): State {
     }
 
     case "SET_BACKGROUND_COLOR": {
-      const color: SetBackgroundColor = action.payload as SetBackgroundColor;
+      const backgroundColor: SetBackgroundColor =
+        action.payload as SetBackgroundColor;
 
-      color.background?.updateProp({
-        fill: color.color,
+      const background: KonvaBackgroundAPI = backgroundColor.background;
+      if (!background) {
+        return state;
+      }
+
+      background.updateProp({
+        fill: backgroundColor.color,
       });
 
       return {
         ...state,
-        backgroundColor: color.color,
+        backgroundColor: backgroundColor.color,
       };
     }
 
     case "SET_BACKGROUND_OPACITY": {
-      const opacity: SetBackgroundOpacity =
+      const backgroundOpacity: SetBackgroundOpacity =
         action.payload as SetBackgroundOpacity;
 
-      opacity.background?.updateProp({
-        opacity: opacity.opacity,
+      const background: KonvaBackgroundAPI = backgroundOpacity.background;
+      if (!background) {
+        return state;
+      }
+
+      background.updateProp({
+        opacity: backgroundOpacity.opacity,
       });
 
       return {
         ...state,
-        backgroundOpacity: opacity.opacity,
+        backgroundOpacity: backgroundOpacity.opacity,
       };
     }
 
     case "SET_GRID_STYLE": {
-      const style: SetGridStyle = action.payload as SetGridStyle;
+      const gridStyle: SetGridStyle = action.payload as SetGridStyle;
 
-      style.grid?.updateProp({
-        style: style.style,
+      const grid: KonvaGridAPI = gridStyle.grid;
+      if (!grid) {
+        return state;
+      }
+
+      grid.updateProp({
+        style: gridStyle.style,
       });
 
       return {
         ...state,
-        gridStyle: style.style,
+        gridStyle: gridStyle.style,
       };
     }
 
@@ -241,6 +257,7 @@ function reducer(state: State, action: StageAction): State {
       if (!stage) {
         return state;
       }
+
       const width: number = innerWidth - state.panelWidth;
       const height: number = innerHeight - state.toolbarHeight;
       let newStageZoom: number;
@@ -1049,7 +1066,7 @@ export function StageProvider(prop: StageProviderProp): React.JSX.Element {
     return () => {
       removeEventListener("resize", resizeHandler);
     };
-  }, []);
+  }, [fitStage]);
 
   const contextValue: IStageContext = React.useMemo<IStageContext>(
     () => ({
