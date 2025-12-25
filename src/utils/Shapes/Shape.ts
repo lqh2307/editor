@@ -430,7 +430,7 @@ export function createShape(shape: KonvaShape): KonvaShape {
         }
       } else {
         newShape.points = newShape.points ?? [
-          0, 0, 64.6, 135.4, 135.4, 64.6, 200, 200,
+          0, 100, 33, 0, 66, 0, 100, 100, 133, 200, 166, 200, 200, 100,
         ];
 
         if (newShape.type === "bezier-arrow-curve") {

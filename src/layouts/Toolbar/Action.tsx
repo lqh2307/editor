@@ -1,5 +1,6 @@
 import { useShapesContext, useStageContext } from "../../contexts";
 import { useDebounceHotKey } from "../../hooks/useDebounceHotKey";
+import { FaObjectGroup, FaObjectUngroup } from "react-icons/fa";
 import { TooltipButton } from "../../components/TooltipButton";
 import { useTranslation } from "react-i18next";
 import { ButtonGroup } from "@mui/material";
@@ -9,10 +10,8 @@ import {
   ContentPasteTwoTone,
   ContentCopyTwoTone,
   ContentCopyRounded,
-  GroupRemoveTwoTone,
   ContentCutTwoTone,
   SelectAllTwoTone,
-  GroupAdd,
 } from "@mui/icons-material";
 
 export const ToolbarAction = React.memo((): React.JSX.Element => {
@@ -191,14 +190,14 @@ export const ToolbarAction = React.memo((): React.JSX.Element => {
   return (
     <ButtonGroup variant={"contained"} size={"small"}>
       <TooltipButton
-        icon={<GroupAdd />}
+        icon={<FaObjectGroup />}
         title={t("toolBar.group.title")}
         disabled={isGroupDisabled}
         onClick={groupShapesHandler}
       />
 
       <TooltipButton
-        icon={<GroupRemoveTwoTone />}
+        icon={<FaObjectUngroup />}
         title={t("toolBar.unGroup.title")}
         disabled={isGroupDisabled}
         value={"true"}
