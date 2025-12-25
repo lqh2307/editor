@@ -37,7 +37,7 @@ export const ToolbarAddRegularShape = React.memo((): React.JSX.Element => {
           },
         ],
         false,
-        undefined,
+        false,
         getStageCenter()
       );
     },
@@ -223,21 +223,6 @@ export const ToolbarAddRegularShape = React.memo((): React.JSX.Element => {
           }}
         >
           <TooltipButton
-            icon={<SignalWifiStatusbarNullTwoTone fontSize={"small"} />}
-            title={t("toolBar.addShape.children.wedge.title")}
-            onClick={addRegularShapeHandler}
-            value={JSON.stringify({
-              type: "wedge",
-            })}
-            onDragStart={dragRegularShapeHandler}
-            draggable={true}
-            sx={{
-              minWidth: 36,
-              minHeight: 32,
-            }}
-          />
-
-          <TooltipButton
             icon={<ShareTwoTone fontSize={"small"} />}
             title={t("toolBar.addShape.children.quadraticCurve.title")}
             onClick={addRegularShapeHandler}
@@ -253,11 +238,66 @@ export const ToolbarAddRegularShape = React.memo((): React.JSX.Element => {
           />
 
           <TooltipButton
+            icon={<ShareTwoTone fontSize={"small"} />}
+            title={t("toolBar.addShape.children.quadraticArrowCurve.title")}
+            onClick={addRegularShapeHandler}
+            value={JSON.stringify({
+              type: "quadratic-arrow-curve",
+            })}
+            onDragStart={dragRegularShapeHandler}
+            draggable={true}
+            sx={{
+              minWidth: 36,
+              minHeight: 32,
+            }}
+          />
+
+          <TooltipButton
             icon={<TimelineTwoTone fontSize={"small"} />}
             title={t("toolBar.addShape.children.bezierCurve.title")}
             onClick={addRegularShapeHandler}
             value={JSON.stringify({
               type: "bezier-curve",
+            })}
+            onDragStart={dragRegularShapeHandler}
+            draggable={true}
+            sx={{
+              minWidth: 36,
+              minHeight: 32,
+            }}
+          />
+
+          <TooltipButton
+            icon={<TimelineTwoTone fontSize={"small"} />}
+            title={t("toolBar.addShape.children.bezierArrowCurve.title")}
+            onClick={addRegularShapeHandler}
+            value={JSON.stringify({
+              type: "bezier-arrow-curve",
+            })}
+            onDragStart={dragRegularShapeHandler}
+            draggable={true}
+            sx={{
+              minWidth: 36,
+              minHeight: 32,
+            }}
+          />
+        </Box>
+
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: "row",
+            alignItems: "center",
+            justifyContent: "center",
+            gap: "0.5rem",
+          }}
+        >
+          <TooltipButton
+            icon={<SignalWifiStatusbarNullTwoTone fontSize={"small"} />}
+            title={t("toolBar.addShape.children.wedge.title")}
+            onClick={addRegularShapeHandler}
+            value={JSON.stringify({
+              type: "wedge",
             })}
             onDragStart={dragRegularShapeHandler}
             draggable={true}

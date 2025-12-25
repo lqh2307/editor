@@ -531,7 +531,9 @@ function reducer(state: State, action: Action): State {
               }
 
               case "quadratic-curve":
-              case "bezier-curve": {
+              case "quadratic-arrow-curve":
+              case "bezier-curve":
+              case "bezier-arrow-curve": {
                 item.x =
                   add.position.x -
                   (item.points[0] + item.points[6]) / 2 +

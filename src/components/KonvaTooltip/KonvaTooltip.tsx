@@ -11,7 +11,7 @@ export const KonvaTooltip = React.memo(
 
       // Update prop (Overwrite)
       React.useEffect(() => {
-        currentPropRef.current = prop;
+        Object.assign(currentPropRef.current, prop);
 
         applyProp();
       }, [prop]);
@@ -71,7 +71,7 @@ export const KonvaTooltip = React.memo(
         (): KonvaTooltipAPI => ({
           updateProp: (prop?: KonvaTooltipProp): void => {
             if (prop) {
-              Object.assign(currentPropRef.current, prop);
+              currentPropRef.current = prop;
             }
 
             applyProp();

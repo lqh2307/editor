@@ -220,7 +220,7 @@ export function createShape(shape: KonvaShape): KonvaShape {
       newShape.strokeOpacity = newShape.strokeOpacity ?? 1;
       newShape.strokeScaleEnabled = newShape.strokeScaleEnabled ?? false;
       newShape.strokeWidth = newShape.strokeWidth ?? 5;
-      newShape.tension = newShape.tension ?? 1;
+      newShape.tension = newShape.tension ?? 0.4;
       newShape.lines = newShape.lines ?? [];
 
       // Offset
@@ -230,7 +230,38 @@ export function createShape(shape: KonvaShape): KonvaShape {
       break;
     }
 
-    case "multi-line": {
+    case "multi-line":
+    case "multi-arrow":
+    case "multi-line-curve":
+    case "multi-arrow-curve": {
+      // Arrow size and tension
+      if (
+        newShape.type === "multi-arrow" ||
+        newShape.type === "multi-arrow-curve"
+      ) {
+        newShape.pointerWidth =
+          newShape.pointerWidth ?? newShape.pointerWidth ?? 10;
+        newShape.pointerLength =
+          newShape.pointerLength ?? newShape.pointerLength ?? 10;
+
+        if (newShape.type === "multi-arrow-curve") {
+          newShape.tension = newShape.tension ?? 0.4;
+        } else {
+          newShape.tension = newShape.tension ?? 0;
+        }
+      } else {
+        newShape.pointerWidth =
+          newShape.pointerWidth ?? newShape.pointerWidth ?? 0;
+        newShape.pointerLength =
+          newShape.pointerLength ?? newShape.pointerLength ?? 0;
+
+        if (newShape.type === "multi-line-curve") {
+          newShape.tension = newShape.tension ?? 0.4;
+        } else {
+          newShape.tension = newShape.tension ?? 0;
+        }
+      }
+
       // Common
       newShape.x = newShape.x ?? 0;
       newShape.y = newShape.y ?? 0;
@@ -247,12 +278,6 @@ export function createShape(shape: KonvaShape): KonvaShape {
       newShape.bezier = newShape.bezier ?? false;
       newShape.closed = newShape.closed ?? false;
       newShape.points = newShape.points ?? [];
-
-      // Arrow size
-      newShape.pointerWidth =
-        newShape.pointerWidth ?? newShape.pointerWidth ?? 0;
-      newShape.pointerLength =
-        newShape.pointerLength ?? newShape.pointerLength ?? 0;
 
       // Offset
       newShape.offsetX = newShape.offsetX ?? 0;
@@ -382,7 +407,45 @@ export function createShape(shape: KonvaShape): KonvaShape {
     }
 
     case "quadratic-curve":
-    case "bezier-curve": {
+    case "quadratic-arrow-curve":
+    case "bezier-curve":
+    case "bezier-arrow-curve": {
+      // Points and arrow size
+      if (
+        newShape.type === "quadratic-curve" ||
+        newShape.type === "quadratic-arrow-curve"
+      ) {
+        newShape.points = newShape.points ?? [0, 0, 200, 0, 200, 0, 200, 200];
+
+        if (newShape.type === "quadratic-arrow-curve") {
+          newShape.pointerWidth =
+            newShape.pointerWidth ?? newShape.pointerWidth ?? 10;
+          newShape.pointerLength =
+            newShape.pointerLength ?? newShape.pointerLength ?? 10;
+        } else {
+          newShape.pointerWidth =
+            newShape.pointerWidth ?? newShape.pointerWidth ?? 0;
+          newShape.pointerLength =
+            newShape.pointerLength ?? newShape.pointerLength ?? 0;
+        }
+      } else {
+        newShape.points = newShape.points ?? [
+          0, 0, 64.6, 135.4, 135.4, 64.6, 200, 200,
+        ];
+
+        if (newShape.type === "bezier-arrow-curve") {
+          newShape.pointerWidth =
+            newShape.pointerWidth ?? newShape.pointerWidth ?? 10;
+          newShape.pointerLength =
+            newShape.pointerLength ?? newShape.pointerLength ?? 10;
+        } else {
+          newShape.pointerWidth =
+            newShape.pointerWidth ?? newShape.pointerWidth ?? 0;
+          newShape.pointerLength =
+            newShape.pointerLength ?? newShape.pointerLength ?? 0;
+        }
+      }
+
       // Common
       newShape.x = newShape.x ?? 150;
       newShape.y = newShape.y ?? 150;
@@ -397,21 +460,6 @@ export function createShape(shape: KonvaShape): KonvaShape {
       newShape.strokeScaleEnabled = newShape.strokeScaleEnabled ?? false;
       newShape.strokeWidth = newShape.strokeWidth ?? 5;
       newShape.bezier = newShape.bezier ?? true;
-
-      // Points
-      if (newShape.type === "quadratic-curve") {
-        newShape.points = newShape.points ?? [0, 0, 200, 0, 200, 0, 200, 200];
-      } else {
-        newShape.points = newShape.points ?? [
-          0, 0, 64.6, 135.4, 135.4, 64.6, 200, 200,
-        ];
-      }
-
-      // Arrow size
-      newShape.pointerWidth =
-        newShape.pointerWidth ?? newShape.pointerWidth ?? 0;
-      newShape.pointerLength =
-        newShape.pointerLength ?? newShape.pointerLength ?? 0;
 
       // Offset
       newShape.offsetX = newShape.offsetX ?? 100;

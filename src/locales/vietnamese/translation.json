@@ -345,8 +345,14 @@
         "quadraticCurve": {
           "title": "Đường cong bậc hai"
         },
+        "quadraticArrowCurve": {
+          "title": "Đường cong mũi tên bậc hai"
+        },
         "bezierCurve": {
           "title": "Đường cong bậc ba"
+        },
+        "bezierArrowCurve": {
+          "title": "Đường cong mũi tên bậc ba"
         }
       },
       "common": {
@@ -457,7 +463,16 @@
       "title": "Thêm văn bản"
     },
     "multiLine": {
-      "title": "Nhiều đường"
+      "title": "Đường thẳng"
+    },
+    "multiArrow": {
+      "title": "Mũi tên thẳng"
+    },
+    "multiLineCurve": {
+      "title": "Đường cong"
+    },
+    "multiArrowCurve": {
+      "title": "Mũi tên cong"
     },
     "drawing": {
       "title": "Vẽ tay"

@@ -9,4 +9,5 @@ export type LoadingImageProp = BoxProps & {
   isLoading?: boolean;
   progress?: number;
   isDisplayProgress?: boolean;
+  backgroundColor?: string;
 };

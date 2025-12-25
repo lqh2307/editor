@@ -22,33 +22,35 @@ export const ToolbarUploadVideo = React.memo((): React.JSX.Element => {
 
   const { addShapes } = useShapesContext();
 
-  const linkInitRef = React.useRef<LinkInfo>({
-    isLoading: false,
-    isOpen: false,
-    link: undefined,
-  });
+  function createResetLinkInfo(): LinkInfo {
+    return {
+      isLoading: false,
+      isOpen: false,
+      link: undefined,
+    };
+  }
 
   const [videoFromLinkInfo, setVideoFromLinkInfo] = React.useState<LinkInfo>(
-    linkInitRef.current
+    createResetLinkInfo()
   );
 
   const videoFromLinkHandler = React.useMemo(() => {
     return {
       open: (): void => {
         setVideoFromLinkInfo({
-          ...linkInitRef.current,
+          ...createResetLinkInfo(),
           isOpen: true,
         });
       },
       close: (): void => {
-        setVideoFromLinkInfo(linkInitRef.current);
+        setVideoFromLinkInfo(createResetLinkInfo());
       },
       onClose: (_: any, reason: "backdropClick" | "escapeKeyDown"): void => {
         if (reason === "backdropClick") {
           return;
         }
 
-        setVideoFromLinkInfo(linkInitRef.current);
+        setVideoFromLinkInfo(createResetLinkInfo());
       },
       changeLink: (value: string): void => {
         setVideoFromLinkInfo((prev) => ({
@@ -75,7 +77,7 @@ export const ToolbarUploadVideo = React.memo((): React.JSX.Element => {
             },
           ],
           false,
-          undefined,
+          false,
           getStageCenter()
         );
       } catch (error) {
@@ -118,7 +120,7 @@ export const ToolbarUploadVideo = React.memo((): React.JSX.Element => {
           "error"
         );
       } finally {
-        setVideoFromLinkInfo(linkInitRef.current);
+        setVideoFromLinkInfo(createResetLinkInfo());
       }
     }, [t, addShapes, videoFromLinkInfo, getStageCenter, updateSnackbarAlert]);
 

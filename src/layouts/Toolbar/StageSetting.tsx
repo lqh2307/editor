@@ -25,30 +25,30 @@ export const ToolbarStageSetting = React.memo((): React.JSX.Element => {
     backgroundColor,
     backgroundOpacity,
     gridStyle,
-    updateBackgroundColor,
-    updateBackgroundOpacity,
-    updateGridStyle,
+    setBackgroundColor,
+    setBackgroundOpacity,
+    setGridStyle,
   } = useStageContext();
 
   const changeBackgroundColorHandler = React.useCallback(
     (value: string): void => {
-      updateBackgroundColor(value);
+      setBackgroundColor(value);
     },
-    [updateBackgroundColor]
+    [setBackgroundColor]
   );
 
   const changeBackgroundOpacityHandler = React.useCallback(
     (value: number): void => {
-      updateBackgroundOpacity(value);
+      setBackgroundOpacity(value);
     },
-    [updateBackgroundOpacity]
+    [setBackgroundOpacity]
   );
 
   const changeGridStyleHandler = React.useCallback(
     (value: string): void => {
-      updateGridStyle(value as KonvaGridStyle);
+      setGridStyle(value as KonvaGridStyle);
     },
-    [updateGridStyle]
+    [setGridStyle]
   );
 
   return (

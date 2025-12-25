@@ -1,4 +1,4 @@
-import { useDrawingContext, useShapesContext } from "../../contexts";
+import { useStageContext, useShapesContext } from "../../contexts";
 import { TooltipButton } from "../../components/TooltipButton";
 import { useTranslation } from "react-i18next";
 import { ButtonGroup } from "@mui/material";
@@ -12,7 +12,7 @@ import {
 export const ToolbarDrawing = React.memo((): React.JSX.Element => {
   const { t } = useTranslation();
 
-  const { drawingMode, setDrawingMode } = useDrawingContext();
+  const { drawingMode, setDrawingMode } = useStageContext();
 
   const { selectedShape } = useShapesContext();
 
@@ -26,6 +26,42 @@ export const ToolbarDrawing = React.memo((): React.JSX.Element => {
             }
 
             case "multi-line": {
+              return undefined;
+            }
+          }
+        }),
+      multiLineCurve: (): void =>
+        setDrawingMode((prev) => {
+          switch (prev) {
+            default: {
+              return "multi-line-curve";
+            }
+
+            case "multi-line-curve": {
+              return undefined;
+            }
+          }
+        }),
+      multiArrow: (): void =>
+        setDrawingMode((prev) => {
+          switch (prev) {
+            default: {
+              return "multi-arrow";
+            }
+
+            case "multi-arrow": {
+              return undefined;
+            }
+          }
+        }),
+      multiArrowCurve: (): void =>
+        setDrawingMode((prev) => {
+          switch (prev) {
+            default: {
+              return "multi-arrow-curve";
+            }
+
+            case "multi-arrow-curve": {
               return undefined;
             }
           }
@@ -75,6 +111,33 @@ export const ToolbarDrawing = React.memo((): React.JSX.Element => {
           background: drawingMode === "multi-line" ? "grey" : "",
         }}
         onClick={changeDrawingModeHandler.multiLine}
+      />
+
+      <TooltipButton
+        icon={<PolylineTwoTone />}
+        title={t("toolBar.multiLineCurve.title")}
+        sx={{
+          background: drawingMode === "multi-line-curve" ? "grey" : "",
+        }}
+        onClick={changeDrawingModeHandler.multiLineCurve}
+      />
+
+      <TooltipButton
+        icon={<PolylineTwoTone />}
+        title={t("toolBar.multiArrow.title")}
+        sx={{
+          background: drawingMode === "multi-arrow" ? "grey" : "",
+        }}
+        onClick={changeDrawingModeHandler.multiArrow}
+      />
+
+      <TooltipButton
+        icon={<PolylineTwoTone />}
+        title={t("toolBar.multiArrowCurve.title")}
+        sx={{
+          background: drawingMode === "multi-arrow-curve" ? "grey" : "",
+        }}
+        onClick={changeDrawingModeHandler.multiArrowCurve}
       />
 
       <TooltipButton

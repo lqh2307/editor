@@ -1,4 +1,5 @@
 import { KonvaGuideLinesAPI } from "../../components/KonvaGuideLines";
+import { useShapesContext, useStageContext } from "../../contexts";
 import { calculateGroupShapeBox } from "../../utils/Shapes";
 import Konva from "konva";
 import React from "react";
@@ -8,8 +9,8 @@ import {
   KonvaConvexPolygon,
   KonvaBezierCurve,
   KonvaFreeDrawing,
+  KonvaMultiArrow,
   KonvaRectangle,
-  KonvaMultiLine,
   KonvaShapeBox,
   KonvaShapeAPI,
   RenderReason,
@@ -20,16 +21,10 @@ import {
   KonvaWedge,
   KonvaVideo,
   KonvaShape,
-  KonvaLine,
   KonvaText,
   KonvaRing,
   KonvaPath,
 } from "../../components/KonvaShape";
-import {
-  useDrawingContext,
-  useShapesContext,
-  useStageContext,
-} from "../../contexts";
 
 export const CanvasShapes = React.memo((): React.JSX.Element => {
   const {
@@ -37,6 +32,7 @@ export const CanvasShapes = React.memo((): React.JSX.Element => {
     guideLinesStick,
     stageWidth,
     stageHeight,
+    drawingMode,
     getGuideLines,
     expandStage,
     setPointerStyle,
@@ -56,8 +52,6 @@ export const CanvasShapes = React.memo((): React.JSX.Element => {
     updateSelectedIds,
     updateSingleSelectedIds,
   } = useShapesContext();
-
-  const { drawingMode } = useDrawingContext();
 
   const hiddenNodesRef = React.useRef<Konva.Node[]>(undefined);
 
@@ -606,6 +600,7 @@ export const CanvasShapes = React.memo((): React.JSX.Element => {
           );
         }
 
+        case "line":
         case "arrow": {
           return (
             <KonvaArrow
@@ -666,27 +661,6 @@ export const CanvasShapes = React.memo((): React.JSX.Element => {
           );
         }
 
-        case "line": {
-          return (
-            <KonvaLine
-              onClick={handleShapeClick}
-              onDblClick={handleShapeDblClick}
-              onMounted={handleOnMounted}
-              onUnMounted={handleOnUnMounted}
-              onMouseOver={handleShapeMouseOver}
-              onMouseLeave={handleShapeMouseLeave}
-              onDragMove={handleShapeDragMove}
-              onAppliedProp={handleAppliedProp}
-              onMouseDown={handleShapeMouseDown}
-              onMouseUp={handleShapeMouseUp}
-              isEditted={edittedId === item.id}
-              isSelected={!!selectedIds?.[item.id]}
-              shapeOption={item}
-              key={item.id}
-            />
-          );
-        }
-
         case "text": {
           return (
             <KonvaText
@@ -720,16 +694,19 @@ export const CanvasShapes = React.memo((): React.JSX.Element => {
               onAppliedProp={handleAppliedProp}
               onMouseDown={handleShapeMouseDown}
               onMouseUp={handleShapeMouseUp}
-              isSelected={!drawingMode && !!selectedIds?.[item.id]}
+              isSelected={!!selectedIds?.[item.id]}
               shapeOption={item}
               key={item.id}
             />
           );
         }
 
-        case "multi-line": {
+        case "multi-line":
+        case "multi-arrow":
+        case "multi-line-curve":
+        case "multi-arrow-curve": {
           return (
-            <KonvaMultiLine
+            <KonvaMultiArrow
               onClick={handleShapeClick}
               onDblClick={handleShapeDblClick}
               onMounted={handleOnMounted}
@@ -741,7 +718,7 @@ export const CanvasShapes = React.memo((): React.JSX.Element => {
               onMouseDown={handleShapeMouseDown}
               onMouseUp={handleShapeMouseUp}
               isEditted={edittedId === item.id}
-              isSelected={!drawingMode && !!selectedIds?.[item.id]}
+              isSelected={!!selectedIds?.[item.id]}
               shapeOption={item}
               key={item.id}
             />
@@ -767,7 +744,8 @@ export const CanvasShapes = React.memo((): React.JSX.Element => {
           );
         }
 
-        case "quadratic-curve": {
+        case "quadratic-curve":
+        case "quadratic-arrow-curve": {
           return (
             <KonvaQuadraticCurve
               onClick={handleShapeClick}
@@ -788,7 +766,8 @@ export const CanvasShapes = React.memo((): React.JSX.Element => {
           );
         }
 
-        case "bezier-curve": {
+        case "bezier-curve":
+        case "bezier-arrow-curve": {
           return (
             <KonvaBezierCurve
               onClick={handleShapeClick}
@@ -814,7 +793,6 @@ export const CanvasShapes = React.memo((): React.JSX.Element => {
     shapeList,
     edittedId,
     selectedIds,
-    drawingMode,
     handleShapeClick,
     handleShapeMouseOver,
     handleShapeMouseLeave,

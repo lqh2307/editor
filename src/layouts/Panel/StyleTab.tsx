@@ -387,7 +387,7 @@ export const PanelStyleTab = React.memo((): React.JSX.Element => {
       changeCurved: (checked: boolean): void => {
         updateShape(
           {
-            bezier: checked,
+            tension: checked ? 0.4 : 0,
           },
           true,
           true
@@ -601,7 +601,13 @@ export const PanelStyleTab = React.memo((): React.JSX.Element => {
           {/* Closed/Curved */}
           <Stack
             sx={{
-              display: selectedShape.type === "multi-line" ? "flex" : "none",
+              display:
+                selectedShape.type === "multi-line" ||
+                selectedShape.type === "multi-arrow" ||
+                selectedShape.type === "multi-line-curve" ||
+                selectedShape.type === "multi-arrow-curve"
+                  ? "flex"
+                  : "none",
               flexDirection: "row",
               gap: "0.5rem",
               alignItems: "center",
@@ -625,7 +631,7 @@ export const PanelStyleTab = React.memo((): React.JSX.Element => {
                 </Typography>
               }
               title={t("panel.style.children.general.children.curved.title")}
-              checked={selectedShape.curved}
+              checked={selectedShape.tension > 0}
               onChange={updateShapeHandler.changeCurved}
             />
           </Stack>
@@ -904,8 +910,13 @@ export const PanelStyleTab = React.memo((): React.JSX.Element => {
             selectedShape.type === "line" ||
             selectedShape.type === "arrow" ||
             selectedShape.type === "quadratic-curve" ||
+            selectedShape.type === "quadratic-arrow-curve" ||
             selectedShape.type === "bezier-curve" ||
-            selectedShape.type === "multi-line"
+            selectedShape.type === "bezier-arrow-curve" ||
+            selectedShape.type === "multi-line" ||
+            selectedShape.type === "multi-arrow" ||
+            selectedShape.type === "multi-line-curve" ||
+            selectedShape.type === "multi-arrow-curve"
               ? "block"
               : "none",
         }}

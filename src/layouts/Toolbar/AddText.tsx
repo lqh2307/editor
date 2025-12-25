@@ -23,7 +23,7 @@ export const ToolbarAddText = React.memo((): React.JSX.Element => {
           },
         ],
         false,
-        undefined,
+        false,
         getStageCenter()
       );
     },

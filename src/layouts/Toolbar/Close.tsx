@@ -1,5 +1,5 @@
 import { ButtonGroup, Typography, Divider, Box } from "@mui/material";
-import { useDrawingContext, useShapesContext } from "../../contexts";
+import { useStageContext, useShapesContext } from "../../contexts";
 import { useDebounceHotKey } from "../../hooks/useDebounceHotKey";
 import { TooltipButton } from "../../components/TooltipButton";
 import { BasicDialog } from "../../components/BasicDialog";
@@ -10,7 +10,7 @@ import React from "react";
 export const ToolbarClose = React.memo((): React.JSX.Element => {
   const { t } = useTranslation();
 
-  const { setDrawingMode } = useDrawingContext();
+  const { setDrawingMode } = useStageContext();
 
   const { updateSelectedIds } = useShapesContext();
 

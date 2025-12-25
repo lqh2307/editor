@@ -126,6 +126,7 @@ export const ToolbarAddImage = React.memo((): React.JSX.Element => {
                 height={imageConfigRef.current.itemSize}
                 draggable={false}
                 fallbackSrc={"./assets/images/placeholder.png"}
+                backgroundColor={"#ffffff"}
               />
             }
             value={JSON.stringify({

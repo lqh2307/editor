@@ -27,10 +27,10 @@ export const ToolbarAddShape = React.memo((): React.JSX.Element => {
       <ToolbarAddText />
 
       {/* Add Image */}
-      {/* <ToolbarAddImage /> */}
+      <ToolbarAddImage />
 
       {/*Fake API*/}
-      {/* <ToolbarFakeAPI /> */}
+      <ToolbarFakeAPI />
 
       {/* Add Component */}
       <ToolbarAddComponent />
@@ -42,7 +42,7 @@ export const ToolbarAddShape = React.memo((): React.JSX.Element => {
       <ToolbarUploadImage />
 
       {/* Upload Video (From Device/From Link) */}
-      {/* <ToolbarUploadVideo /> */}
+      <ToolbarUploadVideo />
     </ButtonGroup>
   );
 });

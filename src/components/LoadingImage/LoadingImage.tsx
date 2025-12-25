@@ -11,6 +11,7 @@ export const LoadingImage = React.memo(
     isLoading,
     progress = 0,
     isDisplayProgress,
+    backgroundColor,
     sx,
     ...prop
   }: LoadingImageProp): React.JSX.Element => {
@@ -71,9 +72,13 @@ export const LoadingImage = React.memo(
             sx={{
               width: "100%",
               height: "100%",
-              backgroundImage: `repeating-conic-gradient(#eeeeee 0% 25%, #ffffff 0% 50%)`,
-              backgroundSize: "25px 25px",
               objectFit: "contain",
+              ...(backgroundColor
+                ? { backgroundColor: backgroundColor }
+                : {
+                    backgroundImage: `repeating-conic-gradient(#eeeeee 0% 25%, #ffffff 0% 50%)`,
+                    backgroundSize: "25px 25px",
+                  }),
             }}
             onError={onErrorHandler}
           />

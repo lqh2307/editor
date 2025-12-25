@@ -5,6 +5,7 @@ export type DrawingInfo = {
   previousMode?: DrawingMode;
   lines?: KonvaFreeDrawingLine[];
   points?: number[];
+  previewPoints?: number[];
   isDrawing?: boolean;
   shapeId?: string;
 };

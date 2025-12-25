@@ -76,12 +76,17 @@ export type KonvaShapeType =
   | "line"
   | "free-drawing"
   | "multi-line"
+  | "multi-arrow"
+  | "multi-line-curve"
+  | "multi-arrow-curve"
   | "path"
   | "arrow"
   | "ring"
   | "wedge"
   | "quadratic-curve"
-  | "bezier-curve";
+  | "quadratic-arrow-curve"
+  | "bezier-curve"
+  | "bezier-arrow-curve";
 
 export type KonvaShapeBox = {
   left?: number;
