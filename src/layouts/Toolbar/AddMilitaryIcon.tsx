@@ -246,7 +246,7 @@ export const ToolbarAddMilitaryIcon = React.memo((): React.JSX.Element => {
           <TooltipButton
             icon={
               <LoadingImage
-                alt={icon.name}
+                alt={icon.title}
                 src={thumbSrc}
                 width={iconConfigRef.current.itemSize}
                 height={iconConfigRef.current.itemSize}
@@ -261,7 +261,7 @@ export const ToolbarAddMilitaryIcon = React.memo((): React.JSX.Element => {
               type: "image",
               svgURL: icon.content,
             })}
-            title={icon.name}
+            title={icon.title}
             sx={{
               minWidth: iconConfigRef.current.itemWidth,
               minHeight: iconConfigRef.current.itemHeight,
@@ -372,7 +372,7 @@ export const ToolbarAddMilitaryIcon = React.memo((): React.JSX.Element => {
                   const icons = data?.[key] || [];
                   const q = (searchQuery || "").toLowerCase();
                   const filteredIcons = q
-                    ? icons.filter((i) => (i?.name || "").toLowerCase().includes(q))
+                    ? icons.filter((i) => (i?.title || "").toLowerCase().includes(q))
                     : icons;
 
                   const panelW = Math.min(window?.innerWidth - 80, 615);
