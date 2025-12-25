@@ -14,6 +14,7 @@ export const PopperButton = React.memo(
     titlePlacement = "bottom",
     onClick,
     sx,
+    closeOnClickAway = true,
     ...props
   }: PopperButtonProp): React.JSX.Element => {
     const [anchorEl, setAnchorEl] =
@@ -48,42 +49,42 @@ export const PopperButton = React.memo(
       setAnchorEl(undefined);
     }, []);
 
-    return (
-      <ClickAwayListener onClickAway={handleClose}>
-        <Box
-          sx={{
-            display: display,
-          }}
-        >
-          <Tooltip title={title} placement={titlePlacement}>
-            <Box>
-              <Button
-                disabled={false}
-                fullWidth={true}
-                variant={"outlined"}
-                type={"button"}
-                size={"small"}
-                {...props}
-                sx={{
-                  minWidth: 0,
-                  minHeight: 0,
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  ...(sx ?? {}),
-                }}
-                onClick={handleClick}
-              >
-                {icon ? icon : <></>}
-              </Button>
-            </Box>
-          </Tooltip>
+    const content = (
+      <Box sx={{ display }}>
+        <Tooltip title={title} placement={titlePlacement}>
+          <Box>
+            <Button
+              disabled={false}
+              fullWidth={true}
+              variant={"outlined"}
+              type={"button"}
+              size={"small"}
+              {...props}
+              sx={{
+                minWidth: 0,
+                minHeight: 0,
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                ...(sx ?? {}),
+              }}
+              onClick={handleClick}
+            >
+              {icon ? icon : <></>}
+            </Button>
+          </Box>
+        </Tooltip>
 
-          <Popper open={!!anchorEl} anchorEl={anchorEl} placement={placement}>
-            {children}
-          </Popper>
-        </Box>
-      </ClickAwayListener>
+        <Popper open={!!anchorEl} anchorEl={anchorEl} placement={placement}>
+          {children}
+        </Popper>
+      </Box>
+    );
+
+    return closeOnClickAway ? (
+      <ClickAwayListener onClickAway={handleClose}>{content}</ClickAwayListener>
+    ) : (
+      content
     );
   }
 );

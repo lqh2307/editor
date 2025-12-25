@@ -356,7 +356,7 @@
       }
     },
     "addBasicIcon": {
-      "title": "Thêm biểu tượng cơ bản",
+      "title": "ký hiệu cơ bản",
       "common": {
         "snackBarAlert": {
           "error": "Lỗi!"
@@ -364,7 +364,7 @@
       }
     },
     "addMilitaryIcon": {
-      "title": "Thêm biểu tượng quân sự",
+      "title": "Ký hiệu quân sự",
       "children": {
         "favorite": {
           "title": "Yêu thích"
@@ -374,7 +374,8 @@
         "snackBarAlert": {
           "error": "Lỗi!"
         }
-      }
+      },
+      "favorites": "Yêu thích"
     },
     "uploadImage": {
       "title": "Tải lên ảnh",
@@ -1200,5 +1201,7 @@
       }
     }
   },
-  "common": {}
+  "common": {
+    "search": "Tìm kiếm..."
+  }
 }
