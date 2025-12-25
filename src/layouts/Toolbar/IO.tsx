@@ -42,6 +42,7 @@ import {
   CloseTwoTone,
   CloudTwoTone,
   SaveTwoTone,
+  MenuTwoTone
 } from "@mui/icons-material";
 import {
   detectContentTypeFromFormat,
@@ -1672,125 +1673,135 @@ export const ToolbarIO = React.memo((): React.JSX.Element => {
 
   return (
     <>
-      <ButtonGroup variant={"contained"} size={"small"}>
-        {/* Save */}
-        <PopperButton icon={<SaveTwoTone />} title={t("toolBar.save.title")}>
-          <Paper
-            elevation={4}
-            sx={{
-              padding: "0.25rem",
-              display: "flex",
-              flexDirection: "column",
-              gap: "0.5rem",
-            }}
-          >
-            <TooltipButton
-              icon={
-                <>
-                  <SaveTwoTone
-                    fontSize={"small"}
-                    sx={{
-                      marginRight: "0.25rem",
-                    }}
-                  />
-                  {t("toolBar.save.children.save.title")}
-                </>
-              }
-              title={t("toolBar.save.children.save.title")}
-              onClick={saveHandler}
-              sx={{
-                justifyContent: "flex-start",
-              }}
-              disabled={saveInfo.isLoading}
-              isLoading={saveInfo.isLoading}
-            />
-
-            <TooltipButton
-              icon={
-                <>
-                  <CloudTwoTone
-                    fontSize={"small"}
-                    sx={{
-                      marginRight: "0.25rem",
-                    }}
-                  />
-                  {t("toolBar.save.children.toCloud.title")}
-                </>
-              }
-              title={t("toolBar.save.children.toCloud.title")}
-              onClick={openSaveToCloudHandler}
-              sx={{
-                justifyContent: "flex-start",
-              }}
-              disabled={saveInfo.isLoading}
-              isLoading={saveInfo.isLoading}
-            />
-          </Paper>
-        </PopperButton>
-
-        {/* Export */}
-        <TooltipButton
-          icon={<DownloadTwoTone />}
-          title={t("toolBar.export.title")}
-          disabled={!shapeList.length}
-          onClick={openSettingHandler}
-        />
-
-        {/* Import */}
-        <PopperButton
-          icon={<UploadTwoTone />}
-          title={t("toolBar.import.title")}
+      <PopperButton icon={<MenuTwoTone />} title={'Menu'}>
+        <Paper
+          elevation={4}
+          sx={{
+            padding: "0.25rem",
+            display: "flex",
+            flexDirection: "column",
+            gap: "0.5rem",
+          }}
         >
-          <Paper
-            elevation={4}
-            sx={{
-              padding: "0.25rem",
-              display: "flex",
-              flexDirection: "column",
-              gap: "0.5rem",
-            }}
-          >
-            <ImportFileButton
-              icon={
-                <>
-                  <DevicesTwoTone
-                    fontSize={"small"}
-                    sx={{
-                      marginRight: "0.25rem",
-                    }}
-                  />
-                  {t("toolBar.import.children.fromDevice.title")}
-                </>
-              }
-              title={t("toolBar.import.children.fromDevice.title")}
-              acceptMimeType={"application/json"}
-              onFileLoaded={importFromDeviceHandler}
-              sx={{
-                justifyContent: "flex-start",
-              }}
-            />
+          {/* Save group */}
+          <Divider textAlign="left" sx={{ fontSize: 12 }}>
+            {/* {t("toolBar.save.title")} */}
+            Menu
+          </Divider>
 
-            <TooltipButton
-              icon={
-                <>
-                  <CloudTwoTone
-                    fontSize={"small"}
-                    sx={{
-                      marginRight: "0.25rem",
-                    }}
-                  />
-                  {t("toolBar.import.children.fromCloud.title")}
-                </>
-              }
-              title={t("toolBar.import.children.fromCloud.title")}
-              onClick={fromCloudHandler.open}
-              sx={{
-                justifyContent: "flex-start",
-              }}
-            />
-          </Paper>
-        </PopperButton>
-      </ButtonGroup>
+          <TooltipButton
+            icon={
+              <>
+                <SaveTwoTone
+                  fontSize={"small"}
+                  sx={{
+                    marginRight: "0.25rem",
+                  }}
+                />
+                {t("toolBar.save.children.save.title")}
+              </>
+            }
+            title={t("toolBar.save.children.save.title")}
+            onClick={saveHandler}
+            sx={{
+              justifyContent: "flex-start",
+            }}
+            disabled={saveInfo.isLoading}
+            isLoading={saveInfo.isLoading}
+          />
+
+          <TooltipButton
+            icon={
+              <>
+                <CloudTwoTone
+                  fontSize={"small"}
+                  sx={{
+                    marginRight: "0.25rem",
+                  }}
+                />
+                {t("toolBar.save.children.toCloud.title")}
+              </>
+            }
+            title={t("toolBar.save.children.toCloud.title")}
+            onClick={openSaveToCloudHandler}
+            sx={{
+              justifyContent: "flex-start",
+            }}
+            disabled={saveInfo.isLoading}
+            isLoading={saveInfo.isLoading}
+          />
+
+          {/* Export group */}
+          <Divider textAlign="left" sx={{ fontSize: 12 }}>
+            {t("toolBar.export.title")}
+          </Divider>
+
+          <TooltipButton
+            icon={
+              <>
+                <DownloadTwoTone
+                  fontSize={"small"}
+                  sx={{
+                    marginRight: "0.25rem",
+                  }}
+                />
+                {t("toolBar.export.title")}
+              </>
+            }
+            title={t("toolBar.export.title")}
+            onClick={openSettingHandler}
+            sx={{
+              justifyContent: "flex-start",
+            }}
+            disabled={!shapeList.length}
+          />
+
+          {/* Import group */}
+          <Divider textAlign="left" sx={{ fontSize: 12 }}>
+            {t("toolBar.import.title")}
+          </Divider>
+
+          <ImportFileButton
+            icon={
+              <>
+                <DevicesTwoTone
+                  fontSize={"small"}
+                  sx={{
+                    marginRight: "0.25rem",
+                  }}
+                />
+                {t("toolBar.import.children.fromDevice.title")}
+              </>
+            }
+            title={t("toolBar.import.children.fromDevice.title")}
+            acceptMimeType={"application/json"}
+            onFileLoaded={importFromDeviceHandler}
+            sx={{
+              justifyContent: "flex-start",
+            }}
+          />
+
+          <TooltipButton
+            icon={
+              <>
+                <CloudTwoTone
+                  fontSize={"small"}
+                  sx={{
+                    marginRight: "0.25rem",
+                  }}
+                />
+                {t("toolBar.import.children.fromCloud.title")}
+              </>
+            }
+            title={t("toolBar.import.children.fromCloud.title")}
+            onClick={fromCloudHandler.open}
+            sx={{
+              justifyContent: "flex-start",
+            }}
+          />
+        </Paper>
+      </PopperButton>
+
 
       {/* Export Dialog */}
       <BasicDialog
