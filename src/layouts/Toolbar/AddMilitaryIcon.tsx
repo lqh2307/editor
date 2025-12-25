@@ -376,7 +376,7 @@ export const ToolbarAddMilitaryIcon = React.memo((): React.JSX.Element => {
                     : icons;
 
                   const panelW = Math.min(window?.innerWidth - 80, 615);
-                  const panelH = Math.min(window?.innerHeight - 120, 360);
+                  const panelH = Math.min(window?.innerHeight - 120, 240);
 
                   // header ~40 (with controls), no tabs when hideTabs=true, padding ~24
                   const headerH = 40;
@@ -397,7 +397,8 @@ export const ToolbarAddMilitaryIcon = React.memo((): React.JSX.Element => {
                   const columnUnit = itemW + gapX;
                   const rowUnit = itemH + gapY;
 
-                  const dynamicColumns = Math.max(1, Math.floor(availableWidth / columnUnit));
+                  // Fixed 12 icons per row
+                  const dynamicColumns = 13;
                   const dynamicRows = Math.max(1, Math.floor(availableHeight / rowUnit));
 
                   const Cell = makeIconCell(filteredIcons, dynamicColumns, favoritesSet, toggleFavorite);
@@ -420,7 +421,7 @@ export const ToolbarAddMilitaryIcon = React.memo((): React.JSX.Element => {
                 }}
                 title={t("toolBar.addMilitaryIcon.title")}
                 width={Math.min(window?.innerWidth - 80, 615)}
-                height={Math.min(window?.innerHeight - 120, 360)}
+                height={Math.min(window?.innerHeight - 120, 240)}
               />
             );
           })()

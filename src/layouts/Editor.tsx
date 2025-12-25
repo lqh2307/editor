@@ -9,7 +9,6 @@ import {
   FreeDrawingProvider,
   ShapesProvider,
   StageProvider,
-  MapProvider,
 } from "../contexts";
 
 export const Editor = React.memo((prop: EditorProp): React.JSX.Element => {
@@ -81,7 +80,7 @@ export const Editor = React.memo((prop: EditorProp): React.JSX.Element => {
       stageZoomMax={stageZoomMax}
       stageZoomStep={stageZoomStep}
     >
-      <MapProvider>
+      {/* <MapProvider> */}
         <FreeDrawingProvider>
           <ShapesProvider maxHistory={maxHistory}>
             <Box
@@ -163,7 +162,7 @@ export const Editor = React.memo((prop: EditorProp): React.JSX.Element => {
             </Box>
           </ShapesProvider>
         </FreeDrawingProvider>
-      </MapProvider>
+      {/* </MapProvider> */}
     </StageProvider>
   );
 });

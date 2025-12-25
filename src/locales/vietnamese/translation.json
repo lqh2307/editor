@@ -313,7 +313,7 @@
       }
     },
     "addShape": {
-      "title": "Thêm hình học",
+      "title": "Ký hiệu hình học",
       "children": {
         "line": {
           "title": "Đường thẳng"
@@ -438,7 +438,7 @@
       }
     },
     "addComponent": {
-      "title": "Thêm thành phần",
+      "title": "Thành phần",
       "common": {
         "snackBarAlert": {
           "error": "Lỗi!"
@@ -446,7 +446,7 @@
       }
     },
     "addTemplate": {
-      "title": "Thêm mẫu",
+      "title": "Mẫu",
       "common": {
         "snackBarAlert": {
           "apply": "Đã áp dụng!",
@@ -455,7 +455,7 @@
       }
     },
     "addText": {
-      "title": "Thêm văn bản"
+      "title": "Văn bản"
     },
     "multiLine": {
       "title": "Nhiều đường"
