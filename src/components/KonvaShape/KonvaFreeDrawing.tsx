@@ -202,14 +202,33 @@ export const KonvaFreeDrawing = React.memo(
       (e: Konva.KonvaEventObject<Event>): void => {
         const node: Konva.Group = e.target as Konva.Group;
         if (node) {
-          Object.assign(currentPropRef.current.shapeOption, {
-            rotation: node.rotation(),
-            scaleX: node.scaleX(),
-            scaleY: node.scaleY(),
-            skewX: node.skewX(),
-            skewY: node.skewY(),
-            x: node.x(),
-            y: node.y(),
+          const shapeOption: KonvaShape = currentPropRef.current.shapeOption;
+
+          const transform = node.getTransform().copy();
+
+          shapeOption.lines.forEach((line) => {
+            const newPoints: number[] = [];
+
+            for (let i = 0; i < line.points.length; i += 2) {
+              const p = transform.point({
+                x: line.points[i],
+                y: line.points[i + 1],
+              });
+
+              newPoints.push(p.x, p.y);
+            }
+
+            line.points = newPoints;
+          });
+
+          Object.assign(shapeOption, {
+            rotation: 0,
+            scaleX: 1,
+            scaleY: 1,
+            skewX: 0,
+            skewY: 0,
+            x: 0,
+            y: 0,
           });
         }
 

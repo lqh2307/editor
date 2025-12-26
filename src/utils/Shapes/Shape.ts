@@ -954,6 +954,30 @@ export function transformPoint(point: Vector2d, option: KonvaShape): Vector2d {
     .point(point);
 }
 
+/* Transform points */
+export function transformPoints(points: number[], option: KonvaShape): number[] {
+  const transform: Konva.Transform = new Konva.Transform()
+    .translate(option.x, option.y)
+    .rotate((Math.PI / 180) * option.rotation)
+    .skew(option.skewX, option.skewY)
+    .scale(option.scaleX, option.scaleY)
+    .translate(-option.offsetX, -option.offsetY)
+
+  const result: number[] = []
+  for (let idx = 0; idx < points.length; idx += 2) {
+    const newValue: Vector2d = transform.point({
+      x: points[idx],
+      y: points[idx + 1]
+    });
+
+    console.log(newValue)
+
+    result.push(newValue.x, newValue.y);
+  }
+
+  return result;
+}
+
 /* Invert point */
 export function invertPoint(point: Vector2d, option: KonvaShape): Vector2d {
   // // undo position translate
