@@ -21,6 +21,7 @@ export type KonvaShape = Partial<Konva.ShapeConfig> &
     box?: KonvaShapeBox;
     clip?: KonvaShapeClip;
     coordinate?: Point;
+    twoArrow?: boolean;
 
     // Filter
     brightness?: number;

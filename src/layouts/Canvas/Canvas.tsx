@@ -120,176 +120,176 @@ export const Canvas = React.memo((): React.JSX.Element => {
   );
 
   // Store transformer
-  const cropperOptionRef = React.useRef<KonvaTFM>({
-    id: "cropper",
-    borderStroke: "#00ff00",
-    borderStrokeWidth: 1.5,
-    borderDash: [10, 10],
-    anchorStyleFunc: (anchor) => {
-      if (anchor.hasName("top-center") || anchor.hasName("bottom-center")) {
-        anchor.setAttrs({
-          fill: "#a5ff00",
-          stroke: "#00ff00",
-          strokeWidth: 1,
-          cornerRadius: 5,
-          height: 10,
-          offsetY: 5,
-          width: 30,
-          offsetX: 15,
-        });
-      } else if (
-        anchor.hasName("middle-left") ||
-        anchor.hasName("middle-right")
-      ) {
-        anchor.setAttrs({
-          fill: "#a5ff00",
-          stroke: "#00ff00",
-          strokeWidth: 1,
-          cornerRadius: 5,
-          height: 30,
-          offsetY: 15,
-          width: 10,
-          offsetX: 5,
-        });
-      } else if (anchor.hasName("rotater")) {
-        anchor.setAttrs({
-          fill: "#a5ff00",
-          stroke: "#00ff00",
-          strokeWidth: 1.5,
-          cornerRadius: 10,
-          height: 20,
-          offsetY: 10,
-          width: 20,
-          offsetX: 10,
-        });
-      } else {
-        anchor.setAttrs({
-          fill: "#a5ff00",
-          stroke: "#00ff00",
-          strokeWidth: 1,
-          cornerRadius: 5,
-          height: 15,
-          offsetY: 7.5,
-          width: 15,
-          offsetX: 7.5,
-        });
-      }
+  const transformersRef = React.useRef<KonvaTFM[]>([
+    {
+      id: "cropper",
+      borderStroke: "#00ff00",
+      borderStrokeWidth: 1.5,
+      borderDash: [10, 10],
+      anchorStyleFunc: (anchor) => {
+        if (anchor.hasName("top-center") || anchor.hasName("bottom-center")) {
+          anchor.setAttrs({
+            fill: "#a5ff00",
+            stroke: "#00ff00",
+            strokeWidth: 1,
+            cornerRadius: 5,
+            height: 10,
+            offsetY: 5,
+            width: 30,
+            offsetX: 15,
+          });
+        } else if (
+          anchor.hasName("middle-left") ||
+          anchor.hasName("middle-right")
+        ) {
+          anchor.setAttrs({
+            fill: "#a5ff00",
+            stroke: "#00ff00",
+            strokeWidth: 1,
+            cornerRadius: 5,
+            height: 30,
+            offsetY: 15,
+            width: 10,
+            offsetX: 5,
+          });
+        } else if (anchor.hasName("rotater")) {
+          anchor.setAttrs({
+            fill: "#a5ff00",
+            stroke: "#00ff00",
+            strokeWidth: 1.5,
+            cornerRadius: 10,
+            height: 20,
+            offsetY: 10,
+            width: 20,
+            offsetX: 10,
+          });
+        } else {
+          anchor.setAttrs({
+            fill: "#a5ff00",
+            stroke: "#00ff00",
+            strokeWidth: 1,
+            cornerRadius: 5,
+            height: 15,
+            offsetY: 7.5,
+            width: 15,
+            offsetX: 7.5,
+          });
+        }
+      },
     },
-  });
-
-  const transformerOptionRef = React.useRef<KonvaTFM>({
-    id: "transformer",
-    borderStroke: "#ff0000",
-    borderStrokeWidth: 1.5,
-    borderDash: [20, 10],
-    anchorStyleFunc: (anchor) => {
-      if (anchor.hasName("top-center") || anchor.hasName("bottom-center")) {
-        anchor.setAttrs({
-          fill: "#ffa500",
-          stroke: "#ff0000",
-          strokeWidth: 1,
-          cornerRadius: 2,
-          height: 4,
-          offsetY: 2,
-          width: 16,
-          offsetX: 8,
-        });
-      } else if (
-        anchor.hasName("middle-left") ||
-        anchor.hasName("middle-right")
-      ) {
-        anchor.setAttrs({
-          fill: "#ffa500",
-          stroke: "#ff0000",
-          strokeWidth: 1,
-          cornerRadius: 2,
-          height: 16,
-          offsetY: 8,
-          width: 4,
-          offsetX: 2,
-        });
-      } else if (anchor.hasName("rotater")) {
-        anchor.setAttrs({
-          fill: "#ffa500",
-          stroke: "#ff0000",
-          strokeWidth: 1.5,
-          cornerRadius: 6,
-          height: 12,
-          offsetY: 6,
-          width: 12,
-          offsetX: 6,
-        });
-      } else {
-        anchor.setAttrs({
-          fill: "#ffa500",
-          stroke: "#ff0000",
-          strokeWidth: 1,
-          cornerRadius: 4,
-          height: 8,
-          offsetY: 4,
-          width: 8,
-          offsetX: 4,
-        });
-      }
+    {
+      id: "transformer",
+      borderStroke: "#ff0000",
+      borderStrokeWidth: 1.5,
+      borderDash: [20, 10],
+      anchorStyleFunc: (anchor) => {
+        if (anchor.hasName("top-center") || anchor.hasName("bottom-center")) {
+          anchor.setAttrs({
+            fill: "#ffa500",
+            stroke: "#ff0000",
+            strokeWidth: 1,
+            cornerRadius: 2,
+            height: 4,
+            offsetY: 2,
+            width: 16,
+            offsetX: 8,
+          });
+        } else if (
+          anchor.hasName("middle-left") ||
+          anchor.hasName("middle-right")
+        ) {
+          anchor.setAttrs({
+            fill: "#ffa500",
+            stroke: "#ff0000",
+            strokeWidth: 1,
+            cornerRadius: 2,
+            height: 16,
+            offsetY: 8,
+            width: 4,
+            offsetX: 2,
+          });
+        } else if (anchor.hasName("rotater")) {
+          anchor.setAttrs({
+            fill: "#ffa500",
+            stroke: "#ff0000",
+            strokeWidth: 1.5,
+            cornerRadius: 6,
+            height: 12,
+            offsetY: 6,
+            width: 12,
+            offsetX: 6,
+          });
+        } else {
+          anchor.setAttrs({
+            fill: "#ffa500",
+            stroke: "#ff0000",
+            strokeWidth: 1,
+            cornerRadius: 4,
+            height: 8,
+            offsetY: 4,
+            width: 8,
+            offsetX: 4,
+          });
+        }
+      },
     },
-  });
-
-  const singleTransformerOptionRef = React.useRef<KonvaTFM>({
-    id: "single-transformer",
-    borderStroke: "#0000ff",
-    borderStrokeWidth: 1.5,
-    borderDash: [20, 10],
-    anchorStyleFunc: (anchor) => {
-      if (anchor.hasName("top-center") || anchor.hasName("bottom-center")) {
-        anchor.setAttrs({
-          fill: "#00a5ff",
-          stroke: "#0000ff",
-          strokeWidth: 1,
-          cornerRadius: 2,
-          height: 4,
-          offsetY: 2,
-          width: 16,
-          offsetX: 8,
-        });
-      } else if (
-        anchor.hasName("middle-left") ||
-        anchor.hasName("middle-right")
-      ) {
-        anchor.setAttrs({
-          fill: "#00a5ff",
-          stroke: "#0000ff",
-          strokeWidth: 1,
-          cornerRadius: 2,
-          height: 16,
-          offsetY: 8,
-          width: 4,
-          offsetX: 2,
-        });
-      } else if (anchor.hasName("rotater")) {
-        anchor.setAttrs({
-          fill: "#00a5ff",
-          stroke: "#0000ff",
-          strokeWidth: 1.5,
-          cornerRadius: 6,
-          height: 12,
-          offsetY: 6,
-          width: 12,
-          offsetX: 6,
-        });
-      } else {
-        anchor.setAttrs({
-          fill: "#00a5ff",
-          stroke: "#0000ff",
-          strokeWidth: 1,
-          cornerRadius: 4,
-          height: 8,
-          offsetY: 4,
-          width: 8,
-          offsetX: 4,
-        });
-      }
+    {
+      id: "single-transformer",
+      borderStroke: "#0000ff",
+      borderStrokeWidth: 1.5,
+      borderDash: [20, 10],
+      anchorStyleFunc: (anchor) => {
+        if (anchor.hasName("top-center") || anchor.hasName("bottom-center")) {
+          anchor.setAttrs({
+            fill: "#00a5ff",
+            stroke: "#0000ff",
+            strokeWidth: 1,
+            cornerRadius: 2,
+            height: 4,
+            offsetY: 2,
+            width: 16,
+            offsetX: 8,
+          });
+        } else if (
+          anchor.hasName("middle-left") ||
+          anchor.hasName("middle-right")
+        ) {
+          anchor.setAttrs({
+            fill: "#00a5ff",
+            stroke: "#0000ff",
+            strokeWidth: 1,
+            cornerRadius: 2,
+            height: 16,
+            offsetY: 8,
+            width: 4,
+            offsetX: 2,
+          });
+        } else if (anchor.hasName("rotater")) {
+          anchor.setAttrs({
+            fill: "#00a5ff",
+            stroke: "#0000ff",
+            strokeWidth: 1.5,
+            cornerRadius: 6,
+            height: 12,
+            offsetY: 6,
+            width: 12,
+            offsetX: 6,
+          });
+        } else {
+          anchor.setAttrs({
+            fill: "#00a5ff",
+            stroke: "#0000ff",
+            strokeWidth: 1,
+            cornerRadius: 4,
+            height: 8,
+            offsetY: 4,
+            width: 8,
+            offsetX: 4,
+          });
+        }
+      },
     },
-  });
+  ]);
 
   const handleOnMounted = React.useCallback(
     (id?: string, transformer?: KonvaTransformerAPI): void => {
@@ -735,29 +735,19 @@ export const Canvas = React.memo((): React.JSX.Element => {
           <KonvaGrid ref={assignGrid} />
         </Layer>
 
-        {/* Shapes */}
+        {/* Shapes/Transformers/Map tooltip */}
         <Layer id={"shapes"} listening={true} draggable={false}>
           <CanvasShapes />
 
-          <KonvaTransformer
-            transformerOption={cropperOptionRef.current}
-            onMounted={handleOnMounted}
-            onUnMounted={handleOnUnMounted}
-          />
+          {transformersRef.current.map((item) => (
+            <KonvaTransformer
+              key={item.id}
+              transformerOption={item}
+              onMounted={handleOnMounted}
+              onUnMounted={handleOnUnMounted}
+            />
+          ))}
 
-          <KonvaTransformer
-            transformerOption={transformerOptionRef.current}
-            onMounted={handleOnMounted}
-            onUnMounted={handleOnUnMounted}
-          />
-
-          <KonvaTransformer
-            transformerOption={singleTransformerOptionRef.current}
-            onMounted={handleOnMounted}
-            onUnMounted={handleOnUnMounted}
-          />
-
-          {/* Map tooltip */}
           <KonvaTooltip
             ref={tooltipRef}
             id={"map-tooltip"}

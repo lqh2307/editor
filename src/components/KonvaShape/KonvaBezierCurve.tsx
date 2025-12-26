@@ -214,7 +214,8 @@ export const KonvaBezierCurve = React.memo(
       (e: Konva.KonvaEventObject<DragEvent>): void => {
         const node: Konva.Arrow = e.target as Konva.Arrow;
         if (node) {
-          const shapeOption: KonvaShape = currentPropRef.current.shapeOption;
+          const prop: KonvaShapeProp = currentPropRef.current;
+          const shapeOption: KonvaShape = prop.shapeOption;
           const newPosition: Vector2d = node.position();
 
           Object.assign(shapeOption, {
@@ -223,18 +224,20 @@ export const KonvaBezierCurve = React.memo(
             box: createShapeBox(node),
           });
 
-          lineNodeRef.current?.position(newPosition);
+          if (prop.isEditted) {
+            lineNodeRef.current?.position(newPosition);
 
-          for (let idx = 0; idx < shapeOption.points.length; idx += 2) {
-            controlNodeRef.current[`${shapeOption.id}-${idx}`]?.position(
-              transformPoint(
-                {
-                  x: shapeOption.points[idx],
-                  y: shapeOption.points[idx + 1],
-                },
-                shapeOption
-              )
-            );
+            for (let idx = 0; idx < shapeOption.points.length; idx += 2) {
+              controlNodeRef.current[`${shapeOption.id}-${idx}`]?.position(
+                transformPoint(
+                  {
+                    x: shapeOption.points[idx],
+                    y: shapeOption.points[idx + 1],
+                  },
+                  shapeOption
+                )
+              );
+            }
           }
         }
 
@@ -255,7 +258,8 @@ export const KonvaBezierCurve = React.memo(
       (e: Konva.KonvaEventObject<DragEvent>): void => {
         const node: Konva.Arrow = e.target as Konva.Arrow;
         if (node) {
-          const shapeOption: KonvaShape = currentPropRef.current.shapeOption;
+          const prop: KonvaShapeProp = currentPropRef.current;
+          const shapeOption: KonvaShape = prop.shapeOption;
 
           const newAttrs: KonvaShape = {
             rotation: node.rotation(),
@@ -269,18 +273,20 @@ export const KonvaBezierCurve = React.memo(
 
           Object.assign(shapeOption, newAttrs);
 
-          lineNodeRef.current?.setAttrs(newAttrs);
+          if (prop.isEditted) {
+            lineNodeRef.current?.setAttrs(newAttrs);
 
-          for (let idx = 0; idx < shapeOption.points.length; idx += 2) {
-            controlNodeRef.current[`${shapeOption.id}-${idx}`]?.position(
-              transformPoint(
-                {
-                  x: shapeOption.points[idx],
-                  y: shapeOption.points[idx + 1],
-                },
-                shapeOption
-              )
-            );
+            for (let idx = 0; idx < shapeOption.points.length; idx += 2) {
+              controlNodeRef.current[`${shapeOption.id}-${idx}`]?.position(
+                transformPoint(
+                  {
+                    x: shapeOption.points[idx],
+                    y: shapeOption.points[idx + 1],
+                  },
+                  shapeOption
+                )
+              );
+            }
           }
         }
       },
@@ -302,38 +308,9 @@ export const KonvaBezierCurve = React.memo(
       currentPropRef.current.onMouseLeave?.(shapeAPI);
     }, []);
 
-    return (
-      <Portal selector={"#shapes"} enabled={isEnabled}>
-        <Arrow
-          listening={true}
-          ref={nodeRef}
-          points={undefined}
-          onClick={handleClick}
-          onDblClick={handleDblClick}
-          onMouseOver={handleMouseOver}
-          onMouseLeave={handleMouseLeave}
-          onMouseDown={handleMouseDown}
-          onMouseUp={handleMouseUp}
-          onDragStart={handleDragStart}
-          onDragMove={handleDragMove}
-          onDragEnd={handleDragEnd}
-          onTransform={handleTransform}
-          onTransformEnd={handleTransformEnd}
-        />
-
-        <Line
-          id={`${prop.shapeOption.id}-line`}
-          listening={true}
-          ref={lineNodeRef}
-          points={undefined}
-          stroke={"#555555"}
-          strokeWidth={1}
-          fill={"#555555"}
-          opacity={0.75}
-          dash={defaultLineDashRef.current}
-        />
-
-        {prop.shapeOption.points.map((_, idx) => {
+    const controlPoints: React.JSX.Element[] = React.useMemo(
+      () =>
+        prop.shapeOption.points.map((_, idx) => {
           if (idx % 2 === 0) {
             const id: string = `${prop.shapeOption.id}-${idx}`;
 
@@ -366,7 +343,42 @@ export const KonvaBezierCurve = React.memo(
           } else {
             return;
           }
-        })}
+        }),
+      [prop.shapeOption.points]
+    );
+
+    return (
+      <Portal selector={"#shapes"} enabled={isEnabled}>
+        <Arrow
+          listening={true}
+          ref={nodeRef}
+          points={undefined}
+          onClick={handleClick}
+          onDblClick={handleDblClick}
+          onMouseOver={handleMouseOver}
+          onMouseLeave={handleMouseLeave}
+          onMouseDown={handleMouseDown}
+          onMouseUp={handleMouseUp}
+          onDragStart={handleDragStart}
+          onDragMove={handleDragMove}
+          onDragEnd={handleDragEnd}
+          onTransform={handleTransform}
+          onTransformEnd={handleTransformEnd}
+        />
+
+        <Line
+          id={`${prop.shapeOption.id}-line`}
+          listening={true}
+          ref={lineNodeRef}
+          points={undefined}
+          stroke={"#555555"}
+          strokeWidth={1}
+          fill={"#555555"}
+          opacity={0.75}
+          dash={defaultLineDashRef.current}
+        />
+
+        {controlPoints}
       </Portal>
     );
   }

@@ -996,3 +996,38 @@ export function invertPoint(point: Vector2d, option: KonvaShape): Vector2d {
     .invert()
     .point(point);
 }
+
+/* Invert points */
+export function invertPoints(points: number[], option: KonvaShape): number[] {
+  const transform: Konva.Transform = new Konva.Transform()
+    .translate(option.x, option.y)
+    .rotate((Math.PI / 180) * option.rotation)
+    .skew(option.skewX, option.skewY)
+    .scale(option.scaleX, option.scaleY)
+    .translate(-option.offsetX, -option.offsetY)
+    .invert()
+
+  const result: number[] = []
+
+  for (let idx = 0; idx < points.length; idx += 2) {
+    const newValue: Vector2d = transform.point({
+      x: points[idx],
+      y: points[idx + 1]
+    });
+
+    result.push(newValue.x, newValue.y);
+  }
+
+  return result;
+}
+
+/* Reverse points */
+export function reversePoints(points: number[]): number[] {
+  const r: number[] = [];
+
+  for (let i = points.length - 2; i >= 0; i -= 2) {
+    r.push(points[i], points[i + 1]);
+  }
+
+  return r;
+};
