@@ -5,6 +5,7 @@ export * from "./KonvaBezierCurve";
 export * from "./KonvaFreeDrawing";
 export * from "./KonvaMultiArrow";
 export * from "./KonvaRectangle";
+export * from "./KonvaFreeArrow";
 export * from "./KonvaEllipse";
 export * from "./KonvaCircle";
 export * from "./KonvaArrow";

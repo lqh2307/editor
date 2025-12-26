@@ -76,6 +76,7 @@ export type KonvaShapeType =
   | "text"
   | "line"
   | "free-drawing"
+  | "free-arrow"
   | "multi-line"
   | "multi-arrow"
   | "multi-line-curve"

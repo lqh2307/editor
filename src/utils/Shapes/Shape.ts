@@ -1055,3 +1055,12 @@ export function reversePoints(points: number[]): number[] {
 
   return r;
 };
+
+/* Pick points */
+export function pickPoints(points: number[], indices: number[]): number[] {
+  const result: number[] = [];
+
+  indices.forEach((i) => result.push(points[i * 2], points[i * 2 + 1]));
+
+  return result;
+}
