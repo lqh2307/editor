@@ -11,7 +11,7 @@ export const KonvaBackground = React.memo(
 
       // Update prop (Overwrite)
       React.useEffect(() => {
-        currentPropRef.current = prop;
+        Object.assign(currentPropRef.current, prop);
 
         applyProp();
       }, [prop]);

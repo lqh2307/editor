@@ -135,6 +135,7 @@ export const ToolbarAddTemplate = React.memo((): React.JSX.Element => {
                 width={templateConfigRef.current.itemSize}
                 height={templateConfigRef.current.itemSize}
                 draggable={false}
+                backgroundColor={"#ffffff"}
               />
             }
             value={template.json_file_id}

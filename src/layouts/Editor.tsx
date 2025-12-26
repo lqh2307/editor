@@ -1,3 +1,4 @@
+import { ShapesProvider, StageProvider } from "../contexts";
 import { limitValue } from "../utils/Number";
 import { EditorProp } from "./Types";
 import { Box } from "@mui/material";
@@ -5,11 +6,6 @@ import { Toolbar } from "./Toolbar";
 import { Canvas } from "./Canvas";
 import { Panel } from "./Panel";
 import React from "react";
-import {
-  FreeDrawingProvider,
-  ShapesProvider,
-  StageProvider,
-} from "../contexts";
 
 export const Editor = React.memo((prop: EditorProp): React.JSX.Element => {
   const {
@@ -80,89 +76,87 @@ export const Editor = React.memo((prop: EditorProp): React.JSX.Element => {
       stageZoomMax={stageZoomMax}
       stageZoomStep={stageZoomStep}
     >
-      {/* <MapProvider> */}
-        <FreeDrawingProvider>
-          <ShapesProvider maxHistory={maxHistory}>
+      {/*<MapProvider>*/}
+        <ShapesProvider maxHistory={maxHistory}>
+          <Box
+            sx={{
+              position: "relative",
+              padding: 0,
+              margin: 0,
+              width: "100vw",
+              height: "100vh",
+              overflow: "hidden",
+              boxSizing: "border-box",
+            }}
+          >
+            {/* Toolbar */}
             <Box
               sx={{
-                position: "relative",
-                padding: 0,
+                position: "fixed",
+                overflowX: "auto",
+                overflowY: "hidden",
                 margin: 0,
-                width: "100vw",
-                height: "100vh",
-                overflow: "hidden",
+                padding: 0,
+                top: 0,
+                left: 0,
+                right: 0,
+                height: toolbarHeight,
                 boxSizing: "border-box",
+                borderBottom: "1px solid #e0e0e0",
+                display: "flex",
+                backgroundColor: toolbarColor,
+                flexDirection: "row",
+                justifyContent: "center",
+                alignItems: "center",
               }}
             >
-              {/* Toolbar */}
-              <Box
-                sx={{
-                  position: "fixed",
-                  overflowX: "auto",
-                  overflowY: "hidden",
-                  margin: 0,
-                  padding: 0,
-                  top: 0,
-                  left: 0,
-                  right: 0,
-                  height: toolbarHeight,
-                  boxSizing: "border-box",
-                  borderBottom: "1px solid #e0e0e0",
-                  display: "flex",
-                  backgroundColor: toolbarColor,
-                  flexDirection: "row",
-                  justifyContent: "center",
-                  alignItems: "center",
-                }}
-              >
-                <Toolbar />
-              </Box>
-
-              {/* Canvas */}
-              <Box
-                sx={{
-                  position: "absolute",
-                  overflow: "hidden",
-                  top: toolbarHeight,
-                  right: panelWidth,
-                  left: 0,
-                  bottom: 0,
-                  margin: 0,
-                  padding: 0,
-                  boxSizing: "border-box",
-                  backgroundImage: `repeating-conic-gradient(${canvasColor} 0% 25%, #ffffff 0% 50%)`,
-                  backgroundSize: "100px 100px",
-                }}
-              >
-                <Canvas />
-              </Box>
-
-              {/* Panel */}
-              <Box
-                sx={{
-                  position: "absolute",
-                  overflowX: "hidden",
-                  overflowY: "auto",
-                  margin: 0,
-                  padding: "0.25rem",
-                  top: toolbarHeight,
-                  right: 0,
-                  bottom: 0,
-                  width: panelWidth,
-                  boxSizing: "border-box",
-                  borderLeft: "1px solid #e0e0e0",
-                  backgroundColor: panelColor,
-                  display: "flex",
-                  flexDirection: "column",
-                  alignItems: "center",
-                }}
-              >
-                <Panel />
-              </Box>
+              <Toolbar />
             </Box>
-          </ShapesProvider>
-        </FreeDrawingProvider>
-      {/* </MapProvider> */}
+
+            {/* Canvas */}
+            <Box
+              sx={{
+                position: "absolute",
+                overflow: "hidden",
+                top: toolbarHeight,
+                right: panelWidth,
+                left: 0,
+                bottom: 0,
+                margin: 0,
+                padding: 0,
+                boxSizing: "border-box",
+                backgroundImage: `repeating-conic-gradient(${canvasColor} 0% 25%, #ffffff 0% 50%)`,
+                backgroundSize: "100px 100px",
+              }}
+            >
+              <Canvas />
+            </Box>
+
+            {/* Panel */}
+            <Box
+              sx={{
+                position: "absolute",
+                overflowX: "hidden",
+                overflowY: "auto",
+                margin: 0,
+                padding: "0.25rem",
+                top: toolbarHeight,
+                right: 0,
+                bottom: 0,
+                width: panelWidth,
+                boxSizing: "border-box",
+                borderLeft: "1px solid #e0e0e0",
+                backgroundColor: panelColor,
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+              }}
+            >
+              <Panel />
+            </Box>
+          </Box>
+        </ShapesProvider>
+      {/*</MapProvider>*/}
     </StageProvider>
   );
 });

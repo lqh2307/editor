@@ -252,9 +252,7 @@ export const ToolbarAddMilitaryIcon = React.memo((): React.JSX.Element => {
                 height={iconConfigRef.current.itemSize}
                 draggable={false}
                 fallbackSrc={"./assets/images/placeholder.png"}
-                sx={{
-                  backgroundColor: "#000000",
-                }}
+                backgroundColor={"#ffffff"}
               />
             }
             value={JSON.stringify({

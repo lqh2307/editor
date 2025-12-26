@@ -1,4 +1,5 @@
 import { KonvaGridStyle } from "../components/KonvaGrid";
+import { DrawingMode } from "../types/FreeDrawing";
 import React from "react";
 
 export type StageProviderProp = {

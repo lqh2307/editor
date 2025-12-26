@@ -1,23 +1,23 @@
 import { parseHexToRGBAString } from "../../utils/Color";
 import { Circle, Arrow } from "react-konva";
-import { Portal } from "react-konva-utils";
 import { Vector2d } from "konva/lib/types";
+import { Portal } from "react-konva-utils";
 import Konva from "konva";
 import React from "react";
-import {
-  createLineDash,
-  createShapeBox,
-  transformPoint,
-  invertPoint,
-} from "../../utils/Shapes";
 import {
   KonvaShapeProp,
   KonvaShapeAPI,
   RenderReason,
   KonvaShape,
 } from "./Types";
+import {
+  createShapeBox,
+  transformPoint,
+  createLineDash,
+  invertPoint,
+} from "../../utils/Shapes";
 
-export const KonvaLine = React.memo(
+export const KonvaMultiArrow = React.memo(
   (prop: KonvaShapeProp): React.JSX.Element => {
     const nodeRef = React.useRef<Konva.Arrow>(undefined);
     const currentPropRef = React.useRef<KonvaShapeProp>(prop);

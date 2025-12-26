@@ -169,6 +169,7 @@ export const ToolbarAddComponent = React.memo((): React.JSX.Element => {
                 height={componentConfigRef.current.itemSize}
                 draggable={false}
                 fallbackSrc={"./assets/images/placeholder.png"}
+                backgroundColor={"#ffffff"}
               />
             }
             value={JSON.stringify({

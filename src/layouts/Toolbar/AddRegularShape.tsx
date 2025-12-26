@@ -1,8 +1,11 @@
+import { TbBorderCornerRounded, TbArrowWaveRightUp } from "react-icons/tb";
 import { useShapesContext, useStageContext } from "../../contexts";
 import { TooltipButton } from "../../components/TooltipButton";
 import { PopperButton } from "../../components/PopperButton";
+import { FiCornerRightDown } from "react-icons/fi";
 import { KonvaDragDrop } from "../../types/Konva";
 import { useTranslation } from "react-i18next";
+import { PiWaveSine } from "react-icons/pi";
 import { Paper, Box } from "@mui/material";
 import React from "react";
 import {
@@ -13,9 +16,7 @@ import {
   RectangleTwoTone,
   PentagonTwoTone,
   CategoryTwoTone,
-  TimelineTwoTone,
   CircleTwoTone,
-  ShareTwoTone,
   StarTwoTone,
 } from "@mui/icons-material";
 
@@ -37,7 +38,7 @@ export const ToolbarAddRegularShape = React.memo((): React.JSX.Element => {
           },
         ],
         false,
-        undefined,
+        false,
         getStageCenter()
       );
     },
@@ -223,22 +224,12 @@ export const ToolbarAddRegularShape = React.memo((): React.JSX.Element => {
           }}
         >
           <TooltipButton
-            icon={<SignalWifiStatusbarNullTwoTone fontSize={"small"} />}
-            title={t("toolBar.addShape.children.wedge.title")}
-            onClick={addRegularShapeHandler}
-            value={JSON.stringify({
-              type: "wedge",
-            })}
-            onDragStart={dragRegularShapeHandler}
-            draggable={true}
-            sx={{
-              minWidth: 36,
-              minHeight: 32,
-            }}
-          />
-
-          <TooltipButton
-            icon={<ShareTwoTone fontSize={"small"} />}
+            icon={
+              <TbBorderCornerRounded
+                fontSize={"20px"}
+                style={{ rotate: "90deg" }}
+              />
+            }
             title={t("toolBar.addShape.children.quadraticCurve.title")}
             onClick={addRegularShapeHandler}
             value={JSON.stringify({
@@ -253,11 +244,66 @@ export const ToolbarAddRegularShape = React.memo((): React.JSX.Element => {
           />
 
           <TooltipButton
-            icon={<TimelineTwoTone fontSize={"small"} />}
+            icon={<FiCornerRightDown fontSize={"20px"} />}
+            title={t("toolBar.addShape.children.quadraticArrowCurve.title")}
+            onClick={addRegularShapeHandler}
+            value={JSON.stringify({
+              type: "quadratic-arrow-curve",
+            })}
+            onDragStart={dragRegularShapeHandler}
+            draggable={true}
+            sx={{
+              minWidth: 36,
+              minHeight: 32,
+            }}
+          />
+
+          <TooltipButton
+            icon={<PiWaveSine fontSize={"20px"} />}
             title={t("toolBar.addShape.children.bezierCurve.title")}
             onClick={addRegularShapeHandler}
             value={JSON.stringify({
               type: "bezier-curve",
+            })}
+            onDragStart={dragRegularShapeHandler}
+            draggable={true}
+            sx={{
+              minWidth: 36,
+              minHeight: 32,
+            }}
+          />
+
+          <TooltipButton
+            icon={<TbArrowWaveRightUp fontSize={"20px"} />}
+            title={t("toolBar.addShape.children.bezierArrowCurve.title")}
+            onClick={addRegularShapeHandler}
+            value={JSON.stringify({
+              type: "bezier-arrow-curve",
+            })}
+            onDragStart={dragRegularShapeHandler}
+            draggable={true}
+            sx={{
+              minWidth: 36,
+              minHeight: 32,
+            }}
+          />
+        </Box>
+
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: "row",
+            alignItems: "center",
+            justifyContent: "center",
+            gap: "0.5rem",
+          }}
+        >
+          <TooltipButton
+            icon={<SignalWifiStatusbarNullTwoTone fontSize={"small"} />}
+            title={t("toolBar.addShape.children.wedge.title")}
+            onClick={addRegularShapeHandler}
+            value={JSON.stringify({
+              type: "wedge",
             })}
             onDragStart={dragRegularShapeHandler}
             draggable={true}

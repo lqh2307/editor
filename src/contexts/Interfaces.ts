@@ -110,6 +110,10 @@ export interface IStageContext {
   stageWidth?: number;
   stageHeight?: number;
 
+  drawingMode?: DrawingMode;
+
+  setDrawingMode?: React.Dispatch<React.SetStateAction<DrawingMode>>;
+
   setStageRatio?: (ratio?: number) => void;
   setStageMinWidth?: (width?: number) => void;
   dragStage?: () => void;
@@ -138,12 +142,12 @@ export interface IStageContext {
 
   getBackground?: () => KonvaBackgroundAPI;
   setBackground?: (background: KonvaBackgroundAPI) => void;
-  updateBackgroundColor?: (color: string) => void;
-  updateBackgroundOpacity?: (opacity: number) => void;
+  setBackgroundColor?: (color: string) => void;
+  setBackgroundOpacity?: (opacity: number) => void;
 
   getGrid?: () => KonvaGridAPI;
   setGrid?: (grid: KonvaGridAPI) => void;
-  updateGridStyle?: (style: KonvaGridStyle) => void;
+  setGridStyle?: (style: KonvaGridStyle) => void;
 
   updateSnackbarAlert?: (message: string, severity: AlertColor) => void;
 }

@@ -1,13 +1,15 @@
 import { KonvaTooltipAPI, KonvaTooltip } from "../../components/KonvaTooltip";
+import { KonvaShape, KonvaShapeType } from "../../components/KonvaShape";
 import { createPathsFromSVG, removeSvgTag } from "../../utils/Shapes";
 import { KonvaGridAPI, KonvaGrid } from "../../components/KonvaGrid";
+import { useShapesContext, useStageContext } from "../../contexts";
 import { calculateLatLonFromPointer } from "../../utils/Map/Utils";
 import { SnackbarAlert } from "../../components/SnackbarAlert";
-import { KonvaShape } from "../../components/KonvaShape";
 import { stringToBase64 } from "../../utils/Image";
 import { KonvaDragDrop } from "../../types/Konva";
 import { useTranslation } from "react-i18next";
 import { downloadFile } from "../../apis/file";
+import { useMapContext } from "../../contexts";
 import { Stage, Layer } from "react-konva";
 import { Vector2d } from "konva/lib/types";
 import { CanvasShapes } from "./Shapes";
@@ -26,11 +28,6 @@ import {
   KonvaGuideLines,
 } from "../../components/KonvaGuideLines";
 import {
-  useDrawingContext,
-  useShapesContext,
-  useStageContext,
-} from "../../contexts";
-import {
   KonvaTransformerAPI,
   KonvaTransformer,
   KonvaTFM,
@@ -41,6 +38,7 @@ export const Canvas = React.memo((): React.JSX.Element => {
 
   const {
     snackBarAlert,
+    drawingMode,
     getStage,
     setStage,
     getBackground,
@@ -57,6 +55,7 @@ export const Canvas = React.memo((): React.JSX.Element => {
     getStagePointerPosition,
     setStagePointerPosition,
     updateSnackbarAlert,
+    setDrawingMode,
   } = useStageContext();
 
   const {
@@ -72,13 +71,18 @@ export const Canvas = React.memo((): React.JSX.Element => {
   const tooltipRef = React.useRef<KonvaTooltipAPI>(undefined);
 
   // Store drawing
-  const drawingInfoRef = React.useRef<DrawingInfo>({
-    previousMode: undefined,
-    lines: undefined,
-    points: undefined,
-    isDrawing: false,
-    shapeId: undefined,
-  });
+  function createResetDrawingInfo(): DrawingInfo {
+    return {
+      previousMode: undefined,
+      lines: undefined,
+      points: undefined,
+      previewPoints: undefined,
+      isDrawing: false,
+      shapeId: undefined,
+    };
+  }
+
+  const drawingInfoRef = React.useRef<DrawingInfo>(createResetDrawingInfo());
 
   const assignStage = React.useCallback(
     (stage: Konva.Stage): void => {
@@ -116,6 +120,7 @@ export const Canvas = React.memo((): React.JSX.Element => {
     [setGuideLines, getGuideLines]
   );
 
+  // Store transformer
   const cropperOptionRef = React.useRef<KonvaTFM>({
     id: "cropper",
     borderStroke: "#00ff00",
@@ -307,34 +312,25 @@ export const Canvas = React.memo((): React.JSX.Element => {
   React.useEffect(() => {
     if (
       !selectedShape.id ||
+      !drawingInfoRef.current.shapeId ||
       selectedShape.id !== drawingInfoRef.current.shapeId
     ) {
       // Reset cursor style
-      setPointerStyle();
+      setPointerStyle?.();
 
       // Reset drawing mode
-      setDrawingMode(undefined);
+      setDrawingMode?.(undefined);
 
       // Reset drawing info
-      drawingInfoRef.current = {
-        previousMode: undefined,
-        lines: undefined,
-        points: undefined,
-        isDrawing: false,
-        shapeId: undefined,
-      };
+      drawingInfoRef.current = createResetDrawingInfo();
     }
-  }, [selectedShape.id, setPointerStyle, setDrawingMode]);
+  }, [selectedShape.id]);
 
   // Update if drawing mode is changed
   React.useEffect(() => {
     if (drawingMode) {
-      if (drawingMode === drawingInfoRef.current.previousMode) {
-        return;
-      }
-
       // Set cursor style
-      setPointerStyle("crosshair");
+      setPointerStyle?.("crosshair");
 
       // Store drawing info
       drawingInfoRef.current = {
@@ -342,47 +338,71 @@ export const Canvas = React.memo((): React.JSX.Element => {
         isDrawing: false,
       };
 
-      if (drawingMode === "multi-line") {
-        if (selectedShape.type === "multi-line" && selectedShape.points) {
-          drawingInfoRef.current.points = selectedShape.points;
+      const drawingInfo: DrawingInfo = drawingInfoRef.current;
 
-          drawingInfoRef.current.shapeId = selectedShape.id;
-        } else {
-          drawingInfoRef.current.shapeId = nanoid();
-        }
-      } else if (
-        drawingMode === "source-over" ||
-        drawingMode === "destination-out"
+      // Store current shape or Add new shape
+      if (
+        selectedShape.type === drawingMode ||
+        (selectedShape.type === "free-drawing" &&
+          (drawingMode === "destination-out" || drawingMode === "source-over"))
       ) {
-        if (selectedShape.type === "free-drawing" && selectedShape.lines) {
-          drawingInfoRef.current.lines = selectedShape.lines;
-
-          drawingInfoRef.current.shapeId = selectedShape.id;
+        if (selectedShape.points) {
+          drawingInfo.points = selectedShape.points;
+          drawingInfo.previewPoints = drawingInfo.points.slice(0) as number[];
+          drawingInfo.previewPoints.push(0, 0);
         } else {
-          drawingInfoRef.current.shapeId = nanoid();
+          drawingInfo.lines = selectedShape.lines;
+        }
+      } else {
+        drawingInfo.shapeId = nanoid();
+
+        if (
+          drawingMode === "multi-line" ||
+          drawingMode === "multi-arrow" ||
+          drawingMode === "multi-line-curve" ||
+          drawingMode === "multi-arrow-curve"
+        ) {
+          drawingInfo.points = [];
+          drawingInfo.previewPoints = drawingInfo.points.slice(0) as number[];
+          drawingInfo.previewPoints.push(0, 0);
+
+          addShapes?.(
+            [
+              {
+                id: drawingInfo.shapeId,
+                type: drawingMode as KonvaShapeType,
+                points: drawingInfo.points,
+              },
+            ],
+            false,
+            false,
+            undefined
+          );
+        } else {
+          drawingInfo.lines = [];
+
+          addShapes?.(
+            [
+              {
+                id: drawingInfo.shapeId,
+                type: "free-drawing",
+                lines: drawingInfo.lines,
+              },
+            ],
+            false,
+            false,
+            undefined
+          );
         }
       }
     } else if (drawingInfoRef.current.previousMode) {
       // Reset cursor style
-      setPointerStyle();
+      setPointerStyle?.();
 
       // Reset drawing info
-      drawingInfoRef.current = {
-        previousMode: undefined,
-        lines: undefined,
-        points: undefined,
-        isDrawing: false,
-        shapeId: undefined,
-      };
+      drawingInfoRef.current = createResetDrawingInfo();
     }
-  }, [
-    drawingMode,
-    selectedShape.type,
-    selectedShape.id,
-    selectedShape.points,
-    selectedShape.lines,
-    setPointerStyle,
-  ]);
+  }, [drawingMode]);
 
   const handleStageMouseWheel = React.useCallback(
     (e: Konva.KonvaEventObject<WheelEvent>): void => {
@@ -504,82 +524,50 @@ export const Canvas = React.memo((): React.JSX.Element => {
         // Enable draggable stage
         setStageDragable(true);
       } else if (e.evt?.button === 0) {
-        const freeDrawingInfo: DrawingInfo = drawingInfoRef.current;
+        const drawingInfo: DrawingInfo = drawingInfoRef.current;
 
-        if (freeDrawingInfo.previousMode === "multi-line") {
-          if (!freeDrawingInfo.points) {
-            // Store drawing points
-            freeDrawingInfo.points = [];
-
-            // Add new shape
-            await addShapes(
-              [
-                {
-                  id: freeDrawingInfo.shapeId,
-                  type: "multi-line",
-                  points: freeDrawingInfo.points,
-                },
-              ],
-              undefined,
-              false,
-              undefined
-            );
-          }
-
-          const pointer: Vector2d = getStagePointerPosition(
-            freeDrawingInfo.shapeId
-          );
+        if (drawingInfo.points) {
+          const pointer: Vector2d = getStagePointerPosition();
           if (!pointer) {
             return;
           }
 
           // Add new point
-          freeDrawingInfo.points.push(pointer.x, pointer.y);
+          const length: number = drawingInfo.previewPoints.length;
+          drawingInfo.points.push(
+            drawingInfo.previewPoints[length - 2],
+            drawingInfo.previewPoints[length - 1]
+          );
+          drawingInfo.previewPoints.push(0, 0);
 
           // Update shape
-          updateShape(undefined, true, false);
-        } else if (
-          freeDrawingInfo.previousMode === "source-over" ||
-          freeDrawingInfo.previousMode === "destination-out"
-        ) {
-          if (!freeDrawingInfo.lines) {
-            // Store drawing lines
-            freeDrawingInfo.lines = [];
-
-            // Add new shape
-            await addShapes(
-              [
-                {
-                  id: freeDrawingInfo.shapeId,
-                  type: "free-drawing",
-                  lines: freeDrawingInfo.lines,
-                },
-              ],
-              undefined,
-              false,
-              undefined
-            );
-          }
-
+          updateShape(
+            {
+              points: drawingInfo.points,
+            },
+            true,
+            true
+          );
+        } else if (drawingInfo.lines) {
           const pointer: Vector2d = getStagePointerPosition(
-            freeDrawingInfo.shapeId
+            drawingInfo.shapeId
           );
           if (!pointer) {
             return;
           }
 
           // Add new line
-          freeDrawingInfo.lines.push({
+          drawingInfo.lines.push({
             id: nanoid(),
             points: [pointer.x, pointer.y],
-            globalCompositeOperation: freeDrawingInfo.previousMode,
+            globalCompositeOperation: drawingInfo.previousMode,
           });
 
           // Update shape
           updateShape(undefined, true, false);
 
           // Mark drawing on
-          freeDrawingInfo.isDrawing = true;
+          drawingInfo.isDrawing = true;
         } else if (e.target instanceof Konva.Stage) {
           // Reset selected ids
           updateSelectedIds(undefined, true);
@@ -589,7 +577,6 @@ export const Canvas = React.memo((): React.JSX.Element => {
     [
       updateSelectedIds,
       updateShape,
-      addShapes,
       setPointerStyle,
       setStageDragable,
       getStagePointerPosition,
@@ -653,28 +640,22 @@ export const Canvas = React.memo((): React.JSX.Element => {
 
   const handleStageMouseUp = React.useCallback(
     (e: Konva.KonvaEventObject<MouseEvent>): void => {
-      const freeDrawingInfo: DrawingInfo = drawingInfoRef.current;
+      const drawingInfo: DrawingInfo = drawingInfoRef.current;
 
       if (e.evt?.button === 2) {
         // Set/Reset cursor style
-        setPointerStyle(freeDrawingInfo.previousMode ? "crosshair" : "default");
+        setPointerStyle(drawingInfo.previousMode ? "crosshair" : "default");
 
         // Disable draggable stage
         setStageDragable(false);
       } else if (e.evt?.button === 0) {
-        if (freeDrawingInfo.previousMode === "multi-line") {
-          // Update shape
-          updateShape(undefined, true, true);
-        } else if (
-          freeDrawingInfo.previousMode === "source-over" ||
-          freeDrawingInfo.previousMode === "destination-out"
-        ) {
+        if (drawingInfo.lines) {
           const lastPoints: number[] =
-            freeDrawingInfo.lines[freeDrawingInfo.lines.length - 1].points;
+            drawingInfo.lines[drawingInfo.lines.length - 1].points;
 
           if (lastPoints.length) {
             const pointer: Vector2d = getStagePointerPosition(
-              freeDrawingInfo.shapeId
+              drawingInfo.shapeId
             );
             if (!pointer) {
               return;
@@ -689,7 +670,7 @@ export const Canvas = React.memo((): React.JSX.Element => {
         }
 
         // Mark drawing off
-        freeDrawingInfo.isDrawing = false;
+        drawingInfo.isDrawing = false;
       }
     },
     [updateShape, setStageDragable, setPointerStyle, getStagePointerPosition]

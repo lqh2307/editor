@@ -1,15 +1,12 @@
+import React from "react";
 import { ToolbarAddRegularShape } from "./AddRegularShape";
 import { ToolbarAddMilitaryIcon } from "./AddMilitaryIcon";
 import { ToolbarAddComponent } from "./AddComponent";
 import { ToolbarAddBasicIcon } from "./AddBasicIcon";
-import { ToolbarUploadVideo } from "./UploadVideo";
 import { ToolbarUploadImage } from "./UploadImage";
 import { ToolbarAddTemplate } from "./AddTemplate";
-import { ToolbarAddImage } from "./AddImage";
 import { ButtonGroup, Paper, Box } from "@mui/material";
 import { ToolbarAddText } from "./AddText";
-import { ToolbarFakeAPI } from "./FakeApi";
-import React from "react";
 import { PopperButton } from "../../components/PopperButton";
 import { CategoryTwoTone } from "@mui/icons-material";
 import { ToolbarDrawing } from "./Drawing";

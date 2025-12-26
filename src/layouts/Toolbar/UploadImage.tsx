@@ -22,33 +22,35 @@ export const ToolbarUploadImage = React.memo((): React.JSX.Element => {
 
   const { addShapes } = useShapesContext();
 
-  const linkInitRef = React.useRef<LinkInfo>({
-    isLoading: false,
-    isOpen: false,
-    link: undefined,
-  });
+  function createResetLinkInfo(): LinkInfo {
+    return {
+      isLoading: false,
+      isOpen: false,
+      link: undefined,
+    };
+  }
 
   const [imageFromLinkInfo, setImageFromLinkInfo] = React.useState<LinkInfo>(
-    linkInitRef.current
+    createResetLinkInfo()
   );
 
   const imageFromLinkHandler = React.useMemo(() => {
     return {
       open: (): void => {
         setImageFromLinkInfo({
-          ...linkInitRef.current,
+          ...createResetLinkInfo(),
           isOpen: true,
         });
       },
       close: (): void => {
-        setImageFromLinkInfo(linkInitRef.current);
+        setImageFromLinkInfo(createResetLinkInfo());
       },
       onClose: (_: any, reason: "backdropClick" | "escapeKeyDown"): void => {
         if (reason === "backdropClick") {
           return;
         }
 
-        setImageFromLinkInfo(linkInitRef.current);
+        setImageFromLinkInfo(createResetLinkInfo());
       },
       changeLink: (value: string): void => {
         setImageFromLinkInfo((prev) => ({
@@ -75,7 +77,7 @@ export const ToolbarUploadImage = React.memo((): React.JSX.Element => {
             },
           ],
           false,
-          undefined,
+          false,
           getStageCenter()
         );
       } catch (error) {
@@ -118,7 +120,7 @@ export const ToolbarUploadImage = React.memo((): React.JSX.Element => {
           "error"
         );
       } finally {
-        setImageFromLinkInfo(linkInitRef.current);
+        setImageFromLinkInfo(createResetLinkInfo());
       }
     }, [t, addShapes, imageFromLinkInfo, getStageCenter, updateSnackbarAlert]);
 

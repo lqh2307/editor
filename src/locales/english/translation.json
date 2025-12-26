@@ -345,8 +345,14 @@
         "quadraticCurve": {
           "title": "Quadratic Curve"
         },
+        "quadraticArrowCurve": {
+          "title": "Quadratic Arrow Curve"
+        },
         "bezierCurve": {
           "title": "Bezier Curve"
+        },
+        "bezierArrowCurve": {
+          "title": "Bezier Arrow Curve"
         }
       },
       "common": {
@@ -459,6 +465,15 @@
     },
     "multiLine": {
       "title": "Multi Line"
+    },
+    "multiArrow": {
+      "title": "Multi Arrow"
+    },
+    "multiLineCurve": {
+      "title": "Multi Line Curve"
+    },
+    "multiArrowCurve": {
+      "title": "Multi Arrow Curve"
     },
     "drawing": {
       "title": "Drawing"

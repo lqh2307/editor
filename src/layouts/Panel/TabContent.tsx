@@ -1,4 +1,4 @@
-import { useDrawingContext, useShapesContext } from "../../contexts";
+import { useStageContext, useShapesContext } from "../../contexts";
 import { PanelArrangeTab } from "./ArrangeTab";
 import { useTranslation } from "react-i18next";
 import { TabContext, TabList } from "@mui/lab";
@@ -13,7 +13,7 @@ import { MapOriginPanel } from "./MapTab";
 export const PanelTabContent = React.memo((): React.JSX.Element => {
   const { t } = useTranslation();
 
-  const { drawingMode } = useDrawingContext();
+  const { drawingMode } = useStageContext();
 
   const { selectedShape, shapeList } = useShapesContext();
 
@@ -150,7 +150,7 @@ export const PanelTabContent = React.memo((): React.JSX.Element => {
           }}
           label={t("panel.filter.title")}
           value={"filter"}
-          />
+        />
 
         <Tab
           sx={{

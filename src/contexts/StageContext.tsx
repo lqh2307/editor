@@ -3,6 +3,7 @@ import { KonvaGuideLinesAPI } from "../components/KonvaGuideLines";
 import { KonvaBackgroundAPI } from "../components/KonvaBackground";
 import { SnackbarAlertProp } from "../components/SnackbarAlert";
 import { detectContentTypeFromFormat } from "../utils/Utils";
+import { DrawingMode } from "../types/FreeDrawing";
 import { useTranslation } from "react-i18next";
 import { ImageFormat } from "../types/Common";
 import { IStageContext } from "./Interfaces";
@@ -1105,6 +1106,9 @@ export function StageProvider(prop: StageProviderProp): React.JSX.Element {
     []
   );
 
+  // Store drawing mode
+  const [drawingMode, setDrawingMode] = React.useState<DrawingMode>(undefined);
+
   // Update background/grid size
   React.useEffect(() => {
     backgroundRef.current?.updateProp({
@@ -1129,7 +1133,7 @@ export function StageProvider(prop: StageProviderProp): React.JSX.Element {
     return () => {
       removeEventListener("resize", resizeHandler);
     };
-  }, [fitStage]);
+  }, []);
 
   const contextValue: IStageContext = React.useMemo<IStageContext>(
     () => ({
@@ -1172,6 +1176,10 @@ export function StageProvider(prop: StageProviderProp): React.JSX.Element {
       stageWidth: state.stageWidth,
       stageHeight: state.stageHeight,
 
+      drawingMode,
+
+      setDrawingMode,
+
       setStageRatio,
       setStageMinWidth,
       setStageZoom,
@@ -1205,7 +1213,7 @@ export function StageProvider(prop: StageProviderProp): React.JSX.Element {
 
       updateSnackbarAlert,
     }),
-    [i18n, state, snackBarAlert]
+    [i18n, state, drawingMode, snackBarAlert]
   );
 
   return (

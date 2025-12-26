@@ -135,6 +135,7 @@ export const ToolbarAddBasicIcon = React.memo((): React.JSX.Element => {
                 height={iconConfigRef.current.itemSize}
                 draggable={false}
                 fallbackSrc={"./assets/images/placeholder.png"}
+                backgroundColor={"#ffffff"}
               />
             }
             value={JSON.stringify({
