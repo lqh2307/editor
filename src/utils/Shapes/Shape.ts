@@ -59,43 +59,6 @@ export function createShape(shape: KonvaShape): KonvaShape {
       break;
     }
 
-    case "arrow":
-    case "line": {
-      // Arrow size
-      if (newShape.type === "arrow") {
-        newShape.pointerWidth =
-          newShape.pointerWidth ?? newShape.pointerWidth ?? 10;
-        newShape.pointerLength =
-          newShape.pointerLength ?? newShape.pointerLength ?? 10;
-      } else {
-        newShape.pointerWidth =
-          newShape.pointerWidth ?? newShape.pointerWidth ?? 0;
-        newShape.pointerLength =
-          newShape.pointerLength ?? newShape.pointerLength ?? 0;
-      }
-
-      // Common
-      newShape.x = newShape.x ?? 150;
-      newShape.y = newShape.y ?? 250;
-      newShape.fillEnabled = newShape.fillEnabled ?? true;
-      newShape.fill = newShape.fill ?? randomColor;
-      newShape.fillOpacity = newShape.fillOpacity ?? 1;
-      newShape.lineCap = newShape.lineCap ?? "butt";
-      newShape.lineJoin = newShape.lineJoin ?? "miter";
-      newShape.strokeEnabled = newShape.strokeEnabled ?? true;
-      newShape.stroke = newShape.stroke ?? randomColor;
-      newShape.strokeOpacity = newShape.strokeOpacity ?? 1;
-      newShape.strokeScaleEnabled = newShape.strokeScaleEnabled ?? false;
-      newShape.strokeWidth = newShape.strokeWidth ?? 10;
-      newShape.points = newShape.points ?? [0, 0, 200, 0];
-
-      // Offset
-      newShape.offsetX = newShape.offsetX ?? 100;
-      newShape.offsetY = newShape.offsetY ?? 0;
-
-      break;
-    }
-
     case "rectangle": {
       // Common
       newShape.width = newShape.width ?? 200;
@@ -234,7 +197,7 @@ export function createShape(shape: KonvaShape): KonvaShape {
     case "multi-arrow":
     case "multi-line-curve":
     case "multi-arrow-curve": {
-      // Arrow size and tension
+      // Arrow size
       if (
         newShape.type === "multi-arrow" ||
         newShape.type === "multi-arrow-curve"
@@ -243,23 +206,24 @@ export function createShape(shape: KonvaShape): KonvaShape {
           newShape.pointerWidth ?? newShape.pointerWidth ?? 10;
         newShape.pointerLength =
           newShape.pointerLength ?? newShape.pointerLength ?? 10;
-
-        if (newShape.type === "multi-arrow-curve") {
-          newShape.tension = newShape.tension ?? 0.4;
-        } else {
-          newShape.tension = newShape.tension ?? 0;
-        }
-      } else {
+      } else if (
+        newShape.type === "multi-line" ||
+        newShape.type === "multi-line-curve"
+      ) {
         newShape.pointerWidth =
           newShape.pointerWidth ?? newShape.pointerWidth ?? 0;
         newShape.pointerLength =
           newShape.pointerLength ?? newShape.pointerLength ?? 0;
+      }
 
-        if (newShape.type === "multi-line-curve") {
-          newShape.tension = newShape.tension ?? 0.4;
-        } else {
-          newShape.tension = newShape.tension ?? 0;
-        }
+      // Tension
+      if (
+        newShape.type === "multi-arrow-curve" ||
+        newShape.type === "multi-line-curve"
+      ) {
+        newShape.tension = newShape.tension ?? 0.4;
+      } else {
+        newShape.tension = newShape.tension ?? 0;
       }
 
       // Common
@@ -274,7 +238,7 @@ export function createShape(shape: KonvaShape): KonvaShape {
       newShape.stroke = newShape.stroke ?? "#000000";
       newShape.strokeOpacity = newShape.strokeOpacity ?? 1;
       newShape.strokeScaleEnabled = newShape.strokeScaleEnabled ?? false;
-      newShape.strokeWidth = newShape.strokeWidth ?? 5;
+      newShape.strokeWidth = newShape.strokeWidth ?? 10;
       newShape.bezier = newShape.bezier ?? false;
       newShape.closed = newShape.closed ?? false;
       newShape.points = newShape.points ?? [];
@@ -406,44 +370,46 @@ export function createShape(shape: KonvaShape): KonvaShape {
       break;
     }
 
+    case "arrow":
+    case "line":
     case "quadratic-curve":
     case "quadratic-arrow-curve":
     case "bezier-curve":
     case "bezier-arrow-curve": {
-      // Points and arrow size
+      // Points
       if (
         newShape.type === "quadratic-curve" ||
         newShape.type === "quadratic-arrow-curve"
       ) {
         newShape.points = newShape.points ?? [0, 0, 200, 0, 200, 0, 200, 200];
-
-        if (newShape.type === "quadratic-arrow-curve") {
-          newShape.pointerWidth =
-            newShape.pointerWidth ?? newShape.pointerWidth ?? 10;
-          newShape.pointerLength =
-            newShape.pointerLength ?? newShape.pointerLength ?? 10;
-        } else {
-          newShape.pointerWidth =
-            newShape.pointerWidth ?? newShape.pointerWidth ?? 0;
-          newShape.pointerLength =
-            newShape.pointerLength ?? newShape.pointerLength ?? 0;
-        }
-      } else {
+        newShape.bezier = newShape.bezier ?? true;
+      } else if (
+        newShape.type === "bezier-curve" ||
+        newShape.type === "bezier-arrow-curve"
+      ) {
         newShape.points = newShape.points ?? [
-          0, 100, 33, 0, 66, 0, 100, 100, 133, 200, 166, 200, 200, 100,
+          0, 100, 100, 0, 100, 200, 200, 100,
         ];
+        newShape.bezier = newShape.bezier ?? true;
+      } else {
+        newShape.points = newShape.points ?? [0, 200, 200, 200];
+      }
 
-        if (newShape.type === "bezier-arrow-curve") {
-          newShape.pointerWidth =
-            newShape.pointerWidth ?? newShape.pointerWidth ?? 10;
-          newShape.pointerLength =
-            newShape.pointerLength ?? newShape.pointerLength ?? 10;
-        } else {
-          newShape.pointerWidth =
-            newShape.pointerWidth ?? newShape.pointerWidth ?? 0;
-          newShape.pointerLength =
-            newShape.pointerLength ?? newShape.pointerLength ?? 0;
-        }
+      // Arrow size
+      if (
+        newShape.type === "quadratic-arrow-curve" ||
+        newShape.type === "bezier-arrow-curve" ||
+        newShape.type === "arrow"
+      ) {
+        newShape.pointerWidth =
+          newShape.pointerWidth ?? newShape.pointerWidth ?? 10;
+        newShape.pointerLength =
+          newShape.pointerLength ?? newShape.pointerLength ?? 10;
+      } else {
+        newShape.pointerWidth =
+          newShape.pointerWidth ?? newShape.pointerWidth ?? 0;
+        newShape.pointerLength =
+          newShape.pointerLength ?? newShape.pointerLength ?? 0;
       }
 
       // Common
@@ -458,8 +424,7 @@ export function createShape(shape: KonvaShape): KonvaShape {
       newShape.stroke = newShape.stroke ?? randomColor;
       newShape.strokeOpacity = newShape.strokeOpacity ?? 1;
       newShape.strokeScaleEnabled = newShape.strokeScaleEnabled ?? false;
-      newShape.strokeWidth = newShape.strokeWidth ?? 5;
-      newShape.bezier = newShape.bezier ?? true;
+      newShape.strokeWidth = newShape.strokeWidth ?? 10;
 
       // Offset
       newShape.offsetX = newShape.offsetX ?? 100;
