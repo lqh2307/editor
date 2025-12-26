@@ -424,6 +424,7 @@ function reducer(state: State, action: Action): State {
           if (shape) {
             if (shape.groupIds) {
               if (
+                shape.originGroupIds &&
                 compareArray(
                   group.ids,
                   shape.originGroupIds.flat(Infinity),
