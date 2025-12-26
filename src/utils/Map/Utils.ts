@@ -24,7 +24,7 @@ export interface BgNode {
   height(): number;
 }
 
-// Hàm tính lat/lon từ vị trí chuột
+// Pixel (chuột) → Tọa độ địa lý (lat / lon
 export function calculateLatLonFromPointer(
   pointer: PointerPosition | null | undefined,
   bgNode: BgNode | null | undefined,
@@ -65,7 +65,7 @@ export function calculateLatLonFromPointer(
   return { lat, lon };
 }
 
-// Convert a lat/lon to canvas pixel coordinates using calibration and background node
+// Tọa độ địa lý (lat / lon) → Pixel trên canvas
 export function calculatePointerFromLatLon(
   latlon: LatLon | null | undefined,
   bgNode: BgNode | null | undefined,
@@ -102,22 +102,4 @@ export function calculatePointerFromLatLon(
   const relY = ((latlon.lat - latMax) / (latMin - latMax)) * bh; // top is latMax
 
   return { x: bx + relX, y: by + relY };
-}
-
-// Convert an array of lat/lon positions to Konva polyline points [x1,y1,x2,y2,...]
-export function latLonHistoryToPoints(
-  history: LatLon[] | null | undefined,
-  bgNode: BgNode | null | undefined,
-  calibration: Calibration | null | undefined
-): number[] {
-  if (!history?.length) return [];
-
-  const pts: number[] = [];
-  for (const h of history) {
-    const p = calculatePointerFromLatLon(h, bgNode, calibration);
-    if (p) {
-      pts.push(p.x, p.y);
-    }
-  }
-  return pts;
 }

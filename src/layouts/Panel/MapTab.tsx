@@ -150,10 +150,10 @@ export const MapOriginPanel = React.memo((): React.JSX.Element => {
                 <Table size="small" sx={{ minWidth: 220, tableLayout: "fixed", fontSize: '0.8rem' }}>
                   <TableHead>
                     <TableRow sx={{ backgroundColor: (theme) => theme.palette.action.hover }}>
-                      <TableCell sx={{ width: 36, fontWeight: 700, py: 0.5, px: 1 }}>#</TableCell>
-                      <TableCell sx={{ width: 90, fontWeight: 700, py: 0.5, px: 1 }}>Vĩ độ</TableCell>
-                      <TableCell sx={{ width: 90, fontWeight: 700, py: 0.5, px: 1 }}>Kinh độ</TableCell>
-                      <TableCell align="right" sx={{ width: 54, fontWeight: 700, py: 0.5, px: 1 }}>—</TableCell>
+                      <TableCell sx={{ width: 15, p: 0.5 }}>#</TableCell>
+                      <TableCell sx={{ width: 55, p: 0.5 }}>Vĩ độ</TableCell>
+                      <TableCell sx={{ width: 55, p: 0.5 }}>Kinh độ</TableCell>
+                      <TableCell align="center" sx={{ width: 55, p: 0.5 }}>—</TableCell>
                     </TableRow>
                   </TableHead>
                   <TableBody>
@@ -170,14 +170,14 @@ export const MapOriginPanel = React.memo((): React.JSX.Element => {
                           hover
                           sx={{ '&:hover': { backgroundColor: (theme) => theme.palette.action.selected } }}
                         >
-                          <TableCell sx={{ width: 36, py: 0.5, px: 1 }}>{idx + 1}</TableCell>
-                          <TableCell sx={{ width: 90, py: 0.5, px: 1, fontVariantNumeric: 'tabular-nums' }}>
+                          <TableCell sx={{ width: 15, p: 0.5 }}>{idx + 1}</TableCell>
+                          <TableCell sx={{ width: 55, p: 0.5, fontVariantNumeric: 'tabular-nums' }}>
                             <Typography variant="caption">{h.lat.toFixed(6)}</Typography>
                           </TableCell>
-                          <TableCell sx={{ width: 90, py: 0.5, px: 1, fontVariantNumeric: 'tabular-nums' }}>
+                          <TableCell sx={{ width: 55, p: 0.5, fontVariantNumeric: 'tabular-nums' }}>
                             <Typography variant="caption">{h.lon.toFixed(6)}</Typography>
                           </TableCell>
-                          <TableCell align="right" sx={{ width: 54, py: 0.5, px: 1 }}>
+                          <TableCell align="right" sx={{ width: 55, p: 0.5 }}>
                             <Stack direction="row" spacing={0} justifyContent="flex-end">
                               <Tooltip title="Lên" arrow>
                                 <span>
