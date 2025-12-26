@@ -3,7 +3,6 @@ import { ToolbarStageSetting } from "./StageSetting";
 import { Box, Divider, Stack } from "@mui/material";
 import { ToolbarAddShape } from "./AddShape";
 import { ToolbarHistory } from "./History";
-import { ToolbarDrawing } from "./Drawing";
 import { ToolbarProfile } from "./Profile";
 import { ToolbarAction } from "./Action";
 import { ToolbarClose } from "./Close";
@@ -25,11 +24,12 @@ export const Toolbar = React.memo((): React.JSX.Element => {
         sx={{
           display: "flex",
           flexDirection: "row",
-          justifyContent: "center",
+          justifyContent: "start",
           alignItems: "center",
-          width: "95%",
+          width: "100%",
           height: "100%",
           overflowX: "auto",
+          paddingLeft: "0.5rem",
         }}
         direction={"row"}
         divider={<Divider orientation={"vertical"} flexItem={true} />}
@@ -50,8 +50,7 @@ export const Toolbar = React.memo((): React.JSX.Element => {
         {/* Add Shapes (Line/Arrow/Circle/Polygon/Rectangle)/Add Icons/Add Image/Add Text */}
         <ToolbarAddShape />
 
-        {/* Free/Erase Drawing */}
-        <ToolbarDrawing />
+        {/* Drawing tools moved into Add menu */}
 
         {/* Background/Grid */}
         <ToolbarStageSetting />
@@ -63,7 +62,7 @@ export const Toolbar = React.memo((): React.JSX.Element => {
         <ToolbarHelp />
 
         {/* Close */}
-        <ToolbarClose />
+        {/* <ToolbarClose /> */}
       </Stack>
 
       <Stack

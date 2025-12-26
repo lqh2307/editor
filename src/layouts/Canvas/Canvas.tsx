@@ -25,7 +25,6 @@ import {
   KonvaGuideLinesAPI,
   KonvaGuideLines,
 } from "../../components/KonvaGuideLines";
-import { useMapContext } from "../../contexts";
 import {
   useDrawingContext,
   useShapesContext,
@@ -69,7 +68,7 @@ export const Canvas = React.memo((): React.JSX.Element => {
   } = useShapesContext();
 
   const { drawingMode, setDrawingMode } = useDrawingContext();
-  const { calibration } = useMapContext();
+  // const { calibration } = useMapContext();
   const tooltipRef = React.useRef<KonvaTooltipAPI>(undefined);
 
   // Store drawing
@@ -597,60 +596,60 @@ export const Canvas = React.memo((): React.JSX.Element => {
     ]
   );
 
-  const handleStageMouseMove = React.useCallback((): void => {
-    console.log("handleStageMouseMove called"); // Log xác nhận sự kiện chuột
-    if (getIsStageDragable()) {
-      dragStage();
-      return;
-    }
+  // const handleStageMouseMove = React.useCallback((): void => {
+  //   console.log("handleStageMouseMove called"); // Log xác nhận sự kiện chuột
+  //   if (getIsStageDragable()) {
+  //     dragStage();
+  //     return;
+  //   }
 
-    const freeDrawingInfo: DrawingInfo = drawingInfoRef.current;
+  //   const freeDrawingInfo: DrawingInfo = drawingInfoRef.current;
 
-    if (freeDrawingInfo.isDrawing) {
-      const pointer: Vector2d = getStagePointerPosition(
-        freeDrawingInfo.shapeId
-      );
-      if (!pointer) {
-        return;
-      }
-      // Add new point to last line
-      freeDrawingInfo.lines[freeDrawingInfo.lines.length - 1].points.push(
-        pointer.x,
-        pointer.y
-      );
-      // Update shape
-      updateShape(undefined, true, false);
-    }
+  //   if (freeDrawingInfo.isDrawing) {
+  //     const pointer: Vector2d = getStagePointerPosition(
+  //       freeDrawingInfo.shapeId
+  //     );
+  //     if (!pointer) {
+  //       return;
+  //     }
+  //     // Add new point to last line
+  //     freeDrawingInfo.lines[freeDrawingInfo.lines.length - 1].points.push(
+  //       pointer.x,
+  //       pointer.y
+  //     );
+  //     // Update shape
+  //     updateShape(undefined, true, false);
+  //   }
 
-    // Luôn cập nhật tooltip khi di chuột trên canvas
-    const p: Vector2d = getStagePointerPosition();
-    if (
-      p &&
-      calibration.topRight &&
-      calibration.bottomLeft &&
-      tooltipRef.current
-    ) {
-      const bgApi = getBackground();
-      const bgNode = bgApi?.getNode();
-      const latLon = calculateLatLonFromPointer(p, bgNode, calibration);
-      if (latLon) {
-        tooltipRef.current.updateProp({
-          text: `Lat: ${latLon.lat.toFixed(6)}\nLon: ${latLon.lon.toFixed(6)}`,
-          x: p.x + 8,
-          y: p.y + 8,
-        });
-      } else {
-        tooltipRef.current.updateProp({ text: "" });
-      }
-    }
-  }, [
-    updateShape,
-    dragStage,
-    getIsStageDragable,
-    getStagePointerPosition,
-    calibration,
-    getBackground,
-  ]);
+  //   // Luôn cập nhật tooltip khi di chuột trên canvas
+  //   const p: Vector2d = getStagePointerPosition();
+  //   if (
+  //     p &&
+  //     calibration.topRight &&
+  //     calibration.bottomLeft &&
+  //     tooltipRef.current
+  //   ) {
+  //     const bgApi = getBackground();
+  //     const bgNode = bgApi?.getNode();
+  //     const latLon = calculateLatLonFromPointer(p, bgNode, calibration);
+  //     if (latLon) {
+  //       tooltipRef.current.updateProp({
+  //         text: `Lat: ${latLon.lat.toFixed(6)}\nLon: ${latLon.lon.toFixed(6)}`,
+  //         x: p.x + 8,
+  //         y: p.y + 8,
+  //       });
+  //     } else {
+  //       tooltipRef.current.updateProp({ text: "" });
+  //     }
+  //   }
+  // }, [
+  //   updateShape,
+  //   dragStage,
+  //   getIsStageDragable,
+  //   getStagePointerPosition,
+  //   calibration,
+  //   getBackground,
+  // ]);
 
   const handleStageMouseUp = React.useCallback(
     (e: Konva.KonvaEventObject<MouseEvent>): void => {
@@ -724,7 +723,7 @@ export const Canvas = React.memo((): React.JSX.Element => {
         onWheel={handleStageMouseWheel}
         onClick={handleStageClick}
         onMouseDown={handleStageMouseDown}
-        onMouseMove={handleStageMouseMove}
+        // onMouseMove={handleStageMouseMove}
         onMouseUp={handleStageMouseUp}
         onContextMenu={handleStageContextMenu}
       >

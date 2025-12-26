@@ -6,42 +6,58 @@ import { ToolbarUploadVideo } from "./UploadVideo";
 import { ToolbarUploadImage } from "./UploadImage";
 import { ToolbarAddTemplate } from "./AddTemplate";
 import { ToolbarAddImage } from "./AddImage";
-import { ButtonGroup } from "@mui/material";
+import { ButtonGroup, Paper, Box } from "@mui/material";
 import { ToolbarAddText } from "./AddText";
 import { ToolbarFakeAPI } from "./FakeApi";
 import React from "react";
+import { PopperButton } from "../../components/PopperButton";
+import { CategoryTwoTone } from "@mui/icons-material";
+import { ToolbarDrawing } from "./Drawing";
+import { useTranslation } from "react-i18next";
 
 export const ToolbarAddShape = React.memo((): React.JSX.Element => {
+  const { t } = useTranslation();
+
   return (
     <ButtonGroup variant={"contained"} size={"small"}>
-      {/* Add Shapes (Line/Arrow/Circle/Rectangle/Convex Polygon/Concave Polygon/Ring/Wedge) */}
-      <ToolbarAddRegularShape />
+      {/* Unified Add menu */}
+      <PopperButton
+        icon={<CategoryTwoTone />}
+        title={t("toolBar.addShape.title")}
+        closeOnClickAway={false}
+      >
+        <Paper
+          elevation={4}
+          sx={{
+            padding: "0.5rem",
+            display: "flex",
+            flexDirection: "column",
+            gap: "0.5rem",
+          }}
+        >
+          <Box sx={{ display: "flex", flexDirection: "row", gap: "0.5rem", flexWrap: "wrap" }}>
+            {/* Geometric Shapes */}
+            <ToolbarAddRegularShape />
 
-      {/* Add Basic Icon */}
-      <ToolbarAddBasicIcon />
+            {/* Basic Icons */}
+            <ToolbarAddBasicIcon />
 
-      {/* Add Military Icon */}
-      <ToolbarAddMilitaryIcon />
+            {/* Military Icons */}
+            <ToolbarAddMilitaryIcon />
 
-      {/* Add Text */}
+            {/* Drawing Tools (Multi-line / Pen / Eraser) */}
+            <ToolbarDrawing />
+          </Box>
+        </Paper>
+      </PopperButton>
+
+      {/* Keep other quick actions as standalone */}
       <ToolbarAddText />
-
-      {/* Add Image */}
       {/* <ToolbarAddImage /> */}
-
-      {/*Fake API*/}
       {/* <ToolbarFakeAPI /> */}
-
-      {/* Add Component */}
       <ToolbarAddComponent />
-
-      {/* Add Template */}
       <ToolbarAddTemplate />
-
-      {/* Upload Image (From Device/From Link) */}
       <ToolbarUploadImage />
-
-      {/* Upload Video (From Device/From Link) */}
       {/* <ToolbarUploadVideo /> */}
     </ButtonGroup>
   );

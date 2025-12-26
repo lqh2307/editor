@@ -313,7 +313,7 @@
       }
     },
     "addShape": {
-      "title": "Thêm hình học",
+      "title": "Ký hiệu hình học",
       "children": {
         "line": {
           "title": "Đường thẳng"
@@ -356,7 +356,7 @@
       }
     },
     "addBasicIcon": {
-      "title": "Thêm biểu tượng cơ bản",
+      "title": "ký hiệu cơ bản",
       "common": {
         "snackBarAlert": {
           "error": "Lỗi!"
@@ -364,7 +364,7 @@
       }
     },
     "addMilitaryIcon": {
-      "title": "Thêm biểu tượng quân sự",
+      "title": "Ký hiệu quân sự",
       "children": {
         "favorite": {
           "title": "Yêu thích"
@@ -374,7 +374,8 @@
         "snackBarAlert": {
           "error": "Lỗi!"
         }
-      }
+      },
+      "favorites": "Yêu thích"
     },
     "uploadImage": {
       "title": "Tải lên ảnh",
@@ -437,7 +438,7 @@
       }
     },
     "addComponent": {
-      "title": "Thêm thành phần",
+      "title": "Thành phần",
       "common": {
         "snackBarAlert": {
           "error": "Lỗi!"
@@ -445,7 +446,7 @@
       }
     },
     "addTemplate": {
-      "title": "Thêm mẫu",
+      "title": "Mẫu",
       "common": {
         "snackBarAlert": {
           "apply": "Đã áp dụng!",
@@ -454,7 +455,7 @@
       }
     },
     "addText": {
-      "title": "Thêm văn bản"
+      "title": "Văn bản"
     },
     "multiLine": {
       "title": "Nhiều đường"
@@ -1200,5 +1201,7 @@
       }
     }
   },
-  "common": {}
+  "common": {
+    "search": "Tìm kiếm..."
+  }
 }

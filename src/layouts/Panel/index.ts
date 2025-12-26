@@ -6,3 +6,4 @@ export * from "./StyleTab";
 export * from "./TextTab";
 export * from "./Types";
 export * from "./Panel";
+export * from "./MapTab";

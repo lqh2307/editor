@@ -6,7 +6,7 @@ import { KonvaIcon } from "../../types/Konva";
 import { ImageTwoTone } from "@mui/icons-material";
 import { AxiosResponse } from "axios";
 import React from "react";
-import { useMapContext } from "../../contexts";
+// import { useMapContext } from "../../contexts";
 import { stringToBase64 } from "../../utils/Image";
 
 type FakeApiEvent = {
@@ -49,7 +49,7 @@ function pickRandomIcon(icons: KonvaIcon[]): KonvaIcon | undefined {
 export const ToolbarFakeAPI = React.memo((): React.JSX.Element => {
   const { addShapes, alignShape } = useShapesContext();
   const { updateSnackbarAlert } = useStageContext();
-  const { setTopRight, setBottomLeft } = useMapContext();
+  // const { setTopRight, setBottomLeft } = useMapContext();
 
   const [icons, setIcons] = React.useState<KonvaIcon[] | null>(null);
   const [loading, setLoading] = React.useState<boolean>(false);
@@ -99,8 +99,8 @@ export const ToolbarFakeAPI = React.memo((): React.JSX.Element => {
 
       // Align the newly added image to the stage top-left
       alignShape(undefined, "left", "top");
-      setTopRight({ lat: trLat, lon: trLon });
-      setBottomLeft({ lat: blLat, lon: blLon });
+      // setTopRight({ lat: trLat, lon: trLon });
+      // setBottomLeft({ lat: blLat, lon: blLon });
 
       // Also add one fake icon to illustrate sending map & ship
       const list = icons && icons.length ? icons : await ensureIcons();
@@ -135,8 +135,8 @@ export const ToolbarFakeAPI = React.memo((): React.JSX.Element => {
   }, [
     addShapes,
     alignShape,
-    setTopRight,
-    setBottomLeft,
+    // setTopRight,
+    // setBottomLeft,
     ensureIcons,
     icons,
     updateSnackbarAlert,

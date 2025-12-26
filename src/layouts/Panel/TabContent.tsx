@@ -8,7 +8,7 @@ import { PanelTextTab } from "./TextTab";
 import { Box, Tab } from "@mui/material";
 import { FilterTab } from "./FilterTab";
 import React from "react";
-import { MapOriginPanel } from "../../components/MapOriginPanel/MapOriginPanel";
+import { MapOriginPanel } from "./MapTab";
 
 export const PanelTabContent = React.memo((): React.JSX.Element => {
   const { t } = useTranslation();
@@ -150,7 +150,7 @@ export const PanelTabContent = React.memo((): React.JSX.Element => {
           }}
           label={t("panel.filter.title")}
           value={"filter"}
-        />
+          />
 
         <Tab
           sx={{
@@ -179,7 +179,7 @@ export const PanelTabContent = React.memo((): React.JSX.Element => {
 
       <FilterTab />
 
-      {tab === "map" && <MapOriginPanel />}
+      <MapOriginPanel />
     </TabContext>
   );
 });
