@@ -22,6 +22,9 @@ export type KonvaShape = Partial<Konva.ShapeConfig> &
     clip?: KonvaShapeClip;
     coordinate?: Point;
 
+    // Map history: array of lat/lon points
+    locationHistory?: { lat: number; lon: number }[];
+
     // Filter
     brightness?: number;
     contrast?: number;

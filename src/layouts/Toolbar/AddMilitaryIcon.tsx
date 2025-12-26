@@ -21,13 +21,20 @@ import { getValue, setValue } from "../../utils/LocalStorage";
 import DraggableTabsPanel from "../../components/DraggableTabsPanel/DraggableTabsPanelProps";
 import { useDebounce } from "../../hooks";
 import React from "react";
+import { Calibration } from "../../utils/Map/Utils";
 
 export const ToolbarAddMilitaryIcon = React.memo((): React.JSX.Element => {
   const { t } = useTranslation();
 
   const { getStageCenter, updateSnackbarAlert } = useStageContext();
 
-  const { addShapes } = useShapesContext();
+  const { addShapes, shapeList, updateShape } = useShapesContext();
+
+  // Temporary calibration. Replace with real one from your map context/state.
+  const calibrationRef = React.useRef<Calibration>({
+    topRight: { lat: 23.343927, lon: 112.520316 },
+    bottomLeft: { lat: 18.708556, lon: 102.228061 },
+  });
 
   const addIconHandler = React.useCallback(
     async (value: string): Promise<void> => {
@@ -108,6 +115,43 @@ export const ToolbarAddMilitaryIcon = React.memo((): React.JSX.Element => {
       // ignore
     }
   }, []);
+
+  const prevHistoryMapRef = React.useRef<Record<string, boolean>>({});
+
+  React.useEffect(() => {
+    console.log("shapeList changed", shapeList);
+  } , [shapeList]);
+
+  React.useEffect(() => {
+    if (!Array.isArray(shapeList) || !shapeList.length) return;
+
+    const prev = prevHistoryMapRef.current;
+
+    for (const s of shapeList) {
+      if (s?.type !== "image") continue;
+
+      const had = !!prev[s.id];
+      const hasNow = Array.isArray(s.locationHistory) && s.locationHistory.length > 0;
+
+      // Auto-attach demo location history when a new military icon is added
+      if (!had && !hasNow) {
+        const { topRight, bottomLeft } = calibrationRef.current;
+        const steps = 6;
+        const hist = Array.from({ length: steps }, (_, i) => {
+          const t = i / (steps - 1);
+          return {
+            lon: bottomLeft.lon + (topRight.lon - bottomLeft.lon) * t,
+            lat: topRight.lat + (bottomLeft.lat - topRight.lat) * (t * 0.9),
+          };
+        });
+
+        updateShape({ id: s.id, locationHistory: hist }, true, true);
+        prev[s.id] = true;
+      } else {
+        prev[s.id] = hasNow;
+      }
+    }
+  }, [shapeList, updateShape]);
 
   const favoritesSet = React.useMemo(
     () => new Set(favorites.map((f) => f.content)),

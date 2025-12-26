@@ -14,6 +14,9 @@
     }
   },
   "toolBar": {
+    "menu": {
+      "title": "Menu"
+    },
     "save": {
       "title": "Lưu (Ctrl + S)",
       "children": {

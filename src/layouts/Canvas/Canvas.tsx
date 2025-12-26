@@ -9,7 +9,6 @@ import { stringToBase64 } from "../../utils/Image";
 import { KonvaDragDrop } from "../../types/Konva";
 import { useTranslation } from "react-i18next";
 import { downloadFile } from "../../apis/file";
-import { useMapContext } from "../../contexts";
 import { Stage, Layer } from "react-konva";
 import { Vector2d } from "konva/lib/types";
 import { CanvasShapes } from "./Shapes";
@@ -66,8 +65,17 @@ export const Canvas = React.memo((): React.JSX.Element => {
     updateSelectedIds,
   } = useShapesContext();
 
-  const { drawingMode, setDrawingMode } = useDrawingContext();
   // const { calibration } = useMapContext();
+  // Fake calibration for map-style coordinates (topRight and bottomLeft)
+  // Replace with context/state if you have real calibration.
+  const calibration = React.useMemo(
+    () => ({
+      topRight: { lat: 23.343927, lon: 112.520316 },
+      bottomLeft: { lat: 18.708556, lon: 102.228061 },
+    }),
+    []
+  );
+
   const tooltipRef = React.useRef<KonvaTooltipAPI>(undefined);
 
   // Store drawing
@@ -583,60 +591,76 @@ export const Canvas = React.memo((): React.JSX.Element => {
     ]
   );
 
-  // const handleStageMouseMove = React.useCallback((): void => {
-  //   console.log("handleStageMouseMove called"); // Log xác nhận sự kiện chuột
-  //   if (getIsStageDragable()) {
-  //     dragStage();
-  //     return;
-  //   }
+  const handleStageMouseMove = React.useCallback((): void => {
+    if (getIsStageDragable()) {
+      dragStage();
 
-  //   const freeDrawingInfo: DrawingInfo = drawingInfoRef.current;
+      return;
+    }
 
-  //   if (freeDrawingInfo.isDrawing) {
-  //     const pointer: Vector2d = getStagePointerPosition(
-  //       freeDrawingInfo.shapeId
-  //     );
-  //     if (!pointer) {
-  //       return;
-  //     }
-  //     // Add new point to last line
-  //     freeDrawingInfo.lines[freeDrawingInfo.lines.length - 1].points.push(
-  //       pointer.x,
-  //       pointer.y
-  //     );
-  //     // Update shape
-  //     updateShape(undefined, true, false);
-  //   }
+    const drawingInfo: DrawingInfo = drawingInfoRef.current;
 
-  //   // Luôn cập nhật tooltip khi di chuột trên canvas
-  //   const p: Vector2d = getStagePointerPosition();
-  //   if (
-  //     p &&
-  //     calibration.topRight &&
-  //     calibration.bottomLeft &&
-  //     tooltipRef.current
-  //   ) {
-  //     const bgApi = getBackground();
-  //     const bgNode = bgApi?.getNode();
-  //     const latLon = calculateLatLonFromPointer(p, bgNode, calibration);
-  //     if (latLon) {
-  //       tooltipRef.current.updateProp({
-  //         text: `Lat: ${latLon.lat.toFixed(6)}\nLon: ${latLon.lon.toFixed(6)}`,
-  //         x: p.x + 8,
-  //         y: p.y + 8,
-  //       });
-  //     } else {
-  //       tooltipRef.current.updateProp({ text: "" });
-  //     }
-  //   }
-  // }, [
-  //   updateShape,
-  //   dragStage,
-  //   getIsStageDragable,
-  //   getStagePointerPosition,
-  //   calibration,
-  //   getBackground,
-  // ]);
+    if (drawingInfo.points) {
+      const pointer: Vector2d = getStagePointerPosition();
+      if (!pointer) {
+        return;
+      }
+
+      // Add new point to last points
+      const length: number = drawingInfo.previewPoints.length;
+      drawingInfo.previewPoints[length - 2] = pointer.x;
+      drawingInfo.previewPoints[length - 1] = pointer.y;
+
+      // Update shape
+      updateShape(
+        {
+          points: drawingInfo.previewPoints,
+        },
+        true,
+        false
+      );
+    } else {
+      if (drawingInfo.isDrawing) {
+        const pointer: Vector2d = getStagePointerPosition(drawingInfo.shapeId);
+        if (!pointer) {
+          return;
+        }
+
+        // Add new point to last line
+        drawingInfo.lines[drawingInfo.lines.length - 1].points.push(
+          pointer.x,
+          pointer.y
+        );
+
+        // Update shape
+        updateShape(undefined, true, false);
+      }
+    }
+
+    // Luôn cập nhật tooltip khi di chuột trên canvas
+    const p: Vector2d = getStagePointerPosition();
+    if (p && tooltipRef.current) {
+      const bgApi = getBackground();
+      const bgNode = bgApi?.getNode();
+      const latLon = calculateLatLonFromPointer(p, bgNode, calibration);
+      if (latLon) {
+        tooltipRef.current.updateProp({
+          text: `Lat: ${latLon.lat.toFixed(6)}\nLon: ${latLon.lon.toFixed(6)}`,
+          x: p.x + 8,
+          y: p.y + 8,
+        });
+      } else {
+        tooltipRef.current.updateProp({ text: "" });
+      }
+    }
+  }, [
+    updateShape,
+    dragStage,
+    getIsStageDragable,
+    getStagePointerPosition,
+    getBackground,
+    calibration,
+  ]);
 
   const handleStageMouseUp = React.useCallback(
     (e: Konva.KonvaEventObject<MouseEvent>): void => {
@@ -704,7 +728,7 @@ export const Canvas = React.memo((): React.JSX.Element => {
         onWheel={handleStageMouseWheel}
         onClick={handleStageClick}
         onMouseDown={handleStageMouseDown}
-        // onMouseMove={handleStageMouseMove}
+        onMouseMove={handleStageMouseMove}
         onMouseUp={handleStageMouseUp}
         onContextMenu={handleStageContextMenu}
       >

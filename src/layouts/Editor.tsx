@@ -1,4 +1,4 @@
-import { ShapesProvider, StageProvider } from "../contexts";
+import { ShapesProvider, StageProvider, FreeDrawingProvider } from "../contexts";
 import { limitValue } from "../utils/Number";
 import { EditorProp } from "./Types";
 import { Box } from "@mui/material";
@@ -76,7 +76,7 @@ export const Editor = React.memo((prop: EditorProp): React.JSX.Element => {
       stageZoomMax={stageZoomMax}
       stageZoomStep={stageZoomStep}
     >
-      {/*<MapProvider>*/}
+      <FreeDrawingProvider>
         <ShapesProvider maxHistory={maxHistory}>
           <Box
             sx={{
@@ -156,7 +156,7 @@ export const Editor = React.memo((prop: EditorProp): React.JSX.Element => {
             </Box>
           </Box>
         </ShapesProvider>
-      {/*</MapProvider>*/}
+      </FreeDrawingProvider>
     </StageProvider>
   );
 });

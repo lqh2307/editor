@@ -2,3 +2,4 @@ export * from "./ShapesContext";
 export * from "./StageContext";
 export * from "./Interfaces";
 export * from "./Types";
+export * from "./DrawingContext";

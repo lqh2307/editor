@@ -5,13 +5,18 @@ import { ToolbarAddShape } from "./AddShape";
 import { ToolbarHistory } from "./History";
 import { ToolbarProfile } from "./Profile";
 import { ToolbarAction } from "./Action";
-import { ToolbarClose } from "./Close";
 import { ToolbarZoom } from "./Zoom";
 import { ToolbarHelp } from "./Help";
 import { ToolbarIO } from "./IO";
 import React from "react";
+import { ButtonGroup, Paper } from "@mui/material";
+import { PopperButton } from "../../components/PopperButton";
+import { AppsTwoTone } from "@mui/icons-material";
+import { useTranslation } from "react-i18next";
 
 export const Toolbar = React.memo((): React.JSX.Element => {
+  const { t } = useTranslation();
+
   return (
     <Box
       sx={{
@@ -35,8 +40,30 @@ export const Toolbar = React.memo((): React.JSX.Element => {
         divider={<Divider orientation={"vertical"} flexItem={true} />}
         spacing={1}
       >
-        {/* Save/Export/Import */}
-        <ToolbarIO />
+        {/* Only group IO into a single menu button */}
+        <ButtonGroup variant={"contained"} size={"small"}>
+          <PopperButton
+            icon={<AppsTwoTone />}
+            title={t("toolBar.menu.title") ?? "Menu"}
+            closeOnClickAway={false}
+            placement={"bottom-start"}
+          >
+            <Paper
+              elevation={4}
+              sx={{
+                padding: "0.5rem",
+                display: "flex",
+                flexDirection: "column",
+                gap: "0.5rem",
+              }}
+            >
+              <Box sx={{ display: "flex", flexDirection: "row", gap: "0.5rem", flexWrap: "wrap" }}>
+                {/* Save/Export/Import */}
+                <ToolbarIO />
+              </Box>
+            </Paper>
+          </PopperButton>
+        </ButtonGroup>
 
         {/* Undo/Redo */}
         <ToolbarHistory />
@@ -50,8 +77,6 @@ export const Toolbar = React.memo((): React.JSX.Element => {
         {/* Add Shapes (Line/Arrow/Circle/Polygon/Rectangle)/Add Icons/Add Image/Add Text */}
         <ToolbarAddShape />
 
-        {/* Drawing tools moved into Add menu */}
-
         {/* Background/Grid */}
         <ToolbarStageSetting />
 
@@ -60,9 +85,6 @@ export const Toolbar = React.memo((): React.JSX.Element => {
 
         {/* Help (Help/Information) */}
         <ToolbarHelp />
-
-        {/* Close */}
-        {/* <ToolbarClose /> */}
       </Stack>
 
       <Stack
