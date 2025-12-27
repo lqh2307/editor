@@ -614,7 +614,7 @@ export const CanvasShapes = React.memo((): React.JSX.Element => {
               onAppliedProp={handleAppliedProp}
               onMouseDown={handleShapeMouseDown}
               onMouseUp={handleShapeMouseUp}
-              isEditted={edittedId === item.id}
+              isEditted={!drawingMode && edittedId === item.id}
               isSelected={!!selectedIds?.[item.id]}
               shapeOption={item}
               key={item.id}
@@ -634,7 +634,7 @@ export const CanvasShapes = React.memo((): React.JSX.Element => {
               onAppliedProp={handleAppliedProp}
               onMouseDown={handleShapeMouseDown}
               onMouseUp={handleShapeMouseUp}
-              isEditted={edittedId === item.id}
+              isEditted={!drawingMode && edittedId === item.id}
               isSelected={!!selectedIds?.[item.id]}
               shapeOption={item}
               key={item.id}
@@ -717,7 +717,7 @@ export const CanvasShapes = React.memo((): React.JSX.Element => {
               onAppliedProp={handleAppliedProp}
               onMouseDown={handleShapeMouseDown}
               onMouseUp={handleShapeMouseUp}
-              isEditted={edittedId === item.id}
+              isEditted={!drawingMode && edittedId === item.id}
               isSelected={!!selectedIds?.[item.id]}
               shapeOption={item}
               key={item.id}
@@ -758,7 +758,7 @@ export const CanvasShapes = React.memo((): React.JSX.Element => {
               onAppliedProp={handleAppliedProp}
               onMouseDown={handleShapeMouseDown}
               onMouseUp={handleShapeMouseUp}
-              isEditted={edittedId === item.id}
+              isEditted={!drawingMode && edittedId === item.id}
               isSelected={!!selectedIds?.[item.id]}
               shapeOption={item}
               key={item.id}
@@ -780,7 +780,7 @@ export const CanvasShapes = React.memo((): React.JSX.Element => {
               onAppliedProp={handleAppliedProp}
               onMouseDown={handleShapeMouseDown}
               onMouseUp={handleShapeMouseUp}
-              isEditted={edittedId === item.id}
+              isEditted={!drawingMode && edittedId === item.id}
               isSelected={!!selectedIds?.[item.id]}
               shapeOption={item}
               key={item.id}
@@ -790,6 +790,7 @@ export const CanvasShapes = React.memo((): React.JSX.Element => {
       }
     });
   }, [
+    drawingMode,
     shapeList,
     edittedId,
     selectedIds,

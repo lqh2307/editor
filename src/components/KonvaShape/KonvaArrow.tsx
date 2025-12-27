@@ -5,10 +5,11 @@ import { Vector2d } from "konva/lib/types";
 import Konva from "konva";
 import React from "react";
 import {
+  createTransform,
   createLineDash,
   createShapeBox,
-  transformPoint,
-  invertPoint,
+  isHasTransform,
+  resetTransform,
 } from "../../utils/Shapes";
 import {
   KonvaShapeProp,
@@ -31,6 +32,26 @@ export const KonvaArrow = React.memo(
       const prop: KonvaShapeProp = currentPropRef.current;
       const shapeOption: KonvaShape = prop.shapeOption;
 
+      if (isHasTransform(shapeOption)) {
+        const transform: Konva.Transform = createTransform(shapeOption);
+
+        shapeOption.points.forEach((_, idx, arr) => {
+          if (idx % 2 !== 0) {
+            return;
+          }
+
+          const newPoint: Vector2d = transform.point({
+            x: arr[idx],
+            y: arr[idx + 1],
+          });
+
+          arr[idx] = newPoint.x;
+          arr[idx + 1] = newPoint.y;
+        });
+
+        resetTransform(shapeOption);
+      }
+
       const node: Konva.Arrow = nodeRef.current;
       if (node) {
         // Update node attrs
@@ -52,17 +73,14 @@ export const KonvaArrow = React.memo(
         shapeOption.box = createShapeBox(node);
       }
 
-      // Update controll attrs
+      // Update control attrs
       for (let idx = 0; idx < shapeOption.points.length; idx += 2) {
         controlNodeRef.current[`${shapeOption.id}-${idx}`]?.setAttrs({
           visible: prop.isEditted,
-          ...transformPoint(
-            {
-              x: shapeOption.points[idx],
-              y: shapeOption.points[idx + 1],
-            },
-            shapeOption
-          ),
+          offsetX: shapeOption.offsetX,
+          offsetY: shapeOption.offsetY,
+          x: shapeOption.points[idx],
+          y: shapeOption.points[idx + 1],
         });
       }
 
@@ -165,15 +183,13 @@ export const KonvaArrow = React.memo(
 
           if (controlNodeRef.current[id]) {
             const shapeOption: KonvaShape = currentPropRef.current.shapeOption;
-            const newPoint: Vector2d = invertPoint(
-              node.position(),
-              shapeOption
-            );
+
+            const newPosition: Vector2d = node.position();
 
             const idx: number = Number(id.slice(id.lastIndexOf("-") + 1));
 
-            shapeOption.points[idx] = newPoint.x;
-            shapeOption.points[idx + 1] = newPoint.y;
+            shapeOption.points[idx] = newPosition.x;
+            shapeOption.points[idx + 1] = newPosition.y;
 
             nodeRef.current?.points(shapeOption.points);
           }
@@ -195,10 +211,11 @@ export const KonvaArrow = React.memo(
 
     const handleDragMove = React.useCallback(
       (e: Konva.KonvaEventObject<DragEvent>): void => {
+        const prop: KonvaShapeProp = currentPropRef.current;
+        const shapeOption: KonvaShape = prop.shapeOption;
+
         const node: Konva.Arrow = e.target as Konva.Arrow;
         if (node) {
-          const prop: KonvaShapeProp = currentPropRef.current;
-          const shapeOption: KonvaShape = prop.shapeOption;
           const newPosition: Vector2d = node.position();
 
           Object.assign(shapeOption, {
@@ -209,21 +226,16 @@ export const KonvaArrow = React.memo(
 
           if (prop.isEditted) {
             for (let idx = 0; idx < shapeOption.points.length; idx += 2) {
-              controlNodeRef.current[`${shapeOption.id}-${idx}`]?.position(
-                transformPoint(
-                  {
-                    x: shapeOption.points[idx],
-                    y: shapeOption.points[idx + 1],
-                  },
-                  shapeOption
-                )
-              );
+              controlNodeRef.current[`${shapeOption.id}-${idx}`]?.position({
+                x: shapeOption.points[idx] + newPosition.x,
+                y: shapeOption.points[idx + 1] + newPosition.y,
+              });
             }
           }
         }
 
         // Call callback function
-        currentPropRef.current.onDragMove?.(shapeAPI);
+        prop.onDragMove?.(shapeAPI);
       },
       []
     );
@@ -242,28 +254,17 @@ export const KonvaArrow = React.memo(
           const prop: KonvaShapeProp = currentPropRef.current;
           const shapeOption: KonvaShape = prop.shapeOption;
 
-          const newAttrs: KonvaShape = {
-            rotation: node.rotation(),
-            scaleX: node.scaleX(),
-            scaleY: node.scaleY(),
-            skewX: node.skewX(),
-            skewY: node.skewY(),
-            x: node.x(),
-            y: node.y(),
-          };
+          const transform: Konva.Transform = node.getTransform().copy();
 
-          Object.assign(shapeOption, newAttrs);
+          Object.assign(shapeOption, transform.decompose());
 
           if (prop.isEditted) {
             for (let idx = 0; idx < shapeOption.points.length; idx += 2) {
               controlNodeRef.current[`${shapeOption.id}-${idx}`]?.position(
-                transformPoint(
-                  {
-                    x: shapeOption.points[idx],
-                    y: shapeOption.points[idx + 1],
-                  },
-                  shapeOption
-                )
+                transform.point({
+                  x: shapeOption.points[idx],
+                  y: shapeOption.points[idx + 1],
+                })
               );
             }
           }
@@ -287,9 +288,26 @@ export const KonvaArrow = React.memo(
       currentPropRef.current.onMouseLeave?.(shapeAPI);
     }, []);
 
-    const controlPoints: React.JSX.Element[] = React.useMemo(
-      () =>
-        prop.shapeOption.points.map((_, idx) => {
+    return (
+      <Portal selector={"#shapes"} enabled={isEnabled}>
+        <Arrow
+          listening={true}
+          ref={nodeRef}
+          points={undefined}
+          onClick={handleClick}
+          onDblClick={handleDblClick}
+          onMouseOver={handleMouseOver}
+          onMouseLeave={handleMouseLeave}
+          onMouseDown={handleMouseDown}
+          onMouseUp={handleMouseUp}
+          onDragStart={handleDragStart}
+          onDragMove={handleDragMove}
+          onDragEnd={handleDragEnd}
+          onTransform={handleTransform}
+          onTransformEnd={handleTransformEnd}
+        />
+
+        {prop.shapeOption.points.map((_, idx) => {
           if (idx % 2 === 0) {
             const id: string = `${prop.shapeOption.id}-${idx}`;
 
@@ -322,30 +340,7 @@ export const KonvaArrow = React.memo(
           } else {
             return;
           }
-        }),
-      [prop.shapeOption.points]
-    );
-
-    return (
-      <Portal selector={"#shapes"} enabled={isEnabled}>
-        <Arrow
-          listening={true}
-          ref={nodeRef}
-          points={undefined}
-          onClick={handleClick}
-          onDblClick={handleDblClick}
-          onMouseOver={handleMouseOver}
-          onMouseLeave={handleMouseLeave}
-          onMouseDown={handleMouseDown}
-          onMouseUp={handleMouseUp}
-          onDragStart={handleDragStart}
-          onDragMove={handleDragMove}
-          onDragEnd={handleDragEnd}
-          onTransform={handleTransform}
-          onTransformEnd={handleTransformEnd}
-        />
-
-        {controlPoints}
+        })}
       </Portal>
     );
   }

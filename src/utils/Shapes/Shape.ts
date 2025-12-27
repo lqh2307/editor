@@ -427,8 +427,8 @@ export function createShape(shape: KonvaShape): KonvaShape {
       newShape.strokeWidth = newShape.strokeWidth ?? 10;
 
       // Offset
-      newShape.offsetX = newShape.offsetX ?? 100;
-      newShape.offsetY = newShape.offsetY ?? 100;
+      newShape.offsetX = newShape.offsetX ?? 0;
+      newShape.offsetY = newShape.offsetY ?? 0;
 
       break;
     }
@@ -914,12 +914,17 @@ export function createLineDash(style: KonvaLineStyle): number[] {
   return lineDashes[style];
 }
 
+/* Create transform */
+export function createTransform(option: KonvaShape): Konva.Transform {
+  return new Konva.Transform()
+    .translate(option.x, option.y)
+    .rotate((Math.PI / 180) * option.rotation)
+    .skew(option.skewX, option.skewY)
+    .scale(option.scaleX, option.scaleY)
+}
+
 /* Transform point */
 export function transformPoint(point: Vector2d, option: KonvaShape): Vector2d {
-  // // offset translate
-  // let x: number = point.x - option.offsetX;
-  // let y: number = point.y - option.offsetY;
-
   // // scale
   // x = x * option.scaleX;
   // y = y * option.scaleY;
@@ -950,7 +955,6 @@ export function transformPoint(point: Vector2d, option: KonvaShape): Vector2d {
     .rotate((Math.PI / 180) * option.rotation)
     .skew(option.skewX, option.skewY)
     .scale(option.scaleX, option.scaleY)
-    .translate(-option.offsetX, -option.offsetY)
     .point(point);
 }
 
@@ -961,7 +965,6 @@ export function transformPoints(points: number[], option: KonvaShape): number[] 
     .rotate((Math.PI / 180) * option.rotation)
     .skew(option.skewX, option.skewY)
     .scale(option.scaleX, option.scaleY)
-    .translate(-option.offsetX, -option.offsetY)
 
   const result: number[] = []
   for (let idx = 0; idx < points.length; idx += 2) {
@@ -970,12 +973,20 @@ export function transformPoints(points: number[], option: KonvaShape): number[] 
       y: points[idx + 1]
     });
 
-    console.log(newValue)
-
     result.push(newValue.x, newValue.y);
   }
 
   return result;
+}
+
+/* Create invert */
+export function createInvert(option: KonvaShape): Konva.Transform {
+  return new Konva.Transform()
+    .translate(option.x, option.y)
+    .rotate((Math.PI / 180) * option.rotation)
+    .skew(option.skewX, option.skewY)
+    .scale(option.scaleX, option.scaleY)
+    .invert();
 }
 
 /* Invert point */
@@ -1005,10 +1016,6 @@ export function invertPoint(point: Vector2d, option: KonvaShape): Vector2d {
   // x = x / option.scaleX;
   // y = y / option.scaleY;
 
-  // // undo offset translate
-  // x = x + option.offsetX;
-  // y = y + option.offsetY;
-
   // return { x, y };
 
   return new Konva.Transform()
@@ -1016,7 +1023,6 @@ export function invertPoint(point: Vector2d, option: KonvaShape): Vector2d {
     .rotate((Math.PI / 180) * option.rotation)
     .skew(option.skewX, option.skewY)
     .scale(option.scaleX, option.scaleY)
-    .translate(-option.offsetX, -option.offsetY)
     .invert()
     .point(point);
 }
@@ -1028,7 +1034,6 @@ export function invertPoints(points: number[], option: KonvaShape): number[] {
     .rotate((Math.PI / 180) * option.rotation)
     .skew(option.skewX, option.skewY)
     .scale(option.scaleX, option.scaleY)
-    .translate(-option.offsetX, -option.offsetY)
     .invert()
 
   const result: number[] = []
@@ -1063,4 +1068,22 @@ export function pickPoints(points: number[], indices: number[]): number[] {
   indices.forEach((i) => result.push(points[i * 2], points[i * 2 + 1]));
 
   return result;
+}
+
+/* Is has transform */
+export function isHasTransform(option: KonvaShape): boolean {
+  return !!(option.x || option.y || option.scaleX || option.scaleY || option.skewX || option.skewY || option.rotation);
+}
+
+/* Reset transform */
+export function resetTransform(option: KonvaShape): void {
+  Object.assign(option, {
+    rotation: 0,
+    scaleX: 1,
+    scaleY: 1,
+    skewX: 0,
+    skewY: 0,
+    x: 0,
+    y: 0,
+  })
 }

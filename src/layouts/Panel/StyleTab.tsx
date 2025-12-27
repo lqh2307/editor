@@ -605,7 +605,11 @@ export const PanelStyleTab = React.memo((): React.JSX.Element => {
                 selectedShape.type === "multi-line" ||
                 selectedShape.type === "multi-arrow" ||
                 selectedShape.type === "multi-line-curve" ||
-                selectedShape.type === "multi-arrow-curve"
+                selectedShape.type === "multi-arrow-curve" ||
+                selectedShape.type === "quadratic-arrow-curve" ||
+                selectedShape.type === "quadratic-curve" ||
+                selectedShape.type === "bezier-arrow-curve" ||
+                selectedShape.type === "bezier-curve"
                   ? "flex"
                   : "none",
               flexDirection: "row",
@@ -625,6 +629,14 @@ export const PanelStyleTab = React.memo((): React.JSX.Element => {
             />
 
             <TooltipSwitch
+              display={
+                selectedShape.type === "quadratic-arrow-curve" ||
+                selectedShape.type === "quadratic-curve" ||
+                selectedShape.type === "bezier-arrow-curve" ||
+                selectedShape.type === "bezier-curve"
+                  ? "none"
+                  : "flex"
+              }
               label={
                 <Typography fontSize={12}>
                   {t("panel.style.children.general.children.curved.title")}
@@ -640,10 +652,20 @@ export const PanelStyleTab = React.memo((): React.JSX.Element => {
           <Stack
             sx={{
               display:
-                selectedShape.type !== "text" &&
-                selectedShape.type !== "free-drawing"
-                  ? "flex"
-                  : "none",
+                selectedShape.type === "text" ||
+                selectedShape.type === "free-drawing" ||
+                selectedShape.type === "line" ||
+                selectedShape.type === "arrow" ||
+                selectedShape.type === "quadratic-arrow-curve" ||
+                selectedShape.type === "quadratic-curve" ||
+                selectedShape.type === "bezier-arrow-curve" ||
+                selectedShape.type === "bezier-curve" ||
+                selectedShape.type === "multi-line" ||
+                selectedShape.type === "multi-arrow" ||
+                selectedShape.type === "multi-line-curve" ||
+                selectedShape.type === "multi-arrow-curve"
+                  ? "none"
+                  : "flex",
               flexDirection: "row",
               gap: "0.5rem",
               alignItems: "center",
@@ -669,7 +691,20 @@ export const PanelStyleTab = React.memo((): React.JSX.Element => {
           {/* SkewX/SkewY */}
           <Stack
             sx={{
-              display: selectedShape.type !== "free-drawing" ? "flex" : "none",
+              display:
+                selectedShape.type === "free-drawing" ||
+                selectedShape.type === "line" ||
+                selectedShape.type === "arrow" ||
+                selectedShape.type === "quadratic-arrow-curve" ||
+                selectedShape.type === "quadratic-curve" ||
+                selectedShape.type === "bezier-arrow-curve" ||
+                selectedShape.type === "bezier-curve" ||
+                selectedShape.type === "multi-line" ||
+                selectedShape.type === "multi-arrow" ||
+                selectedShape.type === "multi-line-curve" ||
+                selectedShape.type === "multi-arrow-curve"
+                  ? "none"
+                  : "flex",
               flexDirection: "row",
               gap: "0.5rem",
               alignItems: "center",

@@ -336,15 +336,15 @@ function reducer(state: State, action: Action): State {
       }
 
       // Get shape
-      const matchedShapeIndex: number = state.shapeList.findIndex(
+      const matchedShape: KonvaShape = state.shapeList.find(
         (item) => item.id === shapeId
       );
-      if (matchedShapeIndex === -1) {
+      if (!matchedShape) {
         return state;
       }
 
       // Update shape
-      Object.assign(state.shapeList[matchedShapeIndex], update.shape);
+      Object.assign(matchedShape, update.shape);
 
       // Render
       if (update.render) {
@@ -1012,27 +1012,37 @@ function reducer(state: State, action: Action): State {
       // Get shape
       move.ids.forEach((shapeId) => {
         // Get shape
-        const matchedShapeIndex: number = state.shapeList.findIndex(
+        const matchedShape: KonvaShape = state.shapeList.find(
           (item) => item.id === shapeId
         );
-        if (matchedShapeIndex === -1) {
+        if (!matchedShape) {
           return state;
         }
 
         // Update shape
-        const newX: number =
-          state.shapeList[matchedShapeIndex].x + move.offsetX;
-        const newY: number =
-          state.shapeList[matchedShapeIndex].y + move.offsetY;
+        const updateOption: KonvaShape = {};
 
-        state.shapeList[matchedShapeIndex].x = newX;
-        state.shapeList[matchedShapeIndex].y = newY;
+        if (matchedShape.points) {
+          matchedShape.points.forEach((_, i, arr) => {
+            if (i % 2 !== 0) {
+              return;
+            }
+
+            arr[i] += move.offsetX;
+            arr[i + 1] += move.offsetY;
+          });
+
+          updateOption.points = matchedShape.points;
+        } else {
+          matchedShape.x += move.offsetX;
+          matchedShape.y += move.offsetY;
+
+          updateOption.x = matchedShape.x;
+          updateOption.y = matchedShape.y;
+        }
 
         // Render
-        move.shapeRefs[shapeId]?.updateShape({
-          x: newX,
-          y: newY,
-        });
+        move.shapeRefs[shapeId]?.updateShape(updateOption);
       });
 
       // Create new state
@@ -1160,27 +1170,52 @@ function reducer(state: State, action: Action): State {
       }
 
       // Get shape index
-      const matchedShapeIndex: number = state.shapeList.findIndex(
+      const matchedShape: KonvaShape = state.shapeList.find(
         (item) => item.id === flip.id
       );
-      if (matchedShapeIndex === -1) {
+      if (!matchedShape) {
         return state;
       }
 
       // Update shape
-      const currentShape: KonvaShape = state.shapeList[matchedShapeIndex];
+      const updateOption: KonvaShape = {};
 
       if (flip.vertical) {
-        currentShape.scaleY = -currentShape.scaleY;
+        if (matchedShape.points) {
+          matchedShape.points.forEach((_, i, arr) => {
+            if (i % 2 !== 0) {
+              return;
+            }
+
+            arr[i + 1] *= -matchedShape.scaleY;
+          });
+
+          updateOption.points = matchedShape.points;
+        } else {
+          matchedShape.scaleY = -matchedShape.scaleY;
+
+          updateOption.scaleY = matchedShape.scaleY;
+        }
       } else {
-        currentShape.scaleX = -currentShape.scaleX;
+        if (updateOption.points) {
+          matchedShape.points.forEach((_, i, arr) => {
+            if (i % 2 !== 0) {
+              return;
+            }
+
+            arr[i] *= -matchedShape.scaleX;
+          });
+
+          updateOption.points = matchedShape.points;
+        } else {
+          matchedShape.scaleX = -matchedShape.scaleX;
+
+          updateOption.scaleX = matchedShape.scaleX;
+        }
       }
 
       // Render
-      flip.shapeRefs[flip.id]?.updateShape({
-        scaleX: currentShape.scaleX,
-        scaleY: currentShape.scaleY,
-      });
+      flip.shapeRefs[flip.id]?.updateShape(updateOption);
 
       return {
         ...state,
@@ -1204,14 +1239,6 @@ function reducer(state: State, action: Action): State {
             return state;
           }
         }
-      }
-
-      // Get shape index
-      const matchedShapeIndex: number = state.shapeList.findIndex(
-        (item) => item.id === align.id
-      );
-      if (matchedShapeIndex === -1) {
-        return state;
       }
 
       // Get shape

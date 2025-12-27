@@ -11,10 +11,11 @@ import {
   KonvaShape,
 } from "./Types";
 import {
+  createTransform,
   createShapeBox,
-  transformPoint,
   createLineDash,
-  invertPoint,
+  isHasTransform,
+  resetTransform,
 } from "../../utils/Shapes";
 
 export const KonvaBezierCurve = React.memo(
@@ -32,6 +33,26 @@ export const KonvaBezierCurve = React.memo(
     const applyProp = React.useCallback((reason?: RenderReason): void => {
       const prop: KonvaShapeProp = currentPropRef.current;
       const shapeOption: KonvaShape = prop.shapeOption;
+
+      if (isHasTransform(shapeOption)) {
+        const transform: Konva.Transform = createTransform(shapeOption);
+
+        shapeOption.points.forEach((_, idx, arr) => {
+          if (idx % 2 !== 0) {
+            return;
+          }
+
+          const newPoint: Vector2d = transform.point({
+            x: arr[idx],
+            y: arr[idx + 1],
+          });
+
+          arr[idx] = newPoint.x;
+          arr[idx + 1] = newPoint.y;
+        });
+
+        resetTransform(shapeOption);
+      }
 
       const node: Konva.Arrow = nodeRef.current;
       if (node) {
@@ -54,7 +75,7 @@ export const KonvaBezierCurve = React.memo(
         shapeOption.box = createShapeBox(node);
       }
 
-      // Update controll attrs
+      // Update control attrs
       lineNodeRef.current?.setAttrs({
         visible: prop.isEditted,
         rotation: shapeOption.rotation,
@@ -72,13 +93,10 @@ export const KonvaBezierCurve = React.memo(
       for (let idx = 0; idx < shapeOption.points.length; idx += 2) {
         controlNodeRef.current[`${shapeOption.id}-${idx}`]?.setAttrs({
           visible: prop.isEditted,
-          ...transformPoint(
-            {
-              x: shapeOption.points[idx],
-              y: shapeOption.points[idx + 1],
-            },
-            shapeOption
-          ),
+          offsetX: shapeOption.offsetX,
+          offsetY: shapeOption.offsetY,
+          x: shapeOption.points[idx],
+          y: shapeOption.points[idx + 1],
         });
       }
 
@@ -181,15 +199,13 @@ export const KonvaBezierCurve = React.memo(
 
           if (controlNodeRef.current[id]) {
             const shapeOption: KonvaShape = currentPropRef.current.shapeOption;
-            const newPoint: Vector2d = invertPoint(
-              node.position(),
-              shapeOption
-            );
+
+            const newPosition: Vector2d = node.position();
 
             const idx: number = Number(id.slice(id.lastIndexOf("-") + 1));
 
-            shapeOption.points[idx] = newPoint.x;
-            shapeOption.points[idx + 1] = newPoint.y;
+            shapeOption.points[idx] = newPosition.x;
+            shapeOption.points[idx + 1] = newPosition.y;
 
             nodeRef.current?.points(shapeOption.points);
             lineNodeRef.current?.points(shapeOption.points);
@@ -216,33 +232,32 @@ export const KonvaBezierCurve = React.memo(
         if (node) {
           const prop: KonvaShapeProp = currentPropRef.current;
           const shapeOption: KonvaShape = prop.shapeOption;
-          const newPosition: Vector2d = node.position();
 
-          Object.assign(shapeOption, {
-            x: newPosition.x,
-            y: newPosition.y,
-            box: createShapeBox(node),
-          });
+          const node: Konva.Arrow = e.target as Konva.Arrow;
+          if (node) {
+            const newPosition: Vector2d = node.position();
 
-          if (prop.isEditted) {
-            lineNodeRef.current?.position(newPosition);
+            Object.assign(shapeOption, {
+              x: newPosition.x,
+              y: newPosition.y,
+              box: createShapeBox(node),
+            });
 
-            for (let idx = 0; idx < shapeOption.points.length; idx += 2) {
-              controlNodeRef.current[`${shapeOption.id}-${idx}`]?.position(
-                transformPoint(
-                  {
-                    x: shapeOption.points[idx],
-                    y: shapeOption.points[idx + 1],
-                  },
-                  shapeOption
-                )
-              );
+            if (prop.isEditted) {
+              lineNodeRef.current?.position(newPosition);
+
+              for (let idx = 0; idx < shapeOption.points.length; idx += 2) {
+                controlNodeRef.current[`${shapeOption.id}-${idx}`]?.position({
+                  x: shapeOption.points[idx] + newPosition.x,
+                  y: shapeOption.points[idx + 1] + newPosition.y,
+                });
+              }
             }
           }
         }
 
         // Call callback function
-        currentPropRef.current.onDragMove?.(shapeAPI);
+        prop.onDragMove?.(shapeAPI);
       },
       []
     );
@@ -261,15 +276,9 @@ export const KonvaBezierCurve = React.memo(
           const prop: KonvaShapeProp = currentPropRef.current;
           const shapeOption: KonvaShape = prop.shapeOption;
 
-          const newAttrs: KonvaShape = {
-            rotation: node.rotation(),
-            scaleX: node.scaleX(),
-            scaleY: node.scaleY(),
-            skewX: node.skewX(),
-            skewY: node.skewY(),
-            x: node.x(),
-            y: node.y(),
-          };
+          const transform: Konva.Transform = node.getTransform().copy();
+
+          const newAttrs: KonvaShape = transform.decompose();
 
           Object.assign(shapeOption, newAttrs);
 
@@ -278,13 +287,10 @@ export const KonvaBezierCurve = React.memo(
 
             for (let idx = 0; idx < shapeOption.points.length; idx += 2) {
               controlNodeRef.current[`${shapeOption.id}-${idx}`]?.position(
-                transformPoint(
-                  {
-                    x: shapeOption.points[idx],
-                    y: shapeOption.points[idx + 1],
-                  },
-                  shapeOption
-                )
+                transform.point({
+                  x: shapeOption.points[idx],
+                  y: shapeOption.points[idx + 1],
+                })
               );
             }
           }
@@ -307,45 +313,6 @@ export const KonvaBezierCurve = React.memo(
       // Call callback function
       currentPropRef.current.onMouseLeave?.(shapeAPI);
     }, []);
-
-    const controlPoints: React.JSX.Element[] = React.useMemo(
-      () =>
-        prop.shapeOption.points.map((_, idx) => {
-          if (idx % 2 === 0) {
-            const id: string = `${prop.shapeOption.id}-${idx}`;
-
-            return (
-              <Circle
-                id={id}
-                key={id}
-                listening={true}
-                ref={(node: Konva.Circle): void => {
-                  if (node) {
-                    if (!controlNodeRef.current[id]) {
-                      controlNodeRef.current[id] = node;
-                    }
-                  } else {
-                    delete controlNodeRef.current[id];
-                  }
-                }}
-                draggable={true}
-                radius={10}
-                stroke={"#555555"}
-                strokeWidth={1}
-                fill={"#dddddd"}
-                onMouseOver={handleMouseOver}
-                onMouseLeave={handleMouseLeave}
-                onDragStart={handleControlDragStart}
-                onDragMove={handleControlDragMove}
-                onDragEnd={handleControlDragEnd}
-              />
-            );
-          } else {
-            return;
-          }
-        }),
-      [prop.shapeOption.points]
-    );
 
     return (
       <Portal selector={"#shapes"} enabled={isEnabled}>
@@ -378,7 +345,40 @@ export const KonvaBezierCurve = React.memo(
           dash={defaultLineDashRef.current}
         />
 
-        {controlPoints}
+        {prop.shapeOption.points.map((_, idx) => {
+          if (idx % 2 === 0) {
+            const id: string = `${prop.shapeOption.id}-${idx}`;
+
+            return (
+              <Circle
+                id={id}
+                key={id}
+                listening={true}
+                ref={(node: Konva.Circle): void => {
+                  if (node) {
+                    if (!controlNodeRef.current[id]) {
+                      controlNodeRef.current[id] = node;
+                    }
+                  } else {
+                    delete controlNodeRef.current[id];
+                  }
+                }}
+                draggable={true}
+                radius={10}
+                stroke={"#555555"}
+                strokeWidth={1}
+                fill={"#dddddd"}
+                onMouseOver={handleMouseOver}
+                onMouseLeave={handleMouseLeave}
+                onDragStart={handleControlDragStart}
+                onDragMove={handleControlDragMove}
+                onDragEnd={handleControlDragEnd}
+              />
+            );
+          } else {
+            return;
+          }
+        })}
       </Portal>
     );
   }

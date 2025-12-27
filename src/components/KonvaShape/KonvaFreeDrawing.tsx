@@ -204,7 +204,7 @@ export const KonvaFreeDrawing = React.memo(
         if (node) {
           const shapeOption: KonvaShape = currentPropRef.current.shapeOption;
 
-          const transform = node.getTransform().copy();
+          const transform: Konva.Transform = node.getTransform().copy();
 
           shapeOption.lines.forEach((line) => {
             const newPoints: number[] = [];

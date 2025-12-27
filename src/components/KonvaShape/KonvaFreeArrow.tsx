@@ -285,45 +285,6 @@ export const KonvaFreeArrow = React.memo(
       currentPropRef.current.onMouseLeave?.(shapeAPI);
     }, []);
 
-    const controlPoints: React.JSX.Element[] = React.useMemo(
-      () =>
-        prop.shapeOption.points.map((_, idx) => {
-          if (idx % 2 === 0) {
-            const id: string = `${prop.shapeOption.id}-${idx}`;
-
-            return (
-              <Circle
-                id={id}
-                key={id}
-                listening={true}
-                ref={(node: Konva.Circle): void => {
-                  if (node) {
-                    if (!controlNodeRef.current[id]) {
-                      controlNodeRef.current[id] = node;
-                    }
-                  } else {
-                    delete controlNodeRef.current[id];
-                  }
-                }}
-                draggable={true}
-                radius={10}
-                stroke={"#555555"}
-                strokeWidth={1}
-                fill={"#dddddd"}
-                onMouseOver={handleMouseOver}
-                onMouseLeave={handleMouseLeave}
-                onDragStart={handleControlDragStart}
-                onDragMove={handleControlDragMove}
-                onDragEnd={handleControlDragEnd}
-              />
-            );
-          } else {
-            return;
-          }
-        }),
-      [prop.shapeOption.points]
-    );
-
     return (
       <Portal selector={"#shapes"} enabled={isEnabled}>
         <Group
@@ -364,7 +325,40 @@ export const KonvaFreeArrow = React.memo(
           />
         </Group>
 
-        {controlPoints}
+        {prop.shapeOption.points.map((_, idx) => {
+          if (idx % 2 === 0) {
+            const id: string = `${prop.shapeOption.id}-${idx}`;
+
+            return (
+              <Circle
+                id={id}
+                key={id}
+                listening={true}
+                ref={(node: Konva.Circle): void => {
+                  if (node) {
+                    if (!controlNodeRef.current[id]) {
+                      controlNodeRef.current[id] = node;
+                    }
+                  } else {
+                    delete controlNodeRef.current[id];
+                  }
+                }}
+                draggable={true}
+                radius={10}
+                stroke={"#555555"}
+                strokeWidth={1}
+                fill={"#dddddd"}
+                onMouseOver={handleMouseOver}
+                onMouseLeave={handleMouseLeave}
+                onDragStart={handleControlDragStart}
+                onDragMove={handleControlDragMove}
+                onDragEnd={handleControlDragEnd}
+              />
+            );
+          } else {
+            return;
+          }
+        })}
       </Portal>
     );
   }
