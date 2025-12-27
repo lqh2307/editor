@@ -1,9 +1,16 @@
-import { createLineDash, createShapeBox } from "../../utils/Shapes";
 import { parseHexToRGBAString } from "../../utils/Color";
 import { Portal } from "react-konva-utils";
+import { Vector2d } from "konva/lib/types";
 import { Group } from "react-konva";
 import React from "react";
 import Konva from "konva";
+import {
+  createTransform,
+  createLineDash,
+  createShapeBox,
+  isHasTransform,
+  resetTransform,
+} from "../../utils/Shapes";
 import {
   KonvaShapeProp,
   KonvaShapeAPI,
@@ -19,45 +26,57 @@ export const KonvaFreeDrawing = React.memo(
 
     // Apply prop
     const applyProp = React.useCallback((reason?: RenderReason): void => {
+      const prop: KonvaShapeProp = currentPropRef.current;
+      const shapeOption: KonvaShape = prop.shapeOption;
+
+      if (isHasTransform(shapeOption)) {
+        const transform: Konva.Transform = createTransform(shapeOption);
+
+        shapeOption.lines.forEach((line) => {
+          line.points.forEach((_, idx, arr) => {
+            if (idx % 2 !== 0) {
+              return;
+            }
+
+            const newPoint: Vector2d = transform.point({
+              x: arr[idx],
+              y: arr[idx + 1],
+            });
+
+            arr[idx] = newPoint.x;
+            arr[idx + 1] = newPoint.y;
+          });
+        });
+
+        resetTransform(shapeOption);
+      }
+
       const node: Konva.Group = nodeRef.current;
       if (node) {
-        const prop: KonvaShapeProp = currentPropRef.current;
-        const shapeOption: KonvaShape = prop.shapeOption;
-
-        // Process node attrs
-        const {
-          id,
-          x,
-          y,
-          scaleX,
-          scaleY,
-          skewX,
-          skewY,
-          rotation,
-          lines,
-          ...lineOption
-        }: KonvaShape = shapeOption;
-
-        lineOption.fill = parseHexToRGBAString(
-          lineOption.fill as string,
-          lineOption.fillOpacity
+        // Process attrs
+        const fill: string = parseHexToRGBAString(
+          shapeOption.fill as string,
+          shapeOption.fillOpacity
         );
 
-        lineOption.stroke = parseHexToRGBAString(
-          lineOption.stroke as string,
-          lineOption.strokeOpacity
+        const stroke: string = parseHexToRGBAString(
+          shapeOption.stroke as string,
+          shapeOption.strokeOpacity
         );
 
-        lineOption.dash = createLineDash(shapeOption.lineStyle);
-
-        node.destroyChildren();
+        const dash: number[] = createLineDash(shapeOption.lineStyle);
 
         // Add lines
-        lines.forEach((line) => {
+        node.destroyChildren();
+
+        shapeOption.lines.forEach((line) => {
           node.add(
             new Konva.Line({
               ...line,
-              ...lineOption,
+              ...shapeOption,
+              fill: fill,
+              stroke: stroke,
+              dash: dash,
               listening: true,
               draggable: false,
               key: line.id,
@@ -68,14 +87,6 @@ export const KonvaFreeDrawing = React.memo(
         // Update node attrs
         node.setAttrs({
           ...shapeOption,
-          id: id,
-          x: x,
-          y: y,
-          scaleX: scaleX,
-          scaleY: scaleY,
-          skewX: skewX,
-          skewY: skewY,
-          rotation: rotation,
           draggable: shapeOption.draggable && prop.isSelected,
         });
 
@@ -200,40 +211,18 @@ export const KonvaFreeDrawing = React.memo(
 
     const handleTransformEnd = React.useCallback(
       (e: Konva.KonvaEventObject<Event>): void => {
+        const prop: KonvaShapeProp = currentPropRef.current;
+        const shapeOption: KonvaShape = prop.shapeOption;
+
         const node: Konva.Group = e.target as Konva.Group;
         if (node) {
-          const shapeOption: KonvaShape = currentPropRef.current.shapeOption;
-
           const transform: Konva.Transform = node.getTransform().copy();
 
-          shapeOption.lines.forEach((line) => {
-            const newPoints: number[] = [];
-
-            for (let i = 0; i < line.points.length; i += 2) {
-              const p = transform.point({
-                x: line.points[i],
-                y: line.points[i + 1],
-              });
-
-              newPoints.push(p.x, p.y);
-            }
-
-            line.points = newPoints;
-          });
-
-          Object.assign(shapeOption, {
-            rotation: 0,
-            scaleX: 1,
-            scaleY: 1,
-            skewX: 0,
-            skewY: 0,
-            x: 0,
-            y: 0,
-          });
+          Object.assign(shapeOption, transform.decompose());
         }
 
         // Call callback function
-        currentPropRef.current.onAppliedProp?.(shapeAPI, "transform-end");
+        prop.onAppliedProp?.(shapeAPI, "transform-end");
       },
       []
     );

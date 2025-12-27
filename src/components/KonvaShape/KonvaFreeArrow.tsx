@@ -364,163 +364,193 @@ export const KonvaFreeArrow = React.memo(
   }
 );
 
-// /* ================= ARROW STRUCT ================= */
+import React, { useRef, useEffect } from "react";
+import { Stage, Layer, Line, Circle, Group, Transformer } from "react-konva";
 
-// const ARROW_DEF = {
-//   head: [0, 1, 2, 3, 4],
-//   leftTail: [0, 5, 6],
-//   rightTail: [4, 7, 8],
-// };
+/* ================= HELPERS ================= */
 
-// export default function App() {
-//   const groupRef = useRef();
-//   const trRef = useRef();
+function pickPoints(flat, indices) {
+  const out = [];
+  indices.forEach((i) => {
+    out.push(flat[i * 2], flat[i * 2 + 1]);
+  });
+  return out;
+}
 
-//   const headRef = useRef();
-//   const leftTailRef = useRef();
-//   const rightTailRef = useRef();
+/* ================= ARROW STRUCT ================= */
 
-//   const controlRefs = useRef({});
+const ARROW_DEF = {
+  head: [6, 7, 8, 9, 0], // đầu mũi
+  leftShaft: [0, 1, 2], // thân trái + đuôi
+  rightShaft: [4, 5, 6], // thân phải + đuôi
+  tailCap: [2, 3, 4], // bịt đuôi
+};
 
-//   /* ===== SOURCE OF TRUTH ===== */
-//   const shape = useRef({
-//     points: [
-//       84, 77, 38, 100, 101, 0, 161, 100, 115, 77,
+export default function App() {
+  const groupRef = useRef();
+  const trRef = useRef();
 
-//       84, 123, 50, 200,
+  const headRef = useRef();
+  const leftRef = useRef();
+  const rightRef = useRef();
+  const tailRef = useRef();
 
-//       115, 123, 150, 200,
-//     ],
-//   });
+  const controlRefs = useRef({});
 
-//   /* ================= RENDER ================= */
+  /* ================= SOURCE OF TRUTH ================= */
 
-//   const renderArrow = () => {
-//     const pts = shape.current.points;
-//     headRef.current.points(pickPoints(pts, ARROW_DEF.head));
-//     leftTailRef.current.points(pickPoints(pts, ARROW_DEF.leftTail));
-//     rightTailRef.current.points(pickPoints(pts, ARROW_DEF.rightTail));
-//   };
+  const shape = useRef({
+    points: [
+      // 0 - cổ mũi
+      85, 85,
 
-//   const updateControlsIdentity = () => {
-//     const pts = shape.current.points;
-//     for (let i = 0; i < pts.length; i += 2) {
-//       controlRefs.current[i]?.position({
-//         x: pts[i],
-//         y: pts[i + 1],
-//       });
-//     }
-//   };
+      // 1 - thân trái
+      85, 120,
 
-//   /* ===== PREVIEW TRANSFORM ===== */
+      // 2 - đuôi trái
+      60, 200,
 
-//   const updateControlPreview = () => {
-//     const group = groupRef.current;
-//     const tr = group.getAbsoluteTransform().copy();
+      // 3 - đáy giữa (tail cap)
+      100, 160,
 
-//     const pts = shape.current.points;
-//     for (let i = 0; i < pts.length; i += 2) {
-//       const c = controlRefs.current[i];
-//       if (!c) continue;
+      // 4 - đuôi phải
+      140, 200,
 
-//       const p = tr.point({ x: pts[i], y: pts[i + 1] });
-//       c.position(p);
-//     }
-//   };
+      // 5 - thân phải
+      115, 120,
 
-//   /* ===== CONTROL DRAG ===== */
+      // 6 - cổ mũi phải
+      115, 85,
 
-//   const onControlDragMove = (e) => {
-//     const idx = Number(e.target.id());
-//     shape.current.points[idx] = e.target.x();
-//     shape.current.points[idx + 1] = e.target.y();
+      // 7 - chân đầu phải
+      170, 110,
 
-//     renderArrow();
-//   };
+      // 8 - đỉnh mũi
+      100, 0,
 
-//   /* ===== TRANSFORM BAKE ===== */
+      // 9 - chân đầu trái
+      30, 110,
+    ],
+  });
 
-//   const bakeTransform = () => {
-//     const group = groupRef.current;
-//     const tr = group.getAbsoluteTransform().copy();
+  /* ================= RENDER ================= */
 
-//     const pts = shape.current.points;
-//     for (let i = 0; i < pts.length; i += 2) {
-//       const p = tr.point({ x: pts[i], y: pts[i + 1] });
-//       pts[i] = p.x;
-//       pts[i + 1] = p.y;
-//     }
+  const renderArrow = () => {
+    const pts = shape.current.points;
 
-//     // reset group
-//     group.position({ x: 0, y: 0 });
-//     group.scale({ x: 1, y: 1 });
-//     group.rotation(0);
+    headRef.current.points(pickPoints(pts, ARROW_DEF.head));
+    leftRef.current.points(pickPoints(pts, ARROW_DEF.leftShaft));
+    rightRef.current.points(pickPoints(pts, ARROW_DEF.rightShaft));
+    tailRef.current.points(pickPoints(pts, ARROW_DEF.tailCap));
+  };
 
-//     renderArrow();
-//     updateControlsIdentity();
+  const updateControlsIdentity = () => {
+    const pts = shape.current.points;
+    for (let i = 0; i < pts.length; i += 2) {
+      controlRefs.current[i]?.position({
+        x: pts[i],
+        y: pts[i + 1],
+      });
+    }
+  };
 
-//     // 🔥 refresh transformer AFTER render
-//     requestAnimationFrame(() => {
-//       trRef.current.nodes([group]);
-//       trRef.current.getLayer().batchDraw();
-//     });
-//   };
+  /* ================= TRANSFORM PREVIEW ================= */
 
-//   /* ================= INIT ================= */
+  const updateControlPreview = () => {
+    const tr = groupRef.current.getAbsoluteTransform().copy();
+    const pts = shape.current.points;
 
-//   useEffect(() => {
-//     renderArrow();
-//     updateControlsIdentity();
+    for (let i = 0; i < pts.length; i += 2) {
+      const c = controlRefs.current[i];
+      if (!c) continue;
 
-//     trRef.current.nodes([groupRef.current]);
-//     trRef.current.getLayer().batchDraw();
-//   }, []);
+      c.position(tr.point({ x: pts[i], y: pts[i + 1] }));
+    }
+  };
 
-//   return (
-//     <Stage width={window.innerWidth} height={window.innerHeight}>
-//       <Layer>
-//         {/* ===== ARROW ===== */}
-//         <Group
-//           ref={groupRef}
-//           draggable
-//           onDragMove={updateControlPreview}
-//           onTransform={updateControlPreview}
-//           onDragEnd={bakeTransform}
-//           onTransformEnd={bakeTransform}
-//         >
-//           <Line ref={headRef} stroke="black" strokeWidth={10} />
-//           <Line
-//             ref={leftTailRef}
-//             stroke="black"
-//             strokeWidth={10}
-//             tension={0.45}
-//           />
-//           <Line
-//             ref={rightTailRef}
-//             stroke="black"
-//             strokeWidth={10}
-//             tension={0.45}
-//           />
-//         </Group>
+  /* ================= CONTROL DRAG ================= */
 
-//         {/* ===== CONTROLS ===== */}
-//         {shape.current.points.map((_, idx) =>
-//           idx % 2 === 0 ? (
-//             <Circle
-//               key={idx}
-//               id={String(idx)}
-//               ref={(n) => (controlRefs.current[idx] = n)}
-//               radius={6}
-//               fill="white"
-//               stroke="black"
-//               draggable
-//               onDragMove={onControlDragMove}
-//             />
-//           ) : null
-//         )}
+  const onControlDragMove = (e) => {
+    const idx = Number(e.target.id());
+    shape.current.points[idx] = e.target.x();
+    shape.current.points[idx + 1] = e.target.y();
+    renderArrow();
+  };
 
-//         <Transformer ref={trRef} />
-//       </Layer>
-//     </Stage>
-//   );
-// }
+  /* ================= BAKE TRANSFORM ================= */
+
+  const bakeTransform = () => {
+    const group = groupRef.current;
+    const tr = group.getAbsoluteTransform().copy();
+    const pts = shape.current.points;
+
+    for (let i = 0; i < pts.length; i += 2) {
+      const p = tr.point({ x: pts[i], y: pts[i + 1] });
+      pts[i] = p.x;
+      pts[i + 1] = p.y;
+    }
+
+    group.position({ x: 0, y: 0 });
+    group.scale({ x: 1, y: 1 });
+    group.rotation(0);
+
+    renderArrow();
+    updateControlsIdentity();
+
+    requestAnimationFrame(() => {
+      trRef.current.nodes([group]);
+      trRef.current.getLayer().batchDraw();
+    });
+  };
+
+  /* ================= INIT ================= */
+
+  useEffect(() => {
+    renderArrow();
+    updateControlsIdentity();
+
+    trRef.current.nodes([groupRef.current]);
+    trRef.current.getLayer().batchDraw();
+  }, []);
+
+  /* ================= RENDER ================= */
+
+  return (
+    <Stage width={window.innerWidth} height={window.innerHeight}>
+      <Layer>
+        {/* ===== ARROW ===== */}
+        <Group
+          ref={groupRef}
+          draggable
+          onDragMove={updateControlPreview}
+          onTransform={updateControlPreview}
+          onDragEnd={bakeTransform}
+          onTransformEnd={bakeTransform}
+        >
+          <Line ref={headRef} stroke="black" strokeWidth={10} />
+          <Line ref={leftRef} stroke="black" strokeWidth={10} tension={0.45} />
+          <Line ref={rightRef} stroke="black" strokeWidth={10} tension={0.45} />
+          <Line ref={tailRef} stroke="black" strokeWidth={10} />
+        </Group>
+
+        {/* ===== CONTROLS ===== */}
+        {shape.current.points.map((_, idx) =>
+          idx % 2 === 0 ? (
+            <Circle
+              key={idx}
+              id={String(idx)}
+              ref={(n) => (controlRefs.current[idx] = n)}
+              radius={6}
+              fill="white"
+              stroke="black"
+              draggable
+              onDragMove={onControlDragMove}
+            />
+          ) : null
+        )}
+
+        <Transformer ref={trRef} />
+      </Layer>
+    </Stage>
+  );
+}
